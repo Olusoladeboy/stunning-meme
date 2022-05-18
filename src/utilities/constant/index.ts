@@ -1,0 +1,13 @@
+export const PRIMARY_COLOR = '#28536B';
+export const LIGHT_PRIMARY_COLOR = '#FDEDD7';
+export const SECOUNDARY_COLOR = '#F38D04';
+export const TRANSITION = 'all 0.3s';
+export const DRAWER_WIDTH = '280px';
+export const MIN_DRAWER_WIDTH = '80px';
+export const PENDING_COLOR = '#30AF9F';
+export const DANGER_COLOR = '#E84E51';
+export const SUCCESS_COLOR = '#389651';
+export const LIGHT_GRAY = '#DCE3E7';
+export const HEADER_HEIGHT = '70px';
+export const DARK_BACKGROUND_COLOR = '#09171f';
+export const BOX_SHADOW = `0px 0px 8px rgba(0, 0, 0, 0.1)`;

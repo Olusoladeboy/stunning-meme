@@ -63,13 +63,13 @@ const setColor = (status: string) => {
 	}
 };
 
-const TransactionHistoryTable = ({ data }: Props) => {
+const WalletSummaryTable = ({ data }: Props) => {
 	const theme = useTheme();
 	const styles = useStyles(theme);
 	return (
 		<Box sx={{ overflow: 'auto' }}>
 			<Box style={styles.tableHeader}>
-				<Typography variant={'h5'}>Transaction History</Typography>
+				<Typography variant={'h5'}>User Wallet Summary</Typography>
 				<Box
 					sx={{
 						display: 'flex',
@@ -214,4 +214,4 @@ const useStyles = (theme: any) => ({
 	},
 });
 
-export default TransactionHistoryTable;
+export default WalletSummaryTable;

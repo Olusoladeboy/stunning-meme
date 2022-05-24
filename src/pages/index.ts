@@ -29,11 +29,11 @@ const Pages = {
 	User: {
 		Initial: {
 			Component: Users,
-			path: LINKS.User,
+			path: LINKS.Users,
 		},
 		UserProfile: {
 			Component: UserProfile,
-			path: LINKS.Profile,
+			path: LINKS.User,
 		},
 	},
 };

@@ -44,7 +44,7 @@ const theme = (dark: boolean): ThemeOptions =>
 				xl: 1536,
 			},
 		},
-		spacing: [0, 4, 8, 16, 32, 64, 80],
+		spacing: [0, 4, 8, 16, 32, 64, 80, 100],
 	}) as any;
 
 export default theme;

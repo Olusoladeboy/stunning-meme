@@ -8,7 +8,6 @@ import { styled } from '@mui/material';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import { LIGHT_GRAY, BOX_SHADOW } from '../../utilities/constant';
-import { TransactionStatusTypes } from '../../utilities/types';
 import { grey } from '@mui/material/colors';
 import Link from '../link';
 import Empty from '../empty';
@@ -55,7 +54,7 @@ const RecentTransactionsTable = ({ data }: Props) => {
 		<Box style={styles.container} sx={{ overflow: 'auto' }}>
 			<Box style={styles.header}>
 				<Typography variant={'h5'} style={styles.headerText}>
-					Recent Conversation
+					Recent Transactions
 				</Typography>
 				<Link style={styles.link} to={'/'}>
 					view more

@@ -117,5 +117,5 @@ export enum UserNavList {
 	Profile = 'profile',
 	Status = 'status',
 	Transaction = 'transaction',
-	WalletSummary = 'wallet summary',
+	WalletSummary = 'wallet-summary',
 }

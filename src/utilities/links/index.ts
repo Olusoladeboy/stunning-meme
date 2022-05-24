@@ -3,8 +3,8 @@ const LINKS = {
 	Login: '/auth/login',
 	ForgetPassword: '/auth/forget-password',
 	CreateNewPassword: '/auth/password/new',
-	User: '/users',
-	Profile: `/user`,
+	Users: '/users',
+	User: `/user`,
 };
 
 export const DRAWER_LINKS = {

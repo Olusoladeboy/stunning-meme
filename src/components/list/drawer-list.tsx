@@ -137,7 +137,7 @@ const DrawerList = () => {
 					}
 				/>
 				<ListItemButton
-					link={LINKS.User}
+					link={LINKS.Users}
 					name={'Users'}
 					icon={
 						<UserIcon

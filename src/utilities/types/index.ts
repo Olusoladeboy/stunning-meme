@@ -112,3 +112,10 @@ export enum ReferralHistoryTypes {
 	PendingReferral = 'pending',
 	AllReferral = 'all',
 }
+
+export enum UserNavList {
+	Profile = 'profile',
+	Status = 'status',
+	Transaction = 'transaction',
+	WalletSummary = 'wallet summary',
+}

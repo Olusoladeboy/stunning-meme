@@ -3,6 +3,7 @@ import Dashboard from './dashboard';
 import ForgetPassword from './auth/forget-password';
 import CreateNewPassword from './auth/create-new-password';
 import Users from './users';
+import UserProfile from './users/profile';
 
 import LINKS from '../utilities/links';
 
@@ -29,6 +30,10 @@ const Pages = {
 		Initial: {
 			Component: Users,
 			path: LINKS.User,
+		},
+		UserProfile: {
+			Component: UserProfile,
+			path: LINKS.Profile,
 		},
 	},
 };

@@ -4,6 +4,7 @@ const LINKS = {
 	ForgetPassword: '/auth/forget-password',
 	CreateNewPassword: '/auth/password/new',
 	User: '/users',
+	Profile: `/user`,
 };
 
 export const DRAWER_LINKS = {

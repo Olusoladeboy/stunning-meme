@@ -25,6 +25,9 @@ const Router = () => {
 				path={Pages.Auth.CreateNewPassword.path}
 				element={<Pages.Auth.CreateNewPassword.Component />}
 			/>
+			<Route path={Pages.User.UserProfile.path}>
+				<Route path=':id' element={<Pages.User.UserProfile.Component />} />
+			</Route>
 		</Routes>
 	);
 };

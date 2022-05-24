@@ -4,6 +4,7 @@ import ForgetPassword from './auth/forget-password';
 import CreateNewPassword from './auth/create-new-password';
 import Users from './users';
 import UserProfile from './users/profile';
+import Managers from './managers';
 
 import LINKS from '../utilities/links';
 
@@ -35,6 +36,10 @@ const Pages = {
 			Component: UserProfile,
 			path: LINKS.User,
 		},
+	},
+	Managers: {
+		Component: Managers,
+		path: LINKS.Managers,
 	},
 };
 

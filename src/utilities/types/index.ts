@@ -119,3 +119,8 @@ export enum UserNavList {
 	Transaction = 'transaction',
 	WalletSummary = 'wallet-summary',
 }
+
+export enum ManagerTypes {
+	Manager = 'Manager',
+	Admin = 'Admin',
+}

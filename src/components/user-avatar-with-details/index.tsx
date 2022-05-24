@@ -1,22 +1,33 @@
 import React, { CSSProperties } from 'react';
 import { Box, Avatar, Typography, useTheme } from '@mui/material';
 
-const UserAvatarWithDetails = () => {
+type Props = {
+	details?: { [key: string]: any };
+};
+
+const UserAvatarWithDetails = ({ details }: Props) => {
 	const theme = useTheme();
 	const styles = useStyles(theme);
 	return (
 		<Box style={styles.container}>
-			<Avatar style={styles.avatar} />
+			<Avatar src={(details && details.avatar) || ''} style={styles.avatar} />
 			<Box style={styles.detailsWrapper as CSSProperties}>
 				<Typography style={styles.text} variant={'body1'}>
-					Name
+					{details && details.name}
 				</Typography>
 				<Typography style={styles.text} variant={'body1'}>
-					Email
+					{details && details.email}
 				</Typography>
-				<Typography style={styles.text} variant={'body1'}>
-					Verified Status
-				</Typography>
+				{details && details.verifiedStatev && (
+					<Typography style={styles.text} variant={'body1'}>
+						Verified Status
+					</Typography>
+				)}
+				{details && details.role && (
+					<Typography style={styles.text} variant={'body1'}>
+						{details.role}
+					</Typography>
+				)}
 			</Box>
 		</Box>
 	);

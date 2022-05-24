@@ -150,11 +150,12 @@ const DrawerList = () => {
 					}
 				/>
 				<ListItemButton
-					name={'Manager'}
+					name={'Managers'}
+					link={LINKS.Managers}
 					icon={
 						<ManagerIcon
 							color={
-								getActiveLink({ name: 'manager', currentPath: pathname })
+								getActiveLink({ name: 'managers', currentPath: pathname })
 									.isActive
 									? activeColor
 									: initialColor

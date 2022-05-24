@@ -28,6 +28,10 @@ const Router = () => {
 			<Route path={Pages.User.UserProfile.path}>
 				<Route path=':id' element={<Pages.User.UserProfile.Component />} />
 			</Route>
+			<Route
+				path={Pages.Managers.path}
+				element={<Pages.Managers.Component />}
+			/>
 		</Routes>
 	);
 };

@@ -5,6 +5,17 @@ const LINKS = {
 	CreateNewPassword: '/auth/password/new',
 	Users: '/users',
 	User: `/user`,
+	Managers: '/managers',
+	Transactions: '/transactions',
+	Conversions: '/conversions',
+	DataNetwork: '/data-network',
+	AirtimeNetwork: '/airtime-network',
+	Coupons: '/coupons',
+	Referral: '/referrals',
+	Notifications: '/notifications',
+	Verification: '/verification',
+	Suspension: '/suspension',
+	AuditLogs: '/audit-logs',
 };
 
 export const DRAWER_LINKS = {

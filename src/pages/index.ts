@@ -13,6 +13,8 @@ import Coupons from './coupons';
 import Referrals from './referrals';
 import ViewReferees from './view-referees';
 import AllReferrals from './referrals/all-referrals';
+import Notifications from './notifications';
+import PushNotification from './notifications/push-notification';
 
 import LINKS from '../utilities/links';
 
@@ -82,6 +84,16 @@ const Pages = {
 	ViewReferees: {
 		Component: ViewReferees,
 		path: LINKS.Referee,
+	},
+	Notifications: {
+		Initial: {
+			Component: Notifications,
+			path: LINKS.Notifications,
+		},
+		PushNotification: {
+			Component: PushNotification,
+			path: LINKS.PushNotification,
+		},
 	},
 };
 

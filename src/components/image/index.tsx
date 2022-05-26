@@ -9,7 +9,7 @@ interface Props extends BoxProps {
 const Image = ({ src, alt = '', ...rest }: Props) => {
 	return (
 		<Box {...rest}>
-			<img src={src} alt={alt} />
+			<img style={{ width: '100%' }} src={src} alt={alt} />
 		</Box>
 	);
 };

@@ -71,6 +71,14 @@ const Router = () => {
 			<Route path={Pages.ViewReferees.path}>
 				<Route path=':id' element={<Pages.ViewReferees.Component />} />
 			</Route>
+			<Route path={Pages.Notifications.Initial.path}>
+				<Route path={''} element={<Pages.Notifications.Initial.Component />} />
+				<Route path={'all'} element={<Pages.Referral.All.Component />} />
+			</Route>
+			<Route
+				path={Pages.Notifications.PushNotification.path}
+				element={<Pages.Notifications.PushNotification.Component />}
+			/>
 		</Routes>
 	);
 };

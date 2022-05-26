@@ -265,13 +265,18 @@ const DrawerList = () => {
 					name={'Referral'}
 					link={LINKS.Referrals}
 					isActive={
-						getActiveLink({ name: 'referral', currentPath: pathname }).isActive
+						getActiveLink({
+							name: 'referral' || 'referee',
+							currentPath: pathname,
+						}).isActive
 					}
 					icon={
 						<ShareIcon
 							color={
-								getActiveLink({ name: 'referral', currentPath: pathname })
-									.isActive
+								getActiveLink({
+									name: 'referral' || 'referee',
+									currentPath: pathname,
+								}).isActive
 									? activeColor
 									: initialColor
 							}
@@ -279,15 +284,16 @@ const DrawerList = () => {
 					}
 				/>
 				<ListItemButton
-					name={'Notification'}
+					name={'Notifications'}
+					link={LINKS.Notifications}
 					isActive={
-						getActiveLink({ name: 'notification', currentPath: pathname })
+						getActiveLink({ name: 'notifications', currentPath: pathname })
 							.isActive
 					}
 					icon={
 						<NotificationIcon
 							color={
-								getActiveLink({ name: 'notification', currentPath: pathname })
+								getActiveLink({ name: 'notifications', currentPath: pathname })
 									.isActive
 									? activeColor
 									: initialColor

@@ -22,7 +22,7 @@ export const StyledTableCell = styled(TableCell)(({ theme }) => ({
 	},
 	[`&.${tableCellClasses.body}`]: {
 		fontSize: '14px',
-		padding: '10px',
+		padding: '15px 10px',
 	},
 	[`&.MuiTableCell-body:last-child`]: {
 		paddingRight: '30px',

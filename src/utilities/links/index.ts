@@ -17,6 +17,7 @@ const LINKS = {
 	AllReferrals: '/referrals/all',
 	Referee: '/referee',
 	Notifications: '/notifications',
+	PushNotification: '/push-notification',
 	Verification: '/verification',
 	Suspension: '/suspension',
 	AuditLogs: '/audit-logs',

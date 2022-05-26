@@ -7,9 +7,10 @@ type Props = {
 	children: ReactNode;
 	title?: ReactNode;
 	close?: () => void;
+	contentWidth?: string;
 };
 
-const ModalWrapper = ({ children, title, close }: Props) => {
+const ModalWrapper = ({ children, title, close, contentWidth }: Props) => {
 	const theme = useTheme();
 	return (
 		<Box
@@ -26,7 +27,7 @@ const ModalWrapper = ({ children, title, close }: Props) => {
 		>
 			<Box
 				sx={{
-					maxWidth: '540px',
+					maxWidth: contentWidth || '680px',
 					position: 'relative',
 					margin: '10rem auto',
 					width: '100%',

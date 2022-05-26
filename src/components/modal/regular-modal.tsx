@@ -14,6 +14,8 @@ type Props = {
 	isFailed?: boolean;
 	handlePressOnFail?: () => void;
 	handleContactUs?: () => void;
+	width?: string;
+	close?: () => void;
 };
 
 const RegularModal = ({
@@ -25,11 +27,12 @@ const RegularModal = ({
 	handlePress,
 	isFailed,
 	handleContactUs,
-	handlePressOnFail,
+	width,
+	close,
 }: Props) => {
 	const theme = useTheme();
 	return (
-		<ModalWrapper>
+		<ModalWrapper close={close} contentWidth={width}>
 			<Box
 				sx={{
 					display: 'flex',

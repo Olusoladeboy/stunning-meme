@@ -1,5 +1,5 @@
 import React from 'react';
-import { AppBar, Toolbar, Box, useTheme, IconButton } from '@mui/material';
+import { AppBar, Toolbar, useTheme, IconButton } from '@mui/material';
 import Image from '../image';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { setToggleDrawer } from '../../store/app';

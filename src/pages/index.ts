@@ -5,6 +5,10 @@ import CreateNewPassword from './auth/create-new-password';
 import Users from './users';
 import UserProfile from './users/profile';
 import Managers from './managers';
+import Transactions from './transactions';
+import Conversions from './conversions';
+import Network from './network';
+import ViewDataPlan from './view-data-plan';
 
 import LINKS from '../utilities/links';
 
@@ -25,7 +29,7 @@ const Pages = {
 	},
 	Dashboard: {
 		Component: Dashboard,
-		path: '/',
+		path: LINKS.Dashboard,
 	},
 	User: {
 		Initial: {
@@ -40,6 +44,22 @@ const Pages = {
 	Managers: {
 		Component: Managers,
 		path: LINKS.Managers,
+	},
+	Transactions: {
+		Component: Transactions,
+		path: LINKS.Transactions,
+	},
+	Conversions: {
+		Component: Conversions,
+		path: LINKS.Conversions,
+	},
+	Network: {
+		Component: Network,
+		path: LINKS.DataNetwork,
+	},
+	ViewDataPlan: {
+		Component: ViewDataPlan,
+		path: LINKS.DataPlan,
 	},
 };
 

@@ -29,23 +29,21 @@ type ListItemButtonProps = {
 	icon: any;
 	name: string;
 	link?: string;
+	isActive: boolean;
 };
 
-const ListItemButton = ({ icon, name, link }: ListItemButtonProps) => {
+const ListItemButton = ({
+	icon,
+	name,
+	link,
+	isActive,
+}: ListItemButtonProps) => {
 	const navigate = useNavigate();
-	const { pathname } = useLocation();
 	const theme = useTheme();
 	const initialColor = theme.palette.primary.main;
 	const activeColor = theme.palette.secondary.main;
 	const styles = useStyles(theme);
 	const { isToggleDrawer } = useAppSelector((store) => store.appState);
-
-	const activePath = () => {
-		return getActiveLink({
-			name: name.toLocaleLowerCase().replace(/\s/gi, '-'),
-			currentPath: pathname,
-		}).isActive;
-	};
 
 	return (
 		<MuiListItemButton
@@ -70,8 +68,8 @@ const ListItemButton = ({ icon, name, link }: ListItemButtonProps) => {
 			<Typography
 				sx={{
 					display: isToggleDrawer ? 'block' : 'none',
-					color: activePath() ? activeColor : initialColor,
-					fontWeight: activePath() ? '600' : 'initial',
+					color: isActive ? activeColor : initialColor,
+					fontWeight: isActive ? '600' : 'initial',
 				}}
 			>
 				{name}
@@ -124,6 +122,9 @@ const DrawerList = () => {
 			>
 				<ListItemButton
 					link={LINKS.Dashboard}
+					isActive={
+						getActiveLink({ name: 'dashboard', currentPath: pathname }).isActive
+					}
 					name={'Dashboard'}
 					icon={
 						<DashboardIcon
@@ -139,6 +140,9 @@ const DrawerList = () => {
 				<ListItemButton
 					link={LINKS.Users}
 					name={'Users'}
+					isActive={
+						getActiveLink({ name: 'user', currentPath: pathname }).isActive
+					}
 					icon={
 						<UserIcon
 							color={
@@ -152,6 +156,9 @@ const DrawerList = () => {
 				<ListItemButton
 					name={'Managers'}
 					link={LINKS.Managers}
+					isActive={
+						getActiveLink({ name: 'managers', currentPath: pathname }).isActive
+					}
 					icon={
 						<ManagerIcon
 							color={
@@ -165,6 +172,11 @@ const DrawerList = () => {
 				/>
 				<ListItemButton
 					name={'Transactions'}
+					link={LINKS.Transactions}
+					isActive={
+						getActiveLink({ name: 'transactions', currentPath: pathname })
+							.isActive
+					}
 					icon={
 						<TransactionIcon
 							color={
@@ -178,6 +190,11 @@ const DrawerList = () => {
 				/>
 				<ListItemButton
 					name={'Conversions'}
+					link={LINKS.Conversions}
+					isActive={
+						getActiveLink({ name: 'conversions', currentPath: pathname })
+							.isActive
+					}
 					icon={
 						<ConversionIcon
 							color={
@@ -191,11 +208,14 @@ const DrawerList = () => {
 				/>
 				<ListItemButton
 					name={'Data Network'}
+					link={LINKS.DataNetwork}
+					isActive={
+						getActiveLink({ name: 'data', currentPath: pathname }).isActive
+					}
 					icon={
 						<DataIcon
 							color={
-								getActiveLink({ name: 'data-network', currentPath: pathname })
-									.isActive
+								getActiveLink({ name: 'data', currentPath: pathname }).isActive
 									? activeColor
 									: initialColor
 							}
@@ -204,11 +224,15 @@ const DrawerList = () => {
 				/>
 				<ListItemButton
 					name={'Airtime Network'}
+					link={LINKS.AirtimeNetwork}
+					isActive={
+						getActiveLink({ name: 'airtime', currentPath: pathname }).isActive
+					}
 					icon={
 						<PhoneIcon
 							color={
 								getActiveLink({
-									name: 'airtime-network',
+									name: 'airtime',
 									currentPath: pathname,
 								}).isActive
 									? activeColor
@@ -219,6 +243,9 @@ const DrawerList = () => {
 				/>
 				<ListItemButton
 					name={'Referral'}
+					isActive={
+						getActiveLink({ name: 'referral', currentPath: pathname }).isActive
+					}
 					icon={
 						<ShareIcon
 							color={
@@ -232,6 +259,10 @@ const DrawerList = () => {
 				/>
 				<ListItemButton
 					name={'Notification'}
+					isActive={
+						getActiveLink({ name: 'notification', currentPath: pathname })
+							.isActive
+					}
 					icon={
 						<NotificationIcon
 							color={
@@ -245,6 +276,10 @@ const DrawerList = () => {
 				/>
 				<ListItemButton
 					name={'Verification'}
+					isActive={
+						getActiveLink({ name: 'verification', currentPath: pathname })
+							.isActive
+					}
 					icon={
 						<VerificationIcon
 							color={
@@ -258,6 +293,10 @@ const DrawerList = () => {
 				/>
 				<ListItemButton
 					name={'Suspension'}
+					isActive={
+						getActiveLink({ name: 'suspension', currentPath: pathname })
+							.isActive
+					}
 					icon={
 						<SuspensionIcon
 							color={
@@ -271,6 +310,10 @@ const DrawerList = () => {
 				/>
 				<ListItemButton
 					name={'Audit Logs'}
+					isActive={
+						getActiveLink({ name: 'audit-logs', currentPath: pathname })
+							.isActive
+					}
 					icon={
 						<CheckIcon
 							color={

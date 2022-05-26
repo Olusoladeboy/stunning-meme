@@ -124,3 +124,13 @@ export enum ManagerTypes {
 	Manager = 'Manager',
 	Admin = 'Admin',
 }
+
+export enum NetworkPageTypes {
+	DATA_NETWORK = 'Data network',
+	AIRTIME_NETWORK = 'Airtime network',
+}
+
+export enum NetworkStatusTypes {
+	ENABLE = 'enable',
+	DISABLE = 'disable',
+}

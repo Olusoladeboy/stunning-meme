@@ -7,11 +7,10 @@ import TableHead from '@mui/material/TableHead';
 import { grey } from '@mui/material/colors';
 import {
 	SUCCESS_COLOR,
-	PENDING_COLOR,
 	DANGER_COLOR,
 	BOX_SHADOW,
 } from '../../utilities/constant';
-import { TransactionStatusTypes, UserStatusTypes } from '../../utilities/types';
+import { UserStatusTypes } from '../../utilities/types';
 import FilterIcon from '../icons/filter';
 import {
 	StyledTableCell as TableCell,
@@ -27,16 +26,6 @@ import UnverifiedUserIcon from '../icons/unverified-user';
 import USERS from '../../utilities/data/user';
 import Empty from '../empty';
 import Pagination from '../pagination';
-
-const setColor = (status: string) => {
-	if (status === TransactionStatusTypes.SUCCESSFUL) {
-		return SUCCESS_COLOR;
-	} else if (status === TransactionStatusTypes.PENDING) {
-		return PENDING_COLOR;
-	} else {
-		return DANGER_COLOR;
-	}
-};
 
 const UsersTable = () => {
 	const [data] = useState<{ [key: string]: any }[] | null>(USERS);

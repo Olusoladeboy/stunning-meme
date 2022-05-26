@@ -1,6 +1,8 @@
 import React from 'react';
-import { Route, Routes } from 'react-router-dom';
+import { Route, Routes, Navigate } from 'react-router-dom';
 import Pages from '../pages';
+import LINKS from '../utilities/links';
+import { NetworkPageTypes } from '../utilities/types';
 
 const Router = () => {
 	return (
@@ -9,6 +11,7 @@ const Router = () => {
 				path={Pages.Dashboard.path}
 				element={<Pages.Dashboard.Component />}
 			/>
+			<Route path={'/'} element={<Navigate to={LINKS.Dashboard} replace />} />
 			<Route
 				path={Pages.User.Initial.path}
 				element={<Pages.User.Initial.Component />}
@@ -32,6 +35,33 @@ const Router = () => {
 				path={Pages.Managers.path}
 				element={<Pages.Managers.Component />}
 			/>
+			<Route
+				path={Pages.Transactions.path}
+				element={<Pages.Transactions.Component />}
+			/>
+			<Route
+				path={Pages.Conversions.path}
+				element={<Pages.Conversions.Component />}
+			/>
+			<Route path={LINKS.Network}>
+				<Route
+					path={'data'}
+					element={
+						<Pages.Network.Component pageType={NetworkPageTypes.DATA_NETWORK} />
+					}
+				/>
+				<Route
+					path={'airtime'}
+					element={
+						<Pages.Network.Component
+							pageType={NetworkPageTypes.AIRTIME_NETWORK}
+						/>
+					}
+				/>
+			</Route>
+			<Route path={LINKS.DataPlan}>
+				<Route path={':plan'} element={<Pages.ViewDataPlan.Component />} />
+			</Route>
 		</Routes>
 	);
 };

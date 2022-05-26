@@ -1,52 +1,31 @@
-import React, { useState } from 'react';
-import { Box, Typography, MenuItem, BoxProps } from '@mui/material';
-import SearchInput from '../form-components/search-input';
-import FilterBy from '../form-components/filter-by';
+import React from 'react';
+import { Box, Typography, BoxProps } from '@mui/material';
+import FilterWithSearch from '../filter-with-search';
 
 interface Props extends BoxProps {
-	title: string;
+	title?: string;
+	hideTitle?: boolean;
 }
 
-const INITIAL_FILTER_VALUE = 'Filter by';
-
 const TableHeader = (props: Props) => {
-	const [filterBy] = useState<string>(INITIAL_FILTER_VALUE);
 	const { title, sx } = props;
 	return (
 		<Box
+			style={props.style}
 			sx={{
 				display: 'flex',
 				alignItems: 'center',
-				justifyContent: 'space-between',
+				justifyContent: title ? 'space-between' : 'flex-end',
 				padding: '10px 0px',
 				...sx,
 			}}
 		>
-			<Typography sx={{ fontWeight: '500' }} variant={'h5'}>
-				{title}
-			</Typography>
-			<Box
-				sx={{
-					display: 'flex',
-					gap: '15px',
-					maxWidth: '540px',
-					width: '100%',
-					alignItems: 'center',
-				}}
-			>
-				<FilterBy
-					selectProps={{
-						value: filterBy,
-					}}
-					sx={{ maxWidth: '200px' }}
-				>
-					<MenuItem value={filterBy} disabled>
-						Filter by
-					</MenuItem>
-					<MenuItem value={filterBy}>Name</MenuItem>
-				</FilterBy>
-				<SearchInput fullWidth placeholder={'Search...'} />
-			</Box>
+			{title && (
+				<Typography sx={{ fontWeight: '500' }} variant={'h5'}>
+					{title}
+				</Typography>
+			)}
+			<FilterWithSearch />
 		</Box>
 	);
 };

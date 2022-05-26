@@ -22,7 +22,6 @@ const TransactionItem = ({
 	amountColor,
 }: Props) => {
 	const theme = useTheme();
-	const styles = useStyles(theme);
 	return (
 		<Box
 			sx={{
@@ -48,11 +47,5 @@ const TransactionItem = ({
 		</Box>
 	);
 };
-
-const useStyles = (theme: any) => ({
-	amountText: {
-		fontWeight: '600',
-	},
-});
 
 export default TransactionItem;

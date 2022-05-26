@@ -6,8 +6,11 @@ const getActiveLink = ({
 	currentPath: string;
 }) => {
 	const actualPathName = pathname.split('/')[1];
-	const pathnameReg = new RegExp(name);
-	const stripPath: any = pathname.substring(1);
+
+	const url_path = window && window.location.pathname;
+	const regExp = new RegExp(name, 'ig');
+
+	const match = url_path.match(regExp);
 
 	if (actualPathName === '' && name === 'dashboard') {
 		return {
@@ -15,9 +18,8 @@ const getActiveLink = ({
 			isActive: true,
 		};
 	}
-	if (stripPath.match(pathnameReg) && actualPathName === name) {
+	if (match && Array.isArray(match) && match[0] === name) {
 		return {
-			path: stripPath.match(pathnameReg)[0],
 			isActive: true,
 		};
 	} else {

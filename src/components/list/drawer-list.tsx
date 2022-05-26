@@ -19,6 +19,7 @@ import ConversionIcon from '../icons/conversion';
 import SuspensionIcon from '../icons/suspension';
 import NotificationIcon from '../icons/notification';
 import VerificationIcon from '../icons/verification';
+import CouponIcon from '../icons/coupon';
 import ShareIcon from '../icons/share';
 import { useAppSelector } from '../../store/hooks';
 import Image from '../image';
@@ -233,6 +234,25 @@ const DrawerList = () => {
 							color={
 								getActiveLink({
 									name: 'airtime',
+									currentPath: pathname,
+								}).isActive
+									? activeColor
+									: initialColor
+							}
+						/>
+					}
+				/>
+				<ListItemButton
+					name={'Coupons'}
+					link={LINKS.Coupons}
+					isActive={
+						getActiveLink({ name: 'coupons', currentPath: pathname }).isActive
+					}
+					icon={
+						<CouponIcon
+							color={
+								getActiveLink({
+									name: 'coupons',
 									currentPath: pathname,
 								}).isActive
 									? activeColor

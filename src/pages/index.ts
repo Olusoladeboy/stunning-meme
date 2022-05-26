@@ -9,6 +9,7 @@ import Transactions from './transactions';
 import Conversions from './conversions';
 import Network from './network';
 import ViewDataPlan from './view-data-plan';
+import Coupons from './coupons';
 
 import LINKS from '../utilities/links';
 
@@ -60,6 +61,10 @@ const Pages = {
 	ViewDataPlan: {
 		Component: ViewDataPlan,
 		path: LINKS.DataPlan,
+	},
+	Coupons: {
+		Component: Coupons,
+		path: LINKS.Coupons,
 	},
 };
 

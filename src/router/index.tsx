@@ -62,6 +62,7 @@ const Router = () => {
 			<Route path={LINKS.DataPlan}>
 				<Route path={':plan'} element={<Pages.ViewDataPlan.Component />} />
 			</Route>
+			<Route path={Pages.Coupons.path} element={<Pages.Coupons.Component />} />
 		</Routes>
 	);
 };

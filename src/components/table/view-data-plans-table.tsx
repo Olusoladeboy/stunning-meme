@@ -256,9 +256,6 @@ const useStyles = (theme: any) => ({
 	text: {
 		color: theme.palette.primary.main,
 	},
-	link: {
-		color: theme.palette.secondary.main,
-	},
 	editDeleteWrapper: {
 		backgroundColor: grey[50],
 		boxShadow: BOX_SHADOW,

@@ -7,9 +7,15 @@ export const StyledTableCell = styled(TableCell)(({ theme }) => ({
 		fontSize: '14px',
 		color: theme.palette.primary.main,
 		fontWeight: '600',
+		paddingLeft: '10px',
+		paddingRight: '10px',
+		'& p': {
+			fontWeight: '600',
+		},
 	},
-	[`&.MuiTableCell-head:nth-type-of(1)`]: {
-		paddingLeft: '30px',
+
+	[`&.MuiTableCell-head:nth-of-type(1)`]: {
+		paddingLeft: '30px !important',
 	},
 	[`&.MuiTableCell-head:last-child`]: {
 		paddingRight: '30px',
@@ -22,7 +28,7 @@ export const StyledTableCell = styled(TableCell)(({ theme }) => ({
 		paddingRight: '30px',
 	},
 	[`&.MuiTableCell-body:nth-of-type(1)`]: {
-		paddingRight: '30px',
+		paddingLeft: '30px',
 	},
 }));
 

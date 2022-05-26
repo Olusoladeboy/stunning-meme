@@ -10,6 +10,9 @@ import Conversions from './conversions';
 import Network from './network';
 import ViewDataPlan from './view-data-plan';
 import Coupons from './coupons';
+import Referrals from './referrals';
+import ViewReferees from './view-referees';
+import AllReferrals from './referrals/all-referrals';
 
 import LINKS from '../utilities/links';
 
@@ -65,6 +68,20 @@ const Pages = {
 	Coupons: {
 		Component: Coupons,
 		path: LINKS.Coupons,
+	},
+	Referral: {
+		Initial: {
+			Component: Referrals,
+			path: LINKS.Referrals,
+		},
+		All: {
+			Component: AllReferrals,
+			path: LINKS.AllReferrals,
+		},
+	},
+	ViewReferees: {
+		Component: ViewReferees,
+		path: LINKS.Referee,
 	},
 };
 

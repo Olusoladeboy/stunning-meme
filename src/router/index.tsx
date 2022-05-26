@@ -63,6 +63,14 @@ const Router = () => {
 				<Route path={':plan'} element={<Pages.ViewDataPlan.Component />} />
 			</Route>
 			<Route path={Pages.Coupons.path} element={<Pages.Coupons.Component />} />
+			<Route path={Pages.Referral.Initial.path}>
+				<Route path={''} element={<Pages.Referral.Initial.Component />} />
+				<Route path={'all'} element={<Pages.Referral.All.Component />} />
+			</Route>
+
+			<Route path={Pages.ViewReferees.path}>
+				<Route path=':id' element={<Pages.ViewReferees.Component />} />
+			</Route>
 		</Routes>
 	);
 };

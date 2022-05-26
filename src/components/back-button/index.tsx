@@ -3,14 +3,20 @@ import { useNavigate } from 'react-router-dom';
 import { Box, Typography, useTheme } from '@mui/material';
 import { ArrowBack } from '@mui/icons-material';
 
-const BackButton = () => {
+type Props = {
+	text?: string;
+};
+
+const BackButton = ({ text }: Props) => {
 	const navigate = useNavigate();
 	const theme = useTheme();
 	const styles = useStyles(theme);
 	return (
 		<Box onClick={() => navigate(-1)} style={styles.container}>
 			<ArrowBack />
-			<Typography style={styles.text}>Back</Typography>
+			<Typography variant={'h5'} style={styles.text}>
+				{text || 'Back'}
+			</Typography>
 		</Box>
 	);
 };

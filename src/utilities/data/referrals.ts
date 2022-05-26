@@ -1,0 +1,45 @@
+const REFERRALS = [
+	{
+		id: '1',
+		name: 'Bisoye Amadi',
+		email: 'Biam@gmail.com',
+		phone_number: '09092562991',
+		date: '30/03/22',
+		status: 'verified',
+		number_of_referees: 1,
+		avatar: require('../../assets/images/user.png'),
+		role: 'Admin',
+	},
+	{
+		id: '2',
+		name: 'Bisoye Amadi',
+		email: 'Biam@gmail.com',
+		phone_number: '09092562991',
+		date: '30/03/22',
+		number_of_referees: 1,
+		status: 'unverified',
+		role: 'Admin',
+	},
+	{
+		id: '3',
+		name: 'Bisoye Amadi',
+		email: 'Biam@gmail.com',
+		phone_number: '09092562991',
+		date: '30/03/22',
+		number_of_referees: 1,
+		status: 'suspended',
+		role: 'manager',
+	},
+	{
+		id: '4',
+		name: 'Bisoye Amadi',
+		email: 'Biam@gmail.com',
+		phone_number: '09092562991',
+		date: '30/03/22',
+		number_of_referees: 1,
+		status: 'deleted',
+		role: 'Admin',
+	},
+];
+
+export default REFERRALS;

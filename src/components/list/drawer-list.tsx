@@ -263,6 +263,7 @@ const DrawerList = () => {
 				/>
 				<ListItemButton
 					name={'Referral'}
+					link={LINKS.Referrals}
 					isActive={
 						getActiveLink({ name: 'referral', currentPath: pathname }).isActive
 					}

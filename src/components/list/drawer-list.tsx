@@ -321,6 +321,7 @@ const DrawerList = () => {
 				/>
 				<ListItemButton
 					name={'Suspension'}
+					link={LINKS.Suspension}
 					isActive={
 						getActiveLink({ name: 'suspension', currentPath: pathname })
 							.isActive

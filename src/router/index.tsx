@@ -83,6 +83,10 @@ const Router = () => {
 				<Route path='' element={<Pages.Verification.Initial.Component />} />
 				<Route path='kyc' element={<Pages.Verification.Kyc.Component />} />
 			</Route>
+			<Route
+				path={Pages.Suspension.path}
+				element={<Pages.Suspension.Component />}
+			/>
 		</Routes>
 	);
 };

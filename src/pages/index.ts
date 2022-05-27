@@ -17,6 +17,7 @@ import Notifications from './notifications';
 import PushNotification from './notifications/push-notification';
 import Verification from './verification';
 import Kyc from './verification/kyc';
+import Suspension from './suspension';
 
 import LINKS from '../utilities/links';
 
@@ -106,6 +107,10 @@ const Pages = {
 			Component: Kyc,
 			path: LINKS.KycVerification,
 		},
+	},
+	Suspension: {
+		Component: Suspension,
+		path: LINKS.Suspension,
 	},
 };
 

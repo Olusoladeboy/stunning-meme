@@ -16,7 +16,7 @@ import Empty from '../empty';
 import Pagination from '../pagination';
 import Button from '../button';
 
-const SuspensionTable = () => {
+const AuditLogsTable = () => {
 	const [data] = useState<{ [key: string]: any }[] | null>(null);
 
 	const theme = useTheme();
@@ -28,7 +28,7 @@ const SuspensionTable = () => {
 					style={styles.tableHeader as CSSProperties}
 					sx={{ padding: '0px 1rem' }}
 				>
-					<TableHeader title={'Suspension'} />
+					<TableHeader title={'Audit Logs'} />
 				</Box>
 
 				<Table sx={{ overflow: 'auto' }}>
@@ -50,15 +50,13 @@ const SuspensionTable = () => {
 							</TableCell>
 							<TableCell>
 								<Box style={styles.filterWrapper}>
-									<Typography variant={'body1'}>
-										Suspension/Deletion Note
-									</Typography>
+									<Typography variant={'body1'}>Date</Typography>
 									<FilterIcon />
 								</Box>
 							</TableCell>
 							<TableCell>
 								<Box style={styles.filterWrapper}>
-									<Typography variant={'body1'}>Status</Typography>
+									<Typography variant={'body1'}>Time</Typography>
 									<FilterIcon />
 								</Box>
 							</TableCell>
@@ -147,4 +145,4 @@ const useStyles = (theme: any) => ({
 	},
 });
 
-export default SuspensionTable;
+export default AuditLogsTable;

@@ -339,6 +339,7 @@ const DrawerList = () => {
 				/>
 				<ListItemButton
 					name={'Audit Logs'}
+					link={LINKS.AuditLogs}
 					isActive={
 						getActiveLink({ name: 'audit-logs', currentPath: pathname })
 							.isActive

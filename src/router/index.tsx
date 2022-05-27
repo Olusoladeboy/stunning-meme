@@ -87,6 +87,10 @@ const Router = () => {
 				path={Pages.Suspension.path}
 				element={<Pages.Suspension.Component />}
 			/>
+			<Route
+				path={Pages.AuditLogs.path}
+				element={<Pages.AuditLogs.Component />}
+			/>
 		</Routes>
 	);
 };

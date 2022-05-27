@@ -18,6 +18,7 @@ import PushNotification from './notifications/push-notification';
 import Verification from './verification';
 import Kyc from './verification/kyc';
 import Suspension from './suspension';
+import AuditLogs from './audit-logs';
 
 import LINKS from '../utilities/links';
 
@@ -111,6 +112,10 @@ const Pages = {
 	Suspension: {
 		Component: Suspension,
 		path: LINKS.Suspension,
+	},
+	AuditLogs: {
+		Component: AuditLogs,
+		path: LINKS.AuditLogs,
 	},
 };
 

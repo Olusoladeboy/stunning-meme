@@ -303,6 +303,7 @@ const DrawerList = () => {
 				/>
 				<ListItemButton
 					name={'Verification'}
+					link={LINKS.Verification}
 					isActive={
 						getActiveLink({ name: 'verification', currentPath: pathname })
 							.isActive

@@ -79,6 +79,10 @@ const Router = () => {
 				path={Pages.Notifications.PushNotification.path}
 				element={<Pages.Notifications.PushNotification.Component />}
 			/>
+			<Route path={Pages.Verification.Initial.path}>
+				<Route path='' element={<Pages.Verification.Initial.Component />} />
+				<Route path='kyc' element={<Pages.Verification.Kyc.Component />} />
+			</Route>
 		</Routes>
 	);
 };

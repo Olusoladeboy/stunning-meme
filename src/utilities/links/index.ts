@@ -19,6 +19,7 @@ const LINKS = {
 	Notifications: '/notifications',
 	PushNotification: '/push-notification',
 	Verification: '/verification',
+	KycVerification: '/verification/kyc',
 	Suspension: '/suspension',
 	AuditLogs: '/audit-logs',
 };

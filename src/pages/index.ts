@@ -15,6 +15,8 @@ import ViewReferees from './view-referees';
 import AllReferrals from './referrals/all-referrals';
 import Notifications from './notifications';
 import PushNotification from './notifications/push-notification';
+import Verification from './verification';
+import Kyc from './verification/kyc';
 
 import LINKS from '../utilities/links';
 
@@ -93,6 +95,16 @@ const Pages = {
 		PushNotification: {
 			Component: PushNotification,
 			path: LINKS.PushNotification,
+		},
+	},
+	Verification: {
+		Initial: {
+			Component: Verification,
+			path: LINKS.Verification,
+		},
+		Kyc: {
+			Component: Kyc,
+			path: LINKS.KycVerification,
 		},
 	},
 };

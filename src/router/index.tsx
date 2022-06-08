@@ -3,18 +3,27 @@ import { Route, Routes, Navigate } from 'react-router-dom';
 import Pages from '../pages';
 import LINKS from '../utilities/links';
 import { NetworkPageTypes } from '../utilities/types';
+import PrivateRoute from '../utilities/helpers/PrivateRoute';
 
 const Router = () => {
 	return (
 		<Routes>
 			<Route
 				path={Pages.Dashboard.path}
-				element={<Pages.Dashboard.Component />}
+				element={
+					<PrivateRoute>
+						<Pages.Dashboard.Component />
+					</PrivateRoute>
+				}
 			/>
 			<Route path={'/'} element={<Navigate to={LINKS.Dashboard} replace />} />
 			<Route
 				path={Pages.User.Initial.path}
-				element={<Pages.User.Initial.Component />}
+				element={
+					<PrivateRoute>
+						<Pages.User.Initial.Component />
+					</PrivateRoute>
+				}
 			/>
 			<Route
 				path={Pages.Auth.Login.path}
@@ -29,67 +38,167 @@ const Router = () => {
 				element={<Pages.Auth.CreateNewPassword.Component />}
 			/>
 			<Route path={Pages.User.UserProfile.path}>
-				<Route path=':id' element={<Pages.User.UserProfile.Component />} />
+				<Route
+					path=':id'
+					element={
+						<PrivateRoute>
+							<Pages.User.UserProfile.Component />
+						</PrivateRoute>
+					}
+				/>
 			</Route>
 			<Route
 				path={Pages.Managers.path}
-				element={<Pages.Managers.Component />}
+				element={
+					<PrivateRoute>
+						<Pages.Managers.Component />
+					</PrivateRoute>
+				}
 			/>
 			<Route
 				path={Pages.Transactions.path}
-				element={<Pages.Transactions.Component />}
+				element={
+					<PrivateRoute>
+						<Pages.Transactions.Component />
+					</PrivateRoute>
+				}
 			/>
 			<Route
 				path={Pages.Conversions.path}
-				element={<Pages.Conversions.Component />}
+				element={
+					<PrivateRoute>
+						<Pages.Conversions.Component />
+					</PrivateRoute>
+				}
 			/>
 			<Route path={LINKS.Network}>
 				<Route
 					path={'data'}
 					element={
-						<Pages.Network.Component pageType={NetworkPageTypes.DATA_NETWORK} />
+						<PrivateRoute>
+							<Pages.Network.Component
+								pageType={NetworkPageTypes.DATA_NETWORK}
+							/>
+						</PrivateRoute>
 					}
 				/>
 				<Route
 					path={'airtime'}
 					element={
-						<Pages.Network.Component
-							pageType={NetworkPageTypes.AIRTIME_NETWORK}
-						/>
+						<PrivateRoute>
+							<Pages.Network.Component
+								pageType={NetworkPageTypes.AIRTIME_NETWORK}
+							/>
+						</PrivateRoute>
 					}
 				/>
 			</Route>
 			<Route path={LINKS.DataPlan}>
-				<Route path={':plan'} element={<Pages.ViewDataPlan.Component />} />
+				<Route
+					path={':plan'}
+					element={
+						<PrivateRoute>
+							<Pages.ViewDataPlan.Component />
+						</PrivateRoute>
+					}
+				/>
 			</Route>
-			<Route path={Pages.Coupons.path} element={<Pages.Coupons.Component />} />
+			<Route
+				path={Pages.Coupons.path}
+				element={
+					<PrivateRoute>
+						<Pages.Coupons.Component />
+					</PrivateRoute>
+				}
+			/>
 			<Route path={Pages.Referral.Initial.path}>
-				<Route path={''} element={<Pages.Referral.Initial.Component />} />
-				<Route path={'all'} element={<Pages.Referral.All.Component />} />
+				<Route
+					path={''}
+					element={
+						<PrivateRoute>
+							<Pages.Referral.Initial.Component />
+						</PrivateRoute>
+					}
+				/>
+				<Route
+					path={'all'}
+					element={
+						<PrivateRoute>
+							<Pages.Referral.All.Component />
+						</PrivateRoute>
+					}
+				/>
 			</Route>
 
 			<Route path={Pages.ViewReferees.path}>
-				<Route path=':id' element={<Pages.ViewReferees.Component />} />
+				<Route
+					path=':id'
+					element={
+						<PrivateRoute>
+							<Pages.ViewReferees.Component />
+						</PrivateRoute>
+					}
+				/>
 			</Route>
 			<Route path={Pages.Notifications.Initial.path}>
-				<Route path={''} element={<Pages.Notifications.Initial.Component />} />
-				<Route path={'all'} element={<Pages.Referral.All.Component />} />
+				<Route
+					path={''}
+					element={
+						<PrivateRoute>
+							<Pages.Notifications.Initial.Component />
+						</PrivateRoute>
+					}
+				/>
+				<Route
+					path={'all'}
+					element={
+						<PrivateRoute>
+							<Pages.Referral.All.Component />
+						</PrivateRoute>
+					}
+				/>
 			</Route>
 			<Route
 				path={Pages.Notifications.PushNotification.path}
-				element={<Pages.Notifications.PushNotification.Component />}
+				element={
+					<PrivateRoute>
+						<Pages.Notifications.PushNotification.Component />
+					</PrivateRoute>
+				}
 			/>
 			<Route path={Pages.Verification.Initial.path}>
-				<Route path='' element={<Pages.Verification.Initial.Component />} />
-				<Route path='kyc' element={<Pages.Verification.Kyc.Component />} />
+				<Route
+					path=''
+					element={
+						<PrivateRoute>
+							<Pages.Verification.Initial.Component />
+						</PrivateRoute>
+					}
+				/>
+				<Route
+					path='kyc'
+					element={
+						<PrivateRoute>
+							<Pages.Verification.Kyc.Component />
+						</PrivateRoute>
+					}
+				/>
 			</Route>
 			<Route
 				path={Pages.Suspension.path}
-				element={<Pages.Suspension.Component />}
+				element={
+					<PrivateRoute>
+						<Pages.Suspension.Component />
+					</PrivateRoute>
+				}
 			/>
 			<Route
 				path={Pages.AuditLogs.path}
-				element={<Pages.AuditLogs.Component />}
+				element={
+					<PrivateRoute>
+						<Pages.AuditLogs.Component />
+					</PrivateRoute>
+				}
 			/>
 		</Routes>
 	);

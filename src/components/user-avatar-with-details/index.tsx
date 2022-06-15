@@ -1,8 +1,14 @@
 import React, { CSSProperties } from 'react';
 import { Box, Avatar, Typography, useTheme } from '@mui/material';
+import { ManagerDetailsDataTypes } from '../../utilities/types';
+
+interface ManagerDetails extends ManagerDetailsDataTypes {
+	role?: string;
+	verifiedStatus?: boolean;
+}
 
 type Props = {
-	details?: { [key: string]: any };
+	details?: ManagerDetails;
 };
 
 const UserAvatarWithDetails = ({ details }: Props) => {
@@ -12,13 +18,13 @@ const UserAvatarWithDetails = ({ details }: Props) => {
 		<Box style={styles.container}>
 			<Avatar src={(details && details.avatar) || ''} style={styles.avatar} />
 			<Box style={styles.detailsWrapper as CSSProperties}>
-				<Typography style={styles.text} variant={'body1'}>
-					{details && details.name}
+				<Typography style={styles.nameText} variant={'body1'}>
+					{details && `${details.firstname} ${details.lastname}`}
 				</Typography>
 				<Typography style={styles.text} variant={'body1'}>
 					{details && details.email}
 				</Typography>
-				{details && details.verifiedStatev && (
+				{details && details.verifiedStatus && (
 					<Typography style={styles.text} variant={'body1'}>
 						Verified Status
 					</Typography>
@@ -47,6 +53,10 @@ const useStyles = (theme: any) => ({
 		display: 'flex',
 		flexDirection: 'column',
 		gap: theme.spacing(2),
+	},
+	nameText: {
+		fontSize: '18px',
+		fontWeight: '600',
 	},
 	text: {
 		fontWeight: '600',

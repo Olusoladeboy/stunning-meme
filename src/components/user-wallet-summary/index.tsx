@@ -21,7 +21,7 @@ const UserWalletSummary = () => {
 				<UserWallet />
 			</Box>
 			<Box sx={{ marginTop: theme.spacing(4) }}>
-				<WalletSummaryTable data={[]} />
+				{/* <WalletSummaryTable data={[]} /> */}
 			</Box>
 		</Box>
 	);

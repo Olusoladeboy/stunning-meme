@@ -9,7 +9,7 @@ const UserTransaction = () => {
 		<Box>
 			<UserAvatarWithDetails />
 			<Box sx={{ marginTop: theme.spacing(4) }}>
-				<TransactionHistoryTable data={[]} />
+				{/* <TransactionHistoryTable data={[]} /> */}
 			</Box>
 		</Box>
 	);

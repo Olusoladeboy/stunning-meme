@@ -26,7 +26,7 @@ const DeleteUserForm = () => {
 				</Box>
 
 				<Button size={'large'} style={styles.btn}>
-					Suspend user
+					Delete user
 				</Button>
 			</Box>
 		</Box>

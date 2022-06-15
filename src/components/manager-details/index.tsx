@@ -1,19 +1,23 @@
 import React, { CSSProperties } from 'react';
 import { Box, Typography, useTheme } from '@mui/material';
+import { grey, red } from '@mui/material/colors';
 import UserAvatarWithDetails from '../user-avatar-with-details';
 import Button from '../button';
-import { grey, red } from '@mui/material/colors';
+import { ManagerDetailsDataTypes } from '../../utilities/types';
+
+interface ManagerDetailsTypes extends ManagerDetailsDataTypes {}
 
 type Props = {
-	details: { [key: string]: any };
+	managerDetail: ManagerDetailsTypes;
+	handleEdit?: () => void;
 };
 
-const ManagerDetails = ({ details }: Props) => {
+const ManagerDetails = ({ managerDetail, handleEdit }: Props) => {
 	const theme = useTheme();
 	const styles = useStyles(theme);
 	return (
 		<Box>
-			<UserAvatarWithDetails details={details} />
+			<UserAvatarWithDetails details={managerDetail} />
 			<Box
 				sx={{
 					display: 'flex',
@@ -26,11 +30,13 @@ const ManagerDetails = ({ details }: Props) => {
 				<Box>
 					<Box sx={{ marginBottom: theme.spacing(3) }} style={styles.grid}>
 						<Typography variant={'body1'}>Total Users</Typography>
-						<Typography variant={'body1'}>{details.user}</Typography>
+						<Typography
+							variant={'body1'}
+						>{`${managerDetail.firstname} ${managerDetail.lastname}`}</Typography>
 					</Box>
 					<Box style={styles.grid}>
 						<Typography variant={'body1'}>Phone number</Typography>
-						<Typography variant={'body1'}>{details.phone_number}</Typography>
+						<Typography variant={'body1'}>{managerDetail.phone}</Typography>
 					</Box>
 				</Box>
 				<Box
@@ -40,7 +46,12 @@ const ManagerDetails = ({ details }: Props) => {
 						gap: theme.spacing(3),
 					}}
 				>
-					<Button style={styles.editBtn as CSSProperties}>Edit profile</Button>
+					<Button
+						onClick={() => typeof handleEdit !== 'undefined' && handleEdit()}
+						style={styles.editBtn as CSSProperties}
+					>
+						Edit profile
+					</Button>
 					<Button style={styles.deleteBtn as CSSProperties}>
 						Delete Admin
 					</Button>

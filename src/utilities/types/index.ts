@@ -13,6 +13,13 @@ export enum StorageKeys {
 	SignUpDetails = '@Storage:key_signUp_Details',
 }
 
+export enum QueryKeyTypes {
+	LoginUserDetails = '@Query:Login_user_details',
+	AllManagers = '@Query:All_manager',
+	AllUsers = '@Query:All_Users',
+	GetSingleUser = '@Query:Get_single_user',
+}
+
 export enum RegistrationStepTypes {
 	EMAIL_VERIFICATION = 'email_verification',
 	BVN_VERIFICATION = 'bvn_verification',
@@ -29,14 +36,32 @@ export type AxiosConfigTypes = {
 	method: any;
 };
 
-export type LoginTypes = {
+export type LoginDataTypes = {
 	email?: string;
 	phone?: string;
 	password: string;
 };
 
 export type UserDetailsType = {
-	[key: string]: any;
+	suspensionDuration: { [key: string]: any };
+	userType: string;
+	hasPin: boolean;
+	biometricLogin: boolean;
+	verified: boolean;
+	bvnVerified: boolean;
+	suspended: boolean;
+	deleted: boolean;
+	restricted: boolean;
+	twoFactorAuth: boolean;
+	isLoggedIn: boolean;
+	suspendWalletTransactions: boolean;
+	firstname: string;
+	lastname: string;
+	email: string;
+	username: string;
+	phone: string;
+	createdAt: string;
+	id: string;
 };
 
 export type LoginDetailsType = {
@@ -100,6 +125,12 @@ export enum EPinsTypes {
 	Education = 'Education',
 }
 
+export type AuthStateTypes = {
+	isAuthenticated: boolean;
+	user: { [key: string]: any } | null;
+	token: string | null;
+};
+
 export enum SettingsTabTypes {
 	Profile = 'profile',
 	Security = 'security',
@@ -134,3 +165,18 @@ export enum NetworkStatusTypes {
 	ENABLE = 'enable',
 	DISABLE = 'disable',
 }
+
+export enum API_ENDPOINTS {
+	Login = '/staff/login',
+	GetUser = '/staff/me',
+	Manager = '/manager',
+	User = '/user',
+}
+
+export type ManagerDetailsDataTypes = {
+	firstname: string;
+	lastname: string;
+	email: string;
+	phone: string;
+	avatar?: string;
+};

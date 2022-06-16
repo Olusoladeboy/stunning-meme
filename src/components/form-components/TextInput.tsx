@@ -19,7 +19,7 @@ const TextInput = (props: TextFieldProps & Props) => {
 					borderColor: mode === ThemeModeType.dark ? grey[500] : 'initial',
 				},
 			}}
-			disabled={props.isLoading}
+			disabled={props.disabled || props.isLoading}
 		/>
 	);
 };

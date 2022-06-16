@@ -18,6 +18,8 @@ export enum QueryKeyTypes {
 	AllManagers = '@Query:All_manager',
 	AllUsers = '@Query:All_Users',
 	GetSingleUser = '@Query:Get_single_user',
+	DataNetwork = '@Query:Data_Network',
+	AirtimeNetwork = '@Query:Airtime_Network',
 }
 
 export enum RegistrationStepTypes {
@@ -171,6 +173,8 @@ export enum API_ENDPOINTS {
 	GetUser = '/staff/me',
 	Manager = '/manager',
 	User = '/user',
+	DataNetwork = '/data-networks',
+	AirtimeNetwork = '/airtime-networks',
 }
 
 export type ManagerDetailsDataTypes = {
@@ -179,4 +183,12 @@ export type ManagerDetailsDataTypes = {
 	email: string;
 	phone: string;
 	avatar?: string;
+};
+
+export type NetworkDataTypes = {
+	name?: string;
+	rate?: string;
+	number?: string;
+	ussd?: string;
+	isActive?: boolean;
 };

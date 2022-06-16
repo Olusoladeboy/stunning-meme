@@ -25,7 +25,10 @@ const NetworkDescriptiveMessageAndAddButton = ({ message, type }: Props) => {
 					close={() => setDisplayModal(false)}
 					title={`Add ${type}`}
 				>
-					<AddNetworkForm type={type} />
+					<AddNetworkForm
+						handleContinue={() => setDisplayModal(false)}
+						type={type}
+					/>
 				</ModalWrapper>
 			)}
 			<Box

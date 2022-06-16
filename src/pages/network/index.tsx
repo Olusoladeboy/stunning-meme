@@ -6,7 +6,6 @@ import { BOX_SHADOW } from '../../utilities/constant';
 import { NetworkPageTypes } from '../../utilities/types';
 import NetworkDescriptiveAndAddButton from '../../components/network-descriptive-message-and-add-buttton';
 import DataNetworkTable from '../../components/table/data-network-table';
-import DATA_NETWORK from '../../utilities/data/data-network';
 import AirtimeNetworkTable from '../../components/table/airtime-network-table';
 import AIRTIME_NETWORK from '../../utilities/data/airtime-network';
 
@@ -35,9 +34,9 @@ const Network = ({ pageType }: Props) => {
 					/>
 				</Box>
 				{pageType === NetworkPageTypes.DATA_NETWORK ? (
-					<DataNetworkTable data={DATA_NETWORK} />
+					<DataNetworkTable />
 				) : (
-					<AirtimeNetworkTable data={AIRTIME_NETWORK} />
+					<AirtimeNetworkTable />
 				)}
 			</Box>
 		</Layout>

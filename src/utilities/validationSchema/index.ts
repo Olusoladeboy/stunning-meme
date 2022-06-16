@@ -31,6 +31,14 @@ const ValidationSchema = {
 			.min(6, 'Code must be 6 digits')
 			.required('Specify E-pin code'),
 	}),
+	DataNetwork: yup.object().shape({
+		name: yup.string().required('Specify name'),
+	}),
+	AirtimeNetwork: yup.object().shape({
+		name: yup.string().required('Specify name'),
+		rate: yup.string().required('Specify rate'),
+		ussd: yup.string().required('Specify ussd'),
+	}),
 };
 
 export default ValidationSchema;

@@ -39,6 +39,12 @@ const ValidationSchema = {
 		rate: yup.string().required('Specify rate'),
 		ussd: yup.string().required('Specify ussd'),
 	}),
+	KycLimit: yup.object().shape({
+		dailyLimit: yup.number().required('Specify daily limit'),
+		weeklyLimit: yup.number().required('Specify weekly limit'),
+		monthlyLimit: yup.number().required('Specify mothly limit'),
+		perTransactionLimit: yup.number().required('Specify transaction per limit'),
+	}),
 };
 
 export default ValidationSchema;

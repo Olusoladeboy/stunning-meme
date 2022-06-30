@@ -45,7 +45,13 @@ const UserTab = ({ handleChange }: Props) => {
 				onClick={() => handleChange(UserNavList.WalletSummary)}
 				style={styles.btn as CSSProperties}
 			>
-				{UserNavList.WalletSummary}
+				Wallet Summary
+			</Button>
+			<Button
+				onClick={() => handleChange(UserNavList.Manager)}
+				style={styles.btn as CSSProperties}
+			>
+				{UserNavList.Manager}
 			</Button>
 		</Box>
 	);

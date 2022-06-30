@@ -1,19 +1,80 @@
-import React, { CSSProperties } from 'react';
+import React, { useEffect } from 'react';
+import { useMutation, useQueryClient } from 'react-query';
+import { useFormik } from 'formik';
+import { useSnackbar } from 'notistack';
 import { Box, useTheme, Typography } from '@mui/material';
 import TextInput from '../form-components/TextInput';
-import Button from '../button';
+import Button from '../button/custom-button';
 import { grey } from '@mui/material/colors';
+import { QueryKeyTypes } from '../../utilities/types';
+import Api from '../../utilities/api';
+import { useAppSelector } from '../../store/hooks';
+import handleResponse from '../../utilities/helpers/handleResponse';
+import ValidationSchemas from '../../utilities/validationSchema';
 
 type Props = {
 	data?: { [key: string]: any };
+	level: number;
 };
 
-const KycForm = ({ data }: Props) => {
+const KycForm = ({ data, level }: Props) => {
 	const theme = useTheme();
 	const styles = useStyles(theme);
+	const { token } = useAppSelector((store) => store.authState);
+	const { enqueueSnackbar } = useSnackbar();
+
+	const initialValues = {
+		dailyLimit: '',
+		weeklyLimit: '',
+		monthlyLimit: '',
+		perTransactionLimit: '',
+	};
+
+	const queryClient = useQueryClient();
+	const { isLoading, mutate } = useMutation(Api.KycLimits.Update, {
+		onSettled: (data, error) => {
+			if (error) {
+				const res = handleResponse({ error, isDisplayMessage: true });
+				if (res?.message) {
+					enqueueSnackbar(res.message, { variant: 'error' });
+				}
+			}
+			if (data && data.success) {
+				enqueueSnackbar(data.message, {
+					variant: 'success',
+				});
+				queryClient.invalidateQueries(QueryKeyTypes.KycLimit);
+			}
+		},
+	});
+
+	const { touched, errors, handleSubmit, handleChange, values, setValues } =
+		useFormik({
+			initialValues,
+			validationSchema: ValidationSchemas.KycLimit,
+			onSubmit: (values) => {
+				mutate({ token: token || '', data: values, id: data ? data.id : '' });
+			},
+		});
+
+	useEffect(() => {
+		if (data) {
+			setValues({
+				dailyLimit: data.dailyLimit,
+				weeklyLimit: data.weeklyLimit,
+				monthlyLimit: data.monthlyLimit,
+				perTransactionLimit: data.perTransactionLimit,
+			});
+		}
+	}, [data, setValues]);
+
+	const { dailyLimit, weeklyLimit, monthlyLimit, perTransactionLimit } = values;
 
 	return (
-		<Box style={styles.form as CSSProperties} component={'form'}>
+		<Box component={'form'}>
+			<Typography style={styles.title} variant={'h5'}>
+				KYC Level {level}
+			</Typography>
 			<Box
 				sx={{
 					display: 'grid',
@@ -25,127 +86,87 @@ const KycForm = ({ data }: Props) => {
 				}}
 			>
 				<Box>
-					<Typography style={styles.title} variant={'h5'}>
-						KYC Level 1
+					<Typography variant={'body1'} style={styles.label}>
+						Daily Limit
 					</Typography>
-					<Box
-						sx={{
-							display: 'grid',
-							gridTemplateColumns: {
-								xs: '1fr',
-								md: 'repeat(2, 1fr)',
-							},
-							gap: theme.spacing(4),
-						}}
-					>
-						<Box>
-							<Typography variant={'body1'} style={styles.label}>
-								Daily Limit
-							</Typography>
-							<TextInput fullWidth placeholder={'Daily limit'} />
-						</Box>
-						<Box>
-							<Typography variant={'body1'} style={styles.label}>
-								Weekly limit
-							</Typography>
-							<TextInput fullWidth placeholder={'Weekly limit'} />
-						</Box>
-						<Box>
-							<Typography variant={'body1'} style={styles.label}>
-								Monthly limit
-							</Typography>
-							<TextInput fullWidth placeholder={'Monthly limit'} />
-						</Box>
-						<Box>
-							<Typography variant={'body1'} style={styles.label}>
-								Per Transaction limit
-							</Typography>
-							<TextInput fullWidth placeholder={'Per transaction limit'} />
-						</Box>
-					</Box>
+					<TextInput
+						fullWidth
+						error={
+							errors && touched.dailyLimit && errors.dailyLimit ? true : false
+						}
+						helperText={errors && touched.dailyLimit && errors.dailyLimit}
+						placeholder={'Daily limit'}
+						value={dailyLimit}
+						onChange={handleChange('dailyLimit')}
+					/>
 				</Box>
 				<Box>
-					<Typography style={styles.title} variant={'h5'}>
-						KYC Level 2
+					<Typography variant={'body1'} style={styles.label}>
+						Weekly limit
 					</Typography>
-					<Box
-						sx={{
-							display: 'grid',
-							gridTemplateColumns: {
-								xs: '1fr',
-								md: 'repeat(2, 1fr)',
-							},
-							gap: theme.spacing(4),
-						}}
-					>
-						<Box>
-							<Typography variant={'body1'} style={styles.label}>
-								Daily Limit
-							</Typography>
-							<TextInput fullWidth placeholder={'Daily limit'} />
-						</Box>
-						<Box>
-							<Typography variant={'body1'} style={styles.label}>
-								Weekly limit
-							</Typography>
-							<TextInput fullWidth placeholder={'Weekly limit'} />
-						</Box>
-						<Box>
-							<Typography variant={'body1'} style={styles.label}>
-								Monthly limit
-							</Typography>
-							<TextInput fullWidth placeholder={'Monthly limit'} />
-						</Box>
-						<Box>
-							<Typography variant={'body1'} style={styles.label}>
-								Per Transaction limit
-							</Typography>
-							<TextInput fullWidth placeholder={'Per transaction limit'} />
-						</Box>
-					</Box>
+					<TextInput
+						fullWidth
+						placeholder={'Weekly limit'}
+						error={
+							errors && touched.weeklyLimit && errors.weeklyLimit ? true : false
+						}
+						helperText={errors && touched.weeklyLimit && errors.weeklyLimit}
+						value={weeklyLimit}
+						onChange={handleChange('weeklyLimit')}
+					/>
 				</Box>
 				<Box>
-					<Typography style={styles.title} variant={'h5'}>
-						KYC Level 3
+					<Typography variant={'body1'} style={styles.label}>
+						Monthly limit
 					</Typography>
-					<Box
-						sx={{
-							display: 'grid',
-							gridTemplateColumns: {
-								xs: '1fr',
-								md: 'repeat(2, 1fr)',
-							},
-							gap: theme.spacing(4),
-						}}
-					>
-						<Box>
-							<Typography variant={'body1'} style={styles.label}>
-								Daily Limit
-							</Typography>
-							<TextInput fullWidth placeholder={'Daily limit'} />
-						</Box>
-						<Box>
-							<Typography variant={'body1'} style={styles.label}>
-								Weekly limit
-							</Typography>
-							<TextInput fullWidth placeholder={'Weekly limit'} />
-						</Box>
-						<Box>
-							<Typography variant={'body1'} style={styles.label}>
-								Monthly limit
-							</Typography>
-							<TextInput fullWidth placeholder={'Monthly limit'} />
-						</Box>
-						<Box>
-							<Typography variant={'body1'} style={styles.label}>
-								Per Transaction limit
-							</Typography>
-							<TextInput fullWidth placeholder={'Per transaction limit'} />
-						</Box>
-					</Box>
+					<TextInput
+						fullWidth
+						placeholder={'Monthly limit'}
+						error={
+							errors && touched.monthlyLimit && errors.monthlyLimit
+								? true
+								: false
+						}
+						helperText={errors && touched.monthlyLimit && errors.monthlyLimit}
+						value={monthlyLimit}
+						onChange={handleChange('monthlyLimit')}
+					/>
+				</Box>
+				<Box>
+					<Typography variant={'body1'} style={styles.label}>
+						Per Transaction limit
+					</Typography>
+					<TextInput
+						fullWidth
+						placeholder={'Per transaction limit'}
+						error={
+							errors &&
+							touched.perTransactionLimit &&
+							errors.perTransactionLimit
+								? true
+								: false
+						}
+						helperText={
+							errors &&
+							touched.perTransactionLimit &&
+							errors.perTransactionLimit
+						}
+						value={perTransactionLimit}
+						onChange={handleChange('perTransactionLimit')}
+					/>
 				</Box>
 			</Box>
-			<Button size={'large'} style={styles.btn}>
+			<Button
+				loading={isLoading}
+				buttonProps={{
+					style: styles.btn,
+					size: 'large',
+					onClick: (e) => {
+						e.preventDefault();
+						handleSubmit();
+					},
+				}}
+			>
 				Save
 			</Button>
 		</Box>
@@ -153,7 +174,7 @@ const KycForm = ({ data }: Props) => {
 };
 
 const useStyles = (theme: any) => ({
-	form: {
+	formWrapper: {
 		display: 'flex',
 		flexDirection: 'column',
 		gap: '20px',

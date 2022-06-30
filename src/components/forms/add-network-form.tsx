@@ -75,7 +75,6 @@ const AddNetworkForm = ({ type, handleContinue, network, isEdit }: Props) => {
 
 				if (data && data.success) {
 					enqueueSnackbar(data.message, { variant: 'success' });
-					queryClient.invalidateQueries(QueryKeyTypes.DataNetwork);
 					queryClient.invalidateQueries(QueryKeyTypes.AirtimeNetwork);
 					typeof handleContinue !== 'undefined' && handleContinue();
 				}

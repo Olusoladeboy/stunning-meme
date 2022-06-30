@@ -20,6 +20,7 @@ export enum QueryKeyTypes {
 	GetSingleUser = '@Query:Get_single_user',
 	DataNetwork = '@Query:Data_Network',
 	AirtimeNetwork = '@Query:Airtime_Network',
+	KycLimit = '@Query:Kyc_Limit',
 }
 
 export enum RegistrationStepTypes {
@@ -151,6 +152,7 @@ export enum UserNavList {
 	Status = 'status',
 	Transaction = 'transaction',
 	WalletSummary = 'wallet-summary',
+	Manager = 'manager',
 }
 
 export enum ManagerTypes {
@@ -175,6 +177,7 @@ export enum API_ENDPOINTS {
 	User = '/user',
 	DataNetwork = '/data-networks',
 	AirtimeNetwork = '/airtime-networks',
+	Kyc = '/kyc',
 }
 
 export type ManagerDetailsDataTypes = {
@@ -191,4 +194,12 @@ export type NetworkDataTypes = {
 	number?: string;
 	ussd?: string;
 	isActive?: boolean;
+};
+
+export type KycDataTypes = {
+	level?: number;
+	dailyLimit: number;
+	weeklyLimit: number;
+	monthlyLimit: number;
+	perTransactionLimit: number;
 };

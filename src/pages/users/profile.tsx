@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation, useParams } from 'react-router-dom';
 import { useQuery } from 'react-query';
 import queryString from 'query-string';
-import { Box, Typography, useTheme, CircularProgress } from '@mui/material';
+import { Box, useTheme, CircularProgress } from '@mui/material';
 import { grey } from '@mui/material/colors';
 import Layout from '../../components/layout';
 import BackButton from '../../components/back-button';
@@ -45,6 +45,8 @@ const Profile = () => {
 				return navigate(`${LINKS.User}/${id}?tab=${UserNavList.Transaction}`);
 			case UserNavList.WalletSummary:
 				return navigate(`${LINKS.User}/${id}?tab=${UserNavList.WalletSummary}`);
+			case UserNavList.Manager:
+				return navigate(`${LINKS.User}/${id}?tab=${UserNavList.Manager}`);
 
 			default:
 				navigate(`${LINKS.User}/${id}`);
@@ -62,6 +64,9 @@ const Profile = () => {
 
 			case UserNavList.WalletSummary:
 				return setCurrentTab(UserNavList.WalletSummary);
+
+			case UserNavList.Manager:
+				return setCurrentTab(UserNavList.Manager);
 
 			default:
 				setCurrentTab(UserNavList.Profile);
@@ -114,6 +119,7 @@ const Profile = () => {
 							<Box hidden={currentTab !== UserNavList.WalletSummary}>
 								<UserWalletSummary />
 							</Box>
+							<Box hidden={currentTab !== UserNavList.Manager}>Manager</Box>
 						</Box>
 					</Box>
 				</>

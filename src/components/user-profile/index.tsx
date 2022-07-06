@@ -8,7 +8,7 @@ import ModalWrapper from '../modal/Wrapper';
 import EditProfileForm from '../forms/edit-profile';
 import UserAvatarWithDetails from '../user-avatar-with-details';
 import UserWallet from '../user-wallet';
-import { UserDetailsType, UserStatusTypes } from '../../utilities/types';
+import { UserDetailsType } from '../../utilities/types';
 import { SUCCESS_COLOR } from '../../utilities/constant';
 
 interface UserDetails extends UserDetailsType {}
@@ -45,7 +45,7 @@ const UserProfile = ({ userDetails }: Props) => {
 					</ModalWrapper>
 				)}
 				<Typography sx={{ marginBottom: theme.spacing(4) }} variant={'h5'}>
-					user profile
+					User profile
 				</Typography>
 				<Box
 					sx={{

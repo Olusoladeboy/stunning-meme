@@ -53,7 +53,7 @@ const Api = {
 		AllManagers: async (token: string) =>
 			apiRequest({
 				method: 'GET',
-				url: API_ENDPOINTS.Manager,
+				url: `${API_ENDPOINTS.Manager}`,
 				token,
 			}),
 	},
@@ -95,14 +95,29 @@ const Api = {
 		}) =>
 			apiRequest({
 				method: 'GET',
-				url: `${API_ENDPOINTS.User}?sort=${sort}`,
+				url: `${API_ENDPOINTS.User}?sort=${sort}&populate=manager`,
 				token,
 			}),
 		GetUserById: async ({ token, id }: { token: string; id: string }) =>
 			apiRequest({
 				method: 'GET',
-				url: `${API_ENDPOINTS.User}?_id=${id}`,
+				url: `${API_ENDPOINTS.User}?_id=${id}&populate=manager`,
 				token,
+			}),
+		AssignManagerToUser: async ({
+			token,
+			data,
+			id,
+		}: {
+			token: string;
+			data: any;
+			id: string;
+		}) =>
+			apiRequest({
+				method: 'PUT',
+				url: `${API_ENDPOINTS.User}/assign-manager/${id}`,
+				token,
+				data,
 			}),
 	},
 	Network: {

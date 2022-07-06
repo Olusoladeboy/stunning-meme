@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation, useParams } from 'react-router-dom';
 import { useQuery } from 'react-query';
 import queryString from 'query-string';
-import { Box, useTheme, CircularProgress } from '@mui/material';
+import { Box, useTheme, CircularProgress, Typography } from '@mui/material';
 import { grey } from '@mui/material/colors';
 import Layout from '../../components/layout';
 import BackButton from '../../components/back-button';
@@ -20,8 +20,14 @@ import UserTransaction from '../../components/user-transaction';
 import UserWalletSummary from '../../components/user-wallet-summary';
 import Api from '../../utilities/api';
 import { useAppSelector } from '../../store/hooks';
+import ManagerInfo from '../../components/user-manager-info';
+import Button from '../../components/button';
+import Modal from '../../components/modal/Wrapper';
+import AssignManagerForm from '../../components/forms/assign-manager-form';
 
-interface UserDetails extends UserDetailsType {}
+interface UserDetails extends UserDetailsType {
+	manager: any;
+}
 
 const Profile = () => {
 	const theme = useTheme();
@@ -29,6 +35,7 @@ const Profile = () => {
 	const { id } = useParams();
 	const { token } = useAppSelector((store) => store.authState);
 	const [userDetails, setUserDetails] = useState<null | UserDetails>(null);
+	const [isDisplayModal, setDisplayModal] = useState<boolean>(false);
 
 	const location = useLocation();
 	const navigate = useNavigate();
@@ -91,40 +98,72 @@ const Profile = () => {
 	);
 
 	return (
-		<Layout>
-			{isLoading ? (
-				<Box style={styles.circularProgress}>
-					<CircularProgress />
-				</Box>
-			) : (
-				<>
-					<Box
-						sx={{
-							padding: { xs: '1.5rem 1rem', md: '2rem' },
-						}}
-						style={styles.container}
-					>
-						<BackButton />
-						<UserTab handleChange={handleChangeTab} />
-						<Box>
-							<Box hidden={currentTab !== UserNavList.Profile}>
-								<UserProfile userDetails={userDetails} />
-							</Box>
-							<Box hidden={currentTab !== UserNavList.Status}>
-								<UserStatus />
-							</Box>
-							<Box hidden={currentTab !== UserNavList.Transaction}>
-								<UserTransaction />
-							</Box>
-							<Box hidden={currentTab !== UserNavList.WalletSummary}>
-								<UserWalletSummary />
-							</Box>
-							<Box hidden={currentTab !== UserNavList.Manager}>Manager</Box>
-						</Box>
-					</Box>
-				</>
+		<>
+			{isDisplayModal && (
+				<Modal
+					title={'Assign Manager to User'}
+					close={() => setDisplayModal(false)}
+				>
+					<AssignManagerForm
+						close={() => setDisplayModal(false)}
+						userDetails={userDetails}
+					/>
+				</Modal>
 			)}
-		</Layout>
+			<Layout>
+				{isLoading ? (
+					<Box style={styles.circularProgress}>
+						<CircularProgress />
+					</Box>
+				) : (
+					<>
+						<Box
+							sx={{
+								padding: { xs: '1.5rem 1rem', md: '2rem' },
+							}}
+							style={styles.container}
+						>
+							<BackButton />
+							<UserTab handleChange={handleChangeTab} />
+							<Box>
+								<Box hidden={currentTab !== UserNavList.Profile}>
+									<UserProfile userDetails={userDetails} />
+								</Box>
+								<Box hidden={currentTab !== UserNavList.Status}>
+									<UserStatus />
+								</Box>
+								<Box hidden={currentTab !== UserNavList.Transaction}>
+									<UserTransaction />
+								</Box>
+								<Box hidden={currentTab !== UserNavList.WalletSummary}>
+									<UserWalletSummary />
+								</Box>
+								<Box hidden={currentTab !== UserNavList.Manager}>
+									{userDetails && userDetails.manager ? (
+										<ManagerInfo
+											changeManager={() => setDisplayModal(true)}
+											manager={userDetails.manager}
+										/>
+									) : (
+										<Box>
+											<Typography sx={{ marginBottom: theme.spacing(2) }}>
+												User does not have a manage
+											</Typography>
+											<Button
+												onClick={() => setDisplayModal(true)}
+												style={styles.button}
+											>
+												Assign manager to user
+											</Button>
+										</Box>
+									)}
+								</Box>
+							</Box>
+						</Box>
+					</>
+				)}
+			</Layout>
+		</>
 	);
 };
 
@@ -143,6 +182,10 @@ const useStyles = (theme: any) => ({
 		display: 'flex',
 		alignItems: 'center',
 		justifyContent: 'center',
+	},
+	button: {
+		backgroundColor: theme.palette.secondary.main,
+		color: grey[50],
 	},
 });
 

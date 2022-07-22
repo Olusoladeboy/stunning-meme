@@ -19,6 +19,7 @@ export enum QueryKeyTypes {
 	AllUsers = '@Query:All_Users',
 	GetSingleUser = '@Query:Get_single_user',
 	DataNetwork = '@Query:Data_Network',
+	ConvertNetwork = '@Query:Convert_Network',
 	AirtimeNetwork = '@Query:Airtime_Network',
 	KycLimit = '@Query:Kyc_Limit',
 	DataPlans = '@Query:Data_Plans',
@@ -164,6 +165,7 @@ export enum ManagerTypes {
 export enum NetworkPageTypes {
 	DATA_NETWORK = 'Data network',
 	AIRTIME_NETWORK = 'Airtime network',
+	CONVERSION_NETWORK = 'Conversion network',
 }
 
 export enum NetworkStatusTypes {
@@ -179,6 +181,7 @@ export enum API_ENDPOINTS {
 	DataNetwork = '/data-networks',
 	DataPlans = '/data-plans',
 	AirtimeNetwork = '/airtime-networks',
+	ConvertNetworks = '/convert-networks',
 	Kyc = '/kyc',
 	Transaction = '/transaction',
 }

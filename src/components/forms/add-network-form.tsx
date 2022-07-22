@@ -1,4 +1,4 @@
-import React, { CSSProperties, useEffect } from 'react';
+import React, { CSSProperties } from 'react';
 import { Box, useTheme, Typography } from '@mui/material';
 import { useFormik } from 'formik';
 import { useMutation, useQueryClient } from 'react-query';
@@ -22,7 +22,10 @@ interface NetworkData extends NetworkDataTypes {
 }
 
 type Props = {
-	type: NetworkPageTypes.DATA_NETWORK | NetworkPageTypes.AIRTIME_NETWORK;
+	type:
+		| NetworkPageTypes.DATA_NETWORK
+		| NetworkPageTypes.AIRTIME_NETWORK
+		| NetworkPageTypes.CONVERSION_NETWORK;
 	handleContinue?: () => void;
 	network?: NetworkData;
 	isEdit?: boolean;
@@ -39,6 +42,7 @@ const AddNetworkForm = ({ type, handleContinue, network, isEdit }: Props) => {
 		name: '',
 		ussd: '',
 		rate: '',
+		number: '',
 	};
 
 	const { isLoading, mutate: createNetwork } = useMutation(
@@ -56,11 +60,69 @@ const AddNetworkForm = ({ type, handleContinue, network, isEdit }: Props) => {
 					enqueueSnackbar(data.message, { variant: 'success' });
 					queryClient.invalidateQueries(QueryKeyTypes.DataNetwork);
 					queryClient.invalidateQueries(QueryKeyTypes.AirtimeNetwork);
+					queryClient.invalidateQueries(QueryKeyTypes.ConvertNetwork);
 					typeof handleContinue !== 'undefined' && handleContinue();
 				}
 			},
 		}
 	);
+
+	const handleMutateNetwork = (values: NetworkData) => {
+		const { name, rate, ussd, number } = values;
+		const url =
+			type === NetworkPageTypes.DATA_NETWORK
+				? API_ENDPOINTS.DataNetwork
+				: type === NetworkPageTypes.AIRTIME_NETWORK
+				? API_ENDPOINTS.AirtimeNetwork
+				: API_ENDPOINTS.ConvertNetworks;
+
+		const createDataPayload =
+			type === NetworkPageTypes.DATA_NETWORK
+				? {
+						name,
+				  }
+				: type === NetworkPageTypes.AIRTIME_NETWORK
+				? {
+						name,
+						rate,
+						ussd,
+				  }
+				: {
+						name,
+						rate,
+						number,
+				  };
+
+		const updateDataPayload =
+			type === NetworkPageTypes.DATA_NETWORK
+				? {
+						name,
+				  }
+				: type === NetworkPageTypes.AIRTIME_NETWORK
+				? {
+						rate,
+						ussd,
+				  }
+				: {
+						rate,
+						number,
+				  };
+
+		if (isEdit && network) {
+			return updateNetwork({
+				url,
+				data: updateDataPayload,
+				token: token as string,
+				id: network.id as string,
+			});
+		}
+
+		createNetwork({
+			url,
+			data: createDataPayload,
+			token: token as string,
+		});
+	};
 
 	const { isLoading: isUpdating, mutate: updateNetwork } = useMutation(
 		Api.Network.UpdateNetwork,
@@ -82,76 +144,22 @@ const AddNetworkForm = ({ type, handleContinue, network, isEdit }: Props) => {
 		}
 	);
 
-	const { errors, touched, values, handleChange, handleSubmit, setValues } =
-		useFormik({
-			initialValues,
-			validationSchema:
-				type === NetworkPageTypes.DATA_NETWORK
-					? ValidationSchema.DataNetwork
-					: ValidationSchema.AirtimeNetwork,
-			onSubmit: (values) => {
-				if (isEdit && network) {
-					return updateNetwork({
-						url:
-							type === NetworkPageTypes.DATA_NETWORK
-								? API_ENDPOINTS.DataNetwork
-								: API_ENDPOINTS.AirtimeNetwork,
-						data:
-							type === NetworkPageTypes.DATA_NETWORK
-								? {
-										name: values.name,
-								  }
-								: {
-										rate: values.rate,
-										ussd: values.ussd,
-								  },
-						token: token as string,
-						id: network.id as string,
-					});
-				}
-				createNetwork({
-					url:
-						type === NetworkPageTypes.DATA_NETWORK
-							? API_ENDPOINTS.DataNetwork
-							: API_ENDPOINTS.AirtimeNetwork,
-					data:
-						type === NetworkPageTypes.DATA_NETWORK
-							? {
-									name: values.name,
-							  }
-							: {
-									name: values.name,
-									rate: values.rate,
-									ussd: values.ussd,
-							  },
-					token: token || '',
-				});
-			},
-		});
+	const validationSchema =
+		type === NetworkPageTypes.DATA_NETWORK
+			? ValidationSchema.DataNetwork
+			: type === NetworkPageTypes.AIRTIME_NETWORK
+			? ValidationSchema.AirtimeNetwork
+			: ValidationSchema.ConvertNetwork;
 
-	useEffect(
-		() => {
-			if (network) {
-				if (type === NetworkPageTypes.DATA_NETWORK) {
-					setValues({
-						...values,
-						name: network?.name,
-					});
-				} else if (type === NetworkPageTypes.AIRTIME_NETWORK) {
-					setValues({
-						...values,
-						name: network?.name,
-						rate: network.rate,
-						ussd: network.ussd,
-					});
-				}
-			}
+	const { errors, touched, values, handleChange, handleSubmit } = useFormik({
+		initialValues: network ? network : initialValues,
+		validationSchema,
+		onSubmit: (values) => {
+			handleMutateNetwork(values);
 		},
-		// eslint-disable-next-line
-		[]
-	);
+	});
 
-	const { name, ussd, rate } = values;
+	const { name, ussd, rate, number } = values;
 
 	return (
 		<Box style={styles.form as CSSProperties} component={'form'}>
@@ -204,7 +212,28 @@ const AddNetworkForm = ({ type, handleContinue, network, isEdit }: Props) => {
 					<Box
 						sx={{
 							display:
-								type === NetworkPageTypes.AIRTIME_NETWORK ? 'block' : 'none',
+								type === NetworkPageTypes.CONVERSION_NETWORK ? 'block' : 'none',
+						}}
+					>
+						<Typography variant={'body1'} style={styles.label}>
+							Phone number
+						</Typography>
+						<TextInput
+							fullWidth
+							placeholder={'Number'}
+							error={errors && touched.number && errors.number ? true : false}
+							helperText={errors && touched.number && errors.number}
+							value={number}
+							onChange={handleChange('number')}
+						/>
+					</Box>
+					<Box
+						sx={{
+							display:
+								type === NetworkPageTypes.AIRTIME_NETWORK ||
+								type === NetworkPageTypes.CONVERSION_NETWORK
+									? 'block'
+									: 'none',
 						}}
 					>
 						<Typography variant={'body1'} style={styles.label}>

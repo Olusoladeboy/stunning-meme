@@ -9,7 +9,10 @@ import ModalWrapper from '../modal/Wrapper';
 
 type Props = {
 	message: string;
-	type: NetworkPageTypes.AIRTIME_NETWORK | NetworkPageTypes.DATA_NETWORK;
+	type:
+		| NetworkPageTypes.AIRTIME_NETWORK
+		| NetworkPageTypes.DATA_NETWORK
+		| NetworkPageTypes.CONVERSION_NETWORK;
 };
 
 const NetworkDescriptiveMessageAndAddButton = ({ message, type }: Props) => {

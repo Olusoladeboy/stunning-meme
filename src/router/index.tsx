@@ -92,6 +92,16 @@ const Router = () => {
 						</PrivateRoute>
 					}
 				/>
+				<Route
+					path={'conversion'}
+					element={
+						<PrivateRoute>
+							<Pages.Network.Component
+								pageType={NetworkPageTypes.CONVERSION_NETWORK}
+							/>
+						</PrivateRoute>
+					}
+				/>
 			</Route>
 			<Route path={LINKS.DataPlan}>
 				<Route path={':plan'}>

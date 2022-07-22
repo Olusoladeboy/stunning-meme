@@ -7,10 +7,13 @@ import { NetworkPageTypes } from '../../utilities/types';
 import NetworkDescriptiveAndAddButton from '../../components/network-descriptive-message-and-add-buttton';
 import DataNetworkTable from '../../components/table/data-network-table';
 import AirtimeNetworkTable from '../../components/table/airtime-network-table';
-import AIRTIME_NETWORK from '../../utilities/data/airtime-network';
+import ConversionNetworkTable from '../../components/table/conversion-network-table';
 
 interface Props extends ComponentProps<any> {
-	pageType: NetworkPageTypes.AIRTIME_NETWORK | NetworkPageTypes.DATA_NETWORK;
+	pageType:
+		| NetworkPageTypes.AIRTIME_NETWORK
+		| NetworkPageTypes.DATA_NETWORK
+		| NetworkPageTypes.CONVERSION_NETWORK;
 }
 
 const Network = ({ pageType }: Props) => {
@@ -30,13 +33,15 @@ const Network = ({ pageType }: Props) => {
 					</Typography>
 					<NetworkDescriptiveAndAddButton
 						type={pageType}
-						message={'Edit data network plan'}
+						message={`Edit ${pageType} plan`}
 					/>
 				</Box>
 				{pageType === NetworkPageTypes.DATA_NETWORK ? (
 					<DataNetworkTable />
-				) : (
+				) : pageType === NetworkPageTypes.AIRTIME_NETWORK ? (
 					<AirtimeNetworkTable />
+				) : (
+					<ConversionNetworkTable />
 				)}
 			</Box>
 		</Layout>

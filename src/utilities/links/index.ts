@@ -10,6 +10,7 @@ const LINKS = {
 	Conversions: '/conversions',
 	Network: '/network',
 	DataNetwork: '/network/data',
+	ConversionNetwork: '/network/conversion',
 	DataPlan: '/data-plan',
 	AirtimeNetwork: '/network/airtime',
 	Coupons: '/coupons',

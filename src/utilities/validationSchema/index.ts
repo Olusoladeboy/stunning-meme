@@ -39,6 +39,14 @@ const ValidationSchema = {
 		rate: yup.string().required('Specify rate'),
 		ussd: yup.string().required('Specify ussd'),
 	}),
+	ConvertNetwork: yup.object().shape({
+		name: yup.string().required('Specify name'),
+		rate: yup.string().required('Specify rate'),
+		number: yup
+			.string()
+			.required('Specify phone number')
+			.matches(PHONE_REX, 'Invalid phone number'),
+	}),
 	KycLimit: yup.object().shape({
 		dailyLimit: yup.number().required('Specify daily limit'),
 		weeklyLimit: yup.number().required('Specify weekly limit'),

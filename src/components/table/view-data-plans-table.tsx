@@ -172,7 +172,7 @@ const ViewDataPlansTable = () => {
 				<ModalWrapper close={() => closePlanModal()} title={'EDIT DATA PLAN'}>
 					<DataPlanForm
 						handleOnSubmit={() => closePlanModal()}
-						data={selectedPlan}
+						dataPayload={selectedPlan}
 					/>
 				</ModalWrapper>
 			)}

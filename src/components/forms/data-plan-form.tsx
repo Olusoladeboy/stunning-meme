@@ -1,4 +1,4 @@
-import React, { CSSProperties } from 'react';
+import React, { CSSProperties, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useSnackbar } from 'notistack';
 import { useMutation, useQueryClient } from 'react-query';
@@ -21,17 +21,18 @@ interface ExtendedDataType extends DataPlan {
 }
 
 type Props = {
-	data?: ExtendedDataType;
+	dataPayload?: ExtendedDataType;
 	handleOnSubmit?: () => void;
 };
 
 const SELECT_PLAN = 'Select plan';
 
-const DataPlanForm = ({ data, handleOnSubmit }: Props) => {
+const DataPlanForm = ({ dataPayload, handleOnSubmit }: Props) => {
 	const theme = useTheme();
 	const styles = useStyles(theme);
 	const params = useParams();
 	const { enqueueSnackbar } = useSnackbar();
+	const [dataPlanType, setDataPlanType] = useState('');
 	const { token } = useAppSelector((store) => store.authState);
 
 	const validationSchema = yup.object().shape({
@@ -42,6 +43,18 @@ const DataPlanForm = ({ data, handleOnSubmit }: Props) => {
 			.notOneOf([SELECT_PLAN], 'Select a plan')
 			.required('Select plan'),
 		code: yup.string().required('Enter code'),
+	});
+
+	const validationSchemaForTypeSms = yup.object().shape({
+		name: yup.string().required('Enter name'),
+		amount: yup.string().required('Enter amount'),
+		type: yup
+			.string()
+			.notOneOf([SELECT_PLAN], 'Select a plan')
+			.required('Select plan'),
+		code: yup.string().required('Enter code'),
+		shortcode: yup.string().required('Enter short code'),
+		shortcode_sms: yup.string().required('Enter short code sms'),
 	});
 
 	const queryClient = useQueryClient();
@@ -87,49 +100,85 @@ const DataPlanForm = ({ data, handleOnSubmit }: Props) => {
 		}
 	);
 
+	const filterAndMutateData = (data: DataPlan) => {
+		const amount =
+			typeof dataPayload?.amount !== 'string'
+				? dataPayload?.amount.$numberDecimal
+				: dataPayload?.amount;
+
+		const updataDataPlan: DataPlan = {
+			type: data.type,
+			code: data.code,
+			amount: amount || '',
+		};
+
+		const createPlanData: DataPlan = {
+			name: data.name,
+			type: data.type,
+			code: data.code,
+			amount: data.amount,
+			network: data.network,
+		};
+
+		if (dataPayload && Object.keys(dataPayload).length > 0) {
+			updatePlan({
+				token: token || '',
+				data:
+					data.type === DataPlanType.SMS
+						? {
+								...updataDataPlan,
+								shortcode: data.shortcode,
+								shortcode_sms: data.shortcode_sms,
+						  }
+						: updataDataPlan,
+				id: dataPayload.id,
+			});
+		} else {
+			createPlan({
+				token: token || '',
+				data: data.type === DataPlanType.SMS ? data : createPlanData,
+			});
+		}
+	};
+
 	const initialValues: DataPlan = {
 		name: '',
 		network: params.id as string,
 		amount: '',
 		type: SELECT_PLAN,
 		code: '',
+		shortcode: '',
+		shortcode_sms: '',
 	};
 
-	const { values, handleChange, errors, touched, handleSubmit, resetForm } =
-		useFormik({
-			initialValues: data
-				? {
-						...data,
-						amount:
-							typeof data.amount !== 'string'
-								? data.amount.$numberDecimal
-								: data.amount,
-				  }
-				: initialValues,
-			validationSchema,
-			onSubmit: (values) => {
-				if (data && Object.keys(data).length > 0) {
-					updatePlan({
-						token: token || '',
-						data: {
-							amount:
-								typeof data.amount !== 'string'
-									? data.amount.$numberDecimal
-									: data.amount,
-							code: values.code,
-						},
-						id: data.id,
-					});
-				} else {
-					createPlan({
-						token: token || '',
-						data: values,
-					});
-				}
-			},
-		});
+	const {
+		values,
+		handleChange,
+		errors,
+		touched,
+		handleSubmit,
+		resetForm,
+		setFieldValue,
+	} = useFormik({
+		initialValues: dataPayload
+			? {
+					...dataPayload,
+					amount:
+						typeof dataPayload.amount !== 'string'
+							? dataPayload.amount.$numberDecimal
+							: dataPayload.amount,
+			  }
+			: initialValues,
+		validationSchema:
+			dataPlanType === DataPlanType.SMS
+				? validationSchemaForTypeSms
+				: validationSchema,
+		onSubmit: (values) => {
+			filterAndMutateData(values);
+		},
+	});
 
-	const { name, amount, type, code } = values;
+	const { name, amount, type, code, shortcode, shortcode_sms } = values;
 
 	return (
 		<Box style={styles.form as CSSProperties} component={'form'}>
@@ -147,8 +196,8 @@ const DataPlanForm = ({ data, handleOnSubmit }: Props) => {
 					<Typography variant={'body1'} style={styles.label}>
 						Data Name
 					</Typography>
-					{data && Object.keys(data).length > 0 ? (
-						<TextPlaceholder text={name} />
+					{dataPayload && Object.keys(dataPayload).length > 0 ? (
+						<TextPlaceholder text={name || ''} />
 					) : (
 						<TextInput
 							fullWidth
@@ -164,7 +213,7 @@ const DataPlanForm = ({ data, handleOnSubmit }: Props) => {
 					<Typography variant={'body1'} style={styles.label}>
 						Data type
 					</Typography>
-					{data && Object.keys(data).length > 0 ? (
+					{dataPayload && Object.keys(dataPayload).length > 0 ? (
 						<TextPlaceholder text={type} hasArrowDropDown />
 					) : (
 						<Select
@@ -172,7 +221,11 @@ const DataPlanForm = ({ data, handleOnSubmit }: Props) => {
 							error={errors && touched.type && errors.type ? true : false}
 							helpertext={errors && touched.type && errors.type}
 							value={type}
-							onChange={handleChange('type') as any}
+							onChange={(e: any) => {
+								const value = e.target.value;
+								setDataPlanType(value);
+								setFieldValue('type', value);
+							}}
 						>
 							<MenuItem disabled value={SELECT_PLAN}>
 								{SELECT_PLAN}
@@ -224,10 +277,12 @@ const DataPlanForm = ({ data, handleOnSubmit }: Props) => {
 							<TextInput
 								fullWidth
 								placeholder={'Shortcode'}
-								error={errors && touched.code && errors.code ? true : false}
-								helperText={errors && touched.code && errors.code}
-								value={code}
-								onChange={handleChange('short_code')}
+								error={
+									errors && touched.shortcode && errors.shortcode ? true : false
+								}
+								helperText={errors && touched.shortcode && errors.shortcode}
+								value={shortcode}
+								onChange={handleChange('shortcode')}
 							/>
 						</Box>
 						<Box>
@@ -245,7 +300,7 @@ const DataPlanForm = ({ data, handleOnSubmit }: Props) => {
 								helperText={
 									errors && touched.shortcode_sms && errors.shortcode_sms
 								}
-								value={values.shortcode_sms}
+								value={shortcode_sms}
 								onChange={handleChange('shortcode_sms')}
 							/>
 						</Box>

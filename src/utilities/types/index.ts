@@ -208,11 +208,12 @@ export type KycDataTypes = {
 };
 
 export type DataPlan = {
-	name: string;
-	network: string;
+	name?: string;
+	network?: string;
 	amount: string | { $numberDecimal: string };
 	type: string;
 	code: string;
+	shortcode?: string;
 	shortcode_sms?: string;
 };
 

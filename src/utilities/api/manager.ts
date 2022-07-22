@@ -1,0 +1,41 @@
+import apiRequest from './apiRequest';
+import { API_ENDPOINTS, ManagerDetailsDataTypes } from '../types';
+
+const Manager = {
+	CreateManager: async ({
+		token,
+		data,
+	}: {
+		token: string;
+		data: ManagerDetailsDataTypes;
+	}) =>
+		apiRequest({
+			method: 'POST',
+			url: API_ENDPOINTS.Manager,
+			token,
+			data,
+		}),
+	UpdateManager: async ({
+		token,
+		data,
+		id,
+	}: {
+		token: string;
+		data: ManagerDetailsDataTypes;
+		id: string;
+	}) =>
+		apiRequest({
+			method: 'PUT',
+			url: `${API_ENDPOINTS.Manager}/${id}`,
+			token,
+			data,
+		}),
+	AllManagers: async (token: string) =>
+		apiRequest({
+			method: 'GET',
+			url: `${API_ENDPOINTS.Manager}`,
+			token,
+		}),
+};
+
+export default Manager;

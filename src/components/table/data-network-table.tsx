@@ -1,4 +1,4 @@
-import React, { CSSProperties, useState } from 'react';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import Table from '@mui/material/Table';
 import { useQuery, useQueryClient, useMutation } from 'react-query';
@@ -175,7 +175,9 @@ const DataNetworkTable = () => {
 										</Box>
 									</TableCell>
 									<TableCell
-										onClick={() => navigate(`${LINKS.DataPlan}/${data.name}`)}
+										onClick={() =>
+											navigate(`${LINKS.DataPlan}/${data.name}/${data.id}`)
+										}
 										sx={{
 											':hover': {
 												textDecoration: 'underline',

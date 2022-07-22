@@ -21,6 +21,7 @@ export enum QueryKeyTypes {
 	DataNetwork = '@Query:Data_Network',
 	AirtimeNetwork = '@Query:Airtime_Network',
 	KycLimit = '@Query:Kyc_Limit',
+	DataPlans = '@Query:Data_Plans',
 }
 
 export enum RegistrationStepTypes {
@@ -176,8 +177,10 @@ export enum API_ENDPOINTS {
 	Manager = '/manager',
 	User = '/user',
 	DataNetwork = '/data-networks',
+	DataPlans = '/data-plans',
 	AirtimeNetwork = '/airtime-networks',
 	Kyc = '/kyc',
+	Transaction = '/transaction',
 }
 
 export type ManagerDetailsDataTypes = {
@@ -203,3 +206,19 @@ export type KycDataTypes = {
 	monthlyLimit: number;
 	perTransactionLimit: number;
 };
+
+export type DataPlan = {
+	name: string;
+	network: string;
+	amount: string | { $numberDecimal: string };
+	type: string;
+	code: string;
+	shortcode_sms?: string;
+};
+
+export enum DataPlanType {
+	USSD = 'USSD',
+	SMS = 'SMS',
+	MANUAL = 'MANUAL',
+	KETTLESUB = 'KETTLESUB',
+}

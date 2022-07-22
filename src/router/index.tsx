@@ -94,14 +94,16 @@ const Router = () => {
 				/>
 			</Route>
 			<Route path={LINKS.DataPlan}>
-				<Route
-					path={':plan'}
-					element={
-						<PrivateRoute>
-							<Pages.ViewDataPlan.Component />
-						</PrivateRoute>
-					}
-				/>
+				<Route path={':plan'}>
+					<Route
+						path={':id'}
+						element={
+							<PrivateRoute>
+								<Pages.ViewDataPlan.Component />
+							</PrivateRoute>
+						}
+					/>
+				</Route>
 			</Route>
 			<Route
 				path={Pages.Coupons.path}

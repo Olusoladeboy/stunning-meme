@@ -19,6 +19,7 @@ import Verification from './verification';
 import Kyc from './verification/kyc';
 import Suspension from './suspension';
 import AuditLogs from './audit-logs';
+import Dispute from './dispute';
 
 import LINKS from '../utilities/links';
 
@@ -74,6 +75,10 @@ const Pages = {
 	Coupons: {
 		Component: Coupons,
 		path: LINKS.Coupons,
+	},
+	Dispute: {
+		Component: Dispute,
+		path: LINKS.Dispute,
 	},
 	Referral: {
 		Initial: {

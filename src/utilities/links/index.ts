@@ -14,6 +14,7 @@ const LINKS = {
 	DataPlan: '/data-plan',
 	AirtimeNetwork: '/network/airtime',
 	Coupons: '/coupons',
+	Dispute: '/dispute',
 	Referrals: '/referrals',
 	AllReferrals: '/referrals/all',
 	Referee: '/referee',

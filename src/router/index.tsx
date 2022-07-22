@@ -123,6 +123,14 @@ const Router = () => {
 					</PrivateRoute>
 				}
 			/>
+			<Route
+				path={Pages.Dispute.path}
+				element={
+					<PrivateRoute>
+						<Pages.Dispute.Component />
+					</PrivateRoute>
+				}
+			/>
 			<Route path={Pages.Referral.Initial.path}>
 				<Route
 					path={''}

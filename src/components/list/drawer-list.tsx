@@ -262,6 +262,25 @@ const DrawerList = () => {
 					}
 				/>
 				<ListItemButton
+					name={'Dispute'}
+					link={LINKS.Dispute}
+					isActive={
+						getActiveLink({ name: 'dispute', currentPath: pathname }).isActive
+					}
+					icon={
+						<CouponIcon
+							color={
+								getActiveLink({
+									name: 'dispute',
+									currentPath: pathname,
+								}).isActive
+									? activeColor
+									: initialColor
+							}
+						/>
+					}
+				/>
+				<ListItemButton
 					name={'Referral'}
 					link={LINKS.Referrals}
 					isActive={

@@ -20,6 +20,7 @@ export enum QueryKeyTypes {
 	GetSingleUser = '@Query:Get_single_user',
 	DataNetwork = '@Query:Data_Network',
 	ConvertNetwork = '@Query:Convert_Network',
+	ConvertAirtime = '@Query:Convert_Airtime',
 	AirtimeNetwork = '@Query:Airtime_Network',
 	KycLimit = '@Query:Kyc_Limit',
 	DataPlans = '@Query:Data_Plans',
@@ -182,6 +183,7 @@ export enum API_ENDPOINTS {
 	DataPlans = '/data-plans',
 	AirtimeNetwork = '/airtime-networks',
 	ConvertNetworks = '/convert-networks',
+	ConvertAirtime = '/convert-airtime',
 	Kyc = '/kyc',
 	Transaction = '/transaction',
 }

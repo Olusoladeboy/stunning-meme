@@ -5,7 +5,11 @@ import SearchInput from '../form-components/search-input';
 
 const INITIAL_FILTER_VALUE = 'Filter by';
 
-const FilterWithSearch = () => {
+type Props = {
+	isDisplayFilter?: boolean;
+};
+
+const FilterWithSearch = ({ isDisplayFilter = false }: Props) => {
 	const [filterBy] = useState<string>(INITIAL_FILTER_VALUE);
 	return (
 		<Box
@@ -17,17 +21,19 @@ const FilterWithSearch = () => {
 				alignItems: 'center',
 			}}
 		>
-			<FilterBy
-				selectProps={{
-					value: filterBy,
-				}}
-				sx={{ maxWidth: '200px' }}
-			>
-				<MenuItem value={filterBy} disabled>
-					Filter by
-				</MenuItem>
-				<MenuItem value={filterBy}>Name</MenuItem>
-			</FilterBy>
+			{isDisplayFilter && (
+				<FilterBy
+					selectProps={{
+						value: filterBy,
+					}}
+					sx={{ maxWidth: '200px' }}
+				>
+					<MenuItem value={filterBy} disabled>
+						Filter by
+					</MenuItem>
+					<MenuItem value={filterBy}>Name</MenuItem>
+				</FilterBy>
+			)}
 			<SearchInput fullWidth placeholder={'Search...'} />
 		</Box>
 	);

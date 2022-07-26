@@ -11,3 +11,4 @@ export const LIGHT_GRAY = '#DCE3E7';
 export const HEADER_HEIGHT = '70px';
 export const DARK_BACKGROUND_COLOR = '#09171f';
 export const BOX_SHADOW = `0px 0px 8px rgba(0, 0, 0, 0.1)`;
+export const MAX_RECORDS = 20;

@@ -1,4 +1,4 @@
-import React, { CSSProperties, useState } from 'react';
+import React, { CSSProperties } from 'react';
 import { useQuery } from 'react-query';
 import { useNavigate } from 'react-router-dom';
 import { Box, useTheme, CircularProgress, Typography } from '@mui/material';
@@ -8,11 +8,7 @@ import Button from '../button';
 import AvaliableNetworkItem from './available-network-item';
 import handleResponse from '../../utilities/helpers/handleResponse';
 import Api from '../../utilities/api';
-import {
-	NetworkDataTypes,
-	QueryKeyTypes,
-	API_ENDPOINTS,
-} from '../../utilities/types';
+import { QueryKeyTypes, API_ENDPOINTS } from '../../utilities/types';
 import { useAppSelector } from '../../store/hooks';
 import LINKS from '../../utilities/links';
 
@@ -22,9 +18,8 @@ const AvailableNetwork = () => {
 	const styles = useStyles(theme);
 	const { enqueueSnackbar } = useSnackbar();
 	const { token } = useAppSelector((store) => store.authState);
-	const [networks, setNetworks] = useState<NetworkDataTypes[] | null>(null);
 
-	const { isLoading } = useQuery(
+	const { isLoading, data } = useQuery(
 		QueryKeyTypes.ConvertNetwork,
 		() =>
 			Api.Network.GetNetwork({
@@ -40,16 +35,12 @@ const AvailableNetwork = () => {
 						enqueueSnackbar(res.message, { variant: 'error' });
 					}
 				}
-
-				if (data && data.success) {
-					setNetworks(data.payload);
-				}
 			},
 		}
 	);
 
 	const handleClick = () => {
-		if (networks && networks.length > 0) {
+		if (data && data.payload.length > 0) {
 			navigate(LINKS.ConversionNetwork);
 		} else {
 			console.log('Add network');
@@ -70,15 +61,17 @@ const AvailableNetwork = () => {
 				</Box>
 			) : (
 				<Box style={styles.container}>
-					{networks && networks.length > 0 ? (
+					{data && data.payload.length > 0 ? (
 						<Box style={styles.main}>
-							{networks.map((network, key) => (
-								<AvaliableNetworkItem
-									key={key}
-									name={network.name || ''}
-									rate={network.rate || ''}
-								/>
-							))}
+							{data.payload.map(
+								(network: { [key: string]: any }, key: number) => (
+									<AvaliableNetworkItem
+										key={key}
+										name={network.name || ''}
+										rate={network.rate || ''}
+									/>
+								)
+							)}
 						</Box>
 					) : (
 						<Typography>No available network</Typography>
@@ -87,7 +80,7 @@ const AvailableNetwork = () => {
 						onClick={() => handleClick()}
 						style={styles.editBtn as CSSProperties}
 					>
-						{networks && networks.length > 0 ? 'View Networks' : 'Add network'}
+						{data && data.payload.length > 0 ? 'View Networks' : 'Add network'}
 					</Button>
 				</Box>
 			)}

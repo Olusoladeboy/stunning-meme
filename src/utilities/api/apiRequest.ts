@@ -21,6 +21,7 @@ const apiRequest = async (config?: ConfigTypes) => {
 			apikey: API_KEY,
 		},
 		data: config?.data,
+		params: config?.params,
 	});
 
 	return res.data;

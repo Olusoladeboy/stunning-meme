@@ -8,13 +8,20 @@ interface Props extends BoxProps {
 	hideTitle?: boolean;
 	isDisplayBackButton?: boolean;
 	backButtonText?: string;
+	isDisplayFilter?: boolean;
 }
 
-const TableHeader = (props: Props) => {
-	const { title, sx, isDisplayBackButton, backButtonText } = props;
+const TableHeader = ({
+	title,
+	sx,
+	isDisplayBackButton,
+	backButtonText,
+	isDisplayFilter,
+	style,
+}: Props) => {
 	return (
 		<Box
-			style={props.style}
+			style={style}
 			sx={{
 				display: 'flex',
 				alignItems: 'center',
@@ -31,7 +38,7 @@ const TableHeader = (props: Props) => {
 			) : (
 				isDisplayBackButton && <BackButton text={backButtonText} />
 			)}
-			<FilterWithSearch />
+			<FilterWithSearch isDisplayFilter={isDisplayFilter} />
 		</Box>
 	);
 };

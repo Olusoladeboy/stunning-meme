@@ -6,7 +6,7 @@ import DetailItem from './detail-item';
 import Button from '../button';
 import ModalWrapper from '../modal/Wrapper';
 import EditProfileForm from '../forms/edit-profile';
-import UserAvatarWithDetails from '../user-avatar-with-details';
+import UserAvatarWithDetails from '../avatar-with-details';
 import UserWallet from '../user-wallet';
 import { UserDetailsType } from '../../utilities/types';
 import { SUCCESS_COLOR } from '../../utilities/constant';
@@ -14,10 +14,10 @@ import { SUCCESS_COLOR } from '../../utilities/constant';
 interface UserDetails extends UserDetailsType {}
 
 type Props = {
-	userDetails: UserDetails | null;
+	user: UserDetailsType | null;
 };
 
-const UserProfile = ({ userDetails }: Props) => {
+const UserProfile = ({ user }: Props) => {
 	const theme = useTheme();
 	const styles = useStyles(theme);
 	const [isEditProfile, setEditProfile] = useState<boolean>(false);
@@ -32,7 +32,7 @@ const UserProfile = ({ userDetails }: Props) => {
 					},
 				}}
 			>
-				<UserAvatarWithDetails />
+				<UserAvatarWithDetails user={user} />
 				<UserWallet />
 			</Box>
 			<Box sx={{ marginTop: theme.spacing(5) }}>
@@ -60,27 +60,19 @@ const UserProfile = ({ userDetails }: Props) => {
 				>
 					<DetailItem
 						text={'name'}
-						value={
-							userDetails && `${userDetails.firstname} ${userDetails.lastname}`
-						}
+						value={user && `${user.firstname} ${user.lastname}`}
 					/>
 					<DetailItem
 						text={'date joined'}
-						value={userDetails && moment.utc(userDetails.createdAt).format('l')}
+						value={user && moment.utc(user.createdAt).format('l')}
 					/>
-					<DetailItem
-						text={'Username'}
-						value={userDetails && userDetails.username}
-					/>
-					<DetailItem
-						text={'pnone number'}
-						value={userDetails && userDetails.phone}
-					/>
-					<DetailItem text={'email'} value={userDetails && userDetails.email} />
+					<DetailItem text={'Username'} value={user && user.username} />
+					<DetailItem text={'pnone number'} value={user && user.phone} />
+					<DetailItem text={'email'} value={user && user.email} />
 					<DetailItem
 						text={'verification status'}
 						value={
-							userDetails && userDetails.verified ? (
+							user && user.verified ? (
 								<Typography style={styles.verifyText as CSSProperties}>
 									Verified
 								</Typography>

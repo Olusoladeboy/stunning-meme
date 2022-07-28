@@ -1,13 +1,19 @@
 import React from 'react';
 import { Box, Typography, useTheme } from '@mui/material';
-import UserAvatarWithDetails from '../user-avatar-with-details';
+import UserAvatarWithDetails from '../avatar-with-details';
 import Button from '../button';
 import { grey } from '@mui/material/colors';
 import SuspendUserForm from '../forms/suspend-user-form';
 import DeleteUserForm from '../forms/delete-user-form';
+import { UserDetailsType } from '../../utilities/types';
 
-const UserStatus = () => {
+type Props = {
+	user: UserDetailsType | null;
+};
+
+const UserStatus = ({ user }: Props) => {
 	const theme = useTheme();
+	// return null;
 	return (
 		<Box>
 			<Box
@@ -18,7 +24,7 @@ const UserStatus = () => {
 					marginBottom: theme.spacing(5),
 				}}
 			>
-				<UserAvatarWithDetails />
+				<UserAvatarWithDetails user={user} />
 				<Button
 					size={'large'}
 					sx={{
@@ -50,7 +56,7 @@ const UserStatus = () => {
 					}}
 				>
 					<SuspendUserForm />
-					<DeleteUserForm />
+					{/* <DeleteUserForm /> */}
 				</Box>
 			</Box>
 		</Box>

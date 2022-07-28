@@ -5,6 +5,7 @@ import SummaryWrapper from './wrapper';
 import ConversionIcon from '../icons/conversion';
 import { SUCCESS_COLOR } from '../../utilities/constant';
 import Link from '../link';
+import LINKS from '../../utilities/links';
 
 const TotalConversions = () => {
 	const theme = useTheme();
@@ -18,7 +19,7 @@ const TotalConversions = () => {
 			<Typography style={styles.text} variant={'h6'}>
 				Total Conversions
 			</Typography>
-			<Link to={'/'}>
+			<Link to={LINKS.Conversions}>
 				<Typography style={styles.linkText} variant={'body1'}>
 					View all
 				</Typography>

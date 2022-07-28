@@ -1,15 +1,22 @@
 import React from 'react';
 import { Box, useTheme } from '@mui/material';
-import UserAvatarWithDetails from '../user-avatar-with-details';
+import UserAvatarWithDetails from '../avatar-with-details';
 import TransactionHistoryTable from '../table/transaction-history-table';
+import { UserDetailsType } from '../../utilities/types';
 
-const UserTransaction = () => {
+type Props = {
+	user: UserDetailsType | null;
+};
+
+const UserTransaction = ({ user }: Props) => {
 	const theme = useTheme();
 	return (
 		<Box>
-			<UserAvatarWithDetails />
+			<Box sx={{ padding: { xs: '0px 1rem', md: '0px 2rem' } }}>
+				<UserAvatarWithDetails user={user} />
+			</Box>
 			<Box sx={{ marginTop: theme.spacing(4) }}>
-				{/* <TransactionHistoryTable data={[]} /> */}
+				<TransactionHistoryTable user={user} />
 			</Box>
 		</Box>
 	);

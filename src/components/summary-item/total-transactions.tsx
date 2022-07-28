@@ -5,6 +5,7 @@ import SummaryWrapper from './wrapper';
 import TransactionIcon from '../icons/transaction';
 import { SECOUNDARY_COLOR } from '../../utilities/constant';
 import Link from '../link';
+import LINKS from '../../utilities/links';
 
 const TotalTransactions = () => {
 	const theme = useTheme();
@@ -18,7 +19,7 @@ const TotalTransactions = () => {
 			<Typography style={styles.text} variant={'h6'}>
 				Total transactions
 			</Typography>
-			<Link to={'/'}>
+			<Link to={LINKS.Transactions}>
 				<Typography style={styles.linkText} variant={'body1'}>
 					View all
 				</Typography>

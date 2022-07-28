@@ -80,7 +80,7 @@ const Profile = () => {
 		}
 	}, [tab]);
 
-	const { isLoading } = useQuery(
+	const { isLoading, data } = useQuery(
 		QueryKeyTypes.GetSingleUser,
 		() =>
 			Api.User.GetUserById({
@@ -118,27 +118,66 @@ const Profile = () => {
 				) : (
 					<>
 						<Box
-							sx={{
-								padding: { xs: '1.5rem 1rem', md: '2rem' },
-							}}
+							sx={{ padding: { xs: '1rem 0px', md: '2rem 0px' } }}
 							style={styles.container}
 						>
-							<BackButton />
-							<UserTab handleChange={handleChangeTab} />
-							<Box>
-								<Box hidden={currentTab !== UserNavList.Profile}>
-									<UserProfile userDetails={userDetails} />
+							<Box
+								sx={{
+									padding: { xs: '0px 1rem', md: '0px 2rem' },
+									display: 'grid',
+									gap: '2rem',
+								}}
+							>
+								<BackButton />
+								<UserTab handleChange={handleChangeTab} />
+							</Box>
+							<>
+								<Box
+									sx={{ padding: { xs: '0px 1rem', md: '0px 2rem' } }}
+									hidden={currentTab !== UserNavList.Profile}
+								>
+									<UserProfile
+										user={
+											data && data.payload && Array.isArray(data.payload)
+												? data.payload[0]
+												: data.payload
+										}
+									/>
 								</Box>
-								<Box hidden={currentTab !== UserNavList.Status}>
-									<UserStatus />
+								<Box
+									sx={{ padding: { xs: '0px 1rem', md: '0px 2rem' } }}
+									hidden={currentTab !== UserNavList.Status}
+								>
+									<UserStatus
+										user={
+											data && data.payload && Array.isArray(data.payload)
+												? data.payload[0]
+												: data.payload
+										}
+									/>
 								</Box>
 								<Box hidden={currentTab !== UserNavList.Transaction}>
-									<UserTransaction />
+									<UserTransaction
+										user={
+											data && data.payload && Array.isArray(data.payload)
+												? data.payload[0]
+												: data.payload
+										}
+									/>
 								</Box>
 								<Box hidden={currentTab !== UserNavList.WalletSummary}>
-									<UserWalletSummary />
+									<UserWalletSummary
+										user={
+											data && data.payload && Array.isArray(data.payload)
+												? data.payload[0]
+												: data.payload
+										}
+									/>
 								</Box>
-								<Box hidden={currentTab !== UserNavList.Manager}>
+								<Box
+									sx={{ padding: { xs: '0px 1rem', md: '0px 2rem' } }}
+									hidden={currentTab !== UserNavList.Manager}
+								>
 									{userDetails && userDetails.manager ? (
 										<ManagerInfo
 											changeManager={() => setDisplayModal(true)}
@@ -158,7 +197,7 @@ const Profile = () => {
 										</Box>
 									)}
 								</Box>
-							</Box>
+							</>
 						</Box>
 					</>
 				)}

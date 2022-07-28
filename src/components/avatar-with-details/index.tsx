@@ -1,37 +1,39 @@
 import React, { CSSProperties } from 'react';
 import { Box, Avatar, Typography, useTheme } from '@mui/material';
-import { ManagerDetailsDataTypes } from '../../utilities/types';
-
-interface ManagerDetails extends ManagerDetailsDataTypes {
-	role?: string;
-	verifiedStatus?: boolean;
-}
+import {
+	ManagerDetailsDataTypes,
+	UserDetailsType,
+} from '../../utilities/types';
+import { DANGER_COLOR, SUCCESS_COLOR } from '../../utilities/constant';
 
 type Props = {
-	details?: ManagerDetails;
+	user: UserDetailsType | null;
+	userType?: 'user' | 'manager';
 };
 
-const UserAvatarWithDetails = ({ details }: Props) => {
+const UserAvatarWithDetails = ({ user, userType = 'user' }: Props) => {
 	const theme = useTheme();
 	const styles = useStyles(theme);
 	return (
 		<Box style={styles.container}>
-			<Avatar src={(details && details.avatar) || ''} style={styles.avatar} />
+			<Avatar src={(user && user.avatar) || ''} style={styles.avatar} />
 			<Box style={styles.detailsWrapper as CSSProperties}>
 				<Typography style={styles.nameText} variant={'body1'}>
-					{details && `${details.firstname} ${details.lastname}`}
+					{user && `${user.firstname} ${user.lastname}`}
 				</Typography>
 				<Typography style={styles.text} variant={'body1'}>
-					{details && details.email}
+					{user && user.email}
 				</Typography>
-				{details && details.verifiedStatus && (
-					<Typography style={styles.text} variant={'body1'}>
-						Verified Status
-					</Typography>
-				)}
-				{details && details.role && (
-					<Typography style={styles.text} variant={'body1'}>
-						{details.role}
+				{user && (
+					<Typography
+						style={{
+							...styles.text,
+							textTransform: 'uppercase',
+							color: user.verified ? SUCCESS_COLOR : DANGER_COLOR,
+						}}
+						variant={'body1'}
+					>
+						{user.verified ? 'Verified' : 'Not verified'}
 					</Typography>
 				)}
 			</Box>

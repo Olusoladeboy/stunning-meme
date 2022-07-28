@@ -6,6 +6,7 @@ import KycLimits from './kyc';
 import DataPlan from './data-plan';
 import Transactions from './transactions';
 import ConvertAirtime from './convert-airtime';
+import Wallet from './wallet';
 
 const Api = {
 	Account,
@@ -16,6 +17,7 @@ const Api = {
 	DataPlan,
 	Transactions,
 	ConvertAirtime,
+	Wallet,
 };
 
 export default Api;

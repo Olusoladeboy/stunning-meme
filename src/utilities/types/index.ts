@@ -24,6 +24,9 @@ export enum QueryKeyTypes {
 	AirtimeNetwork = '@Query:Airtime_Network',
 	KycLimit = '@Query:Kyc_Limit',
 	DataPlans = '@Query:Data_Plans',
+	UserWallet = '@Query:User_Wallet',
+	UserWalletTransaction = '@Query:User_Wallet_Transaction',
+	UserTransactions = '@Query:User_Transactions',
 }
 
 export enum RegistrationStepTypes {
@@ -68,6 +71,7 @@ export type UserDetailsType = {
 	phone: string;
 	createdAt: string;
 	id: string;
+	avatar: string;
 };
 
 export type LoginDetailsType = {
@@ -186,6 +190,7 @@ export enum API_ENDPOINTS {
 	ConvertAirtime = '/convert-airtime',
 	Kyc = '/kyc',
 	Transaction = '/transaction',
+	Wallet = '/wallet',
 }
 
 export type ManagerDetailsDataTypes = {

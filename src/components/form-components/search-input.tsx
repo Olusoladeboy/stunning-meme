@@ -28,7 +28,7 @@ const SearchInput = ({
 	const { mode } = useAppSelector((store) => store.theme);
 	const [value, setValue] = useState('');
 	return (
-		<Box {...rest}>
+		<Box {...rest} sx={{ ...rest.sx, width: fullWidth ? '100%' : 'undefined' }}>
 			<TextField
 				// {...rest.style}
 				fullWidth={fullWidth}

@@ -1,23 +1,32 @@
 import apiRequest from './apiRequest';
 import { API_ENDPOINTS, DataPlan as DataPlanType } from '../types';
 
-const Transactions = {
-	All: async ({
+const Wallet = {
+	Account: async ({
 		token,
 		params,
 	}: {
 		token: string;
-		sort?: string;
+		params?: { [key: string]: any };
+	}) =>
+		apiRequest({
+			method: 'GET',
+			url: API_ENDPOINTS.Wallet,
+			token,
+			params,
+		}),
+	Transactions: async ({
+		token,
+		params,
+	}: {
+		token: string;
 		params?: { [key: string]: any };
 	}) =>
 		apiRequest({
 			method: 'GET',
 			url: API_ENDPOINTS.Transaction,
 			token,
-			params: {
-				sort: '-createdAt',
-				...params,
-			},
+			params,
 		}),
 	CreatePlan: async ({ token, data }: { token: string; data: DataPlanType }) =>
 		apiRequest({
@@ -44,4 +53,4 @@ const Transactions = {
 		}),
 };
 
-export default Transactions;
+export default Wallet;

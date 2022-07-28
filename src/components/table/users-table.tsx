@@ -26,14 +26,11 @@ import SuspendedUserIcon from '../icons/suspended-user';
 import DeletedUserIcon from '../icons/deleted-user';
 import UnverifiedUserIcon from '../icons/unverified-user';
 import Empty from '../empty';
-import Pagination from '../pagination';
 import LINKS from '../../utilities/links';
 import { UserDetailsType } from '../../utilities/types';
 import TableLoader from '../loader/table-loader';
 
-interface UserDetails extends UserDetailsType {
-	avatar?: string;
-}
+interface UserDetails extends UserDetailsType {}
 
 type Props = {
 	isLoading?: boolean;
@@ -221,17 +218,6 @@ const UsersTable = ({ isLoading, users = null }: Props) => {
 					)}
 				</TableBody>
 			</Table>
-			<Pagination
-				sx={{
-					display: 'flex',
-					justifyContent: 'flex-end',
-					marginTop: theme.spacing(4),
-					marginRight: '1rem',
-				}}
-				size={'large'}
-				shape={'rounded'}
-				variant={'outlined'}
-			/>
 		</Box>
 	);
 };

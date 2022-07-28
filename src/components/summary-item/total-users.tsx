@@ -5,6 +5,7 @@ import SummaryWrapper from './wrapper';
 import UserIcon from '../icons/user';
 import { SUCCESS_COLOR } from '../../utilities/constant';
 import Link from '../link';
+import LINKS from '../../utilities/links';
 
 const TotalUsers = () => {
 	const theme = useTheme();
@@ -18,7 +19,7 @@ const TotalUsers = () => {
 			<Typography style={styles.text} variant={'h6'}>
 				Total Users
 			</Typography>
-			<Link to={'/'}>
+			<Link to={LINKS.Users}>
 				<Typography style={styles.linkText} variant={'body1'}>
 					View all
 				</Typography>

@@ -1,7 +1,7 @@
 import React, { CSSProperties } from 'react';
 import { Box, Typography, useTheme } from '@mui/material';
 import { grey, red } from '@mui/material/colors';
-import UserAvatarWithDetails from '../user-avatar-with-details';
+import UserAvatarWithDetails from '../avatar-with-details/manager';
 import Button from '../button';
 import { ManagerDetailsDataTypes } from '../../utilities/types';
 
@@ -17,7 +17,7 @@ const ManagerDetails = ({ managerDetail, handleEdit }: Props) => {
 	const styles = useStyles(theme);
 	return (
 		<Box>
-			<UserAvatarWithDetails details={managerDetail} />
+			<UserAvatarWithDetails user={managerDetail} />
 			<Box
 				sx={{
 					display: 'flex',

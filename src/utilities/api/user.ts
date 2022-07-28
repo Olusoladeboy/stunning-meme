@@ -32,15 +32,16 @@ const User = {
 		}),
 	AllUsers: async ({
 		token,
-		sort = '-createdAt',
+		params,
 	}: {
 		token: string;
-		sort?: string;
+		params?: { [key: string]: any };
 	}) =>
 		apiRequest({
 			method: 'GET',
-			url: `${API_ENDPOINTS.User}?sort=${sort}&populate=manager`,
+			url: `${API_ENDPOINTS.User}`,
 			token,
+			params,
 		}),
 	GetUserById: async ({ token, id }: { token: string; id: string }) =>
 		apiRequest({

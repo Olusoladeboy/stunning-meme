@@ -35,6 +35,11 @@ const Conversions = () => {
 	const { token } = useAppSelector((store) => store.authState);
 
 	useEffect(() => {
+		if (search.length === 0) {
+		}
+	});
+
+	useEffect(() => {
 		if (query && query.page) {
 			setPage(parseInt(query.page as string));
 		}

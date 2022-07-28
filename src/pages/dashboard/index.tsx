@@ -38,7 +38,7 @@ const Dashboard = () => {
 							<TotalUsers />
 							<TotalConversions />
 						</Box>
-						<RecentConversionsTable data={conversions} />
+						<RecentConversionsTable  />
 						<RecentTransactionsTable data={[]} />
 					</Box>
 				</Box>

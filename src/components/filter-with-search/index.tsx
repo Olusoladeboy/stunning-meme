@@ -16,7 +16,7 @@ const FilterWithSearch = ({ isDisplayFilter = false }: Props) => {
 			sx={{
 				display: 'flex',
 				gap: '15px',
-				maxWidth: '540px',
+				maxWidth: isDisplayFilter ? '540px' : '320px',
 				width: '100%',
 				alignItems: 'center',
 			}}

@@ -73,6 +73,7 @@ export type UserDetailsType = {
 	createdAt: string;
 	id: string;
 	avatar: string;
+	kycLevel: string;
 };
 
 export type LoginDetailsType = {

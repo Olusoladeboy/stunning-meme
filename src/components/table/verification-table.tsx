@@ -1,4 +1,4 @@
-import React, { CSSProperties, useState } from 'react';
+import React, { CSSProperties } from 'react';
 import Table from '@mui/material/Table';
 import { useNavigate } from 'react-router-dom';
 import Box from '@mui/material/Box';
@@ -6,21 +6,29 @@ import { Avatar, Typography, useTheme } from '@mui/material';
 import TableBody from '@mui/material/TableBody';
 import TableHead from '@mui/material/TableHead';
 import { grey } from '@mui/material/colors';
-import { SUCCESS_COLOR, BOX_SHADOW } from '../../utilities/constant';
+import {
+	SUCCESS_COLOR,
+	BOX_SHADOW,
+	DANGER_COLOR,
+} from '../../utilities/constant';
 import FilterIcon from '../icons/filter';
 import {
 	StyledTableCell as TableCell,
 	StyledTableRow as TableRow,
 } from './components';
 import TableHeader from '../header/table-header';
-import REFERRALS from '../../utilities/data/referrals';
 import Empty from '../empty';
-import Pagination from '../pagination';
 import Button from '../button';
 import LINKS from '../../utilities/links';
+import { UserDetailsType } from '../../utilities/types';
+import Loader from '../loader/table-loader';
 
-const VerificationTable = () => {
-	const [data] = useState<{ [key: string]: any }[] | null>(REFERRALS);
+type Props = {
+	users: UserDetailsType[] | null;
+	isLoading?: boolean;
+};
+
+const VerificationTable = ({ users, isLoading }: Props) => {
 	const navigate = useNavigate();
 
 	const theme = useTheme();
@@ -95,54 +103,67 @@ const VerificationTable = () => {
 							},
 						}}
 					>
-						{data && data.length > 0 ? (
-							data.map((row, key) => (
-								<TableRow key={key}>
-									<TableCell sx={{ maxWidth: '30px' }}>
-										<Avatar src={row.avatar} />
-									</TableCell>
-									<TableCell style={styles.tableText}>{row.name}</TableCell>
-									<TableCell style={styles.tableText}>{row.email}</TableCell>
-									<TableCell style={styles.tableText}>{row.email}</TableCell>
-									<TableCell style={styles.tableText}>
-										{row.number_of_referees}
-									</TableCell>
-									<TableCell sx={{ maxWidth: '140px' }}>
-										<Box style={styles.verifyPushWrapper}>
-											<Button size={'small'} style={styles.verifyBtn}>
-												Verify user
-											</Button>
-											<Button
-												onClick={() => navigate(LINKS.PushNotification)}
-												size={'small'}
-												style={styles.pushBtn}
-											>
-												Push notify
-											</Button>
-										</Box>
-									</TableCell>
-								</TableRow>
-							))
+						{isLoading ? (
+							<Loader colSpan={6} />
 						) : (
-							<TableRow>
-								<TableCell colSpan={6}>
-									<Empty text={'No users'} />
-								</TableCell>
-							</TableRow>
+							users && (
+								<>
+									{users.length > 0 ? (
+										users.map((row, key) => (
+											<TableRow key={key}>
+												<TableCell sx={{ maxWidth: '60px' }}>
+													<Avatar src={row.avatar} />
+												</TableCell>
+												<TableCell style={styles.tableText}>
+													{row.firstname} {row.lastname}
+												</TableCell>
+												<TableCell style={styles.tableText}>
+													{row.email}
+												</TableCell>
+												<TableCell style={styles.tableText}>
+													{row.kycLevel}
+												</TableCell>
+												<TableCell
+													style={{
+														...styles.tableText,
+														color: row.verified ? SUCCESS_COLOR : DANGER_COLOR,
+													}}
+												>
+													{row.verified ? 'Verified' : 'Not Verified'}
+												</TableCell>
+												<TableCell sx={{ maxWidth: '180px' }}>
+													<Box style={styles.verifyPushWrapper}>
+														{row.verified && (
+															<Button
+																size={'small'}
+																style={styles.verifyBtn as CSSProperties}
+															>
+																Verify user
+															</Button>
+														)}
+														<Button
+															onClick={() => navigate(LINKS.PushNotification)}
+															size={'small'}
+															style={styles.pushBtn as CSSProperties}
+														>
+															Push notify
+														</Button>
+													</Box>
+												</TableCell>
+											</TableRow>
+										))
+									) : (
+										<TableRow>
+											<TableCell colSpan={6}>
+												<Empty text={'No users'} />
+											</TableCell>
+										</TableRow>
+									)}
+								</>
+							)
 						)}
 					</TableBody>
 				</Table>
-				<Pagination
-					sx={{
-						display: 'flex',
-						justifyContent: 'flex-end',
-						marginTop: theme.spacing(4),
-						marginRight: '1rem',
-					}}
-					size={'large'}
-					shape={'rounded'}
-					variant={'outlined'}
-				/>
 			</Box>
 		</>
 	);
@@ -194,10 +215,12 @@ const useStyles = (theme: any) => ({
 	verifyBtn: {
 		color: SUCCESS_COLOR,
 		border: `1px solid ${SUCCESS_COLOR}`,
+		whiteSpace: 'nowrap',
 	},
 	pushBtn: {
 		color: theme.palette.secondary.main,
 		border: `1px solid ${theme.palette.secondary.main}`,
+		whiteSpace: 'nowrap',
 	},
 });
 

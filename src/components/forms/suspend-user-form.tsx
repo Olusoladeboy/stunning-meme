@@ -22,7 +22,7 @@ const SuspendUserForm = () => {
 
 				<Box>
 					<TextInput
-						multiline
+						multiline={true}
 						rows={4}
 						fullWidth
 						placeholder={'Enter suspension note'}

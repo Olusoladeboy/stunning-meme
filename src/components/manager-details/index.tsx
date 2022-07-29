@@ -3,16 +3,23 @@ import { Box, Typography, useTheme } from '@mui/material';
 import { grey, red } from '@mui/material/colors';
 import UserAvatarWithDetails from '../avatar-with-details/manager';
 import Button from '../button';
-import { ManagerDetailsDataTypes } from '../../utilities/types';
+import { ManagerDetailsDataTypes, ManagerTypes } from '../../utilities/types';
 
-interface ManagerDetailsTypes extends ManagerDetailsDataTypes {}
+interface ManagerDetailsTypes extends ManagerDetailsDataTypes {
+	role?: string;
+}
 
 type Props = {
 	managerDetail: ManagerDetailsTypes;
 	handleEdit?: () => void;
+	type?: ManagerTypes.Manager | ManagerTypes.Admin;
 };
 
-const ManagerDetails = ({ managerDetail, handleEdit }: Props) => {
+const ManagerDetails = ({
+	managerDetail,
+	handleEdit,
+	type = ManagerTypes.Manager,
+}: Props) => {
 	const theme = useTheme();
 	const styles = useStyles(theme);
 	return (
@@ -39,23 +46,27 @@ const ManagerDetails = ({ managerDetail, handleEdit }: Props) => {
 						<Typography variant={'body1'}>{managerDetail.phone}</Typography>
 					</Box>
 				</Box>
-				<Box
-					sx={{
-						display: 'flex',
-						flexDirection: 'column',
-						gap: theme.spacing(3),
-					}}
-				>
-					<Button
-						onClick={() => typeof handleEdit !== 'undefined' && handleEdit()}
-						style={styles.editBtn as CSSProperties}
+				{managerDetail?.role !== 'SUPER_ADMIN' && (
+					<Box
+						sx={{
+							display: 'flex',
+							flexDirection: 'column',
+							gap: theme.spacing(3),
+						}}
 					>
-						Edit profile
-					</Button>
-					<Button style={styles.deleteBtn as CSSProperties}>
-						Delete Admin
-					</Button>
-				</Box>
+						<Button
+							onClick={() => typeof handleEdit !== 'undefined' && handleEdit()}
+							style={styles.editBtn as CSSProperties}
+						>
+							Edit profile
+						</Button>
+						<Button style={styles.deleteBtn as CSSProperties}>
+							{type === ManagerTypes.Manager
+								? 'Delete Manager'
+								: 'Delete Admin'}
+						</Button>
+					</Box>
+				)}
 			</Box>
 		</Box>
 	);

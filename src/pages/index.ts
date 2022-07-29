@@ -20,6 +20,7 @@ import Kyc from './verification/kyc';
 import Suspension from './suspension';
 import AuditLogs from './audit-logs';
 import Dispute from './dispute';
+import Admin from './admin';
 
 import LINKS from '../utilities/links';
 
@@ -54,6 +55,10 @@ const Pages = {
 	},
 	Managers: {
 		Component: Managers,
+		path: LINKS.Managers,
+	},
+	Admin: {
+		Component: Admin,
 		path: LINKS.Managers,
 	},
 	Transactions: {

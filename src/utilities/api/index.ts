@@ -7,6 +7,7 @@ import DataPlan from './data-plan';
 import Transactions from './transactions';
 import ConvertAirtime from './convert-airtime';
 import Wallet from './wallet';
+import Staff from './staff';
 
 const Api = {
 	Account,
@@ -18,6 +19,7 @@ const Api = {
 	Transactions,
 	ConvertAirtime,
 	Wallet,
+	Staff,
 };
 
 export default Api;

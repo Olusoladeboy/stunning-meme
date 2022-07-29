@@ -5,13 +5,13 @@ const Account = {
 	Login: async (data: LoginDataTypes) =>
 		apiRequest({
 			method: 'POST',
-			url: API_ENDPOINTS.Login,
+			url: `${API_ENDPOINTS.Staff}/login`,
 			data,
 		}),
 	GetUser: async (token: string) =>
 		apiRequest({
 			method: 'GET',
-			url: API_ENDPOINTS.GetUser,
+			url: `${API_ENDPOINTS.Staff}/me`,
 			token,
 		}),
 };

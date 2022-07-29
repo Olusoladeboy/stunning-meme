@@ -27,6 +27,7 @@ export enum QueryKeyTypes {
 	UserWallet = '@Query:User_Wallet',
 	UserWalletTransaction = '@Query:User_Wallet_Transaction',
 	UserTransactions = '@Query:User_Transactions',
+	AllStaff = '@Query:All_Staff',
 }
 
 export enum RegistrationStepTypes {
@@ -181,6 +182,7 @@ export enum NetworkStatusTypes {
 export enum API_ENDPOINTS {
 	Login = '/staff/login',
 	GetUser = '/staff/me',
+	Staff = '/staff',
 	Manager = '/manager',
 	User = '/user',
 	DataNetwork = '/data-networks',

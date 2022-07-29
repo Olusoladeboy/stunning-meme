@@ -47,14 +47,26 @@ const Router = () => {
 					}
 				/>
 			</Route>
-			<Route
-				path={Pages.Managers.path}
-				element={
-					<PrivateRoute>
-						<Pages.Managers.Component />
-					</PrivateRoute>
-				}
-			/>
+			<Route path={'/managers'}>
+				<Route
+					path={''}
+					element={
+						<PrivateRoute>
+							<Pages.Managers.Component />
+						</PrivateRoute>
+					}
+				/>
+
+				<Route
+					path={'admin'}
+					element={
+						<PrivateRoute>
+							<Pages.Admin.Component />
+						</PrivateRoute>
+					}
+				/>
+			</Route>
+
 			<Route
 				path={Pages.Transactions.path}
 				element={

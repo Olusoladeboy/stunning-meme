@@ -4,7 +4,7 @@ import FilterWithSearch from '../filter-with-search';
 import BackButton from '../back-button';
 
 interface Props extends BoxProps {
-	title?: string;
+	title?: any;
 	hideTitle?: boolean;
 	isDisplayBackButton?: boolean;
 	backButtonText?: string;
@@ -32,9 +32,15 @@ const TableHeader = ({
 			}}
 		>
 			{title ? (
-				<Typography sx={{ fontWeight: '600' }} variant={'h5'}>
-					{title}
-				</Typography>
+				<>
+					{typeof title === 'string' ? (
+						<Typography sx={{ fontWeight: '600' }} variant={'h5'}>
+							{title}
+						</Typography>
+					) : (
+						title
+					)}
+				</>
 			) : (
 				isDisplayBackButton && <BackButton text={backButtonText} />
 			)}

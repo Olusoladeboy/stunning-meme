@@ -1,4 +1,4 @@
-import React, { CSSProperties, useEffect, useState } from 'react';
+import React, { CSSProperties, useState } from 'react';
 import { Box, Typography, useTheme } from '@mui/material';
 import { grey } from '@mui/material/colors';
 import { useQuery } from 'react-query';
@@ -13,7 +13,7 @@ import { useAppSelector } from '../../store/hooks';
 import { QueryKeyTypes, UserDetailsType } from '../../utilities/types';
 
 type Props = {
-	user?: UserDetailsType | null;
+	user: UserDetailsType | null;
 };
 
 const UserWallet = ({ user }: Props) => {
@@ -50,8 +50,6 @@ const UserWallet = ({ user }: Props) => {
 			},
 		}
 	);
-
-	console.log('amount: ', amount);
 
 	return (
 		<>

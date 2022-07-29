@@ -18,34 +18,35 @@ import Empty from '../empty';
 import Pagination from '../pagination';
 import Button from '../button';
 import { ManagerTypes, ManagerDetailsDataTypes } from '../../utilities/types';
-import AddManagerForm from '../forms/manager-admin-form';
+import ManagerAdminForm from '../forms/manager-admin-form';
 import ManagerDetails from '../manager-details';
 import TableLoader from '../loader/table-loader';
 import ManagerTableHeader from '../header/manager-table-header';
 
-interface ManagerDetailsType extends ManagerDetailsDataTypes {
+interface AdminUserDetails extends ManagerDetailsDataTypes {
 	avatar: string;
 	createdAt: string;
+	role: string;
 }
 
 type Props = {
-	managers: ManagerDetailsType[];
+	managers: AdminUserDetails[];
 	isLoading: boolean;
 };
 
-const ManagersTable = ({ managers, isLoading }: Props) => {
+const AdminUserTable = ({ managers, isLoading }: Props) => {
 	const [managerType, setManagerType] = useState<ManagerTypes | null>(null);
 	const [formActionType, setFormActionType] = useState<'edit' | 'add' | ''>('');
-	const [selectedManager, setSelectedManager] =
-		useState<ManagerDetailsType | null>(null);
+	const [selectedAdminUser, setSelectedAdminUser] =
+		useState<AdminUserDetails | null>(null);
 	const [isViewManager, setViewManager] = useState<boolean>(false);
 	const [isEditManager, setEditManager] = useState<boolean>(false);
 
 	const theme = useTheme();
 	const styles = useStyles(theme);
 
-	const handleViewManager = (data: ManagerDetailsType) => {
-		setSelectedManager(data);
+	const handleViewAdminUser = (data: AdminUserDetails) => {
+		setSelectedAdminUser(data);
 		setViewManager(true);
 	};
 
@@ -78,7 +79,7 @@ const ManagersTable = ({ managers, isLoading }: Props) => {
 
 	const onSuccess = () => {
 		setFormActionType('');
-		setSelectedManager(null);
+		setSelectedAdminUser(null);
 		setEditManager(false);
 	};
 
@@ -86,29 +87,34 @@ const ManagersTable = ({ managers, isLoading }: Props) => {
 		<>
 			{formActionType && (
 				<ModalWrapper
-					close={() => setFormActionType('')}
+					close={() => {
+						setFormActionType('');
+						setSelectedAdminUser(null);
+						setEditManager(false);
+					}}
 					title={
 						<Typography variant={'h5'} sx={{ textTransform: 'uppercase' }}>
 							{formActionType} {managerType}
 						</Typography>
 					}
 				>
-					<AddManagerForm
+					<ManagerAdminForm
 						onSuccess={() => onSuccess()}
 						isEdit={isEditManager}
-						type={ManagerTypes.Manager}
-						managerDetails={selectedManager}
+						type={ManagerTypes.Admin}
+						managerDetails={selectedAdminUser}
 					/>
 				</ModalWrapper>
 			)}
-			{selectedManager && isViewManager && (
+			{selectedAdminUser && isViewManager && (
 				<ModalWrapper
-					close={() => setSelectedManager(null)}
-					title={'View manager'}
+					close={() => setSelectedAdminUser(null)}
+					title={'View Admin User'}
 				>
 					<ManagerDetails
 						handleEdit={() => handleAddEditManager({ isEdit: true })}
-						managerDetail={selectedManager}
+						managerDetail={selectedAdminUser}
+						type={ManagerTypes.Admin}
 					/>
 				</ModalWrapper>
 			)}
@@ -117,7 +123,7 @@ const ManagersTable = ({ managers, isLoading }: Props) => {
 					style={styles.tableHeader as CSSProperties}
 					sx={{ padding: '0px 1rem' }}
 				>
-					<ManagerTableHeader title={'Managers'} />
+					<ManagerTableHeader title={'Admin'} />
 					<Box
 						sx={{
 							alignSelf: 'flex-end',
@@ -134,18 +140,6 @@ const ManagersTable = ({ managers, isLoading }: Props) => {
 							style={styles.btnOutline as CSSProperties}
 						>
 							Add admin
-						</Button>
-						<Button
-							onClick={() =>
-								handleAddEditManager({
-									type: ManagerTypes.Manager,
-									isAdd: true,
-								})
-							}
-							startIcon={<AddCircle />}
-							style={styles.btnOutline as CSSProperties}
-						>
-							Add manager
 						</Button>
 					</Box>
 				</Box>
@@ -172,11 +166,20 @@ const ManagersTable = ({ managers, isLoading }: Props) => {
 							<TableCell>
 								<Box style={styles.filterWrapper}>
 									<Typography style={styles.tableHeaderText} variant={'body1'}>
+										Role
+									</Typography>
+									<FilterIcon />
+								</Box>
+							</TableCell>
+							<TableCell>
+								<Box style={styles.filterWrapper}>
+									<Typography style={styles.tableHeaderText} variant={'body1'}>
 										Email
 									</Typography>
 									<FilterIcon />
 								</Box>
 							</TableCell>
+
 							<TableCell>
 								<Box style={styles.filterWrapper}>
 									<Typography style={styles.tableHeaderText} variant={'body1'}>
@@ -189,14 +192,6 @@ const ManagersTable = ({ managers, isLoading }: Props) => {
 								<Box style={styles.filterWrapper}>
 									<Typography style={styles.tableHeaderText} variant={'body1'}>
 										Date
-									</Typography>
-									<FilterIcon />
-								</Box>
-							</TableCell>
-							<TableCell>
-								<Box style={styles.filterWrapper}>
-									<Typography style={styles.tableHeaderText} variant={'body1'}>
-										User
 									</Typography>
 									<FilterIcon />
 								</Box>
@@ -214,20 +209,19 @@ const ManagersTable = ({ managers, isLoading }: Props) => {
 							<TableLoader colSpan={6} />
 						) : managers && managers.length > 0 ? (
 							managers.map((data, key) => (
-								<TableRow onClick={() => handleViewManager(data)} key={key}>
+								<TableRow onClick={() => handleViewAdminUser(data)} key={key}>
 									<TableCell sx={{ maxWidth: '60px' }}>
 										<Avatar src={data.avatar} />
 									</TableCell>
 									<TableCell
 										style={styles.tableText}
 									>{`${data.firstname} ${data.lastname}`}</TableCell>
+									<TableCell style={styles.tableText}>{data.role}</TableCell>
 									<TableCell style={styles.tableText}>{data.email}</TableCell>
 									<TableCell style={styles.tableText}>{data.phone}</TableCell>
 									<TableCell style={styles.tableText}>
 										{moment.utc(data.createdAt).format('l')}
 									</TableCell>
-
-									<TableCell style={styles.tableText}>{0}</TableCell>
 								</TableRow>
 							))
 						) : (
@@ -295,4 +289,4 @@ const useStyles = (theme: any) => ({
 	},
 });
 
-export default ManagersTable;
+export default AdminUserTable;

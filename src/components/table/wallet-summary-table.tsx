@@ -231,7 +231,7 @@ const useStyles = (theme: any) => ({
 		color: theme.palette.primary.main,
 	},
 	paginationWrapper: {
-		marginLeft: '20px',
+		marginRight: '20px',
 		marginTop: '2rem',
 		display: 'flex',
 		justifyContent: 'flex-end',

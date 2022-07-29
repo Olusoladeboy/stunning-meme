@@ -1,5 +1,5 @@
-import React, { CSSProperties, useEffect } from 'react';
-import { Box, useTheme, Typography } from '@mui/material';
+import React, { CSSProperties } from 'react';
+import { Box, useTheme, Typography, MenuItem } from '@mui/material';
 import { useFormik } from 'formik';
 import { useMutation, useQueryClient } from 'react-query';
 import { useSnackbar } from 'notistack';
@@ -15,9 +15,14 @@ import Api from '../../utilities/api';
 import ValidationSchema from '../../utilities/validationSchema';
 import { useAppSelector } from '../../store/hooks';
 import handleResponse from '../../utilities/helpers/handleResponse';
+import Select from '../form-components/Select';
+
+const AMIN_ROLES = ['OPERATIONS', 'CUSTOMER_SUPPORT'];
+const SELECT_ADMIN_PRIVILEDGE = 'Select Admin Priviledge';
 
 interface ManagerDetails extends ManagerDetailsDataTypes {
 	id?: string;
+	role?: string;
 }
 
 type Props = {
@@ -27,7 +32,12 @@ type Props = {
 	isEdit?: boolean;
 };
 
-const AddManagerForm = ({ type, onSuccess, managerDetails, isEdit }: Props) => {
+const ManagerAdminForm = ({
+	type,
+	onSuccess,
+	managerDetails,
+	isEdit,
+}: Props) => {
 	const theme = useTheme();
 	const styles = useStyles(theme);
 	const queryClient = useQueryClient();
@@ -39,9 +49,10 @@ const AddManagerForm = ({ type, onSuccess, managerDetails, isEdit }: Props) => {
 		lastname: '',
 		phone: '',
 		email: '',
+		role: SELECT_ADMIN_PRIVILEDGE,
 	};
 
-	const { isLoading, mutate: createManager } = useMutation(
+	const { isLoading: isCreatingManager, mutate: createManager } = useMutation(
 		Api.Manager.CreateManager,
 		{
 			onSettled: (data, error) => {
@@ -61,7 +72,27 @@ const AddManagerForm = ({ type, onSuccess, managerDetails, isEdit }: Props) => {
 		}
 	);
 
-	const { isLoading: isUpdating, mutate: updateManager } = useMutation(
+	const { isLoading: isCreatingStaff, mutate: createStaff } = useMutation(
+		Api.Staff.Create,
+		{
+			onSettled: (data, error) => {
+				if (data && data.success) {
+					resetForm();
+					queryClient.invalidateQueries(QueryKeyTypes.AllStaff);
+					enqueueSnackbar(data.message, { variant: 'success' });
+					typeof onSuccess !== 'undefined' && onSuccess();
+				}
+				if (error) {
+					const res = handleResponse({ error, isDisplayMessage: true });
+					if (res?.message) {
+						enqueueSnackbar(res.message, { variant: 'error' });
+					}
+				}
+			},
+		}
+	);
+
+	const { isLoading: isUpdatingManager, mutate: updateManager } = useMutation(
 		Api.Manager.UpdateManager,
 		{
 			onSettled: (data, error) => {
@@ -81,42 +112,61 @@ const AddManagerForm = ({ type, onSuccess, managerDetails, isEdit }: Props) => {
 		}
 	);
 
-	const {
-		values,
-		handleSubmit,
-		handleChange,
-		errors,
-		touched,
-		resetForm,
-		setValues,
-	} = useFormik({
-		initialValues,
-		validationSchema: ValidationSchema.ManagerDetails,
-		onSubmit: (values) => {
-			if (isEdit && managerDetails && managerDetails.id) {
-				return updateManager({
-					token: token || '',
-					data: values,
-					id: managerDetails.id,
-				});
-			}
-			createManager({ data: values, token: token || '' });
-		},
-	});
-
-	useEffect(() => {
-		if (managerDetails) {
-			const { firstname, lastname, phone, email } = managerDetails;
-			setValues({
-				firstname,
-				lastname,
-				email,
-				phone,
-			});
+	const { isLoading: isUpdatingStaff, mutate: updateStaff } = useMutation(
+		Api.Staff.Update,
+		{
+			onSettled: (data, error) => {
+				if (data && data.success) {
+					resetForm();
+					queryClient.invalidateQueries(QueryKeyTypes.AllStaff);
+					enqueueSnackbar(data.message, { variant: 'success' });
+					typeof onSuccess !== 'undefined' && onSuccess();
+				}
+				if (error) {
+					const res = handleResponse({ error, isDisplayMessage: true });
+					if (res?.message) {
+						enqueueSnackbar(res.message, { variant: 'error' });
+					}
+				}
+			},
 		}
-	}, [managerDetails, setValues]);
+	);
 
-	const { firstname, lastname, email, phone } = values;
+	const { values, handleSubmit, handleChange, errors, touched, resetForm } =
+		useFormik({
+			initialValues: managerDetails ? managerDetails : initialValues,
+			validationSchema: ValidationSchema.ManagerDetails,
+			onSubmit: (values) => {
+				const { role, ...rest } = values;
+				if (type === ManagerTypes.Manager) {
+					if (isEdit && managerDetails && managerDetails.id) {
+						return updateManager({
+							token: token as string,
+							data: rest,
+							id: managerDetails.id,
+						});
+					}
+					createManager({
+						data: rest,
+						token: token as string,
+					});
+				} else {
+					if (isEdit && managerDetails && managerDetails.id) {
+						return updateStaff({
+							token: token as string,
+							data: { ...rest, role: role as string },
+							id: managerDetails.id,
+						});
+					}
+					createStaff({
+						data: { ...rest, role: role as string },
+						token: token as string,
+					});
+				}
+			},
+		});
+
+	const { firstname, lastname, email, phone, role } = values;
 
 	return (
 		<Box style={styles.form as CSSProperties} component={'form'}>
@@ -203,16 +253,25 @@ const AddManagerForm = ({ type, onSuccess, managerDetails, isEdit }: Props) => {
 					<Typography variant={'body1'} style={styles.label}>
 						Select priviledge
 					</Typography>
-					<TextInput
-						fullWidth
-						placeholder={'last name'}
-						value={lastname}
-						onChange={handleChange('lastname')}
-					/>
+					<Select fullWidth value={role} onChange={handleChange('role') as any}>
+						<MenuItem value={SELECT_ADMIN_PRIVILEDGE}>
+							{SELECT_ADMIN_PRIVILEDGE}
+						</MenuItem>
+						{AMIN_ROLES.map((role) => (
+							<MenuItem value={role} key={role}>
+								{role}
+							</MenuItem>
+						))}
+					</Select>
 				</Box>
 			</Box>
 			<Button
-				loading={isLoading || isUpdating}
+				loading={
+					isCreatingManager ||
+					isUpdatingManager ||
+					isCreatingStaff ||
+					isUpdatingStaff
+				}
 				buttonProps={{
 					type: 'submit',
 					onClick: (e) => {
@@ -259,4 +318,4 @@ const useStyles = (theme: any) => ({
 	},
 });
 
-export default AddManagerForm;
+export default ManagerAdminForm;

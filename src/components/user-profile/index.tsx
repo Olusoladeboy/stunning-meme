@@ -11,8 +11,6 @@ import UserWallet from '../user-wallet';
 import { UserDetailsType } from '../../utilities/types';
 import { SUCCESS_COLOR } from '../../utilities/constant';
 
-interface UserDetails extends UserDetailsType {}
-
 type Props = {
 	user: UserDetailsType | null;
 };
@@ -33,7 +31,7 @@ const UserProfile = ({ user }: Props) => {
 				}}
 			>
 				<UserAvatarWithDetails user={user} />
-				<UserWallet />
+				<UserWallet user={user} />
 			</Box>
 			<Box sx={{ marginTop: theme.spacing(5) }}>
 				{isEditProfile && (

@@ -6,9 +6,10 @@ import { UserNavList } from '../../utilities/types';
 
 type Props = {
 	handleChange: (value: string) => void;
+	currentTab: string;
 };
 
-const UserTab = ({ handleChange }: Props) => {
+const UserTab = ({ handleChange, currentTab }: Props) => {
 	const styles = useStyles();
 	return (
 		<Box
@@ -22,34 +23,71 @@ const UserTab = ({ handleChange }: Props) => {
 		>
 			<Button
 				onClick={() => handleChange(UserNavList.Profile)}
-				style={styles.btn as CSSProperties}
-				sx={{
-					backgroundColor: `${LIGHT_PRIMARY_COLOR} !important`,
-				}}
+				style={
+					{
+						...styles.btn,
+						backgroundColor:
+							currentTab === UserNavList.Profile
+								? `${LIGHT_PRIMARY_COLOR}`
+								: '#CDD9F5',
+					} as CSSProperties
+				}
 			>
 				{UserNavList.Profile}
 			</Button>
 			<Button
 				onClick={() => handleChange(UserNavList.Status)}
-				style={styles.btn as CSSProperties}
+				style={
+					{
+						...styles.btn,
+						backgroundColor:
+							currentTab === UserNavList.Status
+								? `${LIGHT_PRIMARY_COLOR}`
+								: '#CDD9F5',
+					} as CSSProperties
+				}
 			>
 				{UserNavList.Status}
 			</Button>
 			<Button
 				onClick={() => handleChange(UserNavList.Transaction)}
-				style={styles.btn as CSSProperties}
+				style={
+					{
+						...styles.btn,
+						backgroundColor:
+							currentTab === UserNavList.Transaction
+								? `${LIGHT_PRIMARY_COLOR}`
+								: '#CDD9F5',
+					} as CSSProperties
+				}
 			>
 				{UserNavList.Transaction}
 			</Button>
 			<Button
 				onClick={() => handleChange(UserNavList.WalletSummary)}
-				style={styles.btn as CSSProperties}
+				style={
+					{
+						...styles.btn,
+						backgroundColor:
+							currentTab === UserNavList.WalletSummary
+								? `${LIGHT_PRIMARY_COLOR}`
+								: '#CDD9F5',
+					} as CSSProperties
+				}
 			>
 				Wallet Summary
 			</Button>
 			<Button
 				onClick={() => handleChange(UserNavList.Manager)}
-				style={styles.btn as CSSProperties}
+				style={
+					{
+						...styles.btn,
+						backgroundColor:
+							currentTab === UserNavList.Manager
+								? `${LIGHT_PRIMARY_COLOR}`
+								: '#CDD9F5',
+					} as CSSProperties
+				}
 			>
 				{UserNavList.Manager}
 			</Button>

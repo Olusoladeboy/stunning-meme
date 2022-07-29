@@ -129,7 +129,10 @@ const Profile = () => {
 								}}
 							>
 								<BackButton />
-								<UserTab handleChange={handleChangeTab} />
+								<UserTab
+									currentTab={currentTab as string}
+									handleChange={handleChangeTab}
+								/>
 							</Box>
 							<>
 								<Box

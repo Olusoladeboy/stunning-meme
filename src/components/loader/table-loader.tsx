@@ -5,6 +5,7 @@ import {
 	TableCell,
 	TableRow,
 	TableCellProps,
+	Typography,
 } from '@mui/material';
 
 interface TableLoaderProps extends TableCellProps {}
@@ -14,8 +15,16 @@ const TableLoader = (props: TableLoaderProps) => {
 	return (
 		<TableRow>
 			<TableCell colSpan={colSpan}>
-				<Box sx={{ display: 'flex' }}>
+				<Box
+					sx={{
+						display: 'flex',
+						alignItems: 'center',
+						flexDirection: 'column',
+						gap: '8px',
+					}}
+				>
 					<CircularProgress sx={{ margin: 'auto', alignSelf: 'center' }} />
+					<Typography variant={'body2'}>Loading...</Typography>
 				</Box>
 			</TableCell>
 		</TableRow>

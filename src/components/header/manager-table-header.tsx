@@ -8,7 +8,6 @@ import {
 	List,
 	ListItemButton,
 	ClickAwayListener,
-	Button,
 	useTheme,
 } from '@mui/material';
 import { ArrowDropDown } from '@mui/icons-material';

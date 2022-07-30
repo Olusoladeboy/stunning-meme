@@ -7,6 +7,7 @@ import {
 	SUCCESS_COLOR,
 	DANGER_COLOR,
 } from '../../utilities/constant';
+import LINKS from '../../utilities/links';
 
 const UserRecords = () => {
 	const theme = useTheme();
@@ -35,6 +36,7 @@ const UserRecords = () => {
 				text={'Verified Users'}
 				value={'480'}
 				isPaddingRight
+				link={LINKS.Verification}
 			/>
 			<RecordItem
 				isBorderLeft
@@ -51,6 +53,7 @@ const UserRecords = () => {
 				text={'Suspended Users'}
 				value={'7'}
 				isPaddingRight
+				link={LINKS.Suspension}
 			/>
 			<RecordItem
 				isBorderLeft

@@ -32,7 +32,7 @@ const Suspension = () => {
 	}, [query, query.page]);
 
 	const { isLoading, data } = useQuery(
-		QueryKeyTypes.AllUsers,
+		[QueryKeyTypes.AllUsers, 'suspension'],
 		() =>
 			Api.User.AllUsers({
 				token: token as string,
@@ -65,9 +65,9 @@ const Suspension = () => {
 	const handlePageChange = (page: number) => {
 		if (page !== 1) {
 			setPage(page);
-			navigate(`${LINKS.Users}?&page=${page}`);
+			navigate(`${LINKS.Suspension}?&page=${page}`);
 		} else {
-			navigate(LINKS.Users);
+			navigate(LINKS.Suspension);
 			setPage(page);
 		}
 	};

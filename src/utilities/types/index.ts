@@ -27,6 +27,8 @@ export enum QueryKeyTypes {
 	UserWallet = '@Query:User_Wallet',
 	UserWalletTransaction = '@Query:User_Wallet_Transaction',
 	UserTransactions = '@Query:User_Transactions',
+	AllTransactions = '@Query:All_Transactions',
+	RecentTransactions = '@Query:Recent_Transactions',
 	AllStaff = '@Query:All_Staff',
 }
 

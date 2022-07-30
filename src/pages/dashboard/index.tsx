@@ -38,8 +38,8 @@ const Dashboard = () => {
 							<TotalUsers />
 							<TotalConversions />
 						</Box>
-						<RecentConversionsTable  />
-						<RecentTransactionsTable data={[]} />
+						<RecentConversionsTable />
+						<RecentTransactionsTable />
 					</Box>
 				</Box>
 				<Box>

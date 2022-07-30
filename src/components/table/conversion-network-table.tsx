@@ -81,10 +81,8 @@ const ConversionNetworkTable = () => {
 				}
 
 				if (data && data.success) {
-					enqueueSnackbar(data.message, { variant: 'success' });
-					queryClient.invalidateQueries(QueryKeyTypes.DataNetwork);
-					queryClient.invalidateQueries(QueryKeyTypes.AirtimeNetwork);
 					queryClient.invalidateQueries(QueryKeyTypes.ConvertNetwork);
+					enqueueSnackbar(data.message, { variant: 'success' });
 				}
 			},
 		}
@@ -98,7 +96,7 @@ const ConversionNetworkTable = () => {
 		id: string;
 	}) => {
 		updateNetwork({
-			token: token || '',
+			token: token as string,
 			data: {
 				isActive: status,
 			},

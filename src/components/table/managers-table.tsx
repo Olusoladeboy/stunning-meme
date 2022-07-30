@@ -128,15 +128,6 @@ const ManagersTable = ({ managers, isLoading }: Props) => {
 					>
 						<Button
 							onClick={() =>
-								handleAddEditManager({ type: ManagerTypes.Admin, isAdd: true })
-							}
-							startIcon={<AddCircle />}
-							style={styles.btnOutline as CSSProperties}
-						>
-							Add admin
-						</Button>
-						<Button
-							onClick={() =>
 								handleAddEditManager({
 									type: ManagerTypes.Manager,
 									isAdd: true,

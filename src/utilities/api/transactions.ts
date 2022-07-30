@@ -7,17 +7,13 @@ const Transactions = {
 		params,
 	}: {
 		token: string;
-		sort?: string;
 		params?: { [key: string]: any };
 	}) =>
 		apiRequest({
 			method: 'GET',
 			url: API_ENDPOINTS.Transaction,
 			token,
-			params: {
-				sort: '-createdAt',
-				...params,
-			},
+			params,
 		}),
 	CreatePlan: async ({ token, data }: { token: string; data: DataPlanType }) =>
 		apiRequest({

@@ -45,34 +45,29 @@ const ManagerTableHeader = ({ title, sx, style }: Props) => {
 				...sx,
 			}}
 		>
-			<Box style={styles.titleButtonWrapper}>
-				<Typography sx={{ fontWeight: '600' }} variant={'h5'}>
-					{title}
-				</Typography>
-				<ClickAwayListener onClickAway={() => setAnchorEl(null)}>
-					<Box>
-						<Button
-							onClick={handleClick}
-							style={styles.button}
-							endIcon={<ArrowDropDown />}
-						>
+			<ClickAwayListener onClickAway={() => setAnchorEl(null)}>
+				<Box>
+					<Box style={styles.titleButtonWrapper} onClick={handleClick}>
+						<Typography sx={{ fontWeight: '600' }} variant={'h5'}>
 							{title}
-						</Button>
-						<Popper anchorEl={anchorEl} open={Boolean(anchorEl)}>
-							<List style={styles.list}>
-								<ListItemButton onClick={() => handleClickLink(LINKS.Managers)}>
-									Manager
-								</ListItemButton>
-								<ListItemButton
-									onClick={() => handleClickLink(`${LINKS.Managers}/admin`)}
-								>
-									Admin
-								</ListItemButton>
-							</List>
-						</Popper>
+						</Typography>
+						<ArrowDropDown />
 					</Box>
-				</ClickAwayListener>
-			</Box>
+
+					<Popper anchorEl={anchorEl} open={Boolean(anchorEl)}>
+						<List style={styles.list}>
+							<ListItemButton onClick={() => handleClickLink(LINKS.Managers)}>
+								Manager
+							</ListItemButton>
+							<ListItemButton
+								onClick={() => handleClickLink(`${LINKS.Managers}/admin`)}
+							>
+								Admin
+							</ListItemButton>
+						</List>
+					</Popper>
+				</Box>
+			</ClickAwayListener>
 			<Box sx={{ maxWidth: '420px', width: '100%' }}>
 				<Search fullWidth placeholder={'Search...'} />
 			</Box>
@@ -84,7 +79,8 @@ const useStyles = (theme: any) => ({
 	titleButtonWrapper: {
 		display: 'flex',
 		alignItems: 'center',
-		gap: theme.spacing(3),
+		gap: theme.spacing(1),
+		cursor: 'pointer',
 	},
 	button: {
 		color: grey[50],

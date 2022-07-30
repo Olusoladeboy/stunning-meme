@@ -56,7 +56,7 @@ const UserStatus = ({ user }: Props) => {
 					}}
 				>
 					<SuspendUserForm />
-					{/* <DeleteUserForm /> */}
+					<DeleteUserForm />
 				</Box>
 			</Box>
 		</Box>

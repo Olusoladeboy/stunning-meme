@@ -2,8 +2,6 @@ import React from 'react';
 import Table from '@mui/material/Table';
 import Box from '@mui/material/Box';
 import { Typography, useTheme } from '@mui/material';
-import { useQuery } from 'react-query';
-import { useSnackbar } from 'notistack';
 import TableBody from '@mui/material/TableBody';
 import TableCell, { tableCellClasses } from '@mui/material/TableCell';
 import { styled } from '@mui/material';
@@ -14,17 +12,11 @@ import { grey } from '@mui/material/colors';
 import Link from '../link';
 import LINKS from '../../utilities/links';
 import Api from '../../utilities/api';
-import handleResponse from '../../utilities/helpers/handleResponse';
 import { QueryKeyTypes } from '../../utilities/types';
 import { useAppSelector } from '../../store/hooks';
 import Loader from '../loader/table-loader';
 import Empty from '../empty/table-empty';
-
-type Props = {
-	data: {
-		[key: string]: any;
-	}[];
-};
+import { useQueryHook } from '../../utilities/api/hooks';
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
 	[`&.${tableCellClasses.head}`]: {
@@ -59,11 +51,10 @@ const RecentConversionsTable = () => {
 	const theme = useTheme();
 	const styles = useStyles(theme);
 	const { token } = useAppSelector((store) => store.authState);
-	const { enqueueSnackbar } = useSnackbar();
 
-	const { isLoading, data } = useQuery(
-		[QueryKeyTypes.ConvertAirtime, 'recent-airtime-convert'],
-		() =>
+	const { isLoading, data } = useQueryHook({
+		queryKey: [QueryKeyTypes.ConvertAirtime, 'recent-airtime-convert'],
+		queryFn: () =>
 			Api.ConvertAirtime.Records({
 				token: token as string,
 				params: {
@@ -72,18 +63,7 @@ const RecentConversionsTable = () => {
 					populate: 'network,user',
 				},
 			}),
-		{
-			enabled: !!token,
-			onSettled: (data, error) => {
-				if (error) {
-					const res = handleResponse({ error });
-					if (res?.message) {
-						enqueueSnackbar(res.message, { variant: 'error' });
-					}
-				}
-			},
-		}
-	);
+	});
 
 	return (
 		<Box style={styles.container} sx={{ overflow: 'auto' }}>

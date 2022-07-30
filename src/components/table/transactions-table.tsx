@@ -3,11 +3,10 @@ import Table from '@mui/material/Table';
 import Box from '@mui/material/Box';
 import { Typography, useTheme, Avatar } from '@mui/material';
 import TableBody from '@mui/material/TableBody';
-import TableCell, { tableCellClasses } from '@mui/material/TableCell';
-import { styled } from '@mui/material';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import { Check, Close, AccessTime } from '@mui/icons-material';
+import moment from 'moment';
 import {
 	LIGHT_GRAY,
 	SUCCESS_COLOR,
@@ -15,45 +14,20 @@ import {
 	DANGER_COLOR,
 } from '../../utilities/constant';
 import { TransactionStatusTypes } from '../../utilities/types';
-import { grey } from '@mui/material/colors';
 import FilterIcon from '../icons/filter';
+import { StyledTableCell, StyledTableRow } from './components';
+import Empty from '../empty/table-empty';
+import Loader from '../loader/table-loader';
+import formatNumberToCurrency from '../../utilities/helpers/formatNumberToCurrency';
 
 type Props = {
-	data: {
-		[key: string]: any;
-	}[];
+	data:
+		| {
+				[key: string]: any;
+		  }[]
+		| null;
+	isLoading?: boolean;
 };
-
-const StyledTableCell = styled(TableCell)(({ theme }) => ({
-	[`&.${tableCellClasses.head}`]: {
-		// backgroundColor: LIGHT_GRAY,
-		fontWeight: '600',
-		backgroundSize: 'cover',
-		backgroundPosition: 'top-left',
-		fontSize: '14px',
-		color: theme.palette.primary.main,
-		'& p': {
-			fontWeight: '600',
-		},
-	},
-	[`&.${tableCellClasses.body}`]: {
-		fontSize: '14px',
-	},
-}));
-
-const StyledTableRow = styled(TableRow)(({ theme }) => ({
-	color: theme.palette.primary.main,
-	'&:nth-of-type(even)': {
-		backgroundColor: LIGHT_GRAY,
-	},
-	'&:nth-of-type(odd)': {
-		backgroundColor: grey[50],
-	},
-	// hide last border
-	'&:last-child td, &:last-child th': {
-		border: 0,
-	},
-}));
 
 const setColor = (status: string) => {
 	if (status === TransactionStatusTypes.SUCCESSFUL) {
@@ -65,7 +39,7 @@ const setColor = (status: string) => {
 	}
 };
 
-const TransactionsTable = ({ data }: Props) => {
+const TransactionsTable = ({ data, isLoading }: Props) => {
 	const theme = useTheme();
 	const styles = useStyles(theme);
 	return (
@@ -122,75 +96,98 @@ const TransactionsTable = ({ data }: Props) => {
 						},
 					}}
 				>
-					{data.map((data, key) => (
-						<StyledTableRow key={key}>
-							<StyledTableCell style={styles.text}>
-								<Box
-									sx={{
-										display: 'flex',
-										alignItems: 'center',
-										gap: theme.spacing(2),
-									}}
-								>
-									<Avatar src={data.avatar} />
-									<Typography>{data.transaction_id}</Typography>
-								</Box>
-							</StyledTableCell>
-							<StyledTableCell style={styles.text}>
-								{data.transaction_type}
-							</StyledTableCell>
-							<StyledTableCell style={styles.text}>
-								{data.amount}
-							</StyledTableCell>
-							<StyledTableCell style={styles.text}>{data.date}</StyledTableCell>
-							<StyledTableCell style={styles.text}>{data.time}</StyledTableCell>
-							<StyledTableCell>
-								<Box
-									sx={{
-										display: 'flex',
-										color: setColor(data.status),
-										alignItems: 'center',
-										gap: theme.spacing(2),
-									}}
-								>
-									<Box
-										sx={{
-											padding: '5px',
-											position: 'relative',
-											height: '20px',
-											width: '20px',
-											display: 'flex',
-											alignItems: 'center',
-											justifyContent: 'center',
-											svg: {
-												fontSize: '14px',
-											},
-										}}
-									>
-										{data.status === TransactionStatusTypes.SUCCESSFUL ? (
-											<Check />
-										) : data.status === TransactionStatusTypes.PENDING ? (
-											<AccessTime />
-										) : (
-											<Close />
-										)}
-										<Box
-											sx={{
-												backgroundColor: setColor(data.status),
-												height: '100%',
-												width: '100%',
-												position: 'absolute',
-												zIndex: '0',
-												opacity: '0.15',
-												borderRadius: '50%',
-											}}
-										/>
-									</Box>
-									{data.status}
-								</Box>
-							</StyledTableCell>
-						</StyledTableRow>
-					))}
+					{isLoading ? (
+						<Loader colSpan={7} />
+					) : (
+						data && (
+							<>
+								{data.length > 0 ? (
+									data.map((data, key) => (
+										<StyledTableRow key={key}>
+											<StyledTableCell style={styles.text}>
+												<Box
+													sx={{
+														display: 'flex',
+														alignItems: 'center',
+														gap: theme.spacing(2),
+													}}
+												>
+													<Avatar style={styles.avatar} src={data.avatar} />
+													<Typography>{data.reference}</Typography>
+												</Box>
+											</StyledTableCell>
+											<StyledTableCell style={styles.text}>
+												{data.service}
+											</StyledTableCell>
+
+											<StyledTableCell style={styles.text}>
+												{data.reference}
+											</StyledTableCell>
+
+											<StyledTableCell style={styles.text}>
+												{moment.utc(data.createdAt).format('ll')}
+											</StyledTableCell>
+											<StyledTableCell style={styles.text}>
+												{moment.utc(data.createdAt).format('LT')}
+											</StyledTableCell>
+											<StyledTableCell>
+												<Box
+													sx={{
+														display: 'flex',
+														color: setColor(data.status),
+														alignItems: 'center',
+														gap: theme.spacing(2),
+													}}
+												>
+													<Box
+														sx={{
+															padding: '5px',
+															position: 'relative',
+															height: '20px',
+															width: '20px',
+															display: 'flex',
+															alignItems: 'center',
+															justifyContent: 'center',
+															svg: {
+																fontSize: '14px',
+															},
+														}}
+													>
+														{data.status ===
+														TransactionStatusTypes.SUCCESSFUL ? (
+															<Check />
+														) : data.status ===
+														  TransactionStatusTypes.PENDING ? (
+															<AccessTime />
+														) : (
+															<Close />
+														)}
+														<Box
+															sx={{
+																backgroundColor: setColor(data.status),
+																height: '100%',
+																width: '100%',
+																position: 'absolute',
+																zIndex: '0',
+																opacity: '0.15',
+																borderRadius: '50%',
+															}}
+														/>
+													</Box>
+													{'Status'}
+												</Box>
+											</StyledTableCell>
+											<StyledTableCell style={styles.text}>
+												{formatNumberToCurrency(data.amount.$numberDecimal)}
+											</StyledTableCell>
+										</StyledTableRow>
+									))
+								) : (
+									<Empty colSpan={7} text={'No Transactions'} />
+								)}
+							</>
+						)
+					)}
 				</TableBody>
 			</Table>
 		</Box>
@@ -211,6 +208,10 @@ const useStyles = (theme: any) => ({
 	},
 	text: {
 		color: theme.palette.primary.main,
+	},
+	avatar: {
+		height: '30px',
+		width: '30px',
 	},
 });
 

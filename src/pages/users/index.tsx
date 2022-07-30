@@ -2,21 +2,18 @@ import React, { useState, useEffect } from 'react';
 import { Box } from '@mui/material';
 import { useNavigate, useLocation } from 'react-router-dom';
 import queryString from 'query-string';
-import { useQuery } from 'react-query';
-import { useSnackbar } from 'notistack';
 import Layout from '../../components/layout';
 import UsersTable from '../../components/table/users-table';
 import { useAppSelector } from '../../store/hooks';
 import Api from '../../utilities/api';
 import { QueryKeyTypes } from '../../utilities/types';
-import handleResponse from '../../utilities/helpers/handleResponse';
 import Pagination from '../../components/pagination';
 import { MAX_RECORDS } from '../../utilities/constant';
 import LINKS from '../../utilities/links';
+import { useQueryHook } from '../../utilities/api/hooks';
 
 const Users = () => {
 	const { token } = useAppSelector((store) => store.authState);
-	const { enqueueSnackbar } = useSnackbar();
 
 	const navigate = useNavigate();
 	const [count, setCount] = useState<number>(1);
@@ -31,9 +28,9 @@ const Users = () => {
 		}
 	}, [query, query.page]);
 
-	const { isLoading, data } = useQuery(
-		QueryKeyTypes.AllUsers,
-		() =>
+	const { isLoading, data } = useQueryHook({
+		queryKey: QueryKeyTypes.AllUsers,
+		queryFn: () =>
 			Api.User.AllUsers({
 				token: token as string,
 				params: {
@@ -43,24 +40,13 @@ const Users = () => {
 					populate: 'manager',
 				},
 			}),
-		{
-			enabled: !!token,
-			onSettled: (data, error) => {
-				if (error) {
-					const res = handleResponse({ error, isDisplayMessage: true });
-					if (res?.message) {
-						enqueueSnackbar(res.message, { variant: 'error' });
-					}
-				}
-				if (data && data.success) {
-					const total = data.metadata.total;
-					setTotal(data.metadata.total);
-					const count = Math.ceil(total / MAX_RECORDS);
-					setCount(count);
-				}
-			},
-		}
-	);
+		onSuccessFn: (data: any) => {
+			const total = data.metadata.total;
+			setTotal(data.metadata.total);
+			const count = Math.ceil(total / MAX_RECORDS);
+			setCount(count);
+		},
+	});
 
 	const handlePageChange = (page: number) => {
 		if (page !== 1) {

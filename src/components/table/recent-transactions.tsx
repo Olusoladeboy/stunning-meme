@@ -19,12 +19,6 @@ import Api from '../../utilities/api';
 import { useAppSelector } from '../../store/hooks';
 import formatNumberToCurrency from '../../utilities/helpers/formatNumberToCurrency';
 
-type Props = {
-	data: {
-		[key: string]: any;
-	}[];
-};
-
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
 	[`&.${tableCellClasses.head}`]: {
 		// backgroundColor: LIGHT_GRAY,

@@ -30,11 +30,18 @@ const Manager = {
 			token,
 			data,
 		}),
-	AllManagers: async (token: string) =>
+	AllManagers: async ({
+		token,
+		params,
+	}: {
+		token: string;
+		params: { [key: string]: any };
+	}) =>
 		apiRequest({
 			method: 'GET',
 			url: `${API_ENDPOINTS.Manager}`,
 			token,
+			params,
 		}),
 };
 

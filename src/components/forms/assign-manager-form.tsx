@@ -1,18 +1,17 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Box, useTheme, MenuItem } from '@mui/material';
 import * as yup from 'yup';
-import { useNavigate } from 'react-router-dom';
 import { useSnackbar } from 'notistack';
-import { useMutation, useQuery, useQueryClient } from 'react-query';
+import { useMutation, useQueryClient } from 'react-query';
 import { useFormik } from 'formik';
 import { grey } from '@mui/material/colors';
-import LINKS from '../../utilities/links';
 import { QueryKeyTypes } from '../../utilities/types';
 import Api from '../../utilities/api';
 import handleResponse from '../../utilities/helpers/handleResponse';
-import { useAppDispatch, useAppSelector } from '../../store/hooks';
+import { useAppSelector } from '../../store/hooks';
 import CustomButton from '../button/custom-button';
 import Select from '../form-components/Select';
+import { useQueryHook } from '../../utilities/api/hooks';
 
 type Props = {
 	userDetails: any;
@@ -26,31 +25,18 @@ const AssignManagerForm = ({ userDetails, close }: Props) => {
 	const styles = useStyles(theme);
 	const { enqueueSnackbar } = useSnackbar();
 	const { token } = useAppSelector((store) => store.authState);
-	const dispatch = useAppDispatch();
-	const navigate = useNavigate();
-	const [managers, setManagers] = useState<null | { [key: string]: any }[]>(
-		null
-	);
-	const queryClient = useQueryClient();
-	const { isLoading: isLoadingManager } = useQuery(
-		QueryKeyTypes.AllManagers,
-		() => Api.Manager.AllManagers(token || ''),
-		{
-			enabled: !!token,
-			onSettled: (data, error) => {
-				if (error) {
-					const res = handleResponse({ error, isDisplayMessage: true });
-					if (res?.message) {
-						enqueueSnackbar(res.message, { variant: 'error' });
-					}
-				}
 
-				if (data && data.success) {
-					setManagers(data.payload);
-				}
-			},
-		}
-	);
+	const queryClient = useQueryClient();
+	const { isLoading: isLoadingManager, data: managers } = useQueryHook({
+		queryKey: QueryKeyTypes.AllManagers,
+		queryFn: () =>
+			Api.Manager.AllManagers({
+				token: token as string,
+				params: {
+					sort: '-createdAt',
+				},
+			}),
+	});
 	const validationSchema = yup.object().shape({
 		manager: yup
 			.string()
@@ -117,8 +103,8 @@ const AssignManagerForm = ({ userDetails, close }: Props) => {
 					</MenuItem>
 					{isLoadingManager ? (
 						<MenuItem>loading...</MenuItem>
-					) : managers && managers.length > 0 ? (
-						managers.map((manager) => (
+					) : managers && managers.payload.length > 0 ? (
+						managers.payload.map((manager: any) => (
 							<MenuItem
 								value={manager.id}
 								key={manager.id}

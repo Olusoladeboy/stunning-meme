@@ -59,6 +59,7 @@ const EditWalletForm = ({ user, close }: Props) => {
 
 			if (data && data.success) {
 				setDone(true);
+				setAlert({ alert: data.message, type: 'success' });
 				queryClient.invalidateQueries(QueryKeyTypes.GetSingleUser);
 				queryClient.invalidateQueries(QueryKeyTypes.UserWallet);
 			}
@@ -76,7 +77,6 @@ const EditWalletForm = ({ user, close }: Props) => {
 			initialValues,
 			validationSchema,
 			onSubmit: (values) => {
-				console.log(values);
 				mutate({
 					token: token as string,
 					data: values,
@@ -90,6 +90,7 @@ const EditWalletForm = ({ user, close }: Props) => {
 	const handleDone = () => {
 		if (isDone) {
 			resetForm();
+			setDone(false);
 			typeof close !== 'undefined' && close();
 		} else {
 			typeof close !== 'undefined' && close();

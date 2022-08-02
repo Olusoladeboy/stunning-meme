@@ -36,6 +36,7 @@ const VerifyUser = ({ text = 'Verify user', buttonProps, user, id }: Props) => {
 					setAlert({ alert: data.message, type: 'success' });
 					queryClient.invalidateQueries(QueryKeyTypes.AllUsers);
 					queryClient.invalidateQueries(QueryKeyTypes.GetSingleUser);
+					queryClient.invalidateQueries(QueryKeyTypes.Statistics);
 				}
 			},
 		}
@@ -43,7 +44,7 @@ const VerifyUser = ({ text = 'Verify user', buttonProps, user, id }: Props) => {
 
 	return (
 		<Button
-			loading={user?.id === id ? isLoading : false}
+			loading={isLoading}
 			buttonProps={{ ...buttonProps, onClick: () => setVerifyUser(true) }}
 		>
 			{text}

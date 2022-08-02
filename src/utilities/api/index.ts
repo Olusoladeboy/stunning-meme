@@ -8,6 +8,7 @@ import Transactions from './transactions';
 import ConvertAirtime from './convert-airtime';
 import Wallet from './wallet';
 import Staff from './staff';
+import Statistic from './statistics';
 
 const Api = {
 	Account,
@@ -20,6 +21,7 @@ const Api = {
 	ConvertAirtime,
 	Wallet,
 	Staff,
+	Statistic,
 };
 
 export default Api;

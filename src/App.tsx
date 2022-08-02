@@ -9,6 +9,7 @@ import Api from './utilities/api';
 import { useAppSelector, useAppDispatch } from './store/hooks';
 import handleResponse from './utilities/helpers/handleResponse';
 import { setToken, setUser } from './store/auth';
+import { setLoadingStatistics, setStatistics } from './store/app';
 
 function App() {
 	const dispatch = useAppDispatch();
@@ -20,6 +21,20 @@ function App() {
 	};
 
 	const { token } = useAppSelector((store) => store.authState);
+
+	useQuery(QueryKeyTypes.Statistics, () => Api.Statistic(token as string), {
+		enabled: !!token,
+		onSettled: (data, error) => {
+			if (error) {
+				dispatch(setLoadingStatistics(false));
+			}
+
+			if (data && data.success) {
+				dispatch(setStatistics(data.payload));
+			}
+		},
+	});
+
 	useQuery(
 		QueryKeyTypes.LoginUserDetails,
 		() => Api.Account.GetUser(token || ''),

@@ -6,14 +6,16 @@ import UserIcon from '../icons/user';
 import { SUCCESS_COLOR } from '../../utilities/constant';
 import Link from '../link';
 import LINKS from '../../utilities/links';
+import { useAppSelector } from '../../store/hooks';
 
 const TotalUsers = () => {
 	const theme = useTheme();
 	const styles = useStyles(theme);
+	const { statistics } = useAppSelector((store) => store.appState);
 	return (
 		<SummaryWrapper
 			bgColor={SUCCESS_COLOR}
-			amount={'500'}
+			amount={statistics ? statistics.total_users : '---'}
 			icon={<UserIcon color={grey[50]} />}
 		>
 			<Typography style={styles.text} variant={'h6'}>

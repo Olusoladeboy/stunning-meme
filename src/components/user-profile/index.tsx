@@ -10,6 +10,7 @@ import UserAvatarWithDetails from '../avatar-with-details';
 import UserWallet from '../user-wallet';
 import { UserDetailsType } from '../../utilities/types';
 import { SUCCESS_COLOR } from '../../utilities/constant';
+import VerifyUser from '../verify-user';
 
 type Props = {
 	user: UserDetailsType | null;
@@ -83,13 +84,17 @@ const UserProfile = ({ user }: Props) => {
 									}}
 								>
 									<Typography>UNVERIFIED</Typography>
-									<Button style={styles.verifyButton}>VERIFY USER</Button>
+									<VerifyUser
+										buttonProps={{ style: styles.verifyButton }}
+										user={user}
+									/>
 								</Box>
 							)
 						}
 					/>
 				</Box>
 				<Button
+					disabled
 					onClick={() => setEditProfile(true)}
 					sx={{
 						backgroundColor: theme.palette.secondary.main,

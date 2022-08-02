@@ -29,6 +29,7 @@ import Empty from '../empty';
 import LINKS from '../../utilities/links';
 import { UserDetailsType } from '../../utilities/types';
 import TableLoader from '../loader/table-loader';
+import { useAppSelector } from '../../store/hooks';
 
 interface UserDetails extends UserDetailsType {}
 
@@ -41,6 +42,7 @@ const UsersTable = ({ isLoading, users = null }: Props) => {
 	const navigate = useNavigate();
 	const theme = useTheme();
 	const styles = useStyles(theme);
+	const { statistics } = useAppSelector((store) => store.appState);
 
 	return (
 		<Box style={styles.container} sx={{ overflow: 'auto' }}>
@@ -55,7 +57,7 @@ const UsersTable = ({ isLoading, users = null }: Props) => {
 			>
 				<TransactionItem
 					bgColor={SUCCESS_COLOR}
-					amount={'500'}
+					amount={statistics ? statistics.total_users : '0'}
 					amountColor={grey[50]}
 					icon={<UserIcon color={grey[50]} />}
 				>
@@ -67,7 +69,7 @@ const UsersTable = ({ isLoading, users = null }: Props) => {
 					isBorder
 					borderColor={SUCCESS_COLOR}
 					amountColor={SUCCESS_COLOR}
-					amount={'500'}
+					amount={statistics ? statistics.total_verified_users : '0'}
 					icon={<VerifiedUserIcon color={SUCCESS_COLOR} />}
 				>
 					<Typography variant={'body1'} style={styles.transactionItemText}>
@@ -78,7 +80,7 @@ const UsersTable = ({ isLoading, users = null }: Props) => {
 					isBorder
 					borderColor={SUCCESS_COLOR}
 					amountColor={SUCCESS_COLOR}
-					amount={'500'}
+					amount={statistics ? statistics.total_unverified_users : '0'}
 					icon={<UnverifiedUserIcon color={SUCCESS_COLOR} />}
 				>
 					<Typography variant={'body1'} style={styles.transactionItemText}>
@@ -89,7 +91,7 @@ const UsersTable = ({ isLoading, users = null }: Props) => {
 					isBorder
 					borderColor={SUCCESS_COLOR}
 					amountColor={SUCCESS_COLOR}
-					amount={'500'}
+					amount={statistics ? statistics.total_suspended_users : '0'}
 					icon={<SuspendedUserIcon color={SUCCESS_COLOR} />}
 				>
 					<Typography variant={'body1'} style={styles.transactionItemText}>
@@ -100,7 +102,7 @@ const UsersTable = ({ isLoading, users = null }: Props) => {
 					isBorder
 					borderColor={SUCCESS_COLOR}
 					amountColor={SUCCESS_COLOR}
-					amount={'500'}
+					amount={statistics ? statistics.total_deleted_users : '0'}
 					icon={<DeletedUserIcon color={SUCCESS_COLOR} />}
 				>
 					<Typography variant={'body1'} style={styles.transactionItemText}>

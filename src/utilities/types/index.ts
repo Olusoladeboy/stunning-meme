@@ -30,6 +30,7 @@ export enum QueryKeyTypes {
 	AllTransactions = '@Query:All_Transactions',
 	RecentTransactions = '@Query:Recent_Transactions',
 	AllStaff = '@Query:All_Staff',
+	Statistics = '@Query:Statistics',
 }
 
 export enum RegistrationStepTypes {
@@ -245,4 +246,23 @@ export type SuspendUserType = {
 	suspended: boolean;
 	suspensionDurationInDays?: string;
 	suspensionReason?: string;
+};
+
+export type StatisticsType = {
+	total_transactions: number;
+	total_users: number;
+	total_conversions: number;
+	total_verified_users: number;
+	total_unverified_users: number;
+	total_deleted_users: number;
+	total_suspended_users: number;
+	total_airtime_converted: number;
+	total_data_sold: number;
+	total_amount_withdrawn: number;
+	total_wallet_transfer: number;
+	total_wallet_transaction: {
+		credit: number;
+		debit: number;
+	};
+	total_wallet_balance: number;
 };

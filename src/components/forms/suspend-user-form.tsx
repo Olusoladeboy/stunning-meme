@@ -43,6 +43,7 @@ const SuspendUserForm = ({ user }: Props) => {
 				resetForm();
 				queryClient.invalidateQueries(QueryKeyTypes.AllUsers);
 				queryClient.invalidateQueries(QueryKeyTypes.GetSingleUser);
+				queryClient.invalidateQueries(QueryKeyTypes.Statistics);
 			}
 		},
 	});

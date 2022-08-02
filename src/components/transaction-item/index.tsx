@@ -4,7 +4,7 @@ import { grey } from '@mui/material/colors';
 
 type Props = {
 	icon: any;
-	amount: string;
+	amount: string | number;
 	children: ReactNode;
 	bgColor?: string;
 	amountColor?: string;

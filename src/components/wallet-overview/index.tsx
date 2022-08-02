@@ -3,10 +3,12 @@ import { Box, Typography, useTheme } from '@mui/material';
 import WalletIcon from '../icons/wallet';
 import { grey } from '@mui/material/colors';
 import ListItem from './list-item';
+import { useAppSelector } from '../../store/hooks';
 
 const WalletOverview = () => {
 	const theme = useTheme();
 	const styles = useStyles(theme);
+	const { statistics } = useAppSelector((store) => store.appState);
 	return (
 		<Box style={styles.container}>
 			<Box style={styles.header}>
@@ -16,11 +18,26 @@ const WalletOverview = () => {
 				<WalletIcon />
 			</Box>
 			<Box>
-				<ListItem description={'Total Data Sold'} amount={'150000'} />
-				<ListItem description={'Total Airtime Converted'} amount={'150000'} />
-				<ListItem description={'Total Amount Withdrawn'} amount={'150000'} />
-				<ListItem description={'Total Wallet Transfer'} amount={'150000'} />
-				<ListItem description={'Total Wallet Transaction'} amount={'150000'} />
+				<ListItem
+					description={'Total Data Sold'}
+					amount={statistics ? statistics.total_data_sold : ''}
+				/>
+				<ListItem
+					description={'Total Airtime Converted'}
+					amount={statistics ? statistics.total_conversions : ''}
+				/>
+				<ListItem
+					description={'Total Amount Withdrawn'}
+					amount={statistics ? statistics.total_amount_withdrawn : ''}
+				/>
+				<ListItem
+					description={'Total Wallet Transfer'}
+					amount={statistics ? statistics.total_wallet_transfer : ''}
+				/>
+				<ListItem
+					description={'Total Wallet Transaction(Credit)'}
+					amount={statistics ? statistics.total_wallet_transaction.credit : ''}
+				/>
 			</Box>
 		</Box>
 	);

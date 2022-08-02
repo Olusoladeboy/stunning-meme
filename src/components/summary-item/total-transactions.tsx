@@ -6,14 +6,16 @@ import TransactionIcon from '../icons/transaction';
 import { SECOUNDARY_COLOR } from '../../utilities/constant';
 import Link from '../link';
 import LINKS from '../../utilities/links';
+import { useAppSelector } from '../../store/hooks';
 
 const TotalTransactions = () => {
 	const theme = useTheme();
 	const styles = useStyles(theme);
+	const { statistics } = useAppSelector((store) => store.appState);
 	return (
 		<SummaryWrapper
 			bgColor={SECOUNDARY_COLOR}
-			amount={'500'}
+			amount={statistics ? statistics.total_transactions : '---'}
 			icon={<TransactionIcon color={grey[50]} />}
 		>
 			<Typography style={styles.text} variant={'h6'}>

@@ -63,6 +63,7 @@ const VerificationTable = ({ users, isLoading }: Props) => {
 					setAlert({ alert: data.message, type: 'success' });
 					queryClient.invalidateQueries(QueryKeyTypes.AllUsers);
 					queryClient.invalidateQueries(QueryKeyTypes.GetSingleUser);
+					queryClient.invalidateQueries(QueryKeyTypes.Statistics);
 				}
 			},
 		}

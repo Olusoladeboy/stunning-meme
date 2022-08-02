@@ -89,6 +89,23 @@ const User = {
 			url: `${API_ENDPOINTS.User}/admin-verify/${id}`,
 			token,
 		}),
+	ActivateOrDeativateUser: async ({
+		token,
+		id,
+		data,
+	}: {
+		token: string;
+		id: string;
+		data: {
+			isActive: boolean;
+		};
+	}) =>
+		apiRequest({
+			method: 'PUT',
+			url: `${API_ENDPOINTS.User}/activate/${id}`,
+			token,
+			data,
+		}),
 };
 
 export default User;

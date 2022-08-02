@@ -11,7 +11,7 @@ const Transactions = {
 	}) =>
 		apiRequest({
 			method: 'GET',
-			url: API_ENDPOINTS.Transaction,
+			url: `${API_ENDPOINTS.Transaction}/all`,
 			token,
 			params,
 		}),

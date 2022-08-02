@@ -58,10 +58,12 @@ export type UserDetailsType = {
 	suspensionDuration: { [key: string]: any };
 	userType: string;
 	hasPin: boolean;
+	isActive: boolean;
 	biometricLogin: boolean;
 	verified: boolean;
 	bvnVerified: boolean;
 	suspended: boolean;
+	suspensionReason: string;
 	deleted: boolean;
 	restricted: boolean;
 	twoFactorAuth: boolean;
@@ -112,9 +114,9 @@ export enum HttpStatusCodeTypes {
 }
 
 export enum TransactionStatusTypes {
-	PENDING = 'pending',
-	FAILDED = 'failed',
-	SUCCESSFUL = 'successful',
+	PENDING = 'PENDING',
+	FAILED = 'FAILED',
+	SUCCESSFUL = 'SUCCESSFUL',
 }
 
 export enum UserStatusTypes {
@@ -141,7 +143,7 @@ export enum EPinsTypes {
 
 export type AuthStateTypes = {
 	isAuthenticated: boolean;
-	user: { [key: string]: any } | null;
+	user: UserDetailsType | null;
 	token: string | null;
 };
 
@@ -238,3 +240,9 @@ export enum DataPlanType {
 	MANUAL = 'MANUAL',
 	KETTLESUB = 'KETTLESUB',
 }
+
+export type SuspendUserType = {
+	suspended: boolean;
+	suspensionDurationInDays?: string;
+	suspensionReason?: string;
+};

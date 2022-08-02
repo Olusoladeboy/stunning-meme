@@ -134,7 +134,18 @@ const ManagerAdminForm = ({
 
 	const { values, handleSubmit, handleChange, errors, touched, resetForm } =
 		useFormik({
-			initialValues: managerDetails ? managerDetails : initialValues,
+			initialValues: managerDetails
+				? {
+						firstname: managerDetails.firstname,
+						lastname: managerDetails.lastname,
+						phone: managerDetails.phone,
+						email: managerDetails.email,
+						role:
+							type === ManagerTypes.Admin
+								? managerDetails.role
+								: SELECT_ADMIN_PRIVILEDGE,
+				  }
+				: initialValues,
 			validationSchema: ValidationSchema.ManagerDetails,
 			onSubmit: (values) => {
 				const { role, ...rest } = values;

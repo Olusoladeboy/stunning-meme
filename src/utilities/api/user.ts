@@ -1,5 +1,9 @@
 import apiRequest from './apiRequest';
-import { API_ENDPOINTS, ManagerDetailsDataTypes } from '../types';
+import {
+	API_ENDPOINTS,
+	ManagerDetailsDataTypes,
+	SuspendUserType,
+} from '../types';
 
 const User = {
 	CreateUser: async ({
@@ -61,6 +65,21 @@ const User = {
 		apiRequest({
 			method: 'PUT',
 			url: `${API_ENDPOINTS.User}/assign-manager/${id}`,
+			token,
+			data,
+		}),
+	SuspendUser: async ({
+		token,
+		data,
+		id,
+	}: {
+		token: string;
+		data: SuspendUserType;
+		id: string;
+	}) =>
+		apiRequest({
+			method: 'PUT',
+			url: `${API_ENDPOINTS.User}/suspend/${id}`,
 			token,
 			data,
 		}),

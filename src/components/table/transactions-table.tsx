@@ -113,11 +113,13 @@ const TransactionsTable = ({ data, isLoading }: Props) => {
 													}}
 												>
 													<Avatar style={styles.avatar} src={data.avatar} />
-													<Typography>{data.reference}</Typography>
+													<Typography>{data.user}</Typography>
 												</Box>
 											</StyledTableCell>
 											<StyledTableCell style={styles.text}>
-												{data.service}
+												{data.transaction
+													? data.transaction.service
+													: data.service}
 											</StyledTableCell>
 
 											<StyledTableCell style={styles.text}>
@@ -174,7 +176,7 @@ const TransactionsTable = ({ data, isLoading }: Props) => {
 															}}
 														/>
 													</Box>
-													{'Status'}
+													{data.status}
 												</Box>
 											</StyledTableCell>
 											<StyledTableCell style={styles.text}>

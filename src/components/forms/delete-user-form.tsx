@@ -1,32 +1,32 @@
 import React, { CSSProperties } from 'react';
 import { Box, useTheme, Typography, Switch } from '@mui/material';
-import TextInput from '../form-components/TextInput';
 import Button from '../button';
 import { grey } from '@mui/material/colors';
+import TextArea from '../form-components/text-area';
+import { UserDetailsType } from '../../utilities/types';
 
-const DeleteUserForm = () => {
+type Props = {
+	user: UserDetailsType | null;
+};
+
+const DeleteUserForm = ({ user }: Props) => {
 	const theme = useTheme();
 	const styles = useStyles(theme);
 	return (
 		<Box component={'form'}>
 			<Box style={styles.switchWrapper}>
 				<Typography style={styles.text as CSSProperties}>
-					delete user
+					{user?.isActive ? 'Deactivate user' : 'Activate user'}
 				</Typography>
 				<Switch />
 			</Box>
 			<Box style={styles.formWrapper as CSSProperties}>
 				<Box>
-					<TextInput
-						multiline
-						rows={7}
-						fullWidth
-						placeholder={'Enter suspension note'}
-					/>
+					<TextArea rows={8} fullWidth placeholder={'Enter suspension note'} />
 				</Box>
 
 				<Button size={'large'} style={styles.btn}>
-					Delete user
+					Deactivate user
 				</Button>
 			</Box>
 		</Box>

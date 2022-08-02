@@ -24,6 +24,9 @@ const ManagerAvatarWithDetails = ({ user }: Props) => {
 				<Typography style={styles.text} variant={'body1'}>
 					{user && user.email}
 				</Typography>
+				<Typography style={styles.text} variant={'body1'}>
+					{user && user.role?.toString().replace('_', ' ')}
+				</Typography>
 			</Box>
 		</Box>
 	);

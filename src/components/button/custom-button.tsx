@@ -3,6 +3,8 @@ import {
 	Button as MuiButton,
 	ButtonProps,
 	CircularProgress,
+	Box,
+	Typography,
 } from '@mui/material';
 
 type Props = {
@@ -24,7 +26,12 @@ const Button = (props: Props) => {
 	return (
 		<MuiButton disabled={loading} {...buttonProps}>
 			{isLoading ? (
-				<CircularProgress size={'24px'} sx={{ color: 'inherit' }} />
+				<Box sx={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+					<CircularProgress size={'22px'} sx={{ color: 'inherit' }} />
+					<Box sx={{ fontSize: '12px' }} component={'span'}>
+						Loading...
+					</Box>
+				</Box>
 			) : (
 				children
 			)}

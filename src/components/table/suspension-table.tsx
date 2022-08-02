@@ -12,10 +12,10 @@ import {
 	StyledTableRow as TableRow,
 } from './components';
 import TableHeader from '../header/table-header';
-import Button from '../button';
 import { UserDetailsType } from '../../utilities/types';
 import Loader from '../loader/table-loader';
 import Empty from '../empty/table-empty';
+import UnsuspendUser from '../unsuspend-user';
 
 type Props = {
 	users: UserDetailsType[] | null;
@@ -90,7 +90,7 @@ const SuspensionTable = ({ users, isLoading }: Props) => {
 												<TableCell>
 													{row.firstname} {row.lastname}
 												</TableCell>
-												<TableCell>{row.email}</TableCell>
+												<TableCell>{row.suspensionReason}</TableCell>
 												<TableCell>
 													{row.suspended
 														? 'Suspended'
@@ -99,12 +99,14 @@ const SuspensionTable = ({ users, isLoading }: Props) => {
 														: ''}
 												</TableCell>
 												<TableCell>
-													<Button
-														size={'small'}
-														style={styles.suspendBtn as CSSProperties}
-													>
-														unsuspend
-													</Button>
+													<UnsuspendUser
+														user={row}
+														text={'unsuspend'}
+														buttonProps={{
+															size: 'small',
+															style: styles.suspendBtn as CSSProperties,
+														}}
+													/>
 												</TableCell>
 											</TableRow>
 										))

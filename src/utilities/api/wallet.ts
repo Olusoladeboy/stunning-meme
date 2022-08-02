@@ -51,6 +51,21 @@ const Wallet = {
 			token,
 			data,
 		}),
+	SuspendWithdraw: async ({
+		token,
+		data,
+		id,
+	}: {
+		token: string;
+		data: any;
+		id: string;
+	}) =>
+		apiRequest({
+			method: 'PUT',
+			url: `${API_ENDPOINTS.User}/suspend/${id}`,
+			token,
+			data,
+		}),
 };
 
 export default Wallet;

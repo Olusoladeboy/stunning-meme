@@ -57,6 +57,7 @@ export type LoginDataTypes = {
 
 export type UserDetailsType = {
 	suspensionDuration: { [key: string]: any };
+	suspendWithdrawal: boolean;
 	userType: string;
 	hasPin: boolean;
 	isActive: boolean;

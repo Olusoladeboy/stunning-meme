@@ -4,7 +4,6 @@ import {
 	ButtonProps,
 	CircularProgress,
 	Box,
-	Typography,
 } from '@mui/material';
 
 type Props = {

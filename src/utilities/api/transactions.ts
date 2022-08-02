@@ -38,6 +38,21 @@ const Transactions = {
 			token,
 			data,
 		}),
+	TransactUser: async ({
+		token,
+		data,
+		id,
+	}: {
+		token: string;
+		data: any;
+		id: string;
+	}) =>
+		apiRequest({
+			method: 'POST',
+			url: `${API_ENDPOINTS.Transaction}/${id}`,
+			token,
+			data,
+		}),
 };
 
 export default Transactions;

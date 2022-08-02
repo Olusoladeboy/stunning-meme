@@ -113,7 +113,9 @@ const TransactionsTable = ({ data, isLoading }: Props) => {
 													}}
 												>
 													<Avatar style={styles.avatar} src={data.avatar} />
-													<Typography>{data.user}</Typography>
+													<Typography>
+														{data.user?.firstname} {data.user?.lastname}
+													</Typography>
 												</Box>
 											</StyledTableCell>
 											<StyledTableCell style={styles.text}>

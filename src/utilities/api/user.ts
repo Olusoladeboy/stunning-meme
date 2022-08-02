@@ -83,6 +83,12 @@ const User = {
 			token,
 			data,
 		}),
+	VerifyUser: async ({ token, id }: { token: string; id: string }) =>
+		apiRequest({
+			method: 'GET',
+			url: `${API_ENDPOINTS.User}/admin-verify/${id}`,
+			token,
+		}),
 };
 
 export default User;

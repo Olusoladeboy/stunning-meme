@@ -67,7 +67,7 @@ const UserWallet = ({ user }: Props) => {
 						</Box>
 					}
 				>
-					<EditWalletForm />
+					<EditWalletForm user={user} close={() => setEditWallet(false)} />
 				</ModalWrapper>
 			)}
 			<Box style={styles.container}>

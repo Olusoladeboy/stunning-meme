@@ -20,7 +20,7 @@ const TableLoader = (props: TableLoaderProps) => {
 						display: 'flex',
 						alignItems: 'center',
 						flexDirection: 'column',
-						gap: '8px',
+						gap: '6px',
 					}}
 				>
 					<CircularProgress sx={{ margin: 'auto', alignSelf: 'center' }} />

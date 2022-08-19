@@ -10,13 +10,14 @@ import TableRow from '@mui/material/TableRow';
 import { LIGHT_GRAY, BOX_SHADOW } from '../../utilities/constant';
 import { grey } from '@mui/material/colors';
 import Link from '../link';
-import Empty from '../empty';
-
-type Props = {
-	data: {
-		[key: string]: any;
-	}[];
-};
+import Empty from '../empty/table-empty';
+import Loader from '../loader/table-loader';
+import LINKS from '../../utilities/links';
+import { useQueryHook } from '../../utilities/api/hooks';
+import { QueryKeyTypes } from '../../utilities/types';
+import Api from '../../utilities/api';
+import { useAppSelector } from '../../store/hooks';
+import formatNumberToCurrency from '../../utilities/helpers/formatNumberToCurrency';
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
 	[`&.${tableCellClasses.head}`]: {
@@ -47,16 +48,27 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 	},
 }));
 
-const RecentTransactionsTable = ({ data }: Props) => {
+const RecentTransactionsTable = () => {
 	const theme = useTheme();
 	const styles = useStyles(theme);
+	const { token } = useAppSelector((store) => store.authState);
+
+	const { isLoading, data } = useQueryHook({
+		queryKey: QueryKeyTypes.RecentTransactions,
+		queryFn: () =>
+			Api.Transactions.All({
+				token: token as string,
+				params: { sort: '-createdAt', limit: 4, populate: 'user' },
+			}),
+	});
+
 	return (
 		<Box style={styles.container} sx={{ overflow: 'auto' }}>
 			<Box style={styles.header}>
 				<Typography variant={'h5'} style={styles.headerText}>
 					Recent Transactions
 				</Typography>
-				<Link style={styles.link} to={'/'}>
+				<Link style={styles.link} to={LINKS.Transactions}>
 					view more
 				</Link>
 			</Box>
@@ -83,29 +95,29 @@ const RecentTransactionsTable = ({ data }: Props) => {
 						},
 					}}
 				>
-					{data && data.length > 0 ? (
-						data.map((data, key) => (
-							<StyledTableRow key={key}>
-								<StyledTableCell style={styles.text}>
-									{data.full_name}
-								</StyledTableCell>
-								<StyledTableCell style={styles.text}>
-									{data.network_name}
-								</StyledTableCell>
-								<StyledTableCell style={styles.text}>
-									{data.phone_number}
-								</StyledTableCell>
-								<StyledTableCell style={styles.text}>
-									{data.amount}
-								</StyledTableCell>
-							</StyledTableRow>
-						))
+					{isLoading ? (
+						<Loader colSpan={4} />
 					) : (
-						<StyledTableRow>
-							<StyledTableCell colSpan={4}>
-								<Empty text={'No recent transaction'} />
-							</StyledTableCell>
-						</StyledTableRow>
+						data && (
+							<>
+								{data.payload.length > 0 ? (
+									data.payload.map((row: any, key: number) => (
+										<StyledTableRow key={key}>
+											<StyledTableCell>
+												{row.user.firstname} {row.user.lastname}
+											</StyledTableCell>
+											<StyledTableCell>{row.service}</StyledTableCell>
+											<StyledTableCell>{row.user.phone}</StyledTableCell>
+											<StyledTableCell>
+												{formatNumberToCurrency(row.amount.$numberDecimal)}
+											</StyledTableCell>
+										</StyledTableRow>
+									))
+								) : (
+									<Empty colSpan={4} />
+								)}
+							</>
+						)
 					)}
 				</TableBody>
 			</Table>

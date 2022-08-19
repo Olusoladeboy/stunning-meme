@@ -1,19 +1,30 @@
 import React, { CSSProperties } from 'react';
 import { Box, Typography, useTheme } from '@mui/material';
-import UserAvatarWithDetails from '../user-avatar-with-details';
-import Button from '../button';
 import { grey, red } from '@mui/material/colors';
+import UserAvatarWithDetails from '../avatar-with-details/manager';
+import Button from '../button';
+import { ManagerDetailsDataTypes, ManagerTypes } from '../../utilities/types';
+
+interface ManagerDetailsTypes extends ManagerDetailsDataTypes {
+	role?: string;
+}
 
 type Props = {
-	details: { [key: string]: any };
+	managerDetail: ManagerDetailsTypes;
+	handleEdit?: () => void;
+	type?: ManagerTypes.Manager | ManagerTypes.Admin;
 };
 
-const ManagerDetails = ({ details }: Props) => {
+const ManagerDetails = ({
+	managerDetail,
+	handleEdit,
+	type = ManagerTypes.Manager,
+}: Props) => {
 	const theme = useTheme();
 	const styles = useStyles(theme);
 	return (
 		<Box>
-			<UserAvatarWithDetails details={details} />
+			<UserAvatarWithDetails user={managerDetail} />
 			<Box
 				sx={{
 					display: 'flex',
@@ -26,25 +37,36 @@ const ManagerDetails = ({ details }: Props) => {
 				<Box>
 					<Box sx={{ marginBottom: theme.spacing(3) }} style={styles.grid}>
 						<Typography variant={'body1'}>Total Users</Typography>
-						<Typography variant={'body1'}>{details.user}</Typography>
+						<Typography
+							variant={'body1'}
+						>{`${managerDetail.firstname} ${managerDetail.lastname}`}</Typography>
 					</Box>
 					<Box style={styles.grid}>
 						<Typography variant={'body1'}>Phone number</Typography>
-						<Typography variant={'body1'}>{details.phone_number}</Typography>
+						<Typography variant={'body1'}>{managerDetail.phone}</Typography>
 					</Box>
 				</Box>
-				<Box
-					sx={{
-						display: 'flex',
-						flexDirection: 'column',
-						gap: theme.spacing(3),
-					}}
-				>
-					<Button style={styles.editBtn as CSSProperties}>Edit profile</Button>
-					<Button style={styles.deleteBtn as CSSProperties}>
-						Delete Admin
-					</Button>
-				</Box>
+				{managerDetail?.role !== 'SUPER_ADMIN' && (
+					<Box
+						sx={{
+							display: 'flex',
+							flexDirection: 'column',
+							gap: theme.spacing(3),
+						}}
+					>
+						<Button
+							onClick={() => typeof handleEdit !== 'undefined' && handleEdit()}
+							style={styles.editBtn as CSSProperties}
+						>
+							Edit profile
+						</Button>
+						<Button style={styles.deleteBtn as CSSProperties}>
+							{type === ManagerTypes.Manager
+								? 'Delete Manager'
+								: 'Delete Admin'}
+						</Button>
+					</Box>
+				)}
 			</Box>
 		</Box>
 	);

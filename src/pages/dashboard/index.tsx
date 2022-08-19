@@ -9,7 +9,6 @@ import WalletOverview from '../../components/wallet-overview';
 import UserRecords from '../../components/user-record';
 import TaskList from '../../components/task-list';
 import RecentConversionsTable from '../../components/table/recent-conversions';
-import conversions from '../../utilities/data/conversions.json';
 import RecentTransactionsTable from '../../components/table/recent-transactions';
 
 const Dashboard = () => {
@@ -38,8 +37,8 @@ const Dashboard = () => {
 							<TotalUsers />
 							<TotalConversions />
 						</Box>
-						<RecentConversionsTable data={conversions} />
-						<RecentTransactionsTable data={[]} />
+						<RecentConversionsTable />
+						<RecentTransactionsTable />
 					</Box>
 				</Box>
 				<Box>

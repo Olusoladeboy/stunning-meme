@@ -1,46 +1,55 @@
 import { HttpStatusCodeTypes } from '../types';
-import handleErrorMessage from './handleErrorMessage';
+import Storage from '../storage';
+import { StorageKeys } from '../types';
 
 type PropsType = {
-	data: any;
-	handler?: any;
+	error: any;
+	handler?: () => void;
+	isDisplayMessage?: boolean;
 };
 
-const handleResponse = ({ data: { response }, handler }: PropsType) => {
-	const status = response.errors[0].extensions.response.statusCode;
-	if (status) {
-		switch (status) {
-			case HttpStatusCodeTypes.OK:
-				return {
-					msg: handleErrorMessage(response),
-				};
-			case HttpStatusCodeTypes.Forbidden:
-				typeof handler !== 'undefined' && handler();
-				return {
-					msg: handleErrorMessage(response),
-				};
+type ReturnTypes = {
+	data: any;
+	message: string | null;
+};
 
-			case HttpStatusCodeTypes.BadRequest:
-				return {
-					msg: handleErrorMessage(response),
-				};
+const handleResponse = ({
+	error,
+	handler,
+	isDisplayMessage = false,
+}: PropsType): ReturnTypes | null | undefined => {
+	if (error.response !== 'undefined' && error.response.data) {
+		const data = error.response.data;
+		const status = error.response.status;
 
-			case HttpStatusCodeTypes.Unauthorized:
-				typeof handler !== 'undefined' && handler();
-				return {
-					msg: handleErrorMessage(response),
-				};
+		if (status) {
+			switch (status) {
+				case HttpStatusCodeTypes.OK:
+					return { data, message: isDisplayMessage ? data.message : null };
+				case HttpStatusCodeTypes.Forbidden:
+					Storage.deleteItem(StorageKeys.UserToken);
+					typeof handler !== 'undefined' && handler();
+					return { data, message: data.message };
 
-			case HttpStatusCodeTypes.NotFound:
-				return {
-					msg: handleErrorMessage(response),
-				};
+				case HttpStatusCodeTypes.BadRequest:
+					return { data, message: data.message };
 
-			default:
-				return null;
+				case HttpStatusCodeTypes.Unauthorized:
+					Storage.deleteItem(StorageKeys.UserToken);
+					typeof handler !== 'undefined' && handler();
+					return { data, message: data.message };
+
+				case HttpStatusCodeTypes.NotFound:
+					return { data, message: data.message };
+
+				default:
+					return null;
+			}
+		} else {
+			return null;
 		}
 	} else {
-		return null;
+		return error.message;
 	}
 };
 

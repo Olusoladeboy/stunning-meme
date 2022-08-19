@@ -1,29 +1,97 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Box, useTheme, InputAdornment, Typography } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
+import { useSnackbar } from 'notistack';
+import { useMutation } from 'react-query';
+import { useFormik } from 'formik';
 import TextInput from '../form-components/TextInput';
 import Button from '../button';
 import { grey } from '@mui/material/colors';
 import Link from '../link';
 import LINKS from '../../utilities/links';
+import ValidationSchema from '../../utilities/validationSchema';
+import { LoginDataTypes } from '../../utilities/types';
+import Api from '../../utilities/api';
+import handleResponse from '../../utilities/helpers/handleResponse';
+import { useAppDispatch } from '../../store/hooks';
+import { setToken, setUser } from '../../store/auth';
+import CustomButton from '../button/custom-button';
 
 const LoginForm = () => {
 	const theme = useTheme();
 	const styles = useStyles(theme);
+	const { enqueueSnackbar } = useSnackbar();
+	const [isDisplayPassword, setDisplayPassword] = useState<boolean>(false);
+	const dispatch = useAppDispatch();
+	const navigate = useNavigate();
+
+	const initialValues: LoginDataTypes = {
+		email: '',
+		password: '',
+	};
+
+	const { isLoading, mutate } = useMutation(Api.Account.Login, {
+		onSettled: (data, error) => {
+			if (error) {
+				const res = handleResponse({ error, isDisplayMessage: true });
+				if (res?.message) {
+					enqueueSnackbar(res.message, { variant: 'error' });
+				} else {
+					enqueueSnackbar('Something went wrong, try again', {
+						variant: 'error',
+					});
+				}
+			}
+			if (data && data.success) {
+				enqueueSnackbar(data.message, { variant: 'success' });
+				dispatch(setToken(data.payload.token));
+				dispatch(setUser(data.payload.user));
+				navigate(LINKS.Dashboard);
+			}
+		},
+	});
+
+	const { handleChange, errors, touched, values, handleSubmit } = useFormik({
+		initialValues,
+		validationSchema: ValidationSchema.Login,
+		onSubmit: (values) => {
+			mutate(values);
+		},
+	});
+
+	const { password, email } = values;
+
 	return (
 		<Box style={styles.form as any} component={'form'}>
 			<Box>
-				<TextInput fullWidth placeholder={'Username'} />
+				<TextInput
+					fullWidth
+					error={errors && touched.email && errors.email ? true : false}
+					helperText={errors && touched.email && errors.email}
+					placeholder={'Username'}
+					value={email}
+					onChange={handleChange('email')}
+				/>
 			</Box>
 
 			<Box>
 				<TextInput
 					fullWidth
+					error={errors && touched.password && errors.password ? true : false}
+					helperText={errors && touched.password && errors.password}
 					placeholder={'Password'}
+					value={password}
+					onChange={handleChange('password')}
+					type={isDisplayPassword ? 'text' : 'password'}
 					InputProps={{
 						endAdornment: (
 							<InputAdornment position='start'>
-								<Button disableRipple style={styles.endAdornmentBtn}>
-									show
+								<Button
+									onClick={() => setDisplayPassword(!isDisplayPassword)}
+									disableRipple
+									style={styles.endAdornmentBtn}
+								>
+									{isDisplayPassword ? 'hide' : 'show'}
 								</Button>
 							</InputAdornment>
 						),
@@ -37,9 +105,19 @@ const LoginForm = () => {
 				</Link>
 			</Box>
 
-			<Button size={'large'} style={styles.btn}>
+			<CustomButton
+				loading={isLoading && isLoading}
+				buttonProps={{
+					onClick: (e: any) => {
+						handleSubmit();
+					},
+					style: styles.btn,
+					size: 'large',
+					type: 'submit',
+				}}
+			>
 				Login
-			</Button>
+			</CustomButton>
 		</Box>
 	);
 };

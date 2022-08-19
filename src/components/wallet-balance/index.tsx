@@ -2,10 +2,12 @@ import React from 'react';
 import { Box, Typography, useTheme } from '@mui/material';
 import { grey } from '@mui/material/colors';
 import formatNumberToCurrency from '../../utilities/helpers/formatNumberToCurrency';
+import { useAppSelector } from '../../store/hooks';
 
 const WalletBalance = () => {
 	const theme = useTheme();
 	const styles = useStyles(theme);
+	const { statistics } = useAppSelector((store) => store.appState);
 	return (
 		<Box style={styles.container}>
 			<Box>
@@ -17,7 +19,9 @@ const WalletBalance = () => {
 				</Typography>
 			</Box>
 			<Typography style={styles.text} variant={'h5'}>
-				{formatNumberToCurrency('30000')}
+				{formatNumberToCurrency(
+					statistics ? statistics.total_wallet_balance : '---'
+				)}
 			</Typography>
 		</Box>
 	);

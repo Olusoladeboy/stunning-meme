@@ -1,17 +1,56 @@
 import React, { CSSProperties, useState } from 'react';
 import { Box, Typography, useTheme } from '@mui/material';
 import { grey } from '@mui/material/colors';
+import { useQuery } from 'react-query';
+import { useSnackbar } from 'notistack';
 import formatNumberToCurrency from '../../utilities/helpers/formatNumberToCurrency';
 import Button from '../button';
 import ModalWrapper from '../modal/Wrapper';
 import EditWalletForm from '../forms/edit-wallet-form';
+import Api from '../../utilities/api';
+import handleResponse from '../../utilities/helpers/handleResponse';
+import { useAppSelector } from '../../store/hooks';
+import { QueryKeyTypes, UserDetailsType } from '../../utilities/types';
 
-const BALANCE = 500000;
+type Props = {
+	user: UserDetailsType | null;
+};
 
-const UserWallet = () => {
+const UserWallet = ({ user }: Props) => {
 	const theme = useTheme();
 	const styles = useStyles(theme);
+	const [amount, setAmount] = useState<string>('');
 	const [isEditWallet, setEditWallet] = useState<boolean>(false);
+	const { token } = useAppSelector((store) => store.authState);
+	const { enqueueSnackbar } = useSnackbar();
+
+	useQuery(
+		[QueryKeyTypes.UserWallet, user?.id],
+		() =>
+			Api.Wallet.Account({
+				token: token as string,
+				params: {
+					user: user?.id,
+				},
+			}),
+		{
+			enabled: !!(token && user),
+			onSettled: (data, error) => {
+				if (error) {
+					const res = handleResponse({ error });
+					if (res?.message) {
+						enqueueSnackbar(res.message);
+					}
+				}
+
+				if (data && data.success) {
+					const amount = data.payload[0].balance.$numberDecimal;
+					setAmount(amount);
+				}
+			},
+		}
+	);
+
 	return (
 		<>
 			{isEditWallet && (
@@ -23,12 +62,12 @@ const UserWallet = () => {
 								current wallet balance
 							</Typography>
 							<Typography variant={'h4'}>
-								{formatNumberToCurrency(BALANCE)}
+								{formatNumberToCurrency(amount)}
 							</Typography>
 						</Box>
 					}
 				>
-					<EditWalletForm />
+					<EditWalletForm user={user} close={() => setEditWallet(false)} />
 				</ModalWrapper>
 			)}
 			<Box style={styles.container}>
@@ -38,7 +77,7 @@ const UserWallet = () => {
 				</Typography>
 				<Box style={styles.balanceBtnContainer}>
 					<Typography variant={'h4'}>
-						{formatNumberToCurrency(BALANCE)}
+						{formatNumberToCurrency(amount)}
 					</Typography>
 					<Button
 						onClick={() => setEditWallet(true)}

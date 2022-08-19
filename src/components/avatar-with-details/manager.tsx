@@ -1,33 +1,32 @@
 import React, { CSSProperties } from 'react';
 import { Box, Avatar, Typography, useTheme } from '@mui/material';
+import { ManagerDetailsDataTypes } from '../../utilities/types';
+
+interface ManagerDetails extends ManagerDetailsDataTypes {
+	role?: string;
+	verifiedStatus?: boolean;
+}
 
 type Props = {
-	details?: { [key: string]: any };
+	user: ManagerDetails | null;
 };
 
-const UserAvatarWithDetails = ({ details }: Props) => {
+const ManagerAvatarWithDetails = ({ user }: Props) => {
 	const theme = useTheme();
 	const styles = useStyles(theme);
 	return (
 		<Box style={styles.container}>
-			<Avatar src={(details && details.avatar) || ''} style={styles.avatar} />
+			<Avatar src={(user && user.avatar) || ''} style={styles.avatar} />
 			<Box style={styles.detailsWrapper as CSSProperties}>
-				<Typography style={styles.text} variant={'body1'}>
-					{details && details.name}
+				<Typography style={styles.nameText} variant={'body1'}>
+					{user && `${user.firstname} ${user.lastname}`}
 				</Typography>
 				<Typography style={styles.text} variant={'body1'}>
-					{details && details.email}
+					{user && user.email}
 				</Typography>
-				{details && details.verifiedStatev && (
-					<Typography style={styles.text} variant={'body1'}>
-						Verified Status
-					</Typography>
-				)}
-				{details && details.role && (
-					<Typography style={styles.text} variant={'body1'}>
-						{details.role}
-					</Typography>
-				)}
+				<Typography style={styles.text} variant={'body1'}>
+					{user && user.role?.toString().replace('_', ' ')}
+				</Typography>
 			</Box>
 		</Box>
 	);
@@ -48,9 +47,13 @@ const useStyles = (theme: any) => ({
 		flexDirection: 'column',
 		gap: theme.spacing(2),
 	},
+	nameText: {
+		fontSize: '18px',
+		fontWeight: '600',
+	},
 	text: {
 		fontWeight: '600',
 	},
 });
 
-export default UserAvatarWithDetails;
+export default ManagerAvatarWithDetails;

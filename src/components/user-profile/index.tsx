@@ -1,15 +1,24 @@
-import React, { useState } from 'react';
+import React, { CSSProperties, useState } from 'react';
 import { Box, Typography, useTheme } from '@mui/material';
+import { grey } from '@mui/material/colors';
+import moment from 'moment';
 import DetailItem from './detail-item';
 import Button from '../button';
-import { grey } from '@mui/material/colors';
 import ModalWrapper from '../modal/Wrapper';
 import EditProfileForm from '../forms/edit-profile';
-import UserAvatarWithDetails from '../user-avatar-with-details';
+import UserAvatarWithDetails from '../avatar-with-details';
 import UserWallet from '../user-wallet';
+import { UserDetailsType } from '../../utilities/types';
+import { SUCCESS_COLOR } from '../../utilities/constant';
+import VerifyUser from '../verify-user';
 
-const UserProfile = () => {
+type Props = {
+	user: UserDetailsType | null;
+};
+
+const UserProfile = ({ user }: Props) => {
 	const theme = useTheme();
+	const styles = useStyles(theme);
 	const [isEditProfile, setEditProfile] = useState<boolean>(false);
 	return (
 		<Box>
@@ -22,8 +31,8 @@ const UserProfile = () => {
 					},
 				}}
 			>
-				<UserAvatarWithDetails />
-				<UserWallet />
+				<UserAvatarWithDetails user={user} />
+				<UserWallet user={user} />
 			</Box>
 			<Box sx={{ marginTop: theme.spacing(5) }}>
 				{isEditProfile && (
@@ -35,7 +44,7 @@ const UserProfile = () => {
 					</ModalWrapper>
 				)}
 				<Typography sx={{ marginBottom: theme.spacing(4) }} variant={'h5'}>
-					user profile
+					User profile
 				</Typography>
 				<Box
 					sx={{
@@ -48,28 +57,44 @@ const UserProfile = () => {
 						columnGap: theme.spacing(6),
 					}}
 				>
-					<DetailItem text={'name'} value={'Bisoye Amadi'} />
-					<DetailItem text={'date joined'} value={'11/11/22'} />
-					<DetailItem text={'Username'} value={'Bisoye Amadi'} />
-					<DetailItem text={'pnone number'} value={'08101234567'} />
-					<DetailItem text={'email'} value={'Bisoye@gmail.com'} />
+					<DetailItem
+						text={'name'}
+						value={user && `${user.firstname} ${user.lastname}`}
+					/>
+					<DetailItem
+						text={'date joined'}
+						value={user && moment.utc(user.createdAt).format('l')}
+					/>
+					<DetailItem text={'Username'} value={user && user.username} />
+					<DetailItem text={'pnone number'} value={user && user.phone} />
+					<DetailItem text={'email'} value={user && user.email} />
 					<DetailItem
 						text={'verification status'}
 						value={
-							<Box
-								sx={{
-									display: 'flex',
-									alignItems: 'center',
-									gap: theme.spacing(4),
-								}}
-							>
-								<Typography>UNVERIFIED</Typography>
-								<Typography>VERIFY USER</Typography>
-							</Box>
+							user && user.verified ? (
+								<Typography style={styles.verifyText as CSSProperties}>
+									Verified
+								</Typography>
+							) : (
+								<Box
+									sx={{
+										display: 'flex',
+										alignItems: 'center',
+										gap: theme.spacing(4),
+									}}
+								>
+									<Typography>UNVERIFIED</Typography>
+									<VerifyUser
+										buttonProps={{ style: styles.verifyButton }}
+										user={user}
+									/>
+								</Box>
+							)
 						}
 					/>
 				</Box>
 				<Button
+					disabled
 					onClick={() => setEditProfile(true)}
 					sx={{
 						backgroundColor: theme.palette.secondary.main,
@@ -89,5 +114,17 @@ const UserProfile = () => {
 		</Box>
 	);
 };
+
+const useStyles = (theme: any) => ({
+	verifyText: {
+		color: SUCCESS_COLOR,
+		textTransform: 'uppercase',
+		fontWeight: '600',
+	},
+	verifyButton: {
+		border: `1px solid ${SUCCESS_COLOR}`,
+		color: SUCCESS_COLOR,
+	},
+});
 
 export default UserProfile;

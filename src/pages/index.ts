@@ -19,6 +19,8 @@ import Verification from './verification';
 import Kyc from './verification/kyc';
 import Suspension from './suspension';
 import AuditLogs from './audit-logs';
+import Dispute from './dispute';
+import Admin from './admin';
 
 import LINKS from '../utilities/links';
 
@@ -55,6 +57,10 @@ const Pages = {
 		Component: Managers,
 		path: LINKS.Managers,
 	},
+	Admin: {
+		Component: Admin,
+		path: LINKS.Managers,
+	},
 	Transactions: {
 		Component: Transactions,
 		path: LINKS.Transactions,
@@ -74,6 +80,10 @@ const Pages = {
 	Coupons: {
 		Component: Coupons,
 		path: LINKS.Coupons,
+	},
+	Dispute: {
+		Component: Dispute,
+		path: LINKS.Dispute,
 	},
 	Referral: {
 		Initial: {

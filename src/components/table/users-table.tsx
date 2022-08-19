@@ -1,6 +1,8 @@
-import React, { useState } from 'react';
+import React from 'react';
 import Table from '@mui/material/Table';
 import Box from '@mui/material/Box';
+import { useNavigate } from 'react-router-dom';
+import moment from 'moment';
 import { Avatar, Typography, useTheme } from '@mui/material';
 import TableBody from '@mui/material/TableBody';
 import TableHead from '@mui/material/TableHead';
@@ -23,15 +25,25 @@ import VerifiedUserIcon from '../icons/verified-user';
 import SuspendedUserIcon from '../icons/suspended-user';
 import DeletedUserIcon from '../icons/deleted-user';
 import UnverifiedUserIcon from '../icons/unverified-user';
-import USERS from '../../utilities/data/user';
 import Empty from '../empty';
-import Pagination from '../pagination';
+import LINKS from '../../utilities/links';
+import { UserDetailsType } from '../../utilities/types';
+import TableLoader from '../loader/table-loader';
+import { useAppSelector } from '../../store/hooks';
 
-const UsersTable = () => {
-	const [data] = useState<{ [key: string]: any }[] | null>(USERS);
+interface UserDetails extends UserDetailsType {}
 
+type Props = {
+	isLoading?: boolean;
+	users?: UserDetails[] | null;
+};
+
+const UsersTable = ({ isLoading, users = null }: Props) => {
+	const navigate = useNavigate();
 	const theme = useTheme();
 	const styles = useStyles(theme);
+	const { statistics } = useAppSelector((store) => store.appState);
+
 	return (
 		<Box style={styles.container} sx={{ overflow: 'auto' }}>
 			<TableHeader sx={{ padding: '0px 1rem' }} title={'Users'} />
@@ -45,7 +57,7 @@ const UsersTable = () => {
 			>
 				<TransactionItem
 					bgColor={SUCCESS_COLOR}
-					amount={'500'}
+					amount={statistics ? statistics.total_users : '0'}
 					amountColor={grey[50]}
 					icon={<UserIcon color={grey[50]} />}
 				>
@@ -57,7 +69,7 @@ const UsersTable = () => {
 					isBorder
 					borderColor={SUCCESS_COLOR}
 					amountColor={SUCCESS_COLOR}
-					amount={'500'}
+					amount={statistics ? statistics.total_verified_users : '0'}
 					icon={<VerifiedUserIcon color={SUCCESS_COLOR} />}
 				>
 					<Typography variant={'body1'} style={styles.transactionItemText}>
@@ -68,7 +80,7 @@ const UsersTable = () => {
 					isBorder
 					borderColor={SUCCESS_COLOR}
 					amountColor={SUCCESS_COLOR}
-					amount={'500'}
+					amount={statistics ? statistics.total_unverified_users : '0'}
 					icon={<UnverifiedUserIcon color={SUCCESS_COLOR} />}
 				>
 					<Typography variant={'body1'} style={styles.transactionItemText}>
@@ -79,7 +91,7 @@ const UsersTable = () => {
 					isBorder
 					borderColor={SUCCESS_COLOR}
 					amountColor={SUCCESS_COLOR}
-					amount={'500'}
+					amount={statistics ? statistics.total_suspended_users : '0'}
 					icon={<SuspendedUserIcon color={SUCCESS_COLOR} />}
 				>
 					<Typography variant={'body1'} style={styles.transactionItemText}>
@@ -90,7 +102,7 @@ const UsersTable = () => {
 					isBorder
 					borderColor={SUCCESS_COLOR}
 					amountColor={SUCCESS_COLOR}
-					amount={'500'}
+					amount={statistics ? statistics.total_deleted_users : '0'}
 					icon={<DeletedUserIcon color={SUCCESS_COLOR} />}
 				>
 					<Typography variant={'body1'} style={styles.transactionItemText}>
@@ -158,34 +170,44 @@ const UsersTable = () => {
 						},
 					}}
 				>
-					{data && data.length > 0 ? (
-						data.map((data, key) => (
-							<TableRow key={key}>
-								<TableCell>
-									<Avatar src={data.avatar} />
+					{isLoading ? (
+						<TableLoader colSpan={6} />
+					) : users && users.length > 0 ? (
+						users.map((user, key) => (
+							<TableRow
+								onClick={() => navigate(`${LINKS.User}/${user.id}`)}
+								key={key}
+							>
+								<TableCell sx={{ maxWidth: '60px' }}>
+									<Avatar src={user.avatar} />
 								</TableCell>
-								<TableCell style={styles.tableText}>{data.name}</TableCell>
-								<TableCell style={styles.tableText}>{data.email}</TableCell>
+								<TableCell
+									style={styles.tableText}
+								>{`${user.firstname} ${user.lastname}`}</TableCell>
+								<TableCell style={styles.tableText}>{user.email}</TableCell>
+								<TableCell style={styles.tableText}>{user.phone}</TableCell>
 								<TableCell style={styles.tableText}>
-									{data.phone_number}
+									{moment.utc(user.createdAt).format('l')}
 								</TableCell>
-								<TableCell style={styles.tableText}>{data.date}</TableCell>
 
 								<TableCell
 									sx={{
 										textTransform: 'uppercase',
 										fontWeight: '600',
-										color:
-											data.status === UserStatusTypes.Verified
-												? SUCCESS_COLOR
-												: data.status === UserStatusTypes.Unverified
-												? DANGER_COLOR
-												: data.status === UserStatusTypes.Suspended
-												? grey[800]
-												: grey[500],
+										color: user.verified
+											? SUCCESS_COLOR
+											: user.verified === false
+											? DANGER_COLOR
+											: user.suspended
+											? grey[800]
+											: grey[500],
 									}}
 								>
-									{data.status}
+									{user.verified
+										? UserStatusTypes.Verified
+										: user.suspended
+										? UserStatusTypes.Suspended
+										: UserStatusTypes.Unverified}
 								</TableCell>
 							</TableRow>
 						))
@@ -198,17 +220,6 @@ const UsersTable = () => {
 					)}
 				</TableBody>
 			</Table>
-			<Pagination
-				sx={{
-					display: 'flex',
-					justifyContent: 'flex-end',
-					marginTop: theme.spacing(4),
-					marginRight: '1rem',
-				}}
-				size={'large'}
-				shape={'rounded'}
-				variant={'outlined'}
-			/>
 		</Box>
 	);
 };

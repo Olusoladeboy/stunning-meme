@@ -7,10 +7,13 @@ import {
 	SUCCESS_COLOR,
 	DANGER_COLOR,
 } from '../../utilities/constant';
+import LINKS from '../../utilities/links';
+import { useAppSelector } from '../../store/hooks';
 
 const UserRecords = () => {
 	const theme = useTheme();
 	const styles = useStyles(theme);
+	const { statistics } = useAppSelector((store) => store.appState);
 	return (
 		<Box
 			sx={{
@@ -33,15 +36,16 @@ const UserRecords = () => {
 				isBorderBottom
 				textColor={SUCCESS_COLOR}
 				text={'Verified Users'}
-				value={'480'}
+				value={statistics ? statistics.total_verified_users : '0'}
 				isPaddingRight
+				link={LINKS.Verification}
 			/>
 			<RecordItem
 				isBorderLeft
 				isBorderBottom
 				textColor={DANGER_COLOR}
 				text={'Unverified Users'}
-				value={'10'}
+				value={statistics ? statistics.total_unverified_users : '0'}
 				isPaddingLeft
 			/>
 			<RecordItem
@@ -49,15 +53,16 @@ const UserRecords = () => {
 				isBorderTop
 				textColor={grey[800]}
 				text={'Suspended Users'}
-				value={'7'}
+				value={statistics ? statistics.total_suspended_users : '0'}
 				isPaddingRight
+				link={LINKS.Suspension}
 			/>
 			<RecordItem
 				isBorderLeft
 				isBorderTop
 				textColor={grey[400]}
 				text={'Deleted Users'}
-				value={'3'}
+				value={statistics ? statistics.total_deleted_users : '0'}
 				isPaddingLeft
 			/>
 		</Box>

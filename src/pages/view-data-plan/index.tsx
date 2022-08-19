@@ -7,7 +7,6 @@ import BackButton from '../../components/back-button';
 import { BOX_SHADOW } from '../../utilities/constant';
 import Button from '../../components/button';
 import ViewDataPlansTable from '../../components/table/view-data-plans-table';
-import DATA_PLANS from '../../utilities/data/data-plans';
 import ModalWrapper from '../../components/modal/Wrapper';
 import DataPlanForm from '../../components/forms/data-plan-form';
 
@@ -22,7 +21,7 @@ const ViewDataPlan = () => {
 					close={() => setDisplayModal(false)}
 					title={'Add new plan'}
 				>
-					<DataPlanForm />
+					<DataPlanForm handleOnSubmit={() => setDisplayModal(false)} />
 				</ModalWrapper>
 			)}
 			<Box style={styles.container as CSSProperties}>
@@ -36,7 +35,7 @@ const ViewDataPlan = () => {
 						Add new plan
 					</Button>
 				</Box>
-				<ViewDataPlansTable data={DATA_PLANS} />
+				<ViewDataPlansTable />
 			</Box>
 		</Layout>
 	);

@@ -1,4 +1,4 @@
-import React, { CSSProperties, useState } from 'react';
+import React, { CSSProperties } from 'react';
 import Table from '@mui/material/Table';
 import Box from '@mui/material/Box';
 import { Avatar, Typography, useTheme } from '@mui/material';
@@ -12,13 +12,17 @@ import {
 	StyledTableRow as TableRow,
 } from './components';
 import TableHeader from '../header/table-header';
-import Empty from '../empty';
-import Pagination from '../pagination';
-import Button from '../button';
+import { UserDetailsType } from '../../utilities/types';
+import Loader from '../loader/table-loader';
+import Empty from '../empty/table-empty';
+import UnsuspendUser from '../unsuspend-user';
 
-const SuspensionTable = () => {
-	const [data] = useState<{ [key: string]: any }[] | null>(null);
+type Props = {
+	users: UserDetailsType[] | null;
+	isLoading: boolean;
+};
 
+const SuspensionTable = ({ users, isLoading }: Props) => {
 	const theme = useTheme();
 	const styles = useStyles(theme);
 	return (
@@ -72,45 +76,48 @@ const SuspensionTable = () => {
 							},
 						}}
 					>
-						{data && data.length > 0 ? (
-							data.map((row, key) => (
-								<TableRow key={key}>
-									<TableCell sx={{ maxWidth: '30px' }}>
-										<Avatar src={row.avatar} />
-									</TableCell>
-									<TableCell>{row.name}</TableCell>
-									<TableCell>{row.email}</TableCell>
-									<TableCell>{row.number_of_referees}</TableCell>
-									<TableCell>
-										<Button
-											size={'small'}
-											style={styles.suspendBtn as CSSProperties}
-										>
-											unsuspend
-										</Button>
-									</TableCell>
-								</TableRow>
-							))
+						{isLoading ? (
+							<Loader colSpan={6} />
 						) : (
-							<TableRow>
-								<TableCell colSpan={6}>
-									<Empty text={'No suspension records'} />
-								</TableCell>
-							</TableRow>
+							users && (
+								<>
+									{users && users.length > 0 ? (
+										users.map((row, key) => (
+											<TableRow key={key}>
+												<TableCell sx={{ maxWidth: '55px' }}>
+													<Avatar src={row.avatar} />
+												</TableCell>
+												<TableCell>
+													{row.firstname} {row.lastname}
+												</TableCell>
+												<TableCell>{row.suspensionReason}</TableCell>
+												<TableCell>
+													{row.suspended
+														? 'Suspended'
+														: row.deleted
+														? 'Deleted'
+														: ''}
+												</TableCell>
+												<TableCell>
+													<UnsuspendUser
+														user={row}
+														text={'unsuspend'}
+														buttonProps={{
+															size: 'small',
+															style: styles.suspendBtn as CSSProperties,
+														}}
+													/>
+												</TableCell>
+											</TableRow>
+										))
+									) : (
+										<Empty colSpan={6} text={'No suspension records'} />
+									)}
+								</>
+							)
 						)}
 					</TableBody>
 				</Table>
-				<Pagination
-					sx={{
-						display: 'flex',
-						justifyContent: 'flex-end',
-						marginTop: theme.spacing(4),
-						marginRight: '1rem',
-					}}
-					size={'large'}
-					shape={'rounded'}
-					variant={'outlined'}
-				/>
 			</Box>
 		</>
 	);

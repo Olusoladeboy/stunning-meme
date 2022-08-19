@@ -4,7 +4,12 @@ import { grey } from '@mui/material/colors';
 import { Refresh } from '@mui/icons-material';
 import formatNumberToCurrency from '../../utilities/helpers/formatNumberToCurrency';
 
-const ConversionTotal = () => {
+type Props = {
+	total?: number;
+	handleRefresh?: () => void;
+};
+
+const ConversionTotal = ({ total = 0, handleRefresh }: Props) => {
 	const theme = useTheme();
 	const styles = useStyles(theme);
 	return (
@@ -21,12 +26,15 @@ const ConversionTotal = () => {
 				<Box style={styles.verticalLine} />
 				<Box>
 					<Typography sx={{ marginBottom: theme.spacing(2) }} variant={'h4'}>
-						{700}
+						{total}
 					</Typography>
 					<Typography variant={'h6'}>Total conversions</Typography>
 				</Box>
 			</Box>
-			<IconButton style={styles.refreshBtn}>
+			<IconButton
+				onClick={() => typeof handleRefresh !== 'undefined' && handleRefresh()}
+				style={styles.refreshBtn}
+			>
 				<Refresh />
 			</IconButton>
 		</Box>

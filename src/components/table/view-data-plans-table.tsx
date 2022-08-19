@@ -1,4 +1,5 @@
 import React, { CSSProperties, MouseEvent, useState } from 'react';
+import { useParams } from 'react-router-dom';
 import Table from '@mui/material/Table';
 import {
 	Box,
@@ -17,7 +18,9 @@ import {
 } from '@mui/material';
 import { tableCellClasses } from '@mui/material/TableCell';
 import { MoreHoriz } from '@mui/icons-material';
+import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { grey } from '@mui/material/colors';
+import { useSnackbar } from 'notistack';
 import {
 	BOX_SHADOW,
 	DANGER_COLOR,
@@ -29,12 +32,13 @@ import TableHeader from '../header/table-header';
 import DataPlanForm from '../forms/data-plan-form';
 import ModalWrapper from '../modal/Wrapper';
 import RegularAlert from '../modal/regular-modal';
-
-type Props = {
-	data: {
-		[key: string]: any;
-	}[];
-};
+import Api from '../../utilities/api';
+import handleResponse from '../../utilities/helpers/handleResponse';
+import { DataPlan, QueryKeyTypes } from '../../utilities/types';
+import { useAppSelector } from '../../store/hooks';
+import TableLoader from '../loader/table-loader';
+import TableEmpty from '../empty/table-empty';
+import Loader from '../loader';
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
 	[`&.${tableCellClasses.head}`]: {
@@ -68,16 +72,30 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 	},
 }));
 
-const ViewDataPlansTable = ({ data }: Props) => {
+interface ExtendedDataPlan extends DataPlan {
+	shortcode: string;
+	shortcode_sms: string;
+	isActive: boolean;
+	id: string;
+}
+
+const ViewDataPlansTable = () => {
 	const theme = useTheme();
 	const styles = useStyles(theme);
+	const [plans, setPlans] = useState<null | ExtendedDataPlan[]>(null);
+	const [selectedPlan, setSelectedPlan] = useState<null | ExtendedDataPlan>(
+		null
+	);
+
+	const { token } = useAppSelector((store) => store.authState);
+	const { enqueueSnackbar } = useSnackbar();
+	const params = useParams();
+	const queryClient = useQueryClient();
 
 	const [alert, setAlert] = useState<{ [key: string]: any } | null>(null);
 
 	const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-	const [currentRow, setCurrentRow] = useState<null | { [key: string]: any }>(
-		null
-	);
+	const [isEditPlan, setEditPlan] = useState<boolean>(false);
 
 	const handleClickAction = (event: MouseEvent<HTMLElement>) => {
 		setAnchorEl(
@@ -85,23 +103,77 @@ const ViewDataPlansTable = ({ data }: Props) => {
 		);
 	};
 
-	const handleDelete = (data: { [key: string]: any }) => {
-		setAlert({
-			title: `Delete ${data.plan_name}`,
-			btnText: 'Delete plan',
-			message: `Are you sure you want to delete ${data.plan_name}`,
-			alertType: 'failed',
-		});
+	const { isLoading } = useQuery(
+		[QueryKeyTypes.DataPlans, params.id],
+		() =>
+			Api.DataPlan.Plans({
+				token: token || '',
+				network: params ? params.id : '',
+			}),
+		{
+			enabled: !!token,
+			onSettled: (data, error) => {
+				if (error) {
+					const res = handleResponse({ error, isDisplayMessage: true });
+					if (res?.message) {
+						enqueueSnackbar(res.message, { variant: 'error' });
+					}
+				}
+
+				if (data && data.success) {
+					setPlans(data.payload);
+				}
+			},
+		}
+	);
+
+	const { isLoading: isEnablingDisablingPlan, mutate } = useMutation(
+		Api.DataPlan.UpdatePlan,
+		{
+			onSettled: (data, error) => {
+				if (error) {
+					const res = handleResponse({ error, isDisplayMessage: true });
+					if (res?.message) {
+						enqueueSnackbar(res.message, { variant: 'error' });
+					}
+				}
+
+				if (data && data.success) {
+					queryClient.invalidateQueries(QueryKeyTypes.DataPlans);
+					enqueueSnackbar('Data plan updated successfully!', {
+						variant: 'success',
+					});
+				}
+			},
+		}
+	);
+
+	const handleEnableDisablePlan = () => {
+		if (selectedPlan) {
+			mutate({
+				token: token || '',
+				data: {
+					isActive: !selectedPlan.isActive,
+				},
+				id: selectedPlan.id,
+			});
+		}
+	};
+
+	const closePlanModal = () => {
+		setEditPlan(false);
+		setSelectedPlan(null);
 	};
 
 	return (
 		<>
-			{currentRow && (
-				<ModalWrapper
-					close={() => setCurrentRow(null)}
-					title={'EDIT DATA PLAN'}
-				>
-					<DataPlanForm data={currentRow} />
+			{isEnablingDisablingPlan && <Loader />}
+			{isEditPlan && selectedPlan && (
+				<ModalWrapper close={() => closePlanModal()} title={'EDIT DATA PLAN'}>
+					<DataPlanForm
+						handleOnSubmit={() => closePlanModal()}
+						dataPayload={selectedPlan}
+					/>
 				</ModalWrapper>
 			)}
 			{alert && (
@@ -173,61 +245,86 @@ const ViewDataPlansTable = ({ data }: Props) => {
 								},
 							}}
 						>
-							{data.map((row, key) => (
-								<StyledTableRow key={key}>
-									<StyledTableCell
-										sx={{ paddingLeft: '40px' }}
-										style={styles.text}
-									>
-										{row.plan_name}
-									</StyledTableCell>
-									<StyledTableCell style={styles.text}>
-										{row.amount}
-									</StyledTableCell>
-									<StyledTableCell style={styles.text}>
-										{row.code}
-									</StyledTableCell>
-									<StyledTableCell style={styles.text}>
-										{row.shortcode}
-									</StyledTableCell>
-									<StyledTableCell style={styles.text}>
-										{row.shortcode_sms}
-									</StyledTableCell>
+							{isLoading ? (
+								<TableLoader colSpan={6} />
+							) : (
+								plans && (
+									<>
+										{plans.length > 0 ? (
+											plans.map((plan, key) => (
+												<StyledTableRow key={key}>
+													<StyledTableCell
+														sx={{ paddingLeft: '40px' }}
+														style={styles.text}
+													>
+														{plan.name}
+													</StyledTableCell>
+													<StyledTableCell style={styles.text}>
+														{typeof plan.amount !== 'string'
+															? plan.amount.$numberDecimal
+															: plan.amount}
+													</StyledTableCell>
+													<StyledTableCell style={styles.text}>
+														{plan.code}
+													</StyledTableCell>
+													<StyledTableCell style={styles.text}>
+														{plan.shortcode}
+													</StyledTableCell>
+													<StyledTableCell style={styles.text}>
+														{plan.shortcode_sms}
+													</StyledTableCell>
 
-									<StyledTableCell sx={{ paddingRight: '40px' }}>
-										<Box>
-											<IconButton
-												onClick={(event) => handleClickAction(event)}
-												size={'small'}
-											>
-												<MoreHoriz />
-											</IconButton>
-											<Popper open={Boolean(anchorEl)} anchorEl={anchorEl}>
-												<List style={styles.editDeleteWrapper}>
-													<ListItemButton
-														onClick={() => {
-															setAnchorEl(null);
-															setCurrentRow(row);
-														}}
-														style={styles.editBtn}
-													>
-														Edit
-													</ListItemButton>
-													<ListItemButton
-														onClick={() => {
-															setAnchorEl(null);
-															handleDelete(row);
-														}}
-														style={styles.deleteBtn}
-													>
-														Delete
-													</ListItemButton>
-												</List>
-											</Popper>
-										</Box>
-									</StyledTableCell>
-								</StyledTableRow>
-							))}
+													<StyledTableCell sx={{ paddingRight: '40px' }}>
+														<Box>
+															<IconButton
+																onClick={(event) => {
+																	handleClickAction(event);
+																	setSelectedPlan(plan);
+																}}
+																size={'small'}
+															>
+																<MoreHoriz />
+															</IconButton>
+															<Popper
+																open={Boolean(anchorEl)}
+																anchorEl={anchorEl}
+															>
+																<List style={styles.editDeleteWrapper}>
+																	<ListItemButton
+																		onClick={() => {
+																			setAnchorEl(null);
+																			setEditPlan(true);
+																		}}
+																		style={styles.editBtn}
+																	>
+																		Edit
+																	</ListItemButton>
+																	<ListItemButton
+																		onClick={() => {
+																			setAnchorEl(null);
+																			handleEnableDisablePlan();
+																		}}
+																		style={{
+																			...styles.enableDisableBtn,
+																			color: plan.isActive
+																				? DANGER_COLOR
+																				: theme.palette.primary.main,
+																		}}
+																	>
+																		{plan.isActive ? 'Disable' : 'Enable'}
+																	</ListItemButton>
+																</List>
+															</Popper>
+														</Box>
+													</StyledTableCell>
+												</StyledTableRow>
+											))
+										) : (
+											<TableEmpty text={'No records'} colSpan={6} />
+										)}
+									</>
+								)
+							)}
 						</TableBody>
 					</Table>
 				</Box>
@@ -266,7 +363,7 @@ const useStyles = (theme: any) => ({
 		paddingLeft: '40px',
 		paddingRight: '40px',
 	},
-	deleteBtn: {
+	enableDisableBtn: {
 		// minWidth: '120px',
 		color: DANGER_COLOR,
 		paddingLeft: '40px',

@@ -1,16 +1,27 @@
-import Storage from '../storage';
-import { StorageKeys } from '../types';
-
-const baseUrl = process.env.REACT_APP_BASE_URL as string;
-
-const token = Storage.getItem(StorageKeys.UserToken);
+import User from './user';
+import Account from './account';
+import Manager from './manager';
+import Network from './network';
+import KycLimits from './kyc';
+import DataPlan from './data-plan';
+import Transactions from './transactions';
+import ConvertAirtime from './convert-airtime';
+import Wallet from './wallet';
+import Staff from './staff';
+import Statistic from './statistics';
 
 const Api = {
-	Account: {
-		Login: async () => {
-			console.log('Login');
-		},
-	},
+	Account,
+	Manager,
+	User,
+	Network,
+	KycLimits,
+	DataPlan,
+	Transactions,
+	ConvertAirtime,
+	Wallet,
+	Staff,
+	Statistic,
 };
 
 export default Api;

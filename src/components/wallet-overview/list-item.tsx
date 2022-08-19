@@ -5,7 +5,7 @@ import { grey } from '@mui/material/colors';
 
 type Props = {
 	description: string;
-	amount: string;
+	amount: string | number;
 };
 
 const ListItem = ({ amount, description }: Props) => {
@@ -21,7 +21,7 @@ const ListItem = ({ amount, description }: Props) => {
 				style={styles.text}
 				variant={'body1'}
 			>
-				{formatNumberToCurrency(amount)}
+				{amount ? formatNumberToCurrency(amount) : formatNumberToCurrency(0)}
 			</Typography>
 		</Box>
 	);

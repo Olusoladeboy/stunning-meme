@@ -10,12 +10,13 @@ import TableRow from '@mui/material/TableRow';
 import { LIGHT_GRAY, BOX_SHADOW } from '../../utilities/constant';
 import { grey } from '@mui/material/colors';
 import Link from '../link';
-
-type Props = {
-	data: {
-		[key: string]: any;
-	}[];
-};
+import LINKS from '../../utilities/links';
+import Api from '../../utilities/api';
+import { QueryKeyTypes } from '../../utilities/types';
+import { useAppSelector } from '../../store/hooks';
+import Loader from '../loader/table-loader';
+import Empty from '../empty/table-empty';
+import { useQueryHook } from '../../utilities/api/hooks';
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
 	[`&.${tableCellClasses.head}`]: {
@@ -46,16 +47,31 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 	},
 }));
 
-const RecentConversionsTable = ({ data }: Props) => {
+const RecentConversionsTable = () => {
 	const theme = useTheme();
 	const styles = useStyles(theme);
+	const { token } = useAppSelector((store) => store.authState);
+
+	const { isLoading, data } = useQueryHook({
+		queryKey: [QueryKeyTypes.ConvertAirtime, 'recent-airtime-convert'],
+		queryFn: () =>
+			Api.ConvertAirtime.Records({
+				token: token as string,
+				params: {
+					limit: 4,
+					sort: '-createdAt',
+					populate: 'network,user',
+				},
+			}),
+	});
+
 	return (
 		<Box style={styles.container} sx={{ overflow: 'auto' }}>
 			<Box style={styles.header}>
 				<Typography variant={'h5'} style={styles.headerText}>
 					Recent Conversation
 				</Typography>
-				<Link style={styles.link} to={'/'}>
+				<Link style={styles.link} to={LINKS.Conversions}>
 					view more
 				</Link>
 			</Box>
@@ -82,22 +98,28 @@ const RecentConversionsTable = ({ data }: Props) => {
 						},
 					}}
 				>
-					{data.map((data, key) => (
-						<StyledTableRow key={key}>
-							<StyledTableCell style={styles.text}>
-								{data.full_name}
-							</StyledTableCell>
-							<StyledTableCell style={styles.text}>
-								{data.network_name}
-							</StyledTableCell>
-							<StyledTableCell style={styles.text}>
-								{data.phone_number}
-							</StyledTableCell>
-							<StyledTableCell style={styles.text}>
-								{data.amount}
-							</StyledTableCell>
-						</StyledTableRow>
-					))}
+					{isLoading ? (
+						<Loader colSpan={4} />
+					) : (
+						data && (
+							<>
+								{data.payload.length > 0 ? (
+									data.payload.map((row: any) => (
+										<StyledTableRow key={row.id}>
+											<StyledTableCell>
+												{row.user.firstname} {row.user.lastname}
+											</StyledTableCell>
+											<StyledTableCell>{row.network.name}</StyledTableCell>
+											<StyledTableCell>{row.phone_number}</StyledTableCell>
+											<StyledTableCell>{row.network.name}</StyledTableCell>
+										</StyledTableRow>
+									))
+								) : (
+									<Empty colSpan={4} text={'No recent conversion'} />
+								)}
+							</>
+						)
+					)}
 				</TableBody>
 			</Table>
 		</Box>

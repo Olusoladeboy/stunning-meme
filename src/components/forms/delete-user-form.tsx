@@ -1,35 +1,76 @@
-import React, { CSSProperties } from 'react';
+import React, { CSSProperties, useState } from 'react';
 import { Box, useTheme, Typography, Switch } from '@mui/material';
-import TextInput from '../form-components/TextInput';
-import Button from '../button';
+import { useMutation, useQueryClient } from 'react-query';
+// import Button from '../button';
 import { grey } from '@mui/material/colors';
+import { UserDetailsType } from '../../utilities/types';
+import Api from '../../utilities/api';
+import { QueryKeyTypes } from '../../utilities/types';
+import { useAlert } from '../../utilities/hooks';
+import Loader from '../loader';
+import { useAppSelector } from '../../store/hooks';
 
-const DeleteUserForm = () => {
+type Props = {
+	user: UserDetailsType | null;
+};
+
+const DeleteUserForm = ({ user }: Props) => {
 	const theme = useTheme();
 	const styles = useStyles(theme);
+	const setAlert = useAlert();
+	const queryClient = useQueryClient();
+	const [isActive, setActive] = useState<boolean>(
+		user?.isActive ? true : false
+	);
+
+	const { token } = useAppSelector((store) => store.authState);
+	const { isLoading, mutate } = useMutation(Api.User.ActivateOrDeativateUser, {
+		onSettled: (data, error) => {
+			if (error) {
+				setAlert({ alert: error, isError: true });
+			}
+
+			if (data && data.success) {
+				setAlert({ alert: data.message, type: 'success' });
+
+				queryClient.invalidateQueries(QueryKeyTypes.GetSingleUser);
+				queryClient.invalidateQueries(QueryKeyTypes.AllUsers);
+			}
+		},
+	});
+
+	const handleSwitch = () => {
+		setActive(!isActive);
+		mutate({
+			token: token as string,
+			data: {
+				isActive: !user?.isActive,
+			},
+			id: user?.id as string,
+		});
+	};
+
 	return (
-		<Box component={'form'}>
-			<Box style={styles.switchWrapper}>
-				<Typography style={styles.text as CSSProperties}>
-					delete user
-				</Typography>
-				<Switch />
-			</Box>
-			<Box style={styles.formWrapper as CSSProperties}>
+		<>
+			{isLoading && <Loader />}
+			<Box component={'form'}>
+				<Box style={styles.switchWrapper}>
+					<Typography style={styles.text as CSSProperties}>
+						{user?.isActive ? 'Deactivate user' : 'Activate user'}
+					</Typography>
+					<Switch checked={isActive} onChange={() => handleSwitch()} />
+				</Box>
+				{/* <Box style={styles.formWrapper as CSSProperties}>
 				<Box>
-					<TextInput
-						multiline
-						rows={7}
-						fullWidth
-						placeholder={'Enter suspension note'}
-					/>
+					<TextArea rows={8} fullWidth placeholder={'Enter suspension note'} />
 				</Box>
 
 				<Button size={'large'} style={styles.btn}>
-					Suspend user
+					Deactivate user
 				</Button>
+			</Box> */}
 			</Box>
-		</Box>
+		</>
 	);
 };
 

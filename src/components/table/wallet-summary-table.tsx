@@ -1,88 +1,113 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Table from '@mui/material/Table';
+import { useLocation, useNavigate } from 'react-router-dom';
+import queryString from 'query-string';
 import Box from '@mui/material/Box';
 import { Typography, useTheme } from '@mui/material';
 import TableBody from '@mui/material/TableBody';
-import TableCell, { tableCellClasses } from '@mui/material/TableCell';
-import { styled } from '@mui/material';
+import { useQuery } from 'react-query';
+import { useSnackbar } from 'notistack';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
-import { Check, Close, AccessTime } from '@mui/icons-material';
-import {
-	LIGHT_GRAY,
-	SUCCESS_COLOR,
-	PENDING_COLOR,
-	DANGER_COLOR,
-} from '../../utilities/constant';
-import { TransactionStatusTypes } from '../../utilities/types';
-import { grey } from '@mui/material/colors';
+import moment from 'moment';
+import { LIGHT_GRAY } from '../../utilities/constant';
+import { StyledTableRow, StyledTableCell } from './components';
+import { UserDetailsType, UserNavList } from '../../utilities/types';
 import FilterIcon from '../icons/filter';
 import SearchInput from '../form-components/search-input';
-import FilterBy from '../form-components/filter-by';
+import Api from '../../utilities/api';
+import handleResponse from '../../utilities/helpers/handleResponse';
+import { QueryKeyTypes } from '../../utilities/types';
+import { useAppSelector } from '../../store/hooks';
+import Loader from '../loader/table-loader';
+import Empty from '../empty/table-empty';
+import formatNumberToCurrency from '../../utilities/helpers/formatNumberToCurrency';
+import Pagination from '../pagination';
+import { MAX_RECORDS } from '../../utilities/constant';
+import LINKS from '../../utilities/links';
 
 type Props = {
-	data: {
-		[key: string]: any;
-	}[];
+	user: UserDetailsType | null;
 };
 
-const StyledTableCell = styled(TableCell)(({ theme }) => ({
-	[`&.${tableCellClasses.head}`]: {
-		// backgroundColor: LIGHT_GRAY,
-		backgroundSize: 'cover',
-		backgroundPosition: 'top-left',
-		fontSize: '14px',
-		color: theme.palette.primary.main,
-	},
-	[`&.${tableCellClasses.body}`]: {
-		fontSize: '14px',
-	},
-}));
-
-const StyledTableRow = styled(TableRow)(({ theme }) => ({
-	color: theme.palette.primary.main,
-	'&:nth-of-type(even)': {
-		backgroundColor: LIGHT_GRAY,
-	},
-	'&:nth-of-type(odd)': {
-		backgroundColor: grey[50],
-	},
-	// hide last border
-	'&:last-child td, &:last-child th': {
-		border: 0,
-	},
-}));
-
-const setColor = (status: string) => {
-	if (status === TransactionStatusTypes.SUCCESSFUL) {
-		return SUCCESS_COLOR;
-	} else if (status === TransactionStatusTypes.PENDING) {
-		return PENDING_COLOR;
-	} else {
-		return DANGER_COLOR;
-	}
-};
-
-const WalletSummaryTable = ({ data }: Props) => {
+const WalletSummaryTable = ({ user }: Props) => {
 	const theme = useTheme();
 	const styles = useStyles(theme);
+	const navigate = useNavigate();
+	const [count, setCount] = useState<number>(1);
+	const [page, setPage] = useState<number>(1);
+	const [total, setTotal] = useState<number>(0);
+	const location = useLocation();
+	const query = queryString.parse(location.search);
+
+	useEffect(() => {
+		if (query && query.page) {
+			setPage(parseInt(query.page as string));
+		}
+	}, [query, query.page]);
+
+	const { enqueueSnackbar } = useSnackbar();
+	const { token } = useAppSelector((store) => store.authState);
+
+	const { isLoading, data } = useQuery(
+		[QueryKeyTypes.UserWalletTransaction, user?.id, page],
+		() =>
+			Api.Wallet.Transactions({
+				token: token as string,
+				params: {
+					user: user?.id,
+					sort: '-createdAt',
+					limit: MAX_RECORDS,
+					skip: (page - 1) * MAX_RECORDS,
+				},
+			}),
+		{
+			enabled: !!(token && user),
+			onSettled: (data, error) => {
+				if (error) {
+					const res = handleResponse({ error });
+					if (res?.message) {
+						enqueueSnackbar(res.message, { variant: 'error' });
+					}
+				}
+
+				if (data && data.success) {
+					const total = data.metadata.total;
+					setTotal(data.metadata.total);
+					const count = Math.ceil(total / MAX_RECORDS);
+					setCount(count);
+				}
+			},
+		}
+	);
+
+	const handlePageChange = (page: number) => {
+		if (page !== 1) {
+			setPage(page);
+			navigate(
+				`${LINKS.User}/${user?.id}?tab=${UserNavList.WalletSummary}&page=${page}`
+			);
+		} else {
+			navigate(`${LINKS.User}/${user?.id}?tab=${UserNavList.WalletSummary}`);
+			setPage(page);
+		}
+	};
+
 	return (
 		<Box sx={{ overflow: 'auto' }}>
-			<Box style={styles.tableHeader}>
+			<Box
+				sx={{ padding: { xs: '0px 1rem', md: '0px 2rem' } }}
+				style={styles.tableHeader}
+			>
 				<Typography variant={'h5'}>User Wallet Summary</Typography>
 				<Box
 					sx={{
 						display: 'flex',
-						maxWidth: '480px',
+						maxWidth: '320px',
 						width: '100%',
 						gap: theme.spacing(3),
 					}}
 				>
-					<FilterBy
-						placeholder={'Filter by'}
-						sx={{ maxWidth: '200px' }}
-						title={'Filter by'}
-					/>
 					<SearchInput fullWidth placeholder={'Search...'} />
 				</Box>
 			</Box>
@@ -96,29 +121,29 @@ const WalletSummaryTable = ({ data }: Props) => {
 					}}
 				>
 					<TableRow>
-						<StyledTableCell>Transaction</StyledTableCell>
 						<StyledTableCell>Reference</StyledTableCell>
+						<StyledTableCell>Amount</StyledTableCell>
+						<StyledTableCell>
+							<Box style={styles.filterWrapper}>
+								<Typography>Product</Typography>
+								<FilterIcon />
+							</Box>
+						</StyledTableCell>
+						<StyledTableCell>
+							<Box style={styles.filterWrapper}>
+								<Typography>Previous Balance</Typography>
+								<FilterIcon />
+							</Box>
+						</StyledTableCell>
+						<StyledTableCell>
+							<Box style={styles.filterWrapper}>
+								<Typography>New Balance</Typography>
+								<FilterIcon />
+							</Box>
+						</StyledTableCell>
 						<StyledTableCell>
 							<Box style={styles.filterWrapper}>
 								<Typography>Date</Typography>
-								<FilterIcon />
-							</Box>
-						</StyledTableCell>
-						<StyledTableCell>
-							<Box style={styles.filterWrapper}>
-								<Typography>Time</Typography>
-								<FilterIcon />
-							</Box>
-						</StyledTableCell>
-						<StyledTableCell>
-							<Box style={styles.filterWrapper}>
-								<Typography>Status</Typography>
-								<FilterIcon />
-							</Box>
-						</StyledTableCell>
-						<StyledTableCell>
-							<Box style={styles.filterWrapper}>
-								<Typography>Amount</Typography>
 								<FilterIcon />
 							</Box>
 						</StyledTableCell>
@@ -131,68 +156,61 @@ const WalletSummaryTable = ({ data }: Props) => {
 						},
 					}}
 				>
-					{data.map((data, key) => (
-						<StyledTableRow key={key}>
-							<StyledTableCell style={styles.text}>
-								{data.transaction_id}
-							</StyledTableCell>
-							<StyledTableCell style={styles.text}>
-								{data.transaction_type}
-							</StyledTableCell>
-							<StyledTableCell style={styles.text}>
-								{data.amount}
-							</StyledTableCell>
-							<StyledTableCell style={styles.text}>{data.date}</StyledTableCell>
-							<StyledTableCell style={styles.text}>{data.time}</StyledTableCell>
-							<StyledTableCell>
-								<Box
-									sx={{
-										display: 'flex',
-										color: setColor(data.status),
-										alignItems: 'center',
-										gap: theme.spacing(2),
-									}}
-								>
-									<Box
-										sx={{
-											padding: '5px',
-											position: 'relative',
-											height: '20px',
-											width: '20px',
-											display: 'flex',
-											alignItems: 'center',
-											justifyContent: 'center',
-											svg: {
-												fontSize: '14px',
-											},
-										}}
-									>
-										{data.status === TransactionStatusTypes.SUCCESSFUL ? (
-											<Check />
-										) : data.status === TransactionStatusTypes.PENDING ? (
-											<AccessTime />
-										) : (
-											<Close />
-										)}
-										<Box
-											sx={{
-												backgroundColor: setColor(data.status),
-												height: '100%',
-												width: '100%',
-												position: 'absolute',
-												zIndex: '0',
-												opacity: '0.15',
-												borderRadius: '50%',
-											}}
-										/>
-									</Box>
-									{data.status}
-								</Box>
-							</StyledTableCell>
-						</StyledTableRow>
-					))}
+					{isLoading ? (
+						<Loader colSpan={6} />
+					) : (
+						data && (
+							<>
+								{data.payload.length > 0 ? (
+									data.payload.map((row: any) => (
+										<StyledTableRow key={row.id}>
+											<StyledTableCell style={styles.text}>
+												{row.reference}
+											</StyledTableCell>
+											<StyledTableCell style={styles.text}>
+												{formatNumberToCurrency(row.amount.$numberDecimal)}
+											</StyledTableCell>
+											<StyledTableCell style={styles.text}>
+												{row.service}
+											</StyledTableCell>
+											<StyledTableCell style={styles.text}>
+												{formatNumberToCurrency(
+													row.balanceBefore.$numberDecimal
+												)}
+											</StyledTableCell>
+											<StyledTableCell style={styles.text}>
+												{formatNumberToCurrency(
+													row.balanceAfter.$numberDecimal
+												)}
+											</StyledTableCell>
+
+											<StyledTableCell style={styles.text}>
+												{moment.utc(row.createdAt).format('ll')}
+											</StyledTableCell>
+										</StyledTableRow>
+									))
+								) : (
+									<Empty colSpan={6} text={'No Wallet Summary'} />
+								)}
+							</>
+						)
+					)}
 				</TableBody>
 			</Table>
+
+			{total > MAX_RECORDS && (
+				<Box style={styles.paginationWrapper}>
+					<Pagination
+						sx={{}}
+						size={'large'}
+						variant={'outlined'}
+						shape={'rounded'}
+						page={page}
+						count={count}
+						onChange={(e, number) => handlePageChange(number)}
+					/>
+				</Box>
+			)}
 		</Box>
 	);
 };
@@ -211,6 +229,12 @@ const useStyles = (theme: any) => ({
 	},
 	text: {
 		color: theme.palette.primary.main,
+	},
+	paginationWrapper: {
+		marginRight: '20px',
+		marginTop: '2rem',
+		display: 'flex',
+		justifyContent: 'flex-end',
 	},
 });
 

@@ -2,7 +2,6 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import Table from '@mui/material/Table';
 import { useQuery, useQueryClient, useMutation } from 'react-query';
-import { useSnackbar } from 'notistack';
 import Box from '@mui/material/Box';
 import { useTheme } from '@mui/material';
 import TableBody from '@mui/material/TableBody';
@@ -25,13 +24,13 @@ import LINKS from '../../utilities/links';
 import Api from '../../utilities/api';
 import { useAppSelector } from '../../store/hooks';
 import TableLoader from '../loader/table-loader';
-import handleResponse from '../../utilities/helpers/handleResponse';
 import Loader from '../loader';
+import { useAlert } from '../../utilities/hooks';
 
 const DataNetworkTable = () => {
 	const theme = useTheme();
+	const setAlert = useAlert();
 	const styles = useStyles(theme);
-	const { enqueueSnackbar } = useSnackbar();
 	const queryClient = useQueryClient();
 	const navigate = useNavigate();
 	const { token } = useAppSelector((store) => store.authState);
@@ -47,10 +46,7 @@ const DataNetworkTable = () => {
 			enabled: !!token,
 			onSettled: (data, error) => {
 				if (error) {
-					const res = handleResponse({ error, isDisplayMessage: true });
-					if (res?.message) {
-						enqueueSnackbar(res.message, { variant: 'error' });
-					}
+					setAlert({ data: error, type: 'error' });
 				}
 			},
 		}
@@ -61,14 +57,14 @@ const DataNetworkTable = () => {
 		{
 			onSettled: (data, error) => {
 				if (error) {
-					const res = handleResponse({ error, isDisplayMessage: true });
-					if (res?.message) {
-						enqueueSnackbar(res.message, { variant: 'error' });
-					}
+					setAlert({ data: error, type: 'error' });
 				}
 
 				if (data && data.success) {
-					enqueueSnackbar(data.message, { variant: 'success' });
+					setAlert({
+						data: data.message,
+						type: 'success',
+					});
 					queryClient.invalidateQueries(QueryKeyTypes.DataNetwork);
 				}
 			},

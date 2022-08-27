@@ -1,17 +1,16 @@
 import React from 'react';
 import { Box, useTheme, MenuItem } from '@mui/material';
 import * as yup from 'yup';
-import { useSnackbar } from 'notistack';
 import { useMutation, useQueryClient } from 'react-query';
 import { useFormik } from 'formik';
 import { grey } from '@mui/material/colors';
 import { QueryKeyTypes } from '../../utilities/types';
 import Api from '../../utilities/api';
-import handleResponse from '../../utilities/helpers/handleResponse';
 import { useAppSelector } from '../../store/hooks';
 import CustomButton from '../button/custom-button';
 import Select from '../form-components/Select';
 import { useQueryHook } from '../../utilities/api/hooks';
+import { useAlert } from '../../utilities/hooks';
 
 type Props = {
 	userDetails: any;
@@ -22,8 +21,8 @@ const SELECT_MANAGER = 'Select manager';
 
 const AssignManagerForm = ({ userDetails, close }: Props) => {
 	const theme = useTheme();
+	const setAlert = useAlert();
 	const styles = useStyles(theme);
-	const { enqueueSnackbar } = useSnackbar();
 	const { token } = useAppSelector((store) => store.authState);
 
 	const queryClient = useQueryClient();
@@ -51,17 +50,13 @@ const AssignManagerForm = ({ userDetails, close }: Props) => {
 	const { isLoading, mutate } = useMutation(Api.User.AssignManagerToUser, {
 		onSettled: (data, error) => {
 			if (error) {
-				const res = handleResponse({ error, isDisplayMessage: true });
-				if (res?.message) {
-					enqueueSnackbar(res.message, { variant: 'error' });
-				} else {
-					enqueueSnackbar('Something went wrong, try again', {
-						variant: 'error',
-					});
-				}
+				setAlert({ data: error, type: 'error' });
 			}
 			if (data && data.success) {
-				enqueueSnackbar(data.message, { variant: 'success' });
+				setAlert({
+					data: data.message,
+					type: 'success',
+				});
 				queryClient.invalidateQueries(QueryKeyTypes.AllUsers);
 				queryClient.invalidateQueries(QueryKeyTypes.GetSingleUser);
 				resetForm();

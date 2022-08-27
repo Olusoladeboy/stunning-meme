@@ -1,6 +1,5 @@
 import React, { CSSProperties, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { useSnackbar } from 'notistack';
 import { useMutation, useQueryClient } from 'react-query';
 import * as yup from 'yup';
 import { Box, useTheme, Typography, MenuItem } from '@mui/material';
@@ -11,10 +10,10 @@ import { grey } from '@mui/material/colors';
 import { DataPlan, DataPlanType } from '../../utilities/types';
 import Select from '../form-components/Select';
 import Api from '../../utilities/api';
-import handleResponse from '../../utilities/helpers/handleResponse';
 import { QueryKeyTypes } from '../../utilities/types';
 import { useAppSelector } from '../../store/hooks';
 import TextPlaceholder from '../partials/text-placeholder';
+import { useAlert } from '../../utilities/hooks';
 
 interface ExtendedDataType extends DataPlan {
 	id: string;
@@ -29,9 +28,9 @@ const SELECT_PLAN = 'Select plan';
 
 const DataPlanForm = ({ dataPayload, handleOnSubmit }: Props) => {
 	const theme = useTheme();
+	const setAlert = useAlert();
 	const styles = useStyles(theme);
 	const params = useParams();
-	const { enqueueSnackbar } = useSnackbar();
 	const [dataPlanType, setDataPlanType] = useState('');
 	const { token } = useAppSelector((store) => store.authState);
 
@@ -64,15 +63,15 @@ const DataPlanForm = ({ dataPayload, handleOnSubmit }: Props) => {
 		{
 			onSettled: (data, error) => {
 				if (error) {
-					const res = handleResponse({ error });
-					if (res?.message) {
-						enqueueSnackbar(res.message, { variant: 'error' });
-					}
+					setAlert({ data: error, type: 'error' });
 				}
 
 				if (data && data.success) {
 					typeof handleOnSubmit !== 'undefined' && handleOnSubmit();
-					enqueueSnackbar(data.message, { variant: 'success' });
+					setAlert({
+						data: data.message,
+						type: 'success',
+					});
 					resetForm();
 					queryClient.invalidateQueries(QueryKeyTypes.DataPlans);
 				}
@@ -85,15 +84,15 @@ const DataPlanForm = ({ dataPayload, handleOnSubmit }: Props) => {
 		{
 			onSettled: (data, error) => {
 				if (error) {
-					const res = handleResponse({ error });
-					if (res?.message) {
-						enqueueSnackbar(res.message, { variant: 'error' });
-					}
+					setAlert({ data: error, type: 'error' });
 				}
 
 				if (data && data.success) {
 					typeof handleOnSubmit !== 'undefined' && handleOnSubmit();
-					enqueueSnackbar(data.message, { variant: 'success' });
+					setAlert({
+						data: data.message,
+						type: 'success',
+					});
 					queryClient.invalidateQueries(QueryKeyTypes.DataPlans);
 				}
 			},

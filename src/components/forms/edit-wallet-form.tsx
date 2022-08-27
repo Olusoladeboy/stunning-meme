@@ -54,12 +54,12 @@ const EditWalletForm = ({ user, close }: Props) => {
 	const { mutate, isLoading } = useMutation(Api.Transactions.TransactUser, {
 		onSettled: (data, error) => {
 			if (error) {
-				setAlert({ alert: error, isError: true });
+				setAlert({ data: error, isError: true });
 			}
 
 			if (data && data.success) {
 				setDone(true);
-				setAlert({ alert: data.message, type: 'success' });
+				setAlert({ data: data.message, type: 'success' });
 				queryClient.invalidateQueries(QueryKeyTypes.GetSingleUser);
 				queryClient.invalidateQueries(QueryKeyTypes.UserWallet);
 			}

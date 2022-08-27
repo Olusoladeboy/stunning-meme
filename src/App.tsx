@@ -43,7 +43,7 @@ function App() {
 			onSettled: (data, error) => {
 				if (error) {
 					const res = handleResponse({
-						error,
+						payload: error,
 						isDisplayMessage: true,
 						handler: logOut,
 					});

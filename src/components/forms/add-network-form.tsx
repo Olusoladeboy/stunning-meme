@@ -14,8 +14,8 @@ import {
 import ValidationSchema from '../../utilities/validationSchema';
 import Button from '../button/custom-button';
 import Api from '../../utilities/api';
-import handleResponse from '../../utilities/helpers/handleResponse';
 import { useAppSelector } from '../../store/hooks';
+import { useAlert } from '../../utilities/hooks';
 
 interface NetworkData extends NetworkDataTypes {
 	id?: string;
@@ -33,8 +33,8 @@ type Props = {
 
 const AddNetworkForm = ({ type, handleContinue, network, isEdit }: Props) => {
 	const theme = useTheme();
+	const setAlert = useAlert();
 	const styles = useStyles(theme);
-	const { enqueueSnackbar } = useSnackbar();
 	const queryClient = useQueryClient();
 	const { token } = useAppSelector((store) => store.authState);
 
@@ -50,14 +50,14 @@ const AddNetworkForm = ({ type, handleContinue, network, isEdit }: Props) => {
 		{
 			onSettled: (data, error) => {
 				if (error) {
-					const res = handleResponse({ error, isDisplayMessage: true });
-					if (res?.message) {
-						enqueueSnackbar(res.message, { variant: 'error' });
-					}
+					setAlert({ data: error, type: 'error' });
 				}
 
 				if (data && data.success) {
-					enqueueSnackbar(data.message, { variant: 'success' });
+					setAlert({
+						data: data.message,
+						type: 'success',
+					});
 					queryClient.invalidateQueries(QueryKeyTypes.DataNetwork);
 					queryClient.invalidateQueries(QueryKeyTypes.AirtimeNetwork);
 					queryClient.invalidateQueries(QueryKeyTypes.ConvertNetwork);
@@ -129,14 +129,14 @@ const AddNetworkForm = ({ type, handleContinue, network, isEdit }: Props) => {
 		{
 			onSettled: (data, error) => {
 				if (error) {
-					const res = handleResponse({ error, isDisplayMessage: true });
-					if (res?.message) {
-						enqueueSnackbar(res.message, { variant: 'error' });
-					}
+					setAlert({ data: error, type: 'error' });
 				}
 
 				if (data && data.success) {
-					enqueueSnackbar(data.message, { variant: 'success' });
+					setAlert({
+						data: data.message,
+						type: 'success',
+					});
 					queryClient.invalidateQueries(QueryKeyTypes.AirtimeNetwork);
 					queryClient.invalidateQueries(QueryKeyTypes.ConvertNetwork);
 					queryClient.invalidateQueries(QueryKeyTypes.DataNetwork);

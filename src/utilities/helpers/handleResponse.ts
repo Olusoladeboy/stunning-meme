@@ -3,7 +3,7 @@ import Storage from '../storage';
 import { StorageKeys } from '../types';
 
 type PropsType = {
-	error: any;
+	payload: any;
 	handler?: () => void;
 	isDisplayMessage?: boolean;
 };
@@ -14,13 +14,13 @@ type ReturnTypes = {
 };
 
 const handleResponse = ({
-	error,
+	payload,
 	handler,
 	isDisplayMessage = false,
 }: PropsType): ReturnTypes | null | undefined => {
-	if (error.response !== 'undefined' && error.response.data) {
-		const data = error.response.data;
-		const status = error.response.status;
+	if (payload.response !== 'undefined' && payload.response.data) {
+		const data = payload.response.data;
+		const status = payload.response.status;
 
 		if (status) {
 			switch (status) {
@@ -49,7 +49,7 @@ const handleResponse = ({
 			return null;
 		}
 	} else {
-		return error.message;
+		return payload.message;
 	}
 };
 

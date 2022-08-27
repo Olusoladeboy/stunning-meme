@@ -53,6 +53,28 @@ const ValidationSchema = {
 		monthlyLimit: yup.number().required('Specify mothly limit'),
 		perTransactionLimit: yup.number().required('Specify transaction per limit'),
 	}),
+	Coupon: yup.object().shape({
+		code: yup.string().required('Specify coupon code'),
+		type: yup
+			.string()
+			.notOneOf(['Select coupon type'], 'Select coupon type')
+			.required('Select coupon type'),
+		expiresIn: yup.date().required('Specify expire date'),
+		gift: yup
+			.number()
+			.positive('Gift must be positive number')
+			.required('Specify gift in number'),
+	}),
+	EditCoupon: yup.object().shape({
+		gift: yup
+			.number()
+			.positive('Gift must be positive number')
+			.required('Specify gift in number'),
+		type: yup
+			.string()
+			.notOneOf(['Select coupon type'], 'Select coupon type')
+			.required('Select coupon type'),
+	}),
 };
 
 export default ValidationSchema;

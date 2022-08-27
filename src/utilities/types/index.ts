@@ -31,6 +31,7 @@ export enum QueryKeyTypes {
 	RecentTransactions = '@Query:Recent_Transactions',
 	AllStaff = '@Query:All_Staff',
 	Statistics = '@Query:Statistics',
+	Coupon = '@Query:Coupon',
 }
 
 export enum RegistrationStepTypes {
@@ -200,6 +201,7 @@ export enum API_ENDPOINTS {
 	Kyc = '/kyc',
 	Transaction = '/transaction',
 	Wallet = '/wallet',
+	Coupon = '/coupon',
 }
 
 export type ManagerDetailsDataTypes = {
@@ -267,3 +269,39 @@ export type StatisticsType = {
 	};
 	total_wallet_balance: number;
 };
+
+export interface Amount {
+	$numberDecimal: string;
+}
+
+export interface Coupon {
+	code?: string;
+	name?: string;
+	type?: string;
+	expiresIn?: string;
+	gift?: Amount | string;
+	createdBy?: UserDetailsType;
+	createdAt?: string;
+	id?: string;
+	status?: string;
+}
+
+export enum CouponStatus {
+	UNVERIFIED = 'UNVERIFIED',
+	VERIFIED = 'VERIFIED',
+	CANCELLED = 'CANCELLED',
+	EXPIRED = 'EXPIRED',
+}
+
+export interface UpdateCouponStatus {
+	status:
+		| CouponStatus.VERIFIED
+		| CouponStatus.UNVERIFIED
+		| CouponStatus.CANCELLED
+		| CouponStatus.EXPIRED;
+}
+
+export enum CouponType {
+	PERCENT = 'PERCENT',
+	AMOUNT = 'AMOUNT',
+}

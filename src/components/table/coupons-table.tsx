@@ -10,7 +10,9 @@ import {
 	Popper,
 } from '@mui/material';
 import TableBody from '@mui/material/TableBody';
+import { useMutation, useQueryClient } from 'react-query';
 import TableHead from '@mui/material/TableHead';
+import moment from 'moment';
 import { grey } from '@mui/material/colors';
 import { AddCircle, MoreHoriz } from '@mui/icons-material';
 import {
@@ -25,35 +27,68 @@ import {
 	StyledTableRow as TableRow,
 } from './components';
 import TableHeader from '../header/table-header';
-import COUPONS from '../../utilities/data/coupons';
 import Empty from '../empty';
-import Pagination from '../pagination';
 import Button from '../button';
 import CouponForm from '../forms/coupon-form';
 import RegularAlert from '../modal/regular-modal';
+import { Coupon, QueryKeyTypes, CouponStatus } from '../../utilities/types';
+import TableLoader from '../loader/table-loader';
+import Api from '../../utilities/api';
+import { useAlert } from '../../utilities/hooks';
+import { useAppSelector } from '../../store/hooks';
+import Loader from '../loader';
 
-const CouponsTable = () => {
-	const [data] = useState<{ [key: string]: any }[] | null>(COUPONS);
+interface Props {
+	data: Coupon[] | null;
+	isLoading?: boolean;
+}
 
+const CouponsTable = ({ data, isLoading }: Props) => {
 	const [isCreateCoupon, setCreateCoupon] = useState<boolean>(false);
-
+	const setAlert = useAlert();
+	const { token } = useAppSelector((store) => store.authState);
 	const theme = useTheme();
 	const styles = useStyles(theme);
+	const queryClient = useQueryClient();
 
 	const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-	const [currentRow, setCurrentRow] = useState<null | { [key: string]: any }>(
+	const [selectedCoupon, setSelectedCoupon] = useState<null | Coupon>(null);
+	const [isEdit, setEdit] = useState<boolean>(false);
+	const [modalAlert, setModalAlert] = useState<{ [key: string]: any } | null>(
 		null
 	);
-	const [alert, setAlert] = useState<{ [key: string]: any } | null>(null);
 
-	const handleClickAction = (event: MouseEvent<HTMLElement>) => {
+	const { isLoading: isUpdatingCoupon, mutate: updateCoupon } = useMutation(
+		Api.Coupon.UpdateStatus,
+		{
+			onSettled: (data, error) => {
+				if (error) {
+					setAlert({
+						data: error,
+						type: 'error',
+					});
+				}
+
+				if (data && data.success) {
+					setAlert({ data: 'Coupon updated successfully!!', type: 'success' });
+					queryClient.invalidateQueries(QueryKeyTypes.Coupon);
+				}
+			},
+		}
+	);
+
+	const handleClickAction = (
+		event: MouseEvent<HTMLElement>,
+		coupon: Coupon
+	) => {
+		setSelectedCoupon(coupon);
 		setAnchorEl(
 			anchorEl && anchorEl === event.currentTarget ? null : event.currentTarget
 		);
 	};
 
 	const handleDelete = (data: { [key: string]: any }) => {
-		setAlert({
+		setModalAlert({
 			title: `Delete ${data.coupon_name}`,
 			btnText: 'Delete plan',
 			message: `Are you sure you want to delete ${data.coupon_name}`,
@@ -61,29 +96,56 @@ const CouponsTable = () => {
 		});
 	};
 
+	const handleVerifyCoupon = (
+		status:
+			| CouponStatus.VERIFIED
+			| CouponStatus.UNVERIFIED
+			| CouponStatus.EXPIRED
+			| CouponStatus.CANCELLED
+	) => {
+		updateCoupon({
+			token: token as string,
+			data: { status },
+			id: selectedCoupon?.id as string,
+		});
+	};
+
+	const handleCloseEditModal = () => {
+		setEdit(false);
+		setSelectedCoupon(null);
+	};
+
 	return (
 		<>
+			{isUpdatingCoupon && <Loader />}
 			{isCreateCoupon && (
 				<ModalWrapper
 					close={() => setCreateCoupon(false)}
 					title={'CREATE COUPON'}
 				>
-					<CouponForm />
+					<CouponForm onSuccess={() => setCreateCoupon(false)} />
 				</ModalWrapper>
 			)}
-			{alert && (
+			{modalAlert && (
 				<RegularAlert
-					close={() => setAlert(null)}
+					close={() => setModalAlert(null)}
 					width={'480px'}
-					title={alert.title}
-					btnText={alert.btnText}
-					message={alert.message}
-					alertType={alert.alertType}
+					title={modalAlert.title}
+					btnText={modalAlert.btnText}
+					message={modalAlert.message}
+					alertType={modalAlert.alertType}
 				/>
 			)}
-			{currentRow && (
-				<ModalWrapper close={() => setCurrentRow(null)} title={'EDIT COUPON'}>
-					<CouponForm isEdit data={currentRow} />
+			{isEdit && selectedCoupon && (
+				<ModalWrapper
+					close={() => handleCloseEditModal()}
+					title={'EDIT COUPON'}
+				>
+					<CouponForm
+						isEdit
+						data={selectedCoupon}
+						onSuccess={() => handleCloseEditModal()}
+					/>
 				</ModalWrapper>
 			)}
 
@@ -187,98 +249,110 @@ const CouponsTable = () => {
 							},
 						}}
 					>
-						{data && data.length > 0 ? (
-							data.map((row, key) => (
-								<TableRow key={key}>
-									<TableCell
-										sx={{ paddingLeft: '30px !important' }}
-										style={styles.tableText}
-									>
-										{row.coupon_name}
-									</TableCell>
-									<TableCell style={styles.tableText}>{row.type}</TableCell>
-									<TableCell style={styles.tableText}>{row.gift}</TableCell>
-									<TableCell style={styles.tableText}>
-										{row.created_by}
-									</TableCell>
-
-									<TableCell style={styles.tableText}>{row.date}</TableCell>
-									<TableCell style={styles.tableText}>
-										{row.expiration}
-									</TableCell>
-									<TableCell style={styles.tableText}>{row.status}</TableCell>
-									<TableCell>
-										<Box>
-											<IconButton
-												onClick={(event) => handleClickAction(event)}
-												size={'small'}
-											>
-												<MoreHoriz />
-											</IconButton>
-											<Popper open={Boolean(anchorEl)} anchorEl={anchorEl}>
-												<List style={styles.editDeleteWrapper}>
-													<ListItemButton
-														onClick={() => {
-															setAnchorEl(null);
-															setCurrentRow(row);
-														}}
-														style={styles.editBtn}
-													>
-														Edit
-													</ListItemButton>
-													<ListItemButton
-														onClick={() => {
-															setAnchorEl(null);
-															handleDelete(row);
-														}}
-														style={styles.verifyBtn}
-													>
-														Verify
-													</ListItemButton>
-													<ListItemButton
-														onClick={() => {
-															setAnchorEl(null);
-															handleDelete(row);
-														}}
-														style={styles.unverifyBtn}
-													>
-														Unverify
-													</ListItemButton>
-													<ListItemButton
-														onClick={() => {
-															setAnchorEl(null);
-															handleDelete(row);
-														}}
-														style={styles.deleteBtn}
-													>
-														Delete
-													</ListItemButton>
-												</List>
-											</Popper>
-										</Box>
-									</TableCell>
-								</TableRow>
-							))
+						{isLoading ? (
+							<TableLoader colSpan={8} />
 						) : (
-							<TableRow>
-								<TableCell colSpan={6}>
-									<Empty text={'No users'} />
-								</TableCell>
-							</TableRow>
+							data && (
+								<>
+									{data.length > 0 ? (
+										data.map((row, key) => (
+											<TableRow key={row.id}>
+												<TableCell
+													sx={{ paddingLeft: '30px !important' }}
+													style={styles.tableText}
+												>
+													{row.code || row?.name}
+												</TableCell>
+												<TableCell style={styles.tableText}>
+													{row.type}
+												</TableCell>
+												<TableCell style={styles.tableText}>
+													{typeof row.gift === 'string'
+														? row.gift
+														: row.gift?.$numberDecimal}
+												</TableCell>
+												<TableCell style={styles.tableText}>
+													{row.createdBy
+														? `${row.createdBy.firstname} ${row.createdBy.lastname}`
+														: 'No Specified user'}
+												</TableCell>
+
+												<TableCell style={styles.tableText}>
+													{moment.utc(row.createdAt).format('l')}
+												</TableCell>
+												<TableCell style={styles.tableText}>
+													{moment.utc(row.expiresIn).format('l')}
+												</TableCell>
+												<TableCell style={styles.tableText}>
+													{row.status}
+												</TableCell>
+												<TableCell>
+													<Box>
+														<IconButton
+															onClick={(event) => handleClickAction(event, row)}
+															size={'small'}
+														>
+															<MoreHoriz />
+														</IconButton>
+														<Popper
+															open={Boolean(anchorEl)}
+															anchorEl={anchorEl}
+														>
+															<List style={styles.editDeleteWrapper}>
+																<ListItemButton
+																	onClick={() => {
+																		setAnchorEl(null);
+																		setEdit(true);
+																	}}
+																	style={styles.editBtn}
+																>
+																	Edit
+																</ListItemButton>
+																<ListItemButton
+																	onClick={() => {
+																		setAnchorEl(null);
+																		handleVerifyCoupon(CouponStatus.VERIFIED);
+																	}}
+																	style={styles.verifyBtn}
+																>
+																	Verify
+																</ListItemButton>
+																<ListItemButton
+																	onClick={() => {
+																		setAnchorEl(null);
+																		handleVerifyCoupon(CouponStatus.UNVERIFIED);
+																	}}
+																	style={styles.unverifyBtn}
+																>
+																	Unverify
+																</ListItemButton>
+																<ListItemButton
+																	onClick={() => {
+																		setAnchorEl(null);
+																		handleDelete(row);
+																	}}
+																	style={styles.deleteBtn}
+																>
+																	Delete
+																</ListItemButton>
+															</List>
+														</Popper>
+													</Box>
+												</TableCell>
+											</TableRow>
+										))
+									) : (
+										<TableRow>
+											<TableCell colSpan={8}>
+												<Empty text={'No users'} />
+											</TableCell>
+										</TableRow>
+									)}
+								</>
+							)
 						)}
 					</TableBody>
 				</Table>
-				<Pagination
-					sx={{
-						display: 'flex',
-						justifyContent: 'flex-end',
-						marginTop: theme.spacing(4),
-						marginRight: '1rem',
-					}}
-					size={'large'}
-					shape={'rounded'}
-					variant={'outlined'}
-				/>
 			</Box>
 		</>
 	);

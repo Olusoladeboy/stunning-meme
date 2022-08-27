@@ -4,7 +4,6 @@ import Table from '@mui/material/Table';
 import Box from '@mui/material/Box';
 import { useTheme } from '@mui/material';
 import TableBody from '@mui/material/TableBody';
-import { useSnackbar } from 'notistack';
 import TableHead from '@mui/material/TableHead';
 import {
 	LIGHT_GRAY,
@@ -29,10 +28,10 @@ import {
 import Api from '../../utilities/api';
 import { useAppSelector } from '../../store/hooks';
 import TableLoader from '../loader/table-loader';
-import handleResponse from '../../utilities/helpers/handleResponse';
 import NetworkForm from '../forms/add-network-form';
 import Modal from '../modal/Wrapper';
 import Loader from '../loader';
+import { useAlert } from '../../utilities/hooks';
 
 interface ConversionNetworkTypes extends NetworkDataTypes {
 	isActive: boolean;
@@ -41,12 +40,12 @@ interface ConversionNetworkTypes extends NetworkDataTypes {
 
 const ConversionNetworkTable = () => {
 	const theme = useTheme();
+	const setAlert = useAlert();
 	const styles = useStyles(theme);
 	const queryClient = useQueryClient();
 	const [selectedNetwork, setSelectedNetwork] =
 		useState<NetworkDataTypes | null>(null);
 
-	const { enqueueSnackbar } = useSnackbar();
 	const { token } = useAppSelector((store) => store.authState);
 
 	const { isLoading, data } = useQuery(
@@ -60,10 +59,7 @@ const ConversionNetworkTable = () => {
 			enabled: !!token,
 			onSettled: (data, error) => {
 				if (error) {
-					const res = handleResponse({ error, isDisplayMessage: true });
-					if (res?.message) {
-						enqueueSnackbar(res.message, { variant: 'error' });
-					}
+					setAlert({ data: error, type: 'error' });
 				}
 			},
 		}
@@ -74,15 +70,12 @@ const ConversionNetworkTable = () => {
 		{
 			onSettled: (data, error) => {
 				if (error) {
-					const res = handleResponse({ error, isDisplayMessage: true });
-					if (res?.message) {
-						enqueueSnackbar(res.message, { variant: 'error' });
-					}
+					setAlert({ data: error, type: 'error' });
 				}
 
 				if (data && data.success) {
 					queryClient.invalidateQueries(QueryKeyTypes.ConvertNetwork);
-					enqueueSnackbar(data.message, { variant: 'success' });
+					setAlert({ data: data.message, type: 'success' });
 				}
 			},
 		}

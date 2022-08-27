@@ -1,7 +1,6 @@
 import React, { useEffect } from 'react';
 import { useMutation, useQueryClient } from 'react-query';
 import { useFormik } from 'formik';
-import { useSnackbar } from 'notistack';
 import { Box, useTheme, Typography } from '@mui/material';
 import TextInput from '../form-components/TextInput';
 import Button from '../button/custom-button';
@@ -9,8 +8,8 @@ import { grey } from '@mui/material/colors';
 import { QueryKeyTypes } from '../../utilities/types';
 import Api from '../../utilities/api';
 import { useAppSelector } from '../../store/hooks';
-import handleResponse from '../../utilities/helpers/handleResponse';
 import ValidationSchemas from '../../utilities/validationSchema';
+import { useAlert } from '../../utilities/hooks';
 
 type Props = {
 	data?: { [key: string]: any };
@@ -19,9 +18,9 @@ type Props = {
 
 const KycForm = ({ data, level }: Props) => {
 	const theme = useTheme();
+	const setAlert = useAlert();
 	const styles = useStyles(theme);
 	const { token } = useAppSelector((store) => store.authState);
-	const { enqueueSnackbar } = useSnackbar();
 
 	const initialValues = {
 		dailyLimit: '',
@@ -34,14 +33,12 @@ const KycForm = ({ data, level }: Props) => {
 	const { isLoading, mutate } = useMutation(Api.KycLimits.Update, {
 		onSettled: (data, error) => {
 			if (error) {
-				const res = handleResponse({ error, isDisplayMessage: true });
-				if (res?.message) {
-					enqueueSnackbar(res.message, { variant: 'error' });
-				}
+				setAlert({ data: error, type: 'error' });
 			}
 			if (data && data.success) {
-				enqueueSnackbar(data.message, {
-					variant: 'success',
+				setAlert({
+					data: data.message,
+					type: 'success',
 				});
 				queryClient.invalidateQueries(QueryKeyTypes.KycLimit);
 			}

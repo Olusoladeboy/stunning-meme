@@ -27,11 +27,11 @@ const DeleteUserForm = ({ user }: Props) => {
 	const { isLoading, mutate } = useMutation(Api.User.ActivateOrDeativateUser, {
 		onSettled: (data, error) => {
 			if (error) {
-				setAlert({ alert: error, isError: true });
+				setAlert({ data: error, isError: true });
 			}
 
 			if (data && data.success) {
-				setAlert({ alert: data.message, type: 'success' });
+				setAlert({ data: data.message, type: 'success' });
 
 				queryClient.invalidateQueries(QueryKeyTypes.GetSingleUser);
 				queryClient.invalidateQueries(QueryKeyTypes.AllUsers);

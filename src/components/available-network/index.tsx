@@ -11,9 +11,11 @@ import Api from '../../utilities/api';
 import { QueryKeyTypes, API_ENDPOINTS } from '../../utilities/types';
 import { useAppSelector } from '../../store/hooks';
 import LINKS from '../../utilities/links';
+import { useAlert } from '../../utilities/hooks';
 
 const AvailableNetwork = () => {
 	const theme = useTheme();
+	const setAlert = useAlert();
 	const navigate = useNavigate();
 	const styles = useStyles(theme);
 	const { enqueueSnackbar } = useSnackbar();
@@ -30,10 +32,7 @@ const AvailableNetwork = () => {
 			enabled: !!token,
 			onSettled: (data, error) => {
 				if (error) {
-					const res = handleResponse({ error });
-					if (res?.message) {
-						enqueueSnackbar(res.message, { variant: 'error' });
-					}
+					setAlert({ data: error, type: 'error' });
 				}
 			},
 		}

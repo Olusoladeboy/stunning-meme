@@ -1,10 +1,4 @@
-import {
-	useMutation,
-	MutationFunction,
-	useQueryClient,
-	MutateOptions,
-	UseMutateFunction,
-} from 'react-query';
+import { useMutation, MutationFunction, useQueryClient } from 'react-query';
 import { useSnackbar } from 'notistack';
 import handleResponse from '../../helpers/handleResponse';
 
@@ -26,7 +20,7 @@ const useMutationHook = (
 	const queryResponse = useMutation(mutateFn, {
 		onSettled: (data: any, error) => {
 			if (error) {
-				const res = handleResponse({ error, isDisplayMessage });
+				const res = handleResponse({ payload: error, isDisplayMessage });
 				if (res?.message) {
 					enqueueSnackbar(res.message, { variant: 'error' });
 				}

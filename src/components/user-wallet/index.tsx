@@ -2,15 +2,14 @@ import React, { CSSProperties, useState } from 'react';
 import { Box, Typography, useTheme } from '@mui/material';
 import { grey } from '@mui/material/colors';
 import { useQuery } from 'react-query';
-import { useSnackbar } from 'notistack';
 import formatNumberToCurrency from '../../utilities/helpers/formatNumberToCurrency';
 import Button from '../button';
 import ModalWrapper from '../modal/Wrapper';
 import EditWalletForm from '../forms/edit-wallet-form';
 import Api from '../../utilities/api';
-import handleResponse from '../../utilities/helpers/handleResponse';
 import { useAppSelector } from '../../store/hooks';
 import { QueryKeyTypes, UserDetailsType } from '../../utilities/types';
+import { useAlert } from '../../utilities/hooks';
 
 type Props = {
 	user: UserDetailsType | null;
@@ -18,11 +17,11 @@ type Props = {
 
 const UserWallet = ({ user }: Props) => {
 	const theme = useTheme();
+	const setAlert = useAlert();
 	const styles = useStyles(theme);
 	const [amount, setAmount] = useState<string>('');
 	const [isEditWallet, setEditWallet] = useState<boolean>(false);
 	const { token } = useAppSelector((store) => store.authState);
-	const { enqueueSnackbar } = useSnackbar();
 
 	useQuery(
 		[QueryKeyTypes.UserWallet, user?.id],
@@ -37,10 +36,7 @@ const UserWallet = ({ user }: Props) => {
 			enabled: !!(token && user),
 			onSettled: (data, error) => {
 				if (error) {
-					const res = handleResponse({ error });
-					if (res?.message) {
-						enqueueSnackbar(res.message);
-					}
+					setAlert({ data: error, type: 'error' });
 				}
 
 				if (data && data.success) {

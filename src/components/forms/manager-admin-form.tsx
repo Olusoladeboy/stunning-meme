@@ -2,7 +2,6 @@ import React, { CSSProperties } from 'react';
 import { Box, useTheme, Typography, MenuItem } from '@mui/material';
 import { useFormik } from 'formik';
 import { useMutation, useQueryClient } from 'react-query';
-import { useSnackbar } from 'notistack';
 import TextInput from '../form-components/TextInput';
 import Button from '../button/custom-button';
 import { grey } from '@mui/material/colors';
@@ -14,8 +13,8 @@ import {
 import Api from '../../utilities/api';
 import ValidationSchema from '../../utilities/validationSchema';
 import { useAppSelector } from '../../store/hooks';
-import handleResponse from '../../utilities/helpers/handleResponse';
 import Select from '../form-components/Select';
+import { useAlert } from '../../utilities/hooks';
 
 const AMIN_ROLES = ['OPERATIONS', 'CUSTOMER_SUPPORT'];
 const SELECT_ADMIN_PRIVILEDGE = 'Select Admin Priviledge';
@@ -39,9 +38,9 @@ const ManagerAdminForm = ({
 	isEdit,
 }: Props) => {
 	const theme = useTheme();
+	const setAlert = useAlert();
 	const styles = useStyles(theme);
 	const queryClient = useQueryClient();
-	const { enqueueSnackbar } = useSnackbar();
 	const { token } = useAppSelector((store) => store.authState);
 
 	const initialValues: ManagerDetails = {
@@ -59,14 +58,14 @@ const ManagerAdminForm = ({
 				if (data && data.success) {
 					resetForm();
 					queryClient.invalidateQueries(QueryKeyTypes.AllManagers);
-					enqueueSnackbar(data.message, { variant: 'success' });
+					setAlert({
+						data: data.message,
+						type: 'success',
+					});
 					typeof onSuccess !== 'undefined' && onSuccess();
 				}
 				if (error) {
-					const res = handleResponse({ error, isDisplayMessage: true });
-					if (res?.message) {
-						enqueueSnackbar(res.message, { variant: 'error' });
-					}
+					setAlert({ data: error, type: 'error' });
 				}
 			},
 		}
@@ -78,15 +77,18 @@ const ManagerAdminForm = ({
 			onSettled: (data, error) => {
 				if (data && data.success) {
 					resetForm();
-					queryClient.invalidateQueries(QueryKeyTypes.AllStaff);
-					enqueueSnackbar(data.message, { variant: 'success' });
+					setAlert({
+						data: data.message,
+						type: 'success',
+					});
+					setAlert({
+						data: data.message,
+						type: 'success',
+					});
 					typeof onSuccess !== 'undefined' && onSuccess();
 				}
 				if (error) {
-					const res = handleResponse({ error, isDisplayMessage: true });
-					if (res?.message) {
-						enqueueSnackbar(res.message, { variant: 'error' });
-					}
+					setAlert({ data: error, type: 'error' });
 				}
 			},
 		}
@@ -99,14 +101,14 @@ const ManagerAdminForm = ({
 				if (data && data.success) {
 					resetForm();
 					queryClient.invalidateQueries(QueryKeyTypes.AllManagers);
-					enqueueSnackbar(data.message, { variant: 'success' });
+					setAlert({
+						data: data.message,
+						type: 'success',
+					});
 					typeof onSuccess !== 'undefined' && onSuccess();
 				}
 				if (error) {
-					const res = handleResponse({ error, isDisplayMessage: true });
-					if (res?.message) {
-						enqueueSnackbar(res.message, { variant: 'error' });
-					}
+					setAlert({ data: error, type: 'error' });
 				}
 			},
 		}
@@ -119,14 +121,14 @@ const ManagerAdminForm = ({
 				if (data && data.success) {
 					resetForm();
 					queryClient.invalidateQueries(QueryKeyTypes.AllStaff);
-					enqueueSnackbar(data.message, { variant: 'success' });
+					setAlert({
+						data: data.message,
+						type: 'success',
+					});
 					typeof onSuccess !== 'undefined' && onSuccess();
 				}
 				if (error) {
-					const res = handleResponse({ error, isDisplayMessage: true });
-					if (res?.message) {
-						enqueueSnackbar(res.message, { variant: 'error' });
-					}
+					setAlert({ data: error, type: 'error' });
 				}
 			},
 		}

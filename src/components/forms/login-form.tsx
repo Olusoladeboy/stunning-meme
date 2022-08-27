@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Box, useTheme, InputAdornment, Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import { useSnackbar } from 'notistack';
 import { useMutation } from 'react-query';
 import { useFormik } from 'formik';
 import TextInput from '../form-components/TextInput';
@@ -12,15 +11,15 @@ import LINKS from '../../utilities/links';
 import ValidationSchema from '../../utilities/validationSchema';
 import { LoginDataTypes } from '../../utilities/types';
 import Api from '../../utilities/api';
-import handleResponse from '../../utilities/helpers/handleResponse';
 import { useAppDispatch } from '../../store/hooks';
 import { setToken, setUser } from '../../store/auth';
 import CustomButton from '../button/custom-button';
+import { useAlert } from '../../utilities/hooks';
 
 const LoginForm = () => {
 	const theme = useTheme();
+	const setAlert = useAlert();
 	const styles = useStyles(theme);
-	const { enqueueSnackbar } = useSnackbar();
 	const [isDisplayPassword, setDisplayPassword] = useState<boolean>(false);
 	const dispatch = useAppDispatch();
 	const navigate = useNavigate();
@@ -33,17 +32,10 @@ const LoginForm = () => {
 	const { isLoading, mutate } = useMutation(Api.Account.Login, {
 		onSettled: (data, error) => {
 			if (error) {
-				const res = handleResponse({ error, isDisplayMessage: true });
-				if (res?.message) {
-					enqueueSnackbar(res.message, { variant: 'error' });
-				} else {
-					enqueueSnackbar('Something went wrong, try again', {
-						variant: 'error',
-					});
-				}
+				setAlert({ data: error, type: 'error' });
 			}
 			if (data && data.success) {
-				enqueueSnackbar(data.message, { variant: 'success' });
+				setAlert({ data: data.message, type: 'success' });
 				dispatch(setToken(data.payload.token));
 				dispatch(setUser(data.payload.user));
 				navigate(LINKS.Dashboard);

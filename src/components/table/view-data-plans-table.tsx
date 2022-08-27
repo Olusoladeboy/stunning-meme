@@ -20,7 +20,6 @@ import { tableCellClasses } from '@mui/material/TableCell';
 import { MoreHoriz } from '@mui/icons-material';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { grey } from '@mui/material/colors';
-import { useSnackbar } from 'notistack';
 import {
 	BOX_SHADOW,
 	DANGER_COLOR,
@@ -33,12 +32,12 @@ import DataPlanForm from '../forms/data-plan-form';
 import ModalWrapper from '../modal/Wrapper';
 import RegularAlert from '../modal/regular-modal';
 import Api from '../../utilities/api';
-import handleResponse from '../../utilities/helpers/handleResponse';
 import { DataPlan, QueryKeyTypes } from '../../utilities/types';
 import { useAppSelector } from '../../store/hooks';
 import TableLoader from '../loader/table-loader';
 import TableEmpty from '../empty/table-empty';
 import Loader from '../loader';
+import { useAlert } from '../../utilities/hooks';
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
 	[`&.${tableCellClasses.head}`]: {
@@ -81,6 +80,7 @@ interface ExtendedDataPlan extends DataPlan {
 
 const ViewDataPlansTable = () => {
 	const theme = useTheme();
+	const setAlert = useAlert();
 	const styles = useStyles(theme);
 	const [plans, setPlans] = useState<null | ExtendedDataPlan[]>(null);
 	const [selectedPlan, setSelectedPlan] = useState<null | ExtendedDataPlan>(
@@ -88,11 +88,12 @@ const ViewDataPlansTable = () => {
 	);
 
 	const { token } = useAppSelector((store) => store.authState);
-	const { enqueueSnackbar } = useSnackbar();
 	const params = useParams();
 	const queryClient = useQueryClient();
 
-	const [alert, setAlert] = useState<{ [key: string]: any } | null>(null);
+	const [modalAlert, setModalAlert] = useState<{ [key: string]: any } | null>(
+		null
+	);
 
 	const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 	const [isEditPlan, setEditPlan] = useState<boolean>(false);
@@ -114,10 +115,7 @@ const ViewDataPlansTable = () => {
 			enabled: !!token,
 			onSettled: (data, error) => {
 				if (error) {
-					const res = handleResponse({ error, isDisplayMessage: true });
-					if (res?.message) {
-						enqueueSnackbar(res.message, { variant: 'error' });
-					}
+					setAlert({ data: error, type: 'error' });
 				}
 
 				if (data && data.success) {
@@ -132,16 +130,14 @@ const ViewDataPlansTable = () => {
 		{
 			onSettled: (data, error) => {
 				if (error) {
-					const res = handleResponse({ error, isDisplayMessage: true });
-					if (res?.message) {
-						enqueueSnackbar(res.message, { variant: 'error' });
-					}
+					setAlert({ data: error, type: 'error' });
 				}
 
 				if (data && data.success) {
 					queryClient.invalidateQueries(QueryKeyTypes.DataPlans);
-					enqueueSnackbar('Data plan updated successfully!', {
-						variant: 'success',
+					setAlert({
+						data: 'Data plan updated successfully!',
+						type: 'success',
 					});
 				}
 			},
@@ -176,14 +172,14 @@ const ViewDataPlansTable = () => {
 					/>
 				</ModalWrapper>
 			)}
-			{alert && (
+			{modalAlert && (
 				<RegularAlert
-					close={() => setAlert(null)}
+					close={() => setModalAlert(null)}
 					width={'480px'}
-					title={alert.title}
-					btnText={alert.btnText}
-					message={alert.message}
-					alertType={alert.alertType}
+					title={modalAlert.title}
+					btnText={modalAlert.btnText}
+					message={modalAlert.message}
+					alertType={modalAlert.alertType}
 				/>
 			)}
 			<ClickAwayListener onClickAway={() => setAnchorEl(null)}>

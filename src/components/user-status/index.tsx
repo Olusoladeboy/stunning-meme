@@ -24,11 +24,11 @@ const UserStatus = ({ user }: Props) => {
 	const { mutate, isLoading } = useMutation(Api.Wallet.SuspendWithdraw, {
 		onSettled: (data, error) => {
 			if (error) {
-				setAlert({ alert: error, isError: true });
+				setAlert({ data: error, isError: true });
 			}
 
 			if (data && data.success) {
-				setAlert({ alert: data.message, type: 'success' });
+				setAlert({ data: data.message, type: 'success' });
 				queryClient.invalidateQueries(QueryKeyTypes.AllUsers);
 				queryClient.invalidateQueries(QueryKeyTypes.GetSingleUser);
 				queryClient.invalidateQueries(QueryKeyTypes.Statistics);

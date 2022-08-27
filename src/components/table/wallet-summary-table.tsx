@@ -6,7 +6,6 @@ import Box from '@mui/material/Box';
 import { Typography, useTheme } from '@mui/material';
 import TableBody from '@mui/material/TableBody';
 import { useQuery } from 'react-query';
-import { useSnackbar } from 'notistack';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import moment from 'moment';
@@ -16,7 +15,6 @@ import { UserDetailsType, UserNavList } from '../../utilities/types';
 import FilterIcon from '../icons/filter';
 import SearchInput from '../form-components/search-input';
 import Api from '../../utilities/api';
-import handleResponse from '../../utilities/helpers/handleResponse';
 import { QueryKeyTypes } from '../../utilities/types';
 import { useAppSelector } from '../../store/hooks';
 import Loader from '../loader/table-loader';
@@ -25,6 +23,7 @@ import formatNumberToCurrency from '../../utilities/helpers/formatNumberToCurren
 import Pagination from '../pagination';
 import { MAX_RECORDS } from '../../utilities/constant';
 import LINKS from '../../utilities/links';
+import { useAlert } from '../../utilities/hooks';
 
 type Props = {
 	user: UserDetailsType | null;
@@ -32,6 +31,7 @@ type Props = {
 
 const WalletSummaryTable = ({ user }: Props) => {
 	const theme = useTheme();
+	const setAlert = useAlert();
 	const styles = useStyles(theme);
 	const navigate = useNavigate();
 	const [count, setCount] = useState<number>(1);
@@ -46,7 +46,6 @@ const WalletSummaryTable = ({ user }: Props) => {
 		}
 	}, [query, query.page]);
 
-	const { enqueueSnackbar } = useSnackbar();
 	const { token } = useAppSelector((store) => store.authState);
 
 	const { isLoading, data } = useQuery(
@@ -65,10 +64,7 @@ const WalletSummaryTable = ({ user }: Props) => {
 			enabled: !!(token && user),
 			onSettled: (data, error) => {
 				if (error) {
-					const res = handleResponse({ error });
-					if (res?.message) {
-						enqueueSnackbar(res.message, { variant: 'error' });
-					}
+					setAlert({ data: error, type: 'error' });
 				}
 
 				if (data && data.success) {

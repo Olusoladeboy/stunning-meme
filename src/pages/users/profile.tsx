@@ -9,11 +9,7 @@ import BackButton from '../../components/back-button';
 import { BOX_SHADOW } from '../../utilities/constant';
 import UserTab from '../../components/tabs/user';
 import LINKS from '../../utilities/links';
-import {
-	UserNavList,
-	QueryKeyTypes,
-	UserDetailsType,
-} from '../../utilities/types';
+import { UserNavList, QueryKey, UserDetails } from '../../utilities/types';
 import UserProfile from '../../components/user-profile';
 import UserStatus from '../../components/user-status';
 import UserTransaction from '../../components/user-transaction';
@@ -25,7 +21,7 @@ import Button from '../../components/button';
 import Modal from '../../components/modal/Wrapper';
 import AssignManagerForm from '../../components/forms/assign-manager-form';
 
-interface UserDetails extends UserDetailsType {
+interface User extends UserDetails {
 	manager: any;
 }
 
@@ -34,7 +30,7 @@ const Profile = () => {
 	const styles = useStyles(theme);
 	const { id } = useParams();
 	const { token } = useAppSelector((store) => store.authState);
-	const [userDetails, setUserDetails] = useState<null | UserDetails>(null);
+	const [userDetails, setUserDetails] = useState<null | User>(null);
 	const [isDisplayModal, setDisplayModal] = useState<boolean>(false);
 
 	const location = useLocation();
@@ -81,7 +77,7 @@ const Profile = () => {
 	}, [tab]);
 
 	const { isLoading, data } = useQuery(
-		QueryKeyTypes.GetSingleUser,
+		QueryKey.GetSingleUser,
 		() =>
 			Api.User.GetUserById({
 				token: token || '',

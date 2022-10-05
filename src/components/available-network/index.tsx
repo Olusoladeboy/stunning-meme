@@ -8,7 +8,7 @@ import Button from '../button';
 import AvaliableNetworkItem from './available-network-item';
 import handleResponse from '../../utilities/helpers/handleResponse';
 import Api from '../../utilities/api';
-import { QueryKeyTypes, API_ENDPOINTS } from '../../utilities/types';
+import { QueryKey, API_ENDPOINTS } from '../../utilities/types';
 import { useAppSelector } from '../../store/hooks';
 import LINKS from '../../utilities/links';
 import { useAlert } from '../../utilities/hooks';
@@ -22,7 +22,7 @@ const AvailableNetwork = () => {
 	const { token } = useAppSelector((store) => store.authState);
 
 	const { isLoading, data } = useQuery(
-		QueryKeyTypes.ConvertNetwork,
+		QueryKey.ConvertNetwork,
 		() =>
 			Api.Network.GetNetwork({
 				token: token || '',

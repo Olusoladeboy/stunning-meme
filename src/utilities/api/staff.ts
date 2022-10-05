@@ -1,7 +1,7 @@
 import apiRequest from './apiRequest';
-import { API_ENDPOINTS, ManagerDetailsDataTypes } from '../types';
+import { API_ENDPOINTS, ManagerDetailsData } from '../types';
 
-interface StaffDetails extends ManagerDetailsDataTypes {
+interface StaffDetails extends ManagerDetailsData {
 	role: string;
 }
 

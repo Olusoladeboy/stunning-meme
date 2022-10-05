@@ -10,7 +10,7 @@ import TransactionMainBalance from '../../components/transaction-main-balance';
 import { useQueryHook } from '../../utilities/api/hooks';
 import { useAppSelector } from '../../store/hooks';
 import Api from '../../utilities/api';
-import { QueryKeyTypes } from '../../utilities/types';
+import { QueryKey } from '../../utilities/types';
 import { MAX_RECORDS } from '../../utilities/constant';
 import LINKS from '../../utilities/links';
 import Pagination from '../../components/pagination';
@@ -34,7 +34,7 @@ const Transactions = () => {
 
 	const { isLoading, data } = useQueryHook({
 		keepPreviousData: true,
-		queryKey: [QueryKeyTypes.AllTransactions, page],
+		queryKey: [QueryKey.AllTransactions, page],
 		queryFn: () =>
 			Api.Transactions.All({
 				token: token as string,

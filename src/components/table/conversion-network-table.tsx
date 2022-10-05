@@ -20,10 +20,10 @@ import Image from '../image';
 import Button from '../button/custom-button';
 import Empty from '../empty';
 import {
-	QueryKeyTypes,
+	QueryKey,
 	API_ENDPOINTS,
-	NetworkDataTypes,
-	NetworkPageTypes,
+	NetworkData,
+	NetworkPage,
 } from '../../utilities/types';
 import Api from '../../utilities/api';
 import { useAppSelector } from '../../store/hooks';
@@ -33,7 +33,7 @@ import Modal from '../modal/Wrapper';
 import Loader from '../loader';
 import { useAlert } from '../../utilities/hooks';
 
-interface ConversionNetworkTypes extends NetworkDataTypes {
+interface ConversionNetworkTypes extends NetworkData {
 	isActive: boolean;
 	id: string;
 }
@@ -43,13 +43,14 @@ const ConversionNetworkTable = () => {
 	const setAlert = useAlert();
 	const styles = useStyles(theme);
 	const queryClient = useQueryClient();
-	const [selectedNetwork, setSelectedNetwork] =
-		useState<NetworkDataTypes | null>(null);
+	const [selectedNetwork, setSelectedNetwork] = useState<NetworkData | null>(
+		null
+	);
 
 	const { token } = useAppSelector((store) => store.authState);
 
 	const { isLoading, data } = useQuery(
-		QueryKeyTypes.ConvertNetwork,
+		QueryKey.ConvertNetwork,
 		() =>
 			Api.Network.GetNetwork({
 				token: token || '',
@@ -74,7 +75,7 @@ const ConversionNetworkTable = () => {
 				}
 
 				if (data && data.success) {
-					queryClient.invalidateQueries(QueryKeyTypes.ConvertNetwork);
+					queryClient.invalidateQueries(QueryKey.ConvertNetwork);
 					setAlert({ data: data.message, type: 'success' });
 				}
 			},
@@ -109,7 +110,7 @@ const ConversionNetworkTable = () => {
 					<NetworkForm
 						isEdit
 						network={selectedNetwork}
-						type={NetworkPageTypes.CONVERSION_NETWORK}
+						type={NetworkPage.CONVERSION_NETWORK}
 						handleContinue={() => setSelectedNetwork(null)}
 					/>
 				</Modal>

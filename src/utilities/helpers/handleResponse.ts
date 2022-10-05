@@ -1,4 +1,4 @@
-import { HttpStatusCodeTypes } from '../types';
+import { HttpStatusCode } from '../types';
 import Storage from '../storage';
 import { StorageKeys } from '../types';
 
@@ -24,22 +24,22 @@ const handleResponse = ({
 
 		if (status) {
 			switch (status) {
-				case HttpStatusCodeTypes.OK:
+				case HttpStatusCode.OK:
 					return { data, message: isDisplayMessage ? data.message : null };
-				case HttpStatusCodeTypes.Forbidden:
+				case HttpStatusCode.Forbidden:
 					Storage.deleteItem(StorageKeys.UserToken);
 					typeof handler !== 'undefined' && handler();
 					return { data, message: data.message };
 
-				case HttpStatusCodeTypes.BadRequest:
+				case HttpStatusCode.BadRequest:
 					return { data, message: data.message };
 
-				case HttpStatusCodeTypes.Unauthorized:
+				case HttpStatusCode.Unauthorized:
 					Storage.deleteItem(StorageKeys.UserToken);
 					typeof handler !== 'undefined' && handler();
 					return { data, message: data.message };
 
-				case HttpStatusCodeTypes.NotFound:
+				case HttpStatusCode.NotFound:
 					return { data, message: data.message };
 
 				default:

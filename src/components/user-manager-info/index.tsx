@@ -4,10 +4,10 @@ import { grey } from '@mui/material/colors';
 import { LIGHT_GRAY } from '../../utilities/constant';
 import InfoList from './info-list';
 import { useAppSelector } from '../../store/hooks';
-import { ManagerDetailsDataTypes } from '../../utilities/types';
+import { ManagerDetailsData } from '../../utilities/types';
 import Button from '../button';
 
-interface ManagerDetails extends ManagerDetailsDataTypes {}
+interface ManagerDetails extends ManagerDetailsData {}
 
 type Props = {
 	manager: ManagerDetails;

@@ -1,13 +1,9 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import Storage from '../../utilities/storage';
-import {
-	StorageKeys,
-	AuthStateTypes,
-	UserDetailsType,
-} from '../../utilities/types';
+import { StorageKeys, AuthState, UserDetails } from '../../utilities/types';
 
 // Define the initial state using that type
-const initialState: AuthStateTypes = {
+const initialState: AuthState = {
 	isAuthenticated: false,
 	user: null,
 	token: window !== undefined ? Storage.getItem(StorageKeys.UserToken) : null,
@@ -17,7 +13,7 @@ export const userSlice = createSlice({
 	name: 'authState',
 	initialState,
 	reducers: {
-		setUser: (state, action: PayloadAction<UserDetailsType | null>) => {
+		setUser: (state, action: PayloadAction<UserDetails | null>) => {
 			action.payload
 				? (state.isAuthenticated = true)
 				: (state.isAuthenticated = false);

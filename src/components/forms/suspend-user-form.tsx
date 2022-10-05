@@ -6,7 +6,7 @@ import { Box, useTheme, Typography, Switch } from '@mui/material';
 import TextInput from '../form-components/TextInput';
 import Button from '../button/custom-button';
 import { grey } from '@mui/material/colors';
-import { UserDetailsType, QueryKeyTypes } from '../../utilities/types';
+import { UserDetails, QueryKey } from '../../utilities/types';
 import TextArea from '../form-components/text-area';
 import Api from '../../utilities/api';
 import { useAppSelector } from '../../store/hooks';
@@ -14,7 +14,7 @@ import { useAlert } from '../../utilities/hooks';
 import UnsuspendUser from '../unsuspend-user';
 
 type Props = {
-	user: UserDetailsType | null;
+	user: UserDetails | null;
 };
 
 const SuspendUserForm = ({ user }: Props) => {
@@ -41,9 +41,9 @@ const SuspendUserForm = ({ user }: Props) => {
 			if (data && data.success) {
 				setAlert({ data: data.message, type: 'success' });
 				resetForm();
-				queryClient.invalidateQueries(QueryKeyTypes.AllUsers);
-				queryClient.invalidateQueries(QueryKeyTypes.GetSingleUser);
-				queryClient.invalidateQueries(QueryKeyTypes.Statistics);
+				queryClient.invalidateQueries(QueryKey.AllUsers);
+				queryClient.invalidateQueries(QueryKey.GetSingleUser);
+				queryClient.invalidateQueries(QueryKey.Statistics);
 			}
 		},
 	});

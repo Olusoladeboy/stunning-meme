@@ -10,7 +10,7 @@ import ConversionsTable from '../../components/table/conversions-table';
 import ConversionTotal from '../../components/conversion-total';
 import AvailableNetwork from '../../components/available-network';
 import Api from '../../utilities/api';
-import { QueryKeyTypes } from '../../utilities/types';
+import { QueryKey } from '../../utilities/types';
 import { useAppSelector } from '../../store/hooks';
 import { MAX_RECORDS } from '../../utilities/constant';
 import Pagination from '../../components/pagination';
@@ -55,7 +55,7 @@ const Conversions = () => {
 	};
 
 	const { isLoading, data } = useQuery(
-		[QueryKeyTypes.ConvertAirtime, page],
+		[QueryKey.ConvertAirtime, page],
 		() =>
 			Api.ConvertAirtime.Records({
 				token: token as string,

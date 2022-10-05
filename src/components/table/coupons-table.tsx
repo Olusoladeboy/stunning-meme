@@ -31,7 +31,7 @@ import Empty from '../empty';
 import Button from '../button';
 import CouponForm from '../forms/coupon-form';
 import RegularAlert from '../modal/regular-modal';
-import { Coupon, QueryKeyTypes, CouponStatus } from '../../utilities/types';
+import { Coupon, QueryKey, CouponStatus } from '../../utilities/types';
 import TableLoader from '../loader/table-loader';
 import Api from '../../utilities/api';
 import { useAlert } from '../../utilities/hooks';
@@ -71,7 +71,7 @@ const CouponsTable = ({ data, isLoading }: Props) => {
 
 				if (data && data.success) {
 					setAlert({ data: 'Coupon updated successfully!!', type: 'success' });
-					queryClient.invalidateQueries(QueryKeyTypes.Coupon);
+					queryClient.invalidateQueries(QueryKey.Coupon);
 				}
 			},
 		}

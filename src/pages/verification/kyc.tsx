@@ -6,7 +6,7 @@ import Layout from '../../components/layout';
 import BackButton from '../../components/back-button';
 import { BOX_SHADOW } from '../../utilities/constant';
 import KycForm from '../../components/forms/kyc-form';
-import { QueryKeyTypes } from '../../utilities/types';
+import { QueryKey } from '../../utilities/types';
 import { useAppSelector } from '../../store/hooks';
 import Api from '../../utilities/api';
 import { useAlert } from '../../utilities/hooks';
@@ -20,7 +20,7 @@ const Kyc = () => {
 	);
 	const { token } = useAppSelector((store) => store.authState);
 
-	useQuery(QueryKeyTypes.KycLimit, () => Api.KycLimits.Retrieve(token || ''), {
+	useQuery(QueryKey.KycLimit, () => Api.KycLimits.Retrieve(token || ''), {
 		onSettled: (data, error) => {
 			if (error) {
 				setAlert({ data: error, type: 'error' });

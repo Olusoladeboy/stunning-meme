@@ -13,7 +13,7 @@ import {
 	PENDING_COLOR,
 	DANGER_COLOR,
 } from '../../utilities/constant';
-import { TransactionStatusTypes } from '../../utilities/types';
+import { TransactionStatus } from '../../utilities/types';
 import FilterIcon from '../icons/filter';
 import { StyledTableCell, StyledTableRow } from './components';
 import Empty from '../empty/table-empty';
@@ -30,9 +30,9 @@ type Props = {
 };
 
 const setColor = (status: string) => {
-	if (status === TransactionStatusTypes.SUCCESSFUL) {
+	if (status === TransactionStatus.SUCCESSFUL) {
 		return SUCCESS_COLOR;
-	} else if (status === TransactionStatusTypes.PENDING) {
+	} else if (status === TransactionStatus.PENDING) {
 		return PENDING_COLOR;
 	} else {
 		return DANGER_COLOR;
@@ -157,11 +157,9 @@ const TransactionsTable = ({ data, isLoading }: Props) => {
 															},
 														}}
 													>
-														{data.status ===
-														TransactionStatusTypes.SUCCESSFUL ? (
+														{data.status === TransactionStatus.SUCCESSFUL ? (
 															<Check />
-														) : data.status ===
-														  TransactionStatusTypes.PENDING ? (
+														) : data.status === TransactionStatus.PENDING ? (
 															<AccessTime />
 														) : (
 															<Close />

@@ -6,9 +6,9 @@ import { useSnackbar } from 'notistack';
 import TextInput from '../form-components/TextInput';
 import { grey } from '@mui/material/colors';
 import {
-	NetworkPageTypes,
-	NetworkDataTypes,
-	QueryKeyTypes,
+	NetworkPage,
+	NetworkData as INetworkData,
+	QueryKey,
 	API_ENDPOINTS,
 } from '../../utilities/types';
 import ValidationSchema from '../../utilities/validationSchema';
@@ -17,15 +17,15 @@ import Api from '../../utilities/api';
 import { useAppSelector } from '../../store/hooks';
 import { useAlert } from '../../utilities/hooks';
 
-interface NetworkData extends NetworkDataTypes {
+interface NetworkData extends INetworkData {
 	id?: string;
 }
 
 type Props = {
 	type:
-		| NetworkPageTypes.DATA_NETWORK
-		| NetworkPageTypes.AIRTIME_NETWORK
-		| NetworkPageTypes.CONVERSION_NETWORK;
+		| NetworkPage.DATA_NETWORK
+		| NetworkPage.AIRTIME_NETWORK
+		| NetworkPage.CONVERSION_NETWORK;
 	handleContinue?: () => void;
 	network?: NetworkData;
 	isEdit?: boolean;
@@ -58,9 +58,9 @@ const AddNetworkForm = ({ type, handleContinue, network, isEdit }: Props) => {
 						data: data.message,
 						type: 'success',
 					});
-					queryClient.invalidateQueries(QueryKeyTypes.DataNetwork);
-					queryClient.invalidateQueries(QueryKeyTypes.AirtimeNetwork);
-					queryClient.invalidateQueries(QueryKeyTypes.ConvertNetwork);
+					queryClient.invalidateQueries(QueryKey.DataNetwork);
+					queryClient.invalidateQueries(QueryKey.AirtimeNetwork);
+					queryClient.invalidateQueries(QueryKey.ConvertNetwork);
 					typeof handleContinue !== 'undefined' && handleContinue();
 				}
 			},
@@ -70,18 +70,18 @@ const AddNetworkForm = ({ type, handleContinue, network, isEdit }: Props) => {
 	const handleMutateNetwork = (values: NetworkData) => {
 		const { name, rate, ussd, number } = values;
 		const url =
-			type === NetworkPageTypes.DATA_NETWORK
+			type === NetworkPage.DATA_NETWORK
 				? API_ENDPOINTS.DataNetwork
-				: type === NetworkPageTypes.AIRTIME_NETWORK
+				: type === NetworkPage.AIRTIME_NETWORK
 				? API_ENDPOINTS.AirtimeNetwork
 				: API_ENDPOINTS.ConvertNetworks;
 
 		const createDataPayload =
-			type === NetworkPageTypes.DATA_NETWORK
+			type === NetworkPage.DATA_NETWORK
 				? {
 						name,
 				  }
-				: type === NetworkPageTypes.AIRTIME_NETWORK
+				: type === NetworkPage.AIRTIME_NETWORK
 				? {
 						name,
 						rate,
@@ -94,11 +94,11 @@ const AddNetworkForm = ({ type, handleContinue, network, isEdit }: Props) => {
 				  };
 
 		const updateDataPayload =
-			type === NetworkPageTypes.DATA_NETWORK
+			type === NetworkPage.DATA_NETWORK
 				? {
 						name,
 				  }
-				: type === NetworkPageTypes.AIRTIME_NETWORK
+				: type === NetworkPage.AIRTIME_NETWORK
 				? {
 						rate,
 						ussd,
@@ -137,9 +137,9 @@ const AddNetworkForm = ({ type, handleContinue, network, isEdit }: Props) => {
 						data: data.message,
 						type: 'success',
 					});
-					queryClient.invalidateQueries(QueryKeyTypes.AirtimeNetwork);
-					queryClient.invalidateQueries(QueryKeyTypes.ConvertNetwork);
-					queryClient.invalidateQueries(QueryKeyTypes.DataNetwork);
+					queryClient.invalidateQueries(QueryKey.AirtimeNetwork);
+					queryClient.invalidateQueries(QueryKey.ConvertNetwork);
+					queryClient.invalidateQueries(QueryKey.DataNetwork);
 					typeof handleContinue !== 'undefined' && handleContinue();
 				}
 			},
@@ -147,9 +147,9 @@ const AddNetworkForm = ({ type, handleContinue, network, isEdit }: Props) => {
 	);
 
 	const validationSchema =
-		type === NetworkPageTypes.DATA_NETWORK
+		type === NetworkPage.DATA_NETWORK
 			? ValidationSchema.DataNetwork
-			: type === NetworkPageTypes.AIRTIME_NETWORK
+			: type === NetworkPage.AIRTIME_NETWORK
 			? ValidationSchema.AirtimeNetwork
 			: ValidationSchema.ConvertNetwork;
 
@@ -195,8 +195,7 @@ const AddNetworkForm = ({ type, handleContinue, network, isEdit }: Props) => {
 					</Box>
 					<Box
 						sx={{
-							display:
-								type === NetworkPageTypes.AIRTIME_NETWORK ? 'block' : 'none',
+							display: type === NetworkPage.AIRTIME_NETWORK ? 'block' : 'none',
 						}}
 					>
 						<Typography variant={'body1'} style={styles.label}>
@@ -214,7 +213,7 @@ const AddNetworkForm = ({ type, handleContinue, network, isEdit }: Props) => {
 					<Box
 						sx={{
 							display:
-								type === NetworkPageTypes.CONVERSION_NETWORK ? 'block' : 'none',
+								type === NetworkPage.CONVERSION_NETWORK ? 'block' : 'none',
 						}}
 					>
 						<Typography variant={'body1'} style={styles.label}>
@@ -232,8 +231,8 @@ const AddNetworkForm = ({ type, handleContinue, network, isEdit }: Props) => {
 					<Box
 						sx={{
 							display:
-								type === NetworkPageTypes.AIRTIME_NETWORK ||
-								type === NetworkPageTypes.CONVERSION_NETWORK
+								type === NetworkPage.AIRTIME_NETWORK ||
+								type === NetworkPage.CONVERSION_NETWORK
 									? 'block'
 									: 'none',
 						}}

@@ -4,7 +4,7 @@ import * as yup from 'yup';
 import { useMutation, useQueryClient } from 'react-query';
 import { useFormik } from 'formik';
 import { grey } from '@mui/material/colors';
-import { QueryKeyTypes } from '../../utilities/types';
+import { QueryKey } from '../../utilities/types';
 import Api from '../../utilities/api';
 import { useAppSelector } from '../../store/hooks';
 import CustomButton from '../button/custom-button';
@@ -27,7 +27,7 @@ const AssignManagerForm = ({ userDetails, close }: Props) => {
 
 	const queryClient = useQueryClient();
 	const { isLoading: isLoadingManager, data: managers } = useQueryHook({
-		queryKey: QueryKeyTypes.AllManagers,
+		queryKey: QueryKey.AllManagers,
 		queryFn: () =>
 			Api.Manager.AllManagers({
 				token: token as string,
@@ -57,8 +57,8 @@ const AssignManagerForm = ({ userDetails, close }: Props) => {
 					data: data.message,
 					type: 'success',
 				});
-				queryClient.invalidateQueries(QueryKeyTypes.AllUsers);
-				queryClient.invalidateQueries(QueryKeyTypes.GetSingleUser);
+				queryClient.invalidateQueries(QueryKey.AllUsers);
+				queryClient.invalidateQueries(QueryKey.GetSingleUser);
 				resetForm();
 				typeof close !== 'undefined' && close();
 			}

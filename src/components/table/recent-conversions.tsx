@@ -12,7 +12,7 @@ import { grey } from '@mui/material/colors';
 import Link from '../link';
 import LINKS from '../../utilities/links';
 import Api from '../../utilities/api';
-import { QueryKeyTypes } from '../../utilities/types';
+import { QueryKey } from '../../utilities/types';
 import { useAppSelector } from '../../store/hooks';
 import Loader from '../loader/table-loader';
 import Empty from '../empty/table-empty';
@@ -53,7 +53,7 @@ const RecentConversionsTable = () => {
 	const { token } = useAppSelector((store) => store.authState);
 
 	const { isLoading, data } = useQueryHook({
-		queryKey: [QueryKeyTypes.ConvertAirtime, 'recent-airtime-convert'],
+		queryKey: [QueryKey.ConvertAirtime, 'recent-airtime-convert'],
 		queryFn: () =>
 			Api.ConvertAirtime.Records({
 				token: token as string,

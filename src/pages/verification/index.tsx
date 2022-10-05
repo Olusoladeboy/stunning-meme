@@ -6,7 +6,7 @@ import { useQuery } from 'react-query';
 import Layout from '../../components/layout';
 import { useAppSelector } from '../../store/hooks';
 import Api from '../../utilities/api';
-import { QueryKeyTypes } from '../../utilities/types';
+import { QueryKey } from '../../utilities/types';
 import Pagination from '../../components/pagination';
 import { MAX_RECORDS } from '../../utilities/constant';
 import LINKS from '../../utilities/links';
@@ -31,7 +31,7 @@ const Verification = () => {
 	}, [query, query.page]);
 
 	const { isLoading, data } = useQuery(
-		QueryKeyTypes.AllUsers,
+		QueryKey.AllUsers,
 		() =>
 			Api.User.AllUsers({
 				token: token as string,

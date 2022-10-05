@@ -12,7 +12,7 @@ import {
 	DANGER_COLOR,
 	BOX_SHADOW,
 } from '../../utilities/constant';
-import { UserStatusTypes } from '../../utilities/types';
+import { UserStatus } from '../../utilities/types';
 import FilterIcon from '../icons/filter';
 import {
 	StyledTableCell as TableCell,
@@ -27,11 +27,9 @@ import DeletedUserIcon from '../icons/deleted-user';
 import UnverifiedUserIcon from '../icons/unverified-user';
 import Empty from '../empty';
 import LINKS from '../../utilities/links';
-import { UserDetailsType } from '../../utilities/types';
+import { UserDetails } from '../../utilities/types';
 import TableLoader from '../loader/table-loader';
 import { useAppSelector } from '../../store/hooks';
-
-interface UserDetails extends UserDetailsType {}
 
 type Props = {
 	isLoading?: boolean;
@@ -204,10 +202,10 @@ const UsersTable = ({ isLoading, users = null }: Props) => {
 									}}
 								>
 									{user.verified
-										? UserStatusTypes.Verified
+										? UserStatus.Verified
 										: user.suspended
-										? UserStatusTypes.Suspended
-										: UserStatusTypes.Unverified}
+										? UserStatus.Suspended
+										: UserStatus.Unverified}
 								</TableCell>
 							</TableRow>
 						))

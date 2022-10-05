@@ -11,11 +11,10 @@ import TableRow from '@mui/material/TableRow';
 import moment from 'moment';
 import { LIGHT_GRAY } from '../../utilities/constant';
 import { StyledTableRow, StyledTableCell } from './components';
-import { UserDetailsType, UserNavList } from '../../utilities/types';
+import { UserDetails, QueryKey, UserNavList } from '../../utilities/types';
 import FilterIcon from '../icons/filter';
 import SearchInput from '../form-components/search-input';
 import Api from '../../utilities/api';
-import { QueryKeyTypes } from '../../utilities/types';
 import { useAppSelector } from '../../store/hooks';
 import Loader from '../loader/table-loader';
 import Empty from '../empty/table-empty';
@@ -26,7 +25,7 @@ import LINKS from '../../utilities/links';
 import { useAlert } from '../../utilities/hooks';
 
 type Props = {
-	user: UserDetailsType | null;
+	user: UserDetails | null;
 };
 
 const TransactionHistoryTable = ({ user }: Props) => {
@@ -49,7 +48,7 @@ const TransactionHistoryTable = ({ user }: Props) => {
 	const { token } = useAppSelector((store) => store.authState);
 
 	const { isLoading, data } = useQuery(
-		[QueryKeyTypes.UserTransactions, user?.id, page],
+		[QueryKey.UserTransactions, user?.id, page],
 		() =>
 			Api.Transactions.All({
 				token: token as string,

@@ -19,7 +19,7 @@ import {
 	StyledTableRow as TableRow,
 } from './components';
 import Button from '../button';
-import { QueryKeyTypes, API_ENDPOINTS } from '../../utilities/types';
+import { QueryKey, API_ENDPOINTS } from '../../utilities/types';
 import LINKS from '../../utilities/links';
 import Api from '../../utilities/api';
 import { useAppSelector } from '../../store/hooks';
@@ -36,7 +36,7 @@ const DataNetworkTable = () => {
 	const { token } = useAppSelector((store) => store.authState);
 
 	const { isLoading, data } = useQuery(
-		QueryKeyTypes.DataNetwork,
+		QueryKey.DataNetwork,
 		() =>
 			Api.Network.GetNetwork({
 				token: token || '',
@@ -65,7 +65,7 @@ const DataNetworkTable = () => {
 						data: data.message,
 						type: 'success',
 					});
-					queryClient.invalidateQueries(QueryKeyTypes.DataNetwork);
+					queryClient.invalidateQueries(QueryKey.DataNetwork);
 				}
 			},
 		}

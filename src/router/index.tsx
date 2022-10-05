@@ -2,7 +2,7 @@ import React from 'react';
 import { Route, Routes, Navigate } from 'react-router-dom';
 import Pages from '../pages';
 import LINKS from '../utilities/links';
-import { NetworkPageTypes } from '../utilities/types';
+import { NetworkPage } from '../utilities/types';
 import PrivateRoute from '../utilities/helpers/PrivateRoute';
 
 const Router = () => {
@@ -88,9 +88,7 @@ const Router = () => {
 					path={'data'}
 					element={
 						<PrivateRoute>
-							<Pages.Network.Component
-								pageType={NetworkPageTypes.DATA_NETWORK}
-							/>
+							<Pages.Network.Component pageType={NetworkPage.DATA_NETWORK} />
 						</PrivateRoute>
 					}
 				/>
@@ -98,9 +96,7 @@ const Router = () => {
 					path={'airtime'}
 					element={
 						<PrivateRoute>
-							<Pages.Network.Component
-								pageType={NetworkPageTypes.AIRTIME_NETWORK}
-							/>
+							<Pages.Network.Component pageType={NetworkPage.AIRTIME_NETWORK} />
 						</PrivateRoute>
 					}
 				/>
@@ -109,7 +105,7 @@ const Router = () => {
 					element={
 						<PrivateRoute>
 							<Pages.Network.Component
-								pageType={NetworkPageTypes.CONVERSION_NETWORK}
+								pageType={NetworkPage.CONVERSION_NETWORK}
 							/>
 						</PrivateRoute>
 					}

@@ -3,15 +3,15 @@ import { Box, useTheme, Typography, Switch } from '@mui/material';
 import { useMutation, useQueryClient } from 'react-query';
 // import Button from '../button';
 import { grey } from '@mui/material/colors';
-import { UserDetailsType } from '../../utilities/types';
+import { UserDetails } from '../../utilities/types';
 import Api from '../../utilities/api';
-import { QueryKeyTypes } from '../../utilities/types';
+import { QueryKey } from '../../utilities/types';
 import { useAlert } from '../../utilities/hooks';
 import Loader from '../loader';
 import { useAppSelector } from '../../store/hooks';
 
 type Props = {
-	user: UserDetailsType | null;
+	user: UserDetails | null;
 };
 
 const DeleteUserForm = ({ user }: Props) => {
@@ -33,8 +33,8 @@ const DeleteUserForm = ({ user }: Props) => {
 			if (data && data.success) {
 				setAlert({ data: data.message, type: 'success' });
 
-				queryClient.invalidateQueries(QueryKeyTypes.GetSingleUser);
-				queryClient.invalidateQueries(QueryKeyTypes.AllUsers);
+				queryClient.invalidateQueries(QueryKey.GetSingleUser);
+				queryClient.invalidateQueries(QueryKey.AllUsers);
 			}
 		},
 	});

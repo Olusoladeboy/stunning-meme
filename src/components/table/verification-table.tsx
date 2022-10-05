@@ -23,13 +23,13 @@ import Button from '../button';
 import CustomButton from '../button/custom-button';
 import LINKS from '../../utilities/links';
 import Loader from '../loader/table-loader';
-import { UserDetailsType, QueryKeyTypes } from '../../utilities/types';
+import { UserDetails, QueryKey } from '../../utilities/types';
 import { useAlert } from '../../utilities/hooks';
 import { useAppSelector } from '../../store/hooks';
 import Api from '../../utilities/api';
 
 type Props = {
-	users: UserDetailsType[] | null;
+	users: UserDetails[] | null;
 	isLoading?: boolean;
 };
 
@@ -42,7 +42,7 @@ const VerificationTable = ({ users, isLoading }: Props) => {
 	const queryClient = useQueryClient();
 	const setAlert = useAlert();
 	const { token } = useAppSelector((store) => store.authState);
-	const [selectedUser, setSelectUser] = useState<null | UserDetailsType>(null);
+	const [selectedUser, setSelectUser] = useState<null | UserDetails>(null);
 
 	const { isLoading: isVerifyingUser } = useQuery(
 		'',
@@ -61,9 +61,9 @@ const VerificationTable = ({ users, isLoading }: Props) => {
 
 				if (data && data.success) {
 					setAlert({ data: data.message, type: 'success' });
-					queryClient.invalidateQueries(QueryKeyTypes.AllUsers);
-					queryClient.invalidateQueries(QueryKeyTypes.GetSingleUser);
-					queryClient.invalidateQueries(QueryKeyTypes.Statistics);
+					queryClient.invalidateQueries(QueryKey.AllUsers);
+					queryClient.invalidateQueries(QueryKey.GetSingleUser);
+					queryClient.invalidateQueries(QueryKey.Statistics);
 				}
 			},
 		}

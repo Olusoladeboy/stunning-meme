@@ -92,9 +92,6 @@ const DisputesTable = () => {
 					sx={{ padding: '0px 1rem' }}
 				>
 					<TableHeader backButtonText={'Disputes'} isDisplayBackButton />
-					<Button style={styles.btnOutline as CSSProperties}>
-						Open Dispute
-					</Button>
 				</Box>
 
 				<Table sx={{ overflow: 'auto' }}>

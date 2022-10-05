@@ -14,7 +14,7 @@ import Empty from '../empty/table-empty';
 import Loader from '../loader/table-loader';
 import LINKS from '../../utilities/links';
 import { useQueryHook } from '../../utilities/api/hooks';
-import { QueryKeyTypes } from '../../utilities/types';
+import { QueryKey } from '../../utilities/types';
 import Api from '../../utilities/api';
 import { useAppSelector } from '../../store/hooks';
 import formatNumberToCurrency from '../../utilities/helpers/formatNumberToCurrency';
@@ -54,7 +54,7 @@ const RecentTransactionsTable = () => {
 	const { token } = useAppSelector((store) => store.authState);
 
 	const { isLoading, data } = useQueryHook({
-		queryKey: QueryKeyTypes.RecentTransactions,
+		queryKey: QueryKey.RecentTransactions,
 		queryFn: () =>
 			Api.Transactions.All({
 				token: token as string,

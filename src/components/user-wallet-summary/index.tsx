@@ -3,10 +3,10 @@ import { Box, useTheme } from '@mui/material';
 import UserAvatarWithDetails from '../avatar-with-details';
 import UserWallet from '../user-wallet';
 import WalletSummaryTable from '../table/wallet-summary-table';
-import { UserDetailsType } from '../../utilities/types';
+import { UserDetails } from '../../utilities/types';
 
 type Props = {
-	user: UserDetailsType | null;
+	user: UserDetails | null;
 };
 
 const UserWalletSummary = ({ user }: Props) => {

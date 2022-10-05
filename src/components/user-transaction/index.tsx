@@ -2,10 +2,10 @@ import React from 'react';
 import { Box, useTheme } from '@mui/material';
 import UserAvatarWithDetails from '../avatar-with-details';
 import TransactionHistoryTable from '../table/transaction-history-table';
-import { UserDetailsType } from '../../utilities/types';
+import { UserDetails } from '../../utilities/types';
 
 type Props = {
-	user: UserDetailsType | null;
+	user: UserDetails | null;
 };
 
 const UserTransaction = ({ user }: Props) => {

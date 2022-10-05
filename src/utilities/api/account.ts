@@ -1,8 +1,8 @@
 import apiRequest from './apiRequest';
-import { API_ENDPOINTS, LoginDataTypes } from '../types';
+import { API_ENDPOINTS, LoginData } from '../types';
 
 const Account = {
-	Login: async (data: LoginDataTypes) =>
+	Login: async (data: LoginData) =>
 		apiRequest({
 			method: 'POST',
 			url: `${API_ENDPOINTS.Staff}/login`,

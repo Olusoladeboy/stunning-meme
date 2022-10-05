@@ -8,11 +8,11 @@ import ModalWrapper from '../modal/Wrapper';
 import EditWalletForm from '../forms/edit-wallet-form';
 import Api from '../../utilities/api';
 import { useAppSelector } from '../../store/hooks';
-import { QueryKeyTypes, UserDetailsType } from '../../utilities/types';
+import { QueryKey, UserDetails } from '../../utilities/types';
 import { useAlert } from '../../utilities/hooks';
 
 type Props = {
-	user: UserDetailsType | null;
+	user: UserDetails | null;
 };
 
 const UserWallet = ({ user }: Props) => {
@@ -24,7 +24,7 @@ const UserWallet = ({ user }: Props) => {
 	const { token } = useAppSelector((store) => store.authState);
 
 	useQuery(
-		[QueryKeyTypes.UserWallet, user?.id],
+		[QueryKey.UserWallet, user?.id],
 		() =>
 			Api.Wallet.Account({
 				token: token as string,

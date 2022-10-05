@@ -4,7 +4,7 @@ import { useSnackbar } from 'notistack';
 import ThemeProvider from './utilities/theme/MuiThemeProvider';
 import Router from './router';
 import ScrollToTop from './utilities/helpers/ScrollToTop';
-import { QueryKeyTypes } from './utilities/types';
+import { QueryKey } from './utilities/types';
 import Api from './utilities/api';
 import { useAppSelector, useAppDispatch } from './store/hooks';
 import handleResponse from './utilities/helpers/handleResponse';
@@ -22,7 +22,7 @@ function App() {
 
 	const { token } = useAppSelector((store) => store.authState);
 
-	useQuery(QueryKeyTypes.Statistics, () => Api.Statistic(token as string), {
+	useQuery(QueryKey.Statistics, () => Api.Statistic(token as string), {
 		enabled: !!token,
 		onSettled: (data, error) => {
 			if (error) {
@@ -35,32 +35,28 @@ function App() {
 		},
 	});
 
-	useQuery(
-		QueryKeyTypes.LoginUserDetails,
-		() => Api.Account.GetUser(token || ''),
-		{
-			enabled: !!token,
-			onSettled: (data, error) => {
-				if (error) {
-					const res = handleResponse({
-						payload: error,
-						isDisplayMessage: true,
-						handler: logOut,
-					});
-					if (res?.message) {
-						enqueueSnackbar(res.message, { variant: 'error' });
-					}
+	useQuery(QueryKey.LoginUserDetails, () => Api.Account.GetUser(token || ''), {
+		enabled: !!token,
+		onSettled: (data, error) => {
+			if (error) {
+				const res = handleResponse({
+					payload: error,
+					isDisplayMessage: true,
+					handler: logOut,
+				});
+				if (res?.message) {
+					enqueueSnackbar(res.message, { variant: 'error' });
 				}
-				if (data && data.success) {
-					if (Array.isArray(data.payload) && data.payload.length > 0) {
-						dispatch(setUser(data.payload[0]));
-					} else {
-						dispatch(setUser(data.payload));
-					}
+			}
+			if (data && data.success) {
+				if (Array.isArray(data.payload) && data.payload.length > 0) {
+					dispatch(setUser(data.payload[0]));
+				} else {
+					dispatch(setUser(data.payload));
 				}
-			},
-		}
-	);
+			}
+		},
+	});
 	return (
 		<ThemeProvider>
 			<ScrollToTop>

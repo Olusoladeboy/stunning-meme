@@ -32,7 +32,7 @@ import DataPlanForm from '../forms/data-plan-form';
 import ModalWrapper from '../modal/Wrapper';
 import RegularAlert from '../modal/regular-modal';
 import Api from '../../utilities/api';
-import { DataPlan, QueryKeyTypes } from '../../utilities/types';
+import { DataPlan, QueryKey } from '../../utilities/types';
 import { useAppSelector } from '../../store/hooks';
 import TableLoader from '../loader/table-loader';
 import TableEmpty from '../empty/table-empty';
@@ -105,7 +105,7 @@ const ViewDataPlansTable = () => {
 	};
 
 	const { isLoading } = useQuery(
-		[QueryKeyTypes.DataPlans, params.id],
+		[QueryKey.DataPlans, params.id],
 		() =>
 			Api.DataPlan.Plans({
 				token: token || '',
@@ -134,7 +134,7 @@ const ViewDataPlansTable = () => {
 				}
 
 				if (data && data.success) {
-					queryClient.invalidateQueries(QueryKeyTypes.DataPlans);
+					queryClient.invalidateQueries(QueryKey.DataPlans);
 					setAlert({
 						data: 'Data plan updated successfully!',
 						type: 'success',

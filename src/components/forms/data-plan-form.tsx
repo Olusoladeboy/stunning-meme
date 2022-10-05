@@ -10,7 +10,7 @@ import { grey } from '@mui/material/colors';
 import { DataPlan, DataPlanType } from '../../utilities/types';
 import Select from '../form-components/Select';
 import Api from '../../utilities/api';
-import { QueryKeyTypes } from '../../utilities/types';
+import { QueryKey } from '../../utilities/types';
 import { useAppSelector } from '../../store/hooks';
 import TextPlaceholder from '../partials/text-placeholder';
 import { useAlert } from '../../utilities/hooks';
@@ -73,7 +73,7 @@ const DataPlanForm = ({ dataPayload, handleOnSubmit }: Props) => {
 						type: 'success',
 					});
 					resetForm();
-					queryClient.invalidateQueries(QueryKeyTypes.DataPlans);
+					queryClient.invalidateQueries(QueryKey.DataPlans);
 				}
 			},
 		}
@@ -93,7 +93,7 @@ const DataPlanForm = ({ dataPayload, handleOnSubmit }: Props) => {
 						data: data.message,
 						type: 'success',
 					});
-					queryClient.invalidateQueries(QueryKeyTypes.DataPlans);
+					queryClient.invalidateQueries(QueryKey.DataPlans);
 				}
 			},
 		}

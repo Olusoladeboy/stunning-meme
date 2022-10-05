@@ -5,7 +5,7 @@ import { Box, useTheme, Typography } from '@mui/material';
 import TextInput from '../form-components/TextInput';
 import Button from '../button/custom-button';
 import { grey } from '@mui/material/colors';
-import { QueryKeyTypes } from '../../utilities/types';
+import { QueryKey } from '../../utilities/types';
 import Api from '../../utilities/api';
 import { useAppSelector } from '../../store/hooks';
 import ValidationSchemas from '../../utilities/validationSchema';
@@ -40,7 +40,7 @@ const KycForm = ({ data, level }: Props) => {
 					data: data.message,
 					type: 'success',
 				});
-				queryClient.invalidateQueries(QueryKeyTypes.KycLimit);
+				queryClient.invalidateQueries(QueryKey.KycLimit);
 			}
 		},
 	});

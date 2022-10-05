@@ -9,7 +9,7 @@ import { grey } from '@mui/material/colors';
 import Link from '../link';
 import LINKS from '../../utilities/links';
 import ValidationSchema from '../../utilities/validationSchema';
-import { LoginDataTypes } from '../../utilities/types';
+import { LoginData } from '../../utilities/types';
 import Api from '../../utilities/api';
 import { useAppDispatch } from '../../store/hooks';
 import { setToken, setUser } from '../../store/auth';
@@ -24,7 +24,7 @@ const LoginForm = () => {
 	const dispatch = useAppDispatch();
 	const navigate = useNavigate();
 
-	const initialValues: LoginDataTypes = {
+	const initialValues: LoginData = {
 		email: '',
 		password: '',
 	};

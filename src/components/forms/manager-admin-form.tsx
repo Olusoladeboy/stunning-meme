@@ -7,8 +7,8 @@ import Button from '../button/custom-button';
 import { grey } from '@mui/material/colors';
 import {
 	ManagerTypes,
-	ManagerDetailsDataTypes,
-	QueryKeyTypes,
+	ManagerDetailsData,
+	QueryKey,
 } from '../../utilities/types';
 import Api from '../../utilities/api';
 import ValidationSchema from '../../utilities/validationSchema';
@@ -19,7 +19,7 @@ import { useAlert } from '../../utilities/hooks';
 const AMIN_ROLES = ['OPERATIONS', 'CUSTOMER_SUPPORT'];
 const SELECT_ADMIN_PRIVILEDGE = 'Select Admin Priviledge';
 
-interface ManagerDetails extends ManagerDetailsDataTypes {
+interface ManagerDetails extends ManagerDetailsData {
 	id?: string;
 	role?: string;
 }
@@ -57,7 +57,7 @@ const ManagerAdminForm = ({
 			onSettled: (data, error) => {
 				if (data && data.success) {
 					resetForm();
-					queryClient.invalidateQueries(QueryKeyTypes.AllManagers);
+					queryClient.invalidateQueries(QueryKey.AllManagers);
 					setAlert({
 						data: data.message,
 						type: 'success',
@@ -100,7 +100,7 @@ const ManagerAdminForm = ({
 			onSettled: (data, error) => {
 				if (data && data.success) {
 					resetForm();
-					queryClient.invalidateQueries(QueryKeyTypes.AllManagers);
+					queryClient.invalidateQueries(QueryKey.AllManagers);
 					setAlert({
 						data: data.message,
 						type: 'success',
@@ -120,7 +120,7 @@ const ManagerAdminForm = ({
 			onSettled: (data, error) => {
 				if (data && data.success) {
 					resetForm();
-					queryClient.invalidateQueries(QueryKeyTypes.AllStaff);
+					queryClient.invalidateQueries(QueryKey.AllStaff);
 					setAlert({
 						data: data.message,
 						type: 'success',

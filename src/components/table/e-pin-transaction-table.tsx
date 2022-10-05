@@ -15,7 +15,7 @@ import {
 } from '../../utilities/constant';
 import { grey } from '@mui/material/colors';
 import formatNumberToCurrency from '../../utilities/helpers/formatNumberToCurrency';
-import { EPinsTypes } from '../../utilities/types';
+import { EPins } from '../../utilities/types';
 import Pagination from '../pagination';
 
 type Props = {
@@ -102,7 +102,7 @@ const EPinTransactionTable = ({ data, tableTitle }: Props) => {
 							<StyledTableCell>{data.transaction_id}</StyledTableCell>
 							<StyledTableCell>{data.network_provider}</StyledTableCell>
 							<StyledTableCell>
-								{data.type === EPinsTypes.Airtime
+								{data.type === EPins.Airtime
 									? formatNumberToCurrency(data.pin_value)
 									: data.pin_value}
 							</StyledTableCell>

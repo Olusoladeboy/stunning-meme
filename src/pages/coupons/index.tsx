@@ -5,7 +5,7 @@ import queryString from 'query-string';
 import Layout from '../../components/layout';
 import { useAppSelector } from '../../store/hooks';
 import Api from '../../utilities/api';
-import { QueryKeyTypes } from '../../utilities/types';
+import { QueryKey } from '../../utilities/types';
 import Pagination from '../../components/pagination';
 import { MAX_RECORDS } from '../../utilities/constant';
 import LINKS from '../../utilities/links';
@@ -29,7 +29,7 @@ const Coupons = () => {
 	}, [query, query.page]);
 
 	const { isLoading, data } = useQueryHook({
-		queryKey: QueryKeyTypes.Coupon,
+		queryKey: QueryKey.Coupon,
 		queryFn: () =>
 			Api.Coupon.RetrieveAll({
 				token: token as string,

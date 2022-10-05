@@ -20,10 +20,10 @@ import Image from '../image';
 import Button from '../button/custom-button';
 import Empty from '../empty';
 import {
-	QueryKeyTypes,
+	QueryKey,
 	API_ENDPOINTS,
-	NetworkDataTypes,
-	NetworkPageTypes,
+	NetworkData,
+	NetworkPage,
 } from '../../utilities/types';
 import LINKS from '../../utilities/links';
 import Api from '../../utilities/api';
@@ -34,7 +34,7 @@ import Modal from '../modal/Wrapper';
 import Loader from '../loader';
 import { useAlert } from '../../utilities/hooks';
 
-interface AitimeNetworkTypes extends NetworkDataTypes {
+interface AitimeNetworkTypes extends NetworkData {
 	isActive: boolean;
 	id: string;
 }
@@ -44,13 +44,14 @@ const AirtimeNetworkTable = () => {
 	const setAlert = useAlert();
 	const styles = useStyles(theme);
 	const queryClient = useQueryClient();
-	const [selectedNetwork, setSelectedNetwork] =
-		useState<NetworkDataTypes | null>(null);
+	const [selectedNetwork, setSelectedNetwork] = useState<NetworkData | null>(
+		null
+	);
 
 	const { token } = useAppSelector((store) => store.authState);
 
 	const { isLoading, data } = useQuery(
-		QueryKeyTypes.AirtimeNetwork,
+		QueryKey.AirtimeNetwork,
 		() =>
 			Api.Network.GetNetwork({
 				token: token || '',
@@ -76,8 +77,8 @@ const AirtimeNetworkTable = () => {
 
 				if (data && data.success) {
 					setAlert({ data: data.message, type: 'success' });
-					queryClient.invalidateQueries(QueryKeyTypes.DataNetwork);
-					queryClient.invalidateQueries(QueryKeyTypes.AirtimeNetwork);
+					queryClient.invalidateQueries(QueryKey.DataNetwork);
+					queryClient.invalidateQueries(QueryKey.AirtimeNetwork);
 				}
 			},
 		}
@@ -111,7 +112,7 @@ const AirtimeNetworkTable = () => {
 					<NetworkForm
 						isEdit
 						network={selectedNetwork}
-						type={NetworkPageTypes.AIRTIME_NETWORK}
+						type={NetworkPage.AIRTIME_NETWORK}
 						handleContinue={() => setSelectedNetwork(null)}
 					/>
 				</Modal>

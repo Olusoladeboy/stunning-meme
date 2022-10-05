@@ -6,13 +6,13 @@ import CustomButton from '../button/custom-button';
 import { grey } from '@mui/material/colors';
 import SuspendUserForm from '../forms/suspend-user-form';
 import DeleteUserForm from '../forms/delete-user-form';
-import { UserDetailsType, QueryKeyTypes } from '../../utilities/types';
+import { UserDetails, QueryKey } from '../../utilities/types';
 import Api from '../../utilities/api';
 import { useAlert } from '../../utilities/hooks';
 import { useAppSelector } from '../../store/hooks';
 
 type Props = {
-	user: UserDetailsType | null;
+	user: UserDetails | null;
 };
 
 const UserStatus = ({ user }: Props) => {
@@ -29,9 +29,9 @@ const UserStatus = ({ user }: Props) => {
 
 			if (data && data.success) {
 				setAlert({ data: data.message, type: 'success' });
-				queryClient.invalidateQueries(QueryKeyTypes.AllUsers);
-				queryClient.invalidateQueries(QueryKeyTypes.GetSingleUser);
-				queryClient.invalidateQueries(QueryKeyTypes.Statistics);
+				queryClient.invalidateQueries(QueryKey.AllUsers);
+				queryClient.invalidateQueries(QueryKey.GetSingleUser);
+				queryClient.invalidateQueries(QueryKey.Statistics);
 			}
 		},
 	});

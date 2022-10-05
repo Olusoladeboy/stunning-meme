@@ -3,16 +3,16 @@ import { Box, Typography, useTheme } from '@mui/material';
 import { grey } from '@mui/material/colors';
 import { AddCircle } from '@mui/icons-material';
 import Button from '../button';
-import { NetworkPageTypes } from '../../utilities/types';
+import { NetworkPage } from '../../utilities/types';
 import AddNetworkForm from '../forms/add-network-form';
 import ModalWrapper from '../modal/Wrapper';
 
 type Props = {
 	message: string;
 	type:
-		| NetworkPageTypes.AIRTIME_NETWORK
-		| NetworkPageTypes.DATA_NETWORK
-		| NetworkPageTypes.CONVERSION_NETWORK;
+		| NetworkPage.AIRTIME_NETWORK
+		| NetworkPage.DATA_NETWORK
+		| NetworkPage.CONVERSION_NETWORK;
 };
 
 const NetworkDescriptiveMessageAndAddButton = ({ message, type }: Props) => {

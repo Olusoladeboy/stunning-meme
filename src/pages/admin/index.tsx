@@ -3,7 +3,7 @@ import { Box } from '@mui/material';
 import { useQuery } from 'react-query';
 import Layout from '../../components/layout';
 import { useAppSelector } from '../../store/hooks';
-import { QueryKeyTypes } from '../../utilities/types';
+import { QueryKey } from '../../utilities/types';
 import Api from '../../utilities/api';
 import AdminUserTable from '../../components/table/admin-user-table';
 import { useAlert } from '../../utilities/hooks';
@@ -12,7 +12,7 @@ const Admin = () => {
 	const setAlert = useAlert();
 	const { token } = useAppSelector((store) => store.authState);
 	const { data, isLoading } = useQuery(
-		QueryKeyTypes.AllStaff,
+		QueryKey.AllStaff,
 		() => Api.Staff.RetrieveAll(token as string),
 		{
 			enabled: !!token,

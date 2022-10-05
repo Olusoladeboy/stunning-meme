@@ -17,13 +17,13 @@ import {
 import Empty from '../empty';
 import Pagination from '../pagination';
 import Button from '../button';
-import { ManagerTypes, ManagerDetailsDataTypes } from '../../utilities/types';
+import { ManagerTypes, ManagerDetailsData } from '../../utilities/types';
 import AddManagerForm from '../forms/manager-admin-form';
 import ManagerDetails from '../manager-details';
 import TableLoader from '../loader/table-loader';
 import ManagerTableHeader from '../header/manager-table-header';
 
-interface ManagerDetailsType extends ManagerDetailsDataTypes {
+interface ManagerDetailsType extends ManagerDetailsData {
 	avatar: string;
 	createdAt: string;
 }

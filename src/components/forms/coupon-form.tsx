@@ -11,7 +11,7 @@ import {
 	Coupon,
 	CouponType,
 	CouponStatus,
-	QueryKeyTypes,
+	QueryKey,
 } from '../../utilities/types';
 import ValidationSchema from '../../utilities/validationSchema';
 import Api from '../../utilities/api';
@@ -58,7 +58,7 @@ const CouponForm = ({ data, isEdit, onSuccess }: Props) => {
 				}
 
 				if (data && data.success) {
-					queryClient.invalidateQueries(QueryKeyTypes.Coupon);
+					queryClient.invalidateQueries(QueryKey.Coupon);
 					setAlert({ data: 'Coupon created successfully!', type: 'success' });
 					typeof onSuccess !== 'undefined' && onSuccess();
 				}
@@ -75,7 +75,7 @@ const CouponForm = ({ data, isEdit, onSuccess }: Props) => {
 				}
 
 				if (data && data.success) {
-					queryClient.invalidateQueries(QueryKeyTypes.Coupon);
+					queryClient.invalidateQueries(QueryKey.Coupon);
 					setAlert({ data: 'Coupon updated successfully!', type: 'success' });
 					typeof onSuccess !== 'undefined' && onSuccess();
 				}

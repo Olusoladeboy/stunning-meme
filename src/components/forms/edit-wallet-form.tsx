@@ -8,13 +8,13 @@ import Button from '../button';
 import CustomButton from '../button/custom-button';
 import { grey } from '@mui/material/colors';
 import Select from '../form-components/Select';
-import { UserDetailsType, QueryKeyTypes } from '../../utilities/types';
+import { UserDetails, QueryKey } from '../../utilities/types';
 import Api from '../../utilities/api';
 import { useAlert } from '../../utilities/hooks';
 import { useAppSelector } from '../../store/hooks';
 
 type Props = {
-	user: UserDetailsType | null;
+	user: UserDetails | null;
 	close?: () => void;
 };
 
@@ -60,8 +60,9 @@ const EditWalletForm = ({ user, close }: Props) => {
 			if (data && data.success) {
 				setDone(true);
 				setAlert({ data: data.message, type: 'success' });
-				queryClient.invalidateQueries(QueryKeyTypes.GetSingleUser);
-				queryClient.invalidateQueries(QueryKeyTypes.UserWallet);
+				queryClient.invalidateQueries(QueryKey.GetSingleUser);
+				queryClient.invalidateQueries(QueryKey.UserWallet);
+				queryClient.invalidateQueries(QueryKey.UserWalletTransaction);
 			}
 		},
 	});

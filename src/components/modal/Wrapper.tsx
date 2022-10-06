@@ -1,16 +1,23 @@
 import React, { ReactNode } from 'react';
-import { Box, Typography, IconButton, useTheme } from '@mui/material';
+import { Box, BoxProps, useTheme, IconButton, Typography } from '@mui/material';
 import { Close } from '@mui/icons-material';
 import { grey } from '@mui/material/colors';
 
-type Props = {
+interface Props extends BoxProps {
 	children: ReactNode;
-	title?: ReactNode;
-	close?: () => void;
+	hasCloseButton?: boolean;
+	closeModal?: () => void;
+	title?: any;
 	contentWidth?: string;
-};
+}
 
-const ModalWrapper = ({ children, title, close, contentWidth }: Props) => {
+const ModalWrapper = ({
+	children,
+	hasCloseButton,
+	closeModal,
+	title,
+	...rest
+}: Props) => {
 	const theme = useTheme();
 	return (
 		<Box
@@ -23,33 +30,47 @@ const ModalWrapper = ({ children, title, close, contentWidth }: Props) => {
 				backgroundColor: 'rgba(40, 83, 107, 0.7)',
 				zIndex: theme.zIndex.modal,
 				overflow: 'auto',
+				padding: '15px',
 			}}
 		>
 			<Box
 				sx={{
-					maxWidth: contentWidth || '680px',
-					position: 'relative',
+					maxWidth: '480px',
 					margin: '10rem auto',
 					width: '100%',
-					backgroundColor: grey[200],
-					padding: '15px',
+					backgroundColor: 'background.paper',
+					padding: { xs: '15px 20px', sm: '2rem', md: '3.5rem' },
 					borderRadius: '5px',
+					position: 'relative',
+					...rest.sx,
 				}}
 			>
-				<Box>
-					{title && typeof title === 'string' ? (
-						<Typography variant={'h5'}>{title}</Typography>
-					) : (
-						<>{title}</>
-					)}
+				{hasCloseButton && (
 					<IconButton
-						onClick={() => typeof close !== 'undefined' && close()}
-						sx={{ position: 'absolute', right: '15px', top: '10px' }}
+						onClick={() => typeof closeModal !== 'undefined' && closeModal()}
+						size={'small'}
+						sx={{
+							position: 'absolute',
+							top: '-45px',
+							right: '0px',
+							backgroundColor: `${grey['400']} !important`,
+							border: `1.5px solid ${grey['50']}`,
+							color: theme.palette.primary.main,
+						}}
 					>
 						<Close />
 					</IconButton>
+				)}
+				<Box sx={{ marginBottom: theme.spacing(2) }}>
+					{typeof title === 'string' ? (
+						<Typography sx={{ fontWeight: 'bold' }} variant={'h6'}>
+							{title}
+						</Typography>
+					) : (
+						title
+					)}
 				</Box>
-				<Box sx={{ marginTop: (theme) => theme.spacing(4) }}>{children}</Box>
+				{children}
 			</Box>
 		</Box>
 	);

@@ -98,7 +98,7 @@ const Profile = () => {
 			{isDisplayModal && (
 				<Modal
 					title={'Assign Manager to User'}
-					close={() => setDisplayModal(false)}
+					closeModal={() => setDisplayModal(false)}
 				>
 					<AssignManagerForm
 						close={() => setDisplayModal(false)}

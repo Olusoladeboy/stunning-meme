@@ -2,7 +2,6 @@ import React, { CSSProperties } from 'react';
 import { Box, useTheme, Typography } from '@mui/material';
 import { useFormik } from 'formik';
 import { useMutation, useQueryClient } from 'react-query';
-import { useSnackbar } from 'notistack';
 import TextInput from '../form-components/TextInput';
 import { grey } from '@mui/material/colors';
 import {

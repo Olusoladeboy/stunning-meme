@@ -2,11 +2,9 @@ import React, { CSSProperties } from 'react';
 import { useQuery } from 'react-query';
 import { useNavigate } from 'react-router-dom';
 import { Box, useTheme, CircularProgress, Typography } from '@mui/material';
-import { useSnackbar } from 'notistack';
 import { grey } from '@mui/material/colors';
 import Button from '../button';
 import AvaliableNetworkItem from './available-network-item';
-import handleResponse from '../../utilities/helpers/handleResponse';
 import Api from '../../utilities/api';
 import { QueryKey, API_ENDPOINTS } from '../../utilities/types';
 import { useAppSelector } from '../../store/hooks';
@@ -18,7 +16,6 @@ const AvailableNetwork = () => {
 	const setAlert = useAlert();
 	const navigate = useNavigate();
 	const styles = useStyles(theme);
-	const { enqueueSnackbar } = useSnackbar();
 	const { token } = useAppSelector((store) => store.authState);
 
 	const { isLoading, data } = useQuery(

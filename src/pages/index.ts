@@ -21,112 +21,35 @@ import Suspension from './suspension';
 import AuditLogs from './audit-logs';
 import Dispute from './dispute';
 import Admin from './admin';
-
-import LINKS from '../utilities/links';
+import Message from './dispute/message';
 
 const Pages = {
 	Auth: {
-		Login: {
-			Component: Login,
-			path: '/auth/login',
-		},
-		ForgetPassword: {
-			Component: ForgetPassword,
-			path: '/auth/forget-password',
-		},
-		CreateNewPassword: {
-			Component: CreateNewPassword,
-			path: LINKS.CreateNewPassword,
-		},
+		Login,
+		ForgetPassword,
+		CreateNewPassword,
 	},
-	Dashboard: {
-		Component: Dashboard,
-		path: LINKS.Dashboard,
-	},
-	User: {
-		Initial: {
-			Component: Users,
-			path: LINKS.Users,
-		},
-		UserProfile: {
-			Component: UserProfile,
-			path: LINKS.User,
-		},
-	},
-	Managers: {
-		Component: Managers,
-		path: LINKS.Managers,
-	},
-	Admin: {
-		Component: Admin,
-		path: LINKS.Managers,
-	},
-	Transactions: {
-		Component: Transactions,
-		path: LINKS.Transactions,
-	},
-	Conversions: {
-		Component: Conversions,
-		path: LINKS.Conversions,
-	},
-	Network: {
-		Component: Network,
-		path: LINKS.DataNetwork,
-	},
-	ViewDataPlan: {
-		Component: ViewDataPlan,
-		path: LINKS.DataPlan,
-	},
-	Coupons: {
-		Component: Coupons,
-		path: LINKS.Coupons,
-	},
-	Dispute: {
-		Component: Dispute,
-		path: LINKS.Dispute,
-	},
-	Referral: {
-		Initial: {
-			Component: Referrals,
-			path: LINKS.Referrals,
-		},
-		All: {
-			Component: AllReferrals,
-			path: LINKS.AllReferrals,
-		},
-	},
-	ViewReferees: {
-		Component: ViewReferees,
-		path: LINKS.Referee,
-	},
-	Notifications: {
-		Initial: {
-			Component: Notifications,
-			path: LINKS.Notifications,
-		},
-		PushNotification: {
-			Component: PushNotification,
-			path: LINKS.PushNotification,
-		},
-	},
-	Verification: {
-		Initial: {
-			Component: Verification,
-			path: LINKS.Verification,
-		},
-		Kyc: {
-			Component: Kyc,
-			path: LINKS.KycVerification,
-		},
-	},
-	Suspension: {
-		Component: Suspension,
-		path: LINKS.Suspension,
-	},
-	AuditLogs: {
-		Component: AuditLogs,
-		path: LINKS.AuditLogs,
-	},
+	Dashboard,
+	Users,
+	UserProfile,
+	Managers,
+	Admin,
+	Transactions,
+	Conversions,
+	Network,
+	ViewDataPlan,
+	Coupons,
+	Message,
+	Dispute,
+	Referrals,
+	AllReferrals,
+	ViewReferees,
+	Notifications,
+	PushNotification,
+	Verification,
+	Kyc,
+	Suspension,
+	AuditLogs,
 };
 
 export default Pages;

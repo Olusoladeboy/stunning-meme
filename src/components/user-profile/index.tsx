@@ -37,7 +37,7 @@ const UserProfile = ({ user }: Props) => {
 			<Box sx={{ marginTop: theme.spacing(5) }}>
 				{isEditProfile && (
 					<ModalWrapper
-						close={() => setEditProfile(false)}
+						closeModal={() => setEditProfile(false)}
 						title={'Edit Profile'}
 					>
 						<EditProfileForm />

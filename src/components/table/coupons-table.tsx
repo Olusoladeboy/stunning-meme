@@ -30,8 +30,13 @@ import TableHeader from '../header/table-header';
 import Empty from '../empty';
 import Button from '../button';
 import CouponForm from '../forms/coupon-form';
-import RegularAlert from '../modal/regular-modal';
-import { Coupon, QueryKey, CouponStatus } from '../../utilities/types';
+import Modal from '../modal';
+import {
+	Coupon,
+	QueryKey,
+	CouponStatus,
+	ModalDetails,
+} from '../../utilities/types';
 import TableLoader from '../loader/table-loader';
 import Api from '../../utilities/api';
 import { useAlert } from '../../utilities/hooks';
@@ -54,9 +59,7 @@ const CouponsTable = ({ data, isLoading }: Props) => {
 	const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 	const [selectedCoupon, setSelectedCoupon] = useState<null | Coupon>(null);
 	const [isEdit, setEdit] = useState<boolean>(false);
-	const [modalAlert, setModalAlert] = useState<{ [key: string]: any } | null>(
-		null
-	);
+	const [modalAlert, setModalAlert] = useState<ModalDetails | null>(null);
 
 	const { isLoading: isUpdatingCoupon, mutate: updateCoupon } = useMutation(
 		Api.Coupon.UpdateStatus,
@@ -90,9 +93,9 @@ const CouponsTable = ({ data, isLoading }: Props) => {
 	const handleDelete = (data: { [key: string]: any }) => {
 		setModalAlert({
 			title: `Delete ${data.coupon_name}`,
-			btnText: 'Delete plan',
+			buttonText: 'Delete plan',
 			message: `Are you sure you want to delete ${data.coupon_name}`,
-			alertType: 'failed',
+			type: 'failed',
 		});
 	};
 
@@ -120,25 +123,16 @@ const CouponsTable = ({ data, isLoading }: Props) => {
 			{isUpdatingCoupon && <Loader />}
 			{isCreateCoupon && (
 				<ModalWrapper
-					close={() => setCreateCoupon(false)}
+					closeModal={() => setCreateCoupon(false)}
 					title={'CREATE COUPON'}
 				>
 					<CouponForm onSuccess={() => setCreateCoupon(false)} />
 				</ModalWrapper>
 			)}
-			{modalAlert && (
-				<RegularAlert
-					close={() => setModalAlert(null)}
-					width={'480px'}
-					title={modalAlert.title}
-					btnText={modalAlert.btnText}
-					message={modalAlert.message}
-					alertType={modalAlert.alertType}
-				/>
-			)}
+			{modalAlert && <Modal {...modalAlert} />}
 			{isEdit && selectedCoupon && (
 				<ModalWrapper
-					close={() => handleCloseEditModal()}
+					closeModal={() => handleCloseEditModal()}
 					title={'EDIT COUPON'}
 				>
 					<CouponForm

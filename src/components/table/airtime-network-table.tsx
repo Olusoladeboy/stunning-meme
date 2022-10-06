@@ -25,7 +25,6 @@ import {
 	NetworkData,
 	NetworkPage,
 } from '../../utilities/types';
-import LINKS from '../../utilities/links';
 import Api from '../../utilities/api';
 import { useAppSelector } from '../../store/hooks';
 import TableLoader from '../loader/table-loader';
@@ -107,7 +106,7 @@ const AirtimeNetworkTable = () => {
 			{selectedNetwork && (
 				<Modal
 					title={`Edit ${selectedNetwork.name}`}
-					close={() => setSelectedNetwork(null)}
+					closeModal={() => setSelectedNetwork(null)}
 				>
 					<NetworkForm
 						isEdit

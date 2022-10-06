@@ -18,7 +18,7 @@ const ViewDataPlan = () => {
 		<Layout>
 			{isDisplayModal && (
 				<ModalWrapper
-					close={() => setDisplayModal(false)}
+					closeModal={() => setDisplayModal(false)}
 					title={'Add new plan'}
 				>
 					<DataPlanForm handleOnSubmit={() => setDisplayModal(false)} />

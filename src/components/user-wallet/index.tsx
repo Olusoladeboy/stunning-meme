@@ -50,19 +50,15 @@ const UserWallet = ({ user }: Props) => {
 	return (
 		<>
 			{isEditWallet && (
-				<ModalWrapper
-					close={() => setEditWallet(false)}
-					title={
-						<Box>
-							<Typography sx={{ textTransform: 'uppercase' }} variant={'h6'}>
-								current wallet balance
-							</Typography>
-							<Typography variant={'h4'}>
-								{formatNumberToCurrency(amount)}
-							</Typography>
-						</Box>
-					}
-				>
+				<ModalWrapper closeModal={() => setEditWallet(false)}>
+					<Box>
+						<Typography sx={{ textTransform: 'uppercase' }} variant={'h6'}>
+							current wallet balance
+						</Typography>
+						<Typography variant={'h4'}>
+							{formatNumberToCurrency(amount)}
+						</Typography>
+					</Box>
 					<EditWalletForm user={user} close={() => setEditWallet(false)} />
 				</ModalWrapper>
 			)}

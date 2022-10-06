@@ -24,6 +24,7 @@ const LINKS = {
 	KycVerification: '/verification/kyc',
 	Suspension: '/suspension',
 	AuditLogs: '/audit-logs',
+	Message: '/support-ticket/message',
 };
 
 export const DRAWER_LINKS = {

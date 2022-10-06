@@ -65,7 +65,7 @@ const AllReferralTable = () => {
 		<>
 			{isCreateReferral && (
 				<ModalWrapper
-					close={() => setCreateReferral(false)}
+					closeModal={() => setCreateReferral(false)}
 					title={'CREATE REFERRAL'}
 				>
 					<ReferralForm />
@@ -82,7 +82,10 @@ const AllReferralTable = () => {
 				/>
 			)}
 			{currentRow && (
-				<ModalWrapper close={() => setCurrentRow(null)} title={'EDIT COUPON'}>
+				<ModalWrapper
+					closeModal={() => setCurrentRow(null)}
+					title={'EDIT COUPON'}
+				>
 					<ReferralForm isEdit data={currentRow} />
 				</ModalWrapper>
 			)}

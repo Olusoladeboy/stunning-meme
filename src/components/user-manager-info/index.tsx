@@ -3,7 +3,6 @@ import { Box, Avatar, Typography, useTheme } from '@mui/material';
 import { grey } from '@mui/material/colors';
 import { LIGHT_GRAY } from '../../utilities/constant';
 import InfoList from './info-list';
-import { useAppSelector } from '../../store/hooks';
 import { ManagerDetailsData } from '../../utilities/types';
 import Button from '../button';
 
@@ -17,7 +16,6 @@ type Props = {
 const ManagerInfo = ({ manager, changeManager }: Props) => {
 	const theme = useTheme();
 	const styles = useStyles(theme);
-	const { user } = useAppSelector((store) => store.authState);
 
 	return (
 		<Box sx={{ maxWidth: '600px' }}>

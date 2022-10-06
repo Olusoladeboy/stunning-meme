@@ -1,97 +1,48 @@
-import React, { CSSProperties, useState, MouseEvent } from 'react';
+import React, { CSSProperties } from 'react';
 import Table from '@mui/material/Table';
+import { useNavigate } from 'react-router-dom';
 import Box from '@mui/material/Box';
-import {
-	useTheme,
-	List,
-	ListItemButton,
-	IconButton,
-	Popper,
-} from '@mui/material';
+import { Typography, useTheme } from '@mui/material';
 import TableBody from '@mui/material/TableBody';
 import TableHead from '@mui/material/TableHead';
+import moment from 'moment';
 import { grey } from '@mui/material/colors';
-import { MoreHoriz } from '@mui/icons-material';
 import {
 	SUCCESS_COLOR,
 	BOX_SHADOW,
 	DANGER_COLOR,
 } from '../../utilities/constant';
-import ModalWrapper from '../modal/Wrapper';
+import FilterIcon from '../icons/filter';
 import {
 	StyledTableCell as TableCell,
 	StyledTableRow as TableRow,
 } from './components';
 import TableHeader from '../header/table-header';
 import Empty from '../empty';
-import Pagination from '../pagination';
 import Button from '../button';
-import RegularAlert from '../modal/regular-modal';
-import PushNotificationForm from '../forms/push-notification-form';
+import { Ticket, TicketStatus } from '../../utilities/types';
+import TableLoader from '../loader/table-loader';
+import ErrorBoundary from '../../utilities/helpers/error-boundary';
+import LINKS from '../../utilities/links';
 
-const DisputesTable = () => {
-	const [data] = useState<{ [key: string]: any }[] | null>(null);
-	const [isCreateReferral, setCreateReferral] = useState<boolean>(false);
+interface Props {
+	data: Ticket[] | null;
+	isLoading?: boolean;
+}
 
+const DisputeTable = ({ data, isLoading }: Props) => {
 	const theme = useTheme();
 	const styles = useStyles(theme);
-
-	const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-	const [currentRow, setCurrentRow] = useState<null | { [key: string]: any }>(
-		null
-	);
-	const [alert, setAlert] = useState<{ [key: string]: any } | null>(null);
-
-	const handleClickAction = (event: MouseEvent<HTMLElement>) => {
-		setAnchorEl(
-			anchorEl && anchorEl === event.currentTarget ? null : event.currentTarget
-		);
-	};
-
-	const handleDelete = (data: { [key: string]: any }) => {
-		setAlert({
-			title: `Delete ${data.coupon_name}`,
-			btnText: 'Decline',
-			message: `Are you sure you want to delete ${data.coupon_name}`,
-			alertType: 'failed',
-		});
-	};
+	const navigate = useNavigate();
 
 	return (
-		<>
-			{isCreateReferral && (
-				<ModalWrapper
-					close={() => setCreateReferral(false)}
-					title={'CREATE REFERRAL'}
-				>
-					<PushNotificationForm />
-				</ModalWrapper>
-			)}
-			{alert && (
-				<RegularAlert
-					close={() => setAlert(null)}
-					width={'480px'}
-					title={alert.title}
-					btnText={alert.btnText}
-					message={alert.message}
-					alertType={alert.alertType}
-				/>
-			)}
-			{currentRow && (
-				<ModalWrapper
-					close={() => setCurrentRow(null)}
-					title={'EDIT Notification'}
-				>
-					<PushNotificationForm isEdit data={currentRow} />
-				</ModalWrapper>
-			)}
-
+		<ErrorBoundary>
 			<Box style={styles.container} sx={{ overflow: 'auto' }}>
 				<Box
 					style={styles.tableHeader as CSSProperties}
 					sx={{ padding: '0px 1rem' }}
 				>
-					<TableHeader backButtonText={'Disputes'} isDisplayBackButton />
+					<TableHeader title={'Dispute'} />
 				</Box>
 
 				<Table sx={{ overflow: 'auto' }}>
@@ -104,9 +55,39 @@ const DisputesTable = () => {
 						}}
 					>
 						<TableRow>
-							<TableCell sx={{ paddingLeft: '30px' }}>Reference</TableCell>
-							<TableCell sx={{ paddingLeft: '30px' }}>Dispute</TableCell>
-							<TableCell>Dispute</TableCell>
+							<TableCell sx={{ paddingLeft: '30px' }}>Code</TableCell>
+							<TableCell>
+								<Box style={styles.filterWrapper}>
+									<Typography style={styles.tableHeaderText} variant={'body1'}>
+										Type
+									</Typography>
+									<FilterIcon />
+								</Box>
+							</TableCell>
+							<TableCell>
+								<Box style={styles.filterWrapper}>
+									<Typography style={styles.tableHeaderText} variant={'body1'}>
+										Subject
+									</Typography>
+									<FilterIcon />
+								</Box>
+							</TableCell>
+							<TableCell>
+								<Box style={styles.filterWrapper}>
+									<Typography style={styles.tableHeaderText} variant={'body1'}>
+										Status
+									</Typography>
+									<FilterIcon />
+								</Box>
+							</TableCell>
+							<TableCell>
+								<Box style={styles.filterWrapper}>
+									<Typography style={styles.tableHeaderText} variant={'body1'}>
+										Created at
+									</Typography>
+									<FilterIcon />
+								</Box>
+							</TableCell>
 							<TableCell>Action</TableCell>
 						</TableRow>
 					</TableHead>
@@ -117,72 +98,83 @@ const DisputesTable = () => {
 							},
 						}}
 					>
-						{data && data.length > 0 ? (
-							data.map((row, key) => (
-								<TableRow key={key}>
-									<TableCell style={styles.tableText}>
-										{row.coupon_name}
-									</TableCell>
-									<TableCell style={styles.tableText}>
-										{row.coupon_name}
-									</TableCell>
-									<TableCell style={styles.tableText}>{row.status}</TableCell>
-									<TableCell>
-										<Box>
-											<IconButton
-												onClick={(event) => handleClickAction(event)}
-												size={'small'}
-											>
-												<MoreHoriz />
-											</IconButton>
-											<Popper open={Boolean(anchorEl)} anchorEl={anchorEl}>
-												<List style={styles.editDeleteWrapper}>
-													<ListItemButton
-														onClick={() => {
-															setAnchorEl(null);
-															setCurrentRow(row);
-														}}
-														style={styles.editBtn}
-													>
-														Edit
-													</ListItemButton>
-													<ListItemButton
-														onClick={() => {
-															setAnchorEl(null);
-															handleDelete(row);
-														}}
-														style={styles.deleteBtn}
-													>
-														delete
-													</ListItemButton>
-												</List>
-											</Popper>
-										</Box>
-									</TableCell>
-								</TableRow>
-							))
+						{isLoading ? (
+							<TableLoader colSpan={8} />
 						) : (
-							<TableRow>
-								<TableCell colSpan={6}>
-									<Empty text={'No Dispute'} />
-								</TableCell>
-							</TableRow>
+							data && (
+								<>
+									{data.length > 0 ? (
+										data.map((row) => (
+											<TableRow key={row.id}>
+												<TableCell
+													sx={{ paddingLeft: '30px !important' }}
+													style={styles.tableText}
+												>
+													{row.code}
+												</TableCell>
+												<TableCell style={styles.tableText}>
+													{row.type}
+												</TableCell>
+												<TableCell style={styles.tableText}>
+													{row.subject}
+												</TableCell>
+												<TableCell style={styles.tableText}>
+													<Box
+														sx={{
+															backgroundColor:
+																row.status === TicketStatus.OPENED
+																	? SUCCESS_COLOR
+																	: DANGER_COLOR,
+															display: 'inline-block',
+															alignItems: 'center',
+															gap: '3px',
+															padding: '6px 12px',
+															borderRadius: '15px',
+														}}
+													>
+														<Typography
+															sx={{
+																color: grey['50'],
+																fontSize: '10px',
+																fontWeight: '600',
+															}}
+															variant={'body2'}
+														>
+															{row.status}
+														</Typography>
+													</Box>
+												</TableCell>
+
+												<TableCell style={styles.tableText}>
+													{moment.utc(row.createdAt).format('l')}
+												</TableCell>
+
+												<TableCell>
+													<Button
+														onClick={() =>
+															navigate(`${LINKS.Message}/${row.id}`)
+														}
+														style={styles.viewDisputeBtn}
+													>
+														View dispute message
+													</Button>
+												</TableCell>
+											</TableRow>
+										))
+									) : (
+										<TableRow>
+											<TableCell colSpan={8}>
+												<Empty text={'No users'} />
+											</TableCell>
+										</TableRow>
+									)}
+								</>
+							)
 						)}
 					</TableBody>
 				</Table>
-				<Pagination
-					sx={{
-						display: 'flex',
-						justifyContent: 'flex-end',
-						marginTop: theme.spacing(4),
-						marginRight: '1rem',
-					}}
-					size={'large'}
-					shape={'rounded'}
-					variant={'outlined'}
-				/>
 			</Box>
-		</>
+		</ErrorBoundary>
 	);
 };
 
@@ -218,27 +210,20 @@ const useStyles = (theme: any) => ({
 	},
 	btnOutline: {
 		border: `1px solid ${theme.palette.secondary.main}`,
-		paddingLeft: theme.spacing(3),
-		paddingRight: theme.spacing(3),
+		paddingLeft: theme.spacing(4),
+		paddingRight: theme.spacing(4),
 		color: theme.palette.secondary.main,
 		textTransform: 'uppercase',
-		alignSelf: 'flex-end',
 		// fontWeight: '600',
 	},
 	editDeleteWrapper: {
 		backgroundColor: grey[50],
 		boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.03)',
 	},
-	editBtn: {
-		color: SUCCESS_COLOR,
-		paddingLeft: '30px',
-		paddingRight: '30px',
-	},
-	deleteBtn: {
-		color: DANGER_COLOR,
-		paddingLeft: '30px',
-		paddingRight: '30px',
+	viewDisputeBtn: {
+		// minWidth: '120px',
+		color: theme.palette.secondary.main,
 	},
 });
 
-export default DisputesTable;
+export default DisputeTable;

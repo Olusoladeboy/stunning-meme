@@ -105,7 +105,7 @@ const ConversionNetworkTable = () => {
 			{selectedNetwork && (
 				<Modal
 					title={`Edit ${selectedNetwork.name}`}
-					close={() => setSelectedNetwork(null)}
+					closeModal={() => setSelectedNetwork(null)}
 				>
 					<NetworkForm
 						isEdit

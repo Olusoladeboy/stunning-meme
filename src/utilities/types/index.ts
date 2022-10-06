@@ -32,6 +32,8 @@ export enum QueryKey {
 	AllStaff = '@Query:All_Staff',
 	Statistics = '@Query:Statistics',
 	Coupon = '@Query:Coupon',
+	Tickets = '@Query:Tickets',
+	Ticket = '@Query:Ticket',
 }
 
 export enum RegistrationStep {
@@ -163,6 +165,19 @@ export enum ReferralHistory {
 	AllReferral = 'all',
 }
 
+export interface ModalDetails {
+	type?: 'success' | 'failed';
+	title: string;
+	message?: string;
+	buttonText?: string;
+	handlePress?: () => void | null;
+	handleTryAgain?: () => void;
+	handleClose?: () => void | null;
+	isLoading?: boolean;
+	children?: React.ReactNode;
+	contentWidth?: string;
+}
+
 export enum UserNavList {
 	Profile = 'profile',
 	Status = 'status',
@@ -202,6 +217,7 @@ export enum API_ENDPOINTS {
 	Transaction = '/transaction',
 	Wallet = '/wallet',
 	Coupon = '/coupon',
+	Ticket = '/ticket',
 }
 
 export type ManagerDetailsData = {
@@ -357,7 +373,7 @@ export interface RelatedTransaction {
 }
 
 export interface TicketReply {
-	reply_type: string;
+	reply_type: TicketReplyType;
 	id?: string;
 	repliedBy?: string;
 	reply: string;
@@ -377,4 +393,22 @@ export interface Ticket {
 	createdAt: string;
 	updatedAt: string;
 	id: string;
+}
+
+export interface CreateTicket {
+	priority: Priority.HIGH | Priority.LOW | Priority.LOW | string;
+	subject: string;
+	related_transaction?: string;
+	related_transaction_type?: string;
+	message: string;
+	type: TicketType.COMPLAINT | TicketType.DISPUTE | string;
+}
+
+export interface CloseTicket {
+	status: string;
+}
+
+export enum TicketReplyType {
+	Staff = 'Staff',
+	User = 'User',
 }

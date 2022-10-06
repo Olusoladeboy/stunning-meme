@@ -67,7 +67,7 @@ const NotificationsTable = () => {
 		<>
 			{isCreateReferral && (
 				<ModalWrapper
-					close={() => setCreateReferral(false)}
+					closeModal={() => setCreateReferral(false)}
 					title={'CREATE REFERRAL'}
 				>
 					<PushNotificationForm />
@@ -85,7 +85,7 @@ const NotificationsTable = () => {
 			)}
 			{currentRow && (
 				<ModalWrapper
-					close={() => setCurrentRow(null)}
+					closeModal={() => setCurrentRow(null)}
 					title={'EDIT Notification'}
 				>
 					<PushNotificationForm isEdit data={currentRow} />

@@ -87,6 +87,7 @@ const AdminUserTable = ({ managers, isLoading }: Props) => {
 		<>
 			{formActionType && (
 				<ModalWrapper
+					hasCloseButton
 					closeModal={() => {
 						setFormActionType('');
 						setSelectedAdminUser(null);
@@ -108,6 +109,7 @@ const AdminUserTable = ({ managers, isLoading }: Props) => {
 			)}
 			{selectedAdminUser && isViewManager && (
 				<ModalWrapper
+					hasCloseButton
 					closeModal={() => setSelectedAdminUser(null)}
 					title={'View Admin User'}
 				>

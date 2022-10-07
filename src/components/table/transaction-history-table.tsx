@@ -23,6 +23,7 @@ import Pagination from '../pagination';
 import { MAX_RECORDS } from '../../utilities/constant';
 import LINKS from '../../utilities/links';
 import { useAlert } from '../../utilities/hooks';
+import ErrorBoundary from '../../utilities/helpers/error-boundary';
 
 type Props = {
 	user: UserDetails | null;
@@ -106,99 +107,101 @@ const TransactionHistoryTable = ({ user }: Props) => {
 					<SearchInput fullWidth placeholder={'Search...'} />
 				</Box>
 			</Box>
-			<Table sx={{ overflow: 'auto' }} stickyHeader>
-				<TableHead
-					sx={{
-						'& tr': {
-							backgroundColor: LIGHT_GRAY,
-							color: theme.palette.primary.main,
-						},
-					}}
-				>
-					<TableRow>
-						<StyledTableCell>Transaction</StyledTableCell>
-						<StyledTableCell>Reference</StyledTableCell>
-						<StyledTableCell>
-							<Box style={styles.filterWrapper}>
-								<Typography>Date</Typography>
-								<FilterIcon />
-							</Box>
-						</StyledTableCell>
-						<StyledTableCell>
-							<Box style={styles.filterWrapper}>
-								<Typography>Time</Typography>
-								<FilterIcon />
-							</Box>
-						</StyledTableCell>
-						<StyledTableCell>
-							<Box style={styles.filterWrapper}>
-								<Typography>Status</Typography>
-								<FilterIcon />
-							</Box>
-						</StyledTableCell>
-						<StyledTableCell>
-							<Box style={styles.filterWrapper}>
-								<Typography>Amount</Typography>
-								<FilterIcon />
-							</Box>
-						</StyledTableCell>
-					</TableRow>
-				</TableHead>
-				<TableBody
-					sx={{
-						'& tr': {
-							color: theme.palette.primary.main,
-						},
-					}}
-				>
-					{isLoading ? (
-						<Loader colSpan={6} />
-					) : (
-						data && (
-							<>
-								{data.payload.length > 0 ? (
-									data.payload.map((row: any) => (
-										<StyledTableRow key={row.id}>
-											<StyledTableCell style={styles.text}>
-												{row.service}
-											</StyledTableCell>
-											<StyledTableCell style={styles.text}>
-												{row.reference}
-											</StyledTableCell>
-											<StyledTableCell style={styles.text}>
-												{moment.utc(row.createdAt).format('ll')}
-											</StyledTableCell>
-											<StyledTableCell style={styles.text}>
-												{moment.utc(row.createdAt).format('LT')}
-											</StyledTableCell>
-											<StyledTableCell style={styles.text}>
-												status
-											</StyledTableCell>
-											<StyledTableCell style={styles.text}>
-												{formatNumberToCurrency(row.amount.$numberDecimal)}
-											</StyledTableCell>
-										</StyledTableRow>
-									))
-								) : (
-									<Empty colSpan={6} text={'No Wallet Summary'} />
-								)}
-							</>
-						)
-					)}
-				</TableBody>
-			</Table>
+			<ErrorBoundary>
+				<Table sx={{ overflow: 'auto' }} stickyHeader>
+					<TableHead
+						sx={{
+							'& tr': {
+								backgroundColor: LIGHT_GRAY,
+								color: theme.palette.primary.main,
+							},
+						}}
+					>
+						<TableRow>
+							<StyledTableCell>Transaction</StyledTableCell>
+							<StyledTableCell>Reference</StyledTableCell>
+							<StyledTableCell>
+								<Box style={styles.filterWrapper}>
+									<Typography>Date</Typography>
+									<FilterIcon />
+								</Box>
+							</StyledTableCell>
+							<StyledTableCell>
+								<Box style={styles.filterWrapper}>
+									<Typography>Time</Typography>
+									<FilterIcon />
+								</Box>
+							</StyledTableCell>
+							<StyledTableCell>
+								<Box style={styles.filterWrapper}>
+									<Typography>Status</Typography>
+									<FilterIcon />
+								</Box>
+							</StyledTableCell>
+							<StyledTableCell>
+								<Box style={styles.filterWrapper}>
+									<Typography>Amount</Typography>
+									<FilterIcon />
+								</Box>
+							</StyledTableCell>
+						</TableRow>
+					</TableHead>
+					<TableBody
+						sx={{
+							'& tr': {
+								color: theme.palette.primary.main,
+							},
+						}}
+					>
+						{isLoading ? (
+							<Loader colSpan={6} />
+						) : (
+							data && (
+								<>
+									{data.payload.length > 0 ? (
+										data.payload.map((row: any) => (
+											<StyledTableRow key={row.id}>
+												<StyledTableCell style={styles.text}>
+													{row.service}
+												</StyledTableCell>
+												<StyledTableCell style={styles.text}>
+													{row.reference}
+												</StyledTableCell>
+												<StyledTableCell style={styles.text}>
+													{moment.utc(row.createdAt).format('ll')}
+												</StyledTableCell>
+												<StyledTableCell style={styles.text}>
+													{moment.utc(row.createdAt).format('LT')}
+												</StyledTableCell>
+												<StyledTableCell style={styles.text}>
+													status
+												</StyledTableCell>
+												<StyledTableCell style={styles.text}>
+													{formatNumberToCurrency(row.amount)}
+												</StyledTableCell>
+											</StyledTableRow>
+										))
+									) : (
+										<Empty colSpan={6} text={'No Wallet Summary'} />
+									)}
+								</>
+							)
+						)}
+					</TableBody>
+				</Table>
 
-			{total > MAX_RECORDS && (
-				<Pagination
-					sx={{ marginLeft: '20px', marginTop: '2rem' }}
-					size={'large'}
-					variant={'outlined'}
-					shape={'rounded'}
-					page={page}
-					count={count}
-					onChange={(e, number) => handlePageChange(number)}
-				/>
-			)}
+				{total > MAX_RECORDS && (
+					<Pagination
+						sx={{ marginLeft: '20px', marginTop: '2rem' }}
+						size={'large'}
+						variant={'outlined'}
+						shape={'rounded'}
+						page={page}
+						count={count}
+						onChange={(e, number) => handlePageChange(number)}
+					/>
+				)}
+			</ErrorBoundary>
 		</Box>
 	);
 };

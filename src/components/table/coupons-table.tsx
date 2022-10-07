@@ -123,6 +123,7 @@ const CouponsTable = ({ data, isLoading }: Props) => {
 			{isUpdatingCoupon && <Loader />}
 			{isCreateCoupon && (
 				<ModalWrapper
+					hasCloseButton
 					closeModal={() => setCreateCoupon(false)}
 					title={'CREATE COUPON'}
 				>
@@ -132,6 +133,7 @@ const CouponsTable = ({ data, isLoading }: Props) => {
 			{modalAlert && <Modal {...modalAlert} />}
 			{isEdit && selectedCoupon && (
 				<ModalWrapper
+					hasCloseButton
 					closeModal={() => handleCloseEditModal()}
 					title={'EDIT COUPON'}
 				>

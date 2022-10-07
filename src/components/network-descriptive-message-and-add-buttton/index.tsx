@@ -25,6 +25,7 @@ const NetworkDescriptiveMessageAndAddButton = ({ message, type }: Props) => {
 		<>
 			{isDisplayModal && (
 				<ModalWrapper
+					hasCloseButton
 					closeModal={() => setDisplayModal(false)}
 					title={`Add ${type}`}
 				>

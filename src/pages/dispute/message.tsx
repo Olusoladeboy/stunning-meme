@@ -28,7 +28,7 @@ import CloseDispute from '../../components/close-dispute-button';
 
 const Message = () => {
 	const alert = useAlert();
-	const { token, user } = useAppSelector((store) => store.authState);
+	const { token } = useAppSelector((store) => store.authState);
 	const params = useParams();
 	const navigate = useNavigate();
 

@@ -105,6 +105,7 @@ const ConversionNetworkTable = () => {
 			{selectedNetwork && (
 				<Modal
 					title={`Edit ${selectedNetwork.name}`}
+					hasCloseButton
 					closeModal={() => setSelectedNetwork(null)}
 				>
 					<NetworkForm

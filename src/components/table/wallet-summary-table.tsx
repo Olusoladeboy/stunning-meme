@@ -11,7 +11,12 @@ import TableRow from '@mui/material/TableRow';
 import moment from 'moment';
 import { LIGHT_GRAY } from '../../utilities/constant';
 import { StyledTableRow, StyledTableCell } from './components';
-import { UserDetails, QueryKey, UserNavList } from '../../utilities/types';
+import {
+	UserDetails,
+	QueryKey,
+	UserNavList,
+	Transaction,
+} from '../../utilities/types';
 import FilterIcon from '../icons/filter';
 import SearchInput from '../form-components/search-input';
 import Api from '../../utilities/api';
@@ -157,26 +162,22 @@ const WalletSummaryTable = ({ user }: Props) => {
 						data && (
 							<>
 								{data.payload.length > 0 ? (
-									data.payload.map((row: any) => (
+									data.payload.map((row: Transaction) => (
 										<StyledTableRow key={row.id}>
 											<StyledTableCell style={styles.text}>
 												{row.reference}
 											</StyledTableCell>
 											<StyledTableCell style={styles.text}>
-												{formatNumberToCurrency(row.amount.$numberDecimal)}
+												{formatNumberToCurrency(row.amount)}
 											</StyledTableCell>
 											<StyledTableCell style={styles.text}>
 												{row.service}
 											</StyledTableCell>
 											<StyledTableCell style={styles.text}>
-												{formatNumberToCurrency(
-													row.balanceBefore.$numberDecimal
-												)}
+												{formatNumberToCurrency(row.balanceBefore)}
 											</StyledTableCell>
 											<StyledTableCell style={styles.text}>
-												{formatNumberToCurrency(
-													row.balanceAfter.$numberDecimal
-												)}
+												{formatNumberToCurrency(row.balanceAfter)}
 											</StyledTableCell>
 
 											<StyledTableCell style={styles.text}>

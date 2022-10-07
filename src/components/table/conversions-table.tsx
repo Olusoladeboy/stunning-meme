@@ -153,14 +153,10 @@ const ConversionsTable = ({
 													{conversion.phone_number}
 												</StyledTableCell>
 												<StyledTableCell style={styles.text}>
-													{formatNumberToCurrency(
-														conversion.amount.$numberDecimal
-													)}
+													{formatNumberToCurrency(conversion.amount)}
 												</StyledTableCell>
 												<StyledTableCell style={styles.text}>
-													{formatNumberToCurrency(
-														conversion.return_amount.$numberDecimal
-													)}
+													{formatNumberToCurrency(conversion.return_amount)}
 												</StyledTableCell>
 												<StyledTableCell style={styles.text}>
 													{conversion.status}

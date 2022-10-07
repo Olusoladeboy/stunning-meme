@@ -13,9 +13,10 @@ interface Props extends BoxProps {
 
 const ModalWrapper = ({
 	children,
-	hasCloseButton,
+	hasCloseButton = true,
 	closeModal,
 	title,
+	contentWidth,
 	...rest
 }: Props) => {
 	const theme = useTheme();
@@ -35,7 +36,7 @@ const ModalWrapper = ({
 		>
 			<Box
 				sx={{
-					maxWidth: '480px',
+					maxWidth: contentWidth || '640px',
 					margin: '10rem auto',
 					width: '100%',
 					backgroundColor: 'background.paper',
@@ -61,15 +62,17 @@ const ModalWrapper = ({
 						<Close />
 					</IconButton>
 				)}
-				<Box sx={{ marginBottom: theme.spacing(2) }}>
-					{typeof title === 'string' ? (
-						<Typography sx={{ fontWeight: 'bold' }} variant={'h6'}>
-							{title}
-						</Typography>
-					) : (
-						title
-					)}
-				</Box>
+				{title && (
+					<Box sx={{ marginBottom: theme.spacing(3) }}>
+						{typeof title === 'string' ? (
+							<Typography sx={{ fontWeight: 'bold' }} variant={'h6'}>
+								{title}
+							</Typography>
+						) : (
+							title
+						)}
+					</Box>
+				)}
 				{children}
 			</Box>
 		</Box>

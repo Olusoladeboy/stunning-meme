@@ -86,6 +86,7 @@ const ManagersTable = ({ managers, isLoading }: Props) => {
 		<>
 			{formActionType && (
 				<ModalWrapper
+					hasCloseButton
 					closeModal={() => setFormActionType('')}
 					title={
 						<Typography variant={'h5'} sx={{ textTransform: 'uppercase' }}>
@@ -103,6 +104,7 @@ const ManagersTable = ({ managers, isLoading }: Props) => {
 			)}
 			{selectedManager && isViewManager && (
 				<ModalWrapper
+					hasCloseButton
 					closeModal={() => setSelectedManager(null)}
 					title={'View manager'}
 				>

@@ -16,6 +16,7 @@ import { MAX_RECORDS } from '../../utilities/constant';
 import Pagination from '../../components/pagination';
 import LINKS from '../../utilities/links';
 import { useAlert } from '../../utilities/hooks';
+import ErrorBoundary from '../../utilities/helpers/error-boundary';
 
 const Conversions = () => {
 	const theme = useTheme();
@@ -132,24 +133,26 @@ const Conversions = () => {
 						<AvailableNetwork />
 					</Box>
 				</Box>
-				<ConversionsTable
-					isLoading={isLoading || isReloading}
-					conversions={data && data.payload}
-					handleSort={handleSort}
-					handleSearch={handleSearch}
-				/>
-
-				{total > MAX_RECORDS && !isReloading && (
-					<Pagination
-						sx={{ marginLeft: '20px' }}
-						size={'large'}
-						variant={'outlined'}
-						shape={'rounded'}
-						page={page}
-						count={count}
-						onChange={(e, number) => handlePageChange(number)}
+				<ErrorBoundary>
+					<ConversionsTable
+						isLoading={isLoading || isReloading}
+						conversions={data && data.payload}
+						handleSort={handleSort}
+						handleSearch={handleSearch}
 					/>
-				)}
+
+					{total > MAX_RECORDS && !isReloading && (
+						<Pagination
+							sx={{ marginLeft: '20px' }}
+							size={'large'}
+							variant={'outlined'}
+							shape={'rounded'}
+							page={page}
+							count={count}
+							onChange={(e, number) => handlePageChange(number)}
+						/>
+					)}
+				</ErrorBoundary>
 			</Box>
 		</Layout>
 	);

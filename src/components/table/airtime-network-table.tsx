@@ -105,6 +105,7 @@ const AirtimeNetworkTable = () => {
 			{isUpdating && <Loader />}
 			{selectedNetwork && (
 				<Modal
+					hasCloseButton
 					title={`Edit ${selectedNetwork.name}`}
 					closeModal={() => setSelectedNetwork(null)}
 				>

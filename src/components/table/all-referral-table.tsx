@@ -65,6 +65,7 @@ const AllReferralTable = () => {
 		<>
 			{isCreateReferral && (
 				<ModalWrapper
+					hasCloseButton
 					closeModal={() => setCreateReferral(false)}
 					title={'CREATE REFERRAL'}
 				>
@@ -83,6 +84,7 @@ const AllReferralTable = () => {
 			)}
 			{currentRow && (
 				<ModalWrapper
+					hasCloseButton
 					closeModal={() => setCurrentRow(null)}
 					title={'EDIT COUPON'}
 				>

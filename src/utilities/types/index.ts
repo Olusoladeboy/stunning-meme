@@ -412,3 +412,90 @@ export enum TicketReplyType {
 	Staff = 'Staff',
 	User = 'User',
 }
+
+export type User = {
+	id: string;
+	suspensionDuration: { [key: string]: any };
+	userType: string;
+	biometricLogin: boolean;
+	verified: boolean;
+	bvnVerified: boolean;
+	suspended: boolean;
+	deleted: boolean;
+	restricted: boolean;
+	twoFactorAuth: boolean;
+	isLoggedIn: boolean;
+	suspendWalletTransactions: boolean;
+	firstname: string;
+	lastname: string;
+	email: string;
+	kycLevel: number;
+	username: string;
+	phone: string;
+	hasPin: boolean;
+	manager: string | { [key: string]: any };
+	defaultBank: string;
+	photoUrl: string | null;
+	code: string;
+};
+
+export interface PinData {
+	network?: string;
+	amount?: number;
+	plan?: string;
+	service_type?: string;
+	product_code?: string;
+	price?: number;
+	monthsPaidFor?: number;
+	numberOfPins?: number;
+}
+
+export interface EducationPin {
+	serialNumber: string;
+	pin: string;
+}
+
+export interface ElectricityToken {
+	token: string;
+	unit: number;
+	amount: string;
+	transId: string;
+}
+
+export interface Transaction {
+	id: string;
+	status:
+		| TransactionStatus.FAILED
+		| TransactionStatus.PENDING
+		| TransactionStatus.SUCCESSFUL;
+	plan: string;
+	service: string;
+	number: string;
+	createdBy: string;
+	reference: string;
+	user: User;
+	amount: string;
+	balanceBefore: string;
+	balanceAfter: string;
+	name: string;
+	type: string;
+	createdAt: string;
+	pin_data?: PinData;
+	pin?: string;
+	pins?: EducationPin[];
+	transaction: {
+		id: string;
+		amount: Amount;
+		discount_code?: string | null;
+		balanceBefore: Amount;
+		balanceAfter: Amount;
+		type: string;
+		service: string;
+		createdBy: string;
+		user: string;
+		reference: string;
+		createdAt: string;
+		updatedAt: string;
+	};
+	electricity_token?: ElectricityToken;
+}

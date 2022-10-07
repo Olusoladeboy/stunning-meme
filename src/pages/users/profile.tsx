@@ -20,6 +20,7 @@ import ManagerInfo from '../../components/user-manager-info';
 import Button from '../../components/button';
 import Modal from '../../components/modal/Wrapper';
 import AssignManagerForm from '../../components/forms/assign-manager-form';
+import ErrorBoundary from '../../utilities/helpers/error-boundary';
 
 interface User extends UserDetails {
 	manager: any;
@@ -98,6 +99,7 @@ const Profile = () => {
 			{isDisplayModal && (
 				<Modal
 					title={'Assign Manager to User'}
+					hasCloseButton
 					closeModal={() => setDisplayModal(false)}
 				>
 					<AssignManagerForm
@@ -130,7 +132,7 @@ const Profile = () => {
 									handleChange={handleChangeTab}
 								/>
 							</Box>
-							<>
+							<ErrorBoundary>
 								<Box
 									sx={{ padding: { xs: '0px 1rem', md: '0px 2rem' } }}
 									hidden={currentTab !== UserNavList.Profile}
@@ -196,7 +198,7 @@ const Profile = () => {
 										</Box>
 									)}
 								</Box>
-							</>
+							</ErrorBoundary>
 						</Box>
 					</>
 				)}

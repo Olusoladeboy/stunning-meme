@@ -174,7 +174,11 @@ const AddNetworkForm = ({ type, handleContinue, network, isEdit }: Props) => {
 				<Box
 					sx={{
 						display: 'grid',
-						gridTemplateColumns: { xs: '1fr', md: 'repeat(2, 1fr)' },
+						gridTemplateColumns: {
+							xs: '1fr',
+							md:
+								type === NetworkPage.AIRTIME_NETWORK ? 'repeat(2, 1fr)' : '1fr',
+						},
 						gap: theme.spacing(4),
 					}}
 				>

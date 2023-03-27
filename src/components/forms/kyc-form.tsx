@@ -155,14 +155,12 @@ const KycForm = ({ data, level }: Props) => {
 			</Box>
 			<Button
 				loading={isLoading}
-				buttonProps={{
-					style: styles.btn,
-					size: 'large',
-					onClick: (e) => {
-						e.preventDefault();
-						handleSubmit();
-					},
+				onClick={(e: React.FormEvent<HTMLButtonElement>) => {
+					e.preventDefault();
+					handleSubmit();
 				}}
+				style={styles.btn}
+				size={'large'}
 			>
 				Save
 			</Button>

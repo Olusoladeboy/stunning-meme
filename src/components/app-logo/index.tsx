@@ -1,11 +1,11 @@
 import React from 'react';
 import { Box, BoxProps } from '@mui/material';
 
-type Props = {};
+interface Props extends BoxProps {}
 
-const AppLogo = (props: BoxProps) => {
+const AppLogo: React.FC<Props> = (props) => {
 	return (
-		<Box>
+		<Box {...props}>
 			<img
 				src={require('../../assets/images/app-logo.png')}
 				alt='airtime-logo'

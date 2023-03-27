@@ -1,39 +1,24 @@
-import React, { ReactNode, useEffect, useState } from 'react';
+import React from 'react';
 import {
 	Button as MuiButton,
 	ButtonProps,
 	CircularProgress,
-	Box,
 } from '@mui/material';
 
-type Props = {
+interface Props extends ButtonProps {
 	loading?: boolean;
-	buttonProps?: ButtonProps;
-	children: ReactNode;
-};
+}
 
-const Button = (props: Props) => {
-	const { buttonProps, children, loading = false } = props;
-	const [isLoading, setIsLoading] = useState<boolean>(false);
-	useEffect(() => {
-		if (loading) {
-			setIsLoading(true);
-		} else {
-			setIsLoading(false);
-		}
-	}, [loading]);
+const Button: React.FC<Props> = ({ loading, children, ...rest }) => {
 	return (
-		<MuiButton disabled={loading} {...buttonProps}>
-			{isLoading ? (
-				<Box sx={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-					<CircularProgress size={'22px'} sx={{ color: 'inherit' }} />
-					<Box sx={{ fontSize: '12px' }} component={'span'}>
-						Loading...
-					</Box>
-				</Box>
-			) : (
-				children
-			)}
+		<MuiButton
+			disabled={loading}
+			{...rest}
+			startIcon={
+				loading && <CircularProgress size={'22px'} sx={{ color: 'inherit' }} />
+			}
+		>
+			{loading ? 'Loading...' : children}
 		</MuiButton>
 	);
 };

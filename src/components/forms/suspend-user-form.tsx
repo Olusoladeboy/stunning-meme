@@ -1,4 +1,4 @@
-import React, { CSSProperties, useEffect, SyntheticEvent } from 'react';
+import React, { CSSProperties, useEffect } from 'react';
 import { useFormik } from 'formik';
 import { useMutation, useQueryClient } from 'react-query';
 import * as yup from 'yup';
@@ -150,14 +150,12 @@ const SuspendUserForm = ({ user }: Props) => {
 
 						<Button
 							loading={isLoading}
-							buttonProps={{
-								size: 'large',
-								style: styles.btn,
-								onClick: (e: SyntheticEvent) => {
-									e.preventDefault();
-									handleSubmit();
-								},
+							onClick={(e: React.FormEvent<HTMLButtonElement>) => {
+								e.preventDefault();
+								handleSubmit();
 							}}
+							size={'large'}
+							style={styles.btn}
 						>
 							Suspend user
 						</Button>

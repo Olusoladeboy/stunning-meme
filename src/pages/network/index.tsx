@@ -1,13 +1,15 @@
 import React, { ComponentProps } from 'react';
 import { Box, Typography, useTheme } from '@mui/material';
 import { grey } from '@mui/material/colors';
-import Layout from '../../components/layout';
+import {
+	Layout,
+	NetworkDescriptiveMessageAndButton,
+	AirtimeNetworkTable,
+	ConversionNetworkTable,
+	DataNetworkTable,
+} from '../../components';
 import { BOX_SHADOW } from '../../utilities/constant';
 import { NetworkPage } from '../../utilities/types';
-import NetworkDescriptiveAndAddButton from '../../components/network-descriptive-message-and-add-buttton';
-import DataNetworkTable from '../../components/table/data-network-table';
-import AirtimeNetworkTable from '../../components/table/airtime-network-table';
-import ConversionNetworkTable from '../../components/table/conversion-network-table';
 
 interface Props extends ComponentProps<any> {
 	pageType:
@@ -31,7 +33,7 @@ const Network = ({ pageType }: Props) => {
 					>
 						{pageType}
 					</Typography>
-					<NetworkDescriptiveAndAddButton
+					<NetworkDescriptiveMessageAndButton
 						type={pageType}
 						message={`Edit ${pageType} plan`}
 					/>

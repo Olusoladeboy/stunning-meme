@@ -232,13 +232,11 @@ const CouponForm = ({ data, isEdit, onSuccess }: Props) => {
 			</Box>
 			<Button
 				loading={isCreatingCoupon || isUpdatingCoupon}
-				buttonProps={{
-					onClick: (e) => {
-						e.preventDefault();
-						handleSubmit();
-					},
-					size: 'large',
-					style: styles.btn,
+				size={'large'}
+				style={styles.btn}
+				onClick={(e: React.FormEvent<HTMLButtonElement>) => {
+					e.preventDefault();
+					handleSubmit();
 				}}
 			>
 				Save

@@ -28,7 +28,7 @@ import {
 import Api from '../../utilities/api';
 import { useAppSelector } from '../../store/hooks';
 import TableLoader from '../loader/table-loader';
-import NetworkForm from '../forms/add-network-form';
+import NetworkForm from '../forms/network-form';
 import Modal from '../modal/Wrapper';
 import Loader from '../loader';
 import { useAlert } from '../../utilities/hooks';
@@ -180,37 +180,35 @@ const ConversionNetworkTable = () => {
 											style={styles.statusBtnWrapper}
 										>
 											<Button
-												buttonProps={{
-													style: {
-														backgroundColor: data.isActive
-															? SUCCESS_COLOR
-															: grey[400],
-														color: grey[50],
-													},
-													disabled: data.isActive,
-													onClick: () =>
-														handleEnableDisableNetwork({
-															status: true,
-															id: data.id,
-														}),
+												disabled={data.isActive}
+												style={{
+													backgroundColor: data.isActive
+														? SUCCESS_COLOR
+														: grey[400],
+													color: grey[50],
 												}}
+												onClick={() =>
+													handleEnableDisableNetwork({
+														status: true,
+														id: data.id,
+													})
+												}
 											>
 												Enable
 											</Button>
 											<Button
-												buttonProps={{
-													style: {
-														backgroundColor: !data.isActive
-															? DANGER_COLOR
-															: grey[400],
-														color: grey[50],
-													},
-													disabled: !data.isActive,
-													onClick: () =>
-														handleEnableDisableNetwork({
-															status: false,
-															id: data.id,
-														}),
+												disabled={!data.isActive}
+												onClick={() =>
+													handleEnableDisableNetwork({
+														status: false,
+														id: data.id,
+													})
+												}
+												style={{
+													backgroundColor: !data.isActive
+														? DANGER_COLOR
+														: grey[400],
+													color: grey[50],
 												}}
 											>
 												Disable

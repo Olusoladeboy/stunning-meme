@@ -168,15 +168,13 @@ const EditWalletForm = ({ user, close }: Props) => {
 			<Box style={styles.btnWrapper}>
 				<CustomButton
 					loading={isLoading}
-					buttonProps={{
-						variant: 'outlined',
-						size: 'large',
-						style: styles.btnOutline,
-						onClick: (e: SyntheticEvent) => {
-							e.preventDefault();
-							handleSubmit();
-						},
+					onClick={(e: React.FormEvent<HTMLButtonElement>) => {
+						e.preventDefault();
+						handleSubmit();
 					}}
+					variant={'outlined'}
+					size={'large'}
+					style={styles.btnOutline}
 				>
 					Update
 				</CustomButton>

@@ -1,7 +1,6 @@
 import React from 'react';
 import { Box } from '@mui/material';
-import Layout from '../../components/layout';
-import ManagersTable from '../../components/table/managers-table';
+import { Layout, ManagersTable } from '../../components';
 import { useAppSelector } from '../../store/hooks';
 import { QueryKey } from '../../utilities/types';
 import Api from '../../utilities/api';

@@ -30,7 +30,7 @@ type Props = {
 	isEdit?: boolean;
 };
 
-const AddNetworkForm = ({ type, handleContinue, network, isEdit }: Props) => {
+const NetworkForm = ({ type, handleContinue, network, isEdit }: Props) => {
 	const theme = useTheme();
 	const setAlert = useAlert();
 	const styles = useStyles(theme);
@@ -255,15 +255,13 @@ const AddNetworkForm = ({ type, handleContinue, network, isEdit }: Props) => {
 				</Box>
 			</Box>
 			<Button
-				loading={isLoading || isUpdating}
-				buttonProps={{
-					size: 'large',
-					style: styles.btn,
-					onClick: (e) => {
-						e.preventDefault();
-						handleSubmit();
-					},
+				onClick={(e: React.FormEvent<HTMLButtonElement>) => {
+					e.preventDefault();
+					handleSubmit();
 				}}
+				loading={isLoading || isUpdating}
+				size={'large'}
+				style={styles.btn}
 			>
 				Save
 			</Button>
@@ -303,4 +301,4 @@ const useStyles = (theme: any) => ({
 	},
 });
 
-export default AddNetworkForm;
+export default NetworkForm;

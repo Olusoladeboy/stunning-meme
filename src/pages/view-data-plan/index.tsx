@@ -2,13 +2,15 @@ import React, { CSSProperties, useState } from 'react';
 import { Box, useTheme } from '@mui/material';
 import { grey } from '@mui/material/colors';
 import { AddCircle } from '@mui/icons-material';
-import Layout from '../../components/layout';
-import BackButton from '../../components/back-button';
+import {
+	Layout,
+	BackButton,
+	Button,
+	ModalLayout,
+	DataPlanForm,
+} from '../../components';
 import { BOX_SHADOW } from '../../utilities/constant';
-import Button from '../../components/button';
-import ViewDataPlansTable from '../../components/table/view-data-plans-table';
-import ModalWrapper from '../../components/modal/Wrapper';
-import DataPlanForm from '../../components/forms/data-plan-form';
+import ViewDataPlansTable from '../../components/table/data-plans-table';
 
 const ViewDataPlan = () => {
 	const theme = useTheme();
@@ -17,12 +19,12 @@ const ViewDataPlan = () => {
 	return (
 		<Layout>
 			{isDisplayModal && (
-				<ModalWrapper
+				<ModalLayout
 					closeModal={() => setDisplayModal(false)}
 					title={'Add new plan'}
 				>
 					<DataPlanForm handleOnSubmit={() => setDisplayModal(false)} />
-				</ModalWrapper>
+				</ModalLayout>
 			)}
 			<Box style={styles.container as CSSProperties}>
 				<Box style={styles.header}>

@@ -4,7 +4,7 @@ import { grey } from '@mui/material/colors';
 import { AddCircle } from '@mui/icons-material';
 import Button from '../button';
 import { NetworkPage } from '../../utilities/types';
-import AddNetworkForm from '../forms/add-network-form';
+import AddNetworkForm from '../forms/network-form';
 import ModalWrapper from '../modal/Wrapper';
 
 type Props = {

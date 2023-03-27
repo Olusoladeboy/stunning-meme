@@ -308,14 +308,12 @@ const DataPlanForm = ({ dataPayload, handleOnSubmit }: Props) => {
 			</Box>
 			<Button
 				loading={isCreatingPlan || isUpdatingPlan}
-				buttonProps={{
-					style: styles.btn,
-					size: 'large',
-					type: 'submit',
-					onClick: (e) => {
-						e.preventDefault();
-						handleSubmit();
-					},
+				style={styles.btn}
+				type={'submit'}
+				size={'large'}
+				onClick={(e: React.FormEvent<HTMLButtonElement>) => {
+					e.preventDefault();
+					handleSubmit();
 				}}
 			>
 				Save

@@ -105,18 +105,16 @@ const ReplyTicketForm = ({ ticket }: Props) => {
 				/>
 				<Button
 					loading={isLoading}
-					buttonProps={{
-						disabled: isDisabled,
-						sx: {
-							backgroundColor: `${theme.palette.secondary.main} !important`,
-							color: grey['50'],
-							minWidth: '160px',
-							justifySelf: 'flex-start',
-						},
-						onClick: (e: React.FormEvent<HTMLButtonElement>) => {
-							e.preventDefault();
-							handleSubmit();
-						},
+					disabled={isDisabled}
+					sx={{
+						backgroundColor: `${theme.palette.secondary.main} !important`,
+						color: grey['50'],
+						minWidth: '160px',
+						justifySelf: 'flex-start',
+					}}
+					onClick={(e: React.FormEvent<HTMLButtonElement>) => {
+						e.preventDefault();
+						handleSubmit();
 					}}
 				>
 					Submit

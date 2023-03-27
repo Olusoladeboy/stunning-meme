@@ -1,9 +1,32 @@
 import React from 'react';
 import { Route, Routes, Navigate } from 'react-router-dom';
-import Pages from '../pages';
 import LINKS from '../utilities/links';
 import { NetworkPage } from '../utilities/types';
 import PrivateRoute from '../utilities/helpers/PrivateRoute';
+import {
+	Login,
+	Dashboard,
+	Kyc,
+	Managers,
+	Network,
+	Notifications,
+	PushNotification,
+	Admin,
+	Dispute,
+	Coupons,
+	AllReferrals,
+	AuditLogs,
+	ViewDataPlan,
+	ViewReferees,
+	Verification,
+	Message,
+	Suspension,
+	Transactions,
+	UserProfile,
+	Users,
+	Conversions,
+	Referrals,
+} from '../pages';
 
 const Router = () => {
 	return (
@@ -14,7 +37,7 @@ const Router = () => {
 				path={'/dashboard'}
 				element={
 					<PrivateRoute>
-						<Pages.Dashboard />
+						<Dashboard />
 					</PrivateRoute>
 				}
 			/>
@@ -22,19 +45,19 @@ const Router = () => {
 				path={'users'}
 				element={
 					<PrivateRoute>
-						<Pages.Users />
+						<Users />
 					</PrivateRoute>
 				}
 			/>
 			<Route path={'auth'}>
-				<Route path={'login'} element={<Pages.Auth.Login />} />
+				<Route path={'login'} element={<Login />} />
 			</Route>
 
 			<Route
 				path={'user/:id'}
 				element={
 					<PrivateRoute>
-						<Pages.UserProfile />
+						<UserProfile />
 					</PrivateRoute>
 				}
 			/>
@@ -43,7 +66,7 @@ const Router = () => {
 					path={''}
 					element={
 						<PrivateRoute>
-							<Pages.Managers />
+							<Managers />
 						</PrivateRoute>
 					}
 				/>
@@ -52,7 +75,7 @@ const Router = () => {
 					path={'admin'}
 					element={
 						<PrivateRoute>
-							<Pages.Admin />
+							<Admin />
 						</PrivateRoute>
 					}
 				/>
@@ -62,7 +85,7 @@ const Router = () => {
 				path={'transactions'}
 				element={
 					<PrivateRoute>
-						<Pages.Transactions />
+						<Transactions />
 					</PrivateRoute>
 				}
 			/>
@@ -70,7 +93,7 @@ const Router = () => {
 				path={'conversions'}
 				element={
 					<PrivateRoute>
-						<Pages.Conversions />
+						<Conversions />
 					</PrivateRoute>
 				}
 			/>
@@ -79,7 +102,7 @@ const Router = () => {
 					path={'data'}
 					element={
 						<PrivateRoute>
-							<Pages.Network pageType={NetworkPage.DATA_NETWORK} />
+							<Network pageType={NetworkPage.DATA_NETWORK} />
 						</PrivateRoute>
 					}
 				/>
@@ -87,7 +110,7 @@ const Router = () => {
 					path={'airtime'}
 					element={
 						<PrivateRoute>
-							<Pages.Network pageType={NetworkPage.AIRTIME_NETWORK} />
+							<Network pageType={NetworkPage.AIRTIME_NETWORK} />
 						</PrivateRoute>
 					}
 				/>
@@ -95,7 +118,7 @@ const Router = () => {
 					path={'conversion'}
 					element={
 						<PrivateRoute>
-							<Pages.Network pageType={NetworkPage.CONVERSION_NETWORK} />
+							<Network pageType={NetworkPage.CONVERSION_NETWORK} />
 						</PrivateRoute>
 					}
 				/>
@@ -106,7 +129,7 @@ const Router = () => {
 						path={':id'}
 						element={
 							<PrivateRoute>
-								<Pages.ViewDataPlan />
+								<ViewDataPlan />
 							</PrivateRoute>
 						}
 					/>
@@ -116,7 +139,7 @@ const Router = () => {
 				path={'coupons'}
 				element={
 					<PrivateRoute>
-						<Pages.Coupons />
+						<Coupons />
 					</PrivateRoute>
 				}
 			/>
@@ -124,7 +147,7 @@ const Router = () => {
 				path={'support-ticket/message/:id'}
 				element={
 					<PrivateRoute>
-						<Pages.Message />
+						<Message />
 					</PrivateRoute>
 				}
 			/>
@@ -132,7 +155,7 @@ const Router = () => {
 				path={'dispute'}
 				element={
 					<PrivateRoute>
-						<Pages.Dispute />
+						<Dispute />
 					</PrivateRoute>
 				}
 			/>
@@ -141,7 +164,7 @@ const Router = () => {
 					path={''}
 					element={
 						<PrivateRoute>
-							<Pages.Referrals />
+							<Referrals />
 						</PrivateRoute>
 					}
 				/>
@@ -149,7 +172,7 @@ const Router = () => {
 					path={'all'}
 					element={
 						<PrivateRoute>
-							<Pages.AllReferrals />
+							<AllReferrals />
 						</PrivateRoute>
 					}
 				/>
@@ -159,7 +182,7 @@ const Router = () => {
 				path={'referee/:id'}
 				element={
 					<PrivateRoute>
-						<Pages.ViewReferees />
+						<ViewReferees />
 					</PrivateRoute>
 				}
 			/>
@@ -168,7 +191,7 @@ const Router = () => {
 					path={''}
 					element={
 						<PrivateRoute>
-							<Pages.Notifications />
+							<Notifications />
 						</PrivateRoute>
 					}
 				/>
@@ -176,7 +199,7 @@ const Router = () => {
 					path={'all'}
 					element={
 						<PrivateRoute>
-							<Pages.AllReferrals />
+							<AllReferrals />
 						</PrivateRoute>
 					}
 				/>
@@ -185,7 +208,7 @@ const Router = () => {
 				path={'push-notification'}
 				element={
 					<PrivateRoute>
-						<Pages.PushNotification />
+						<PushNotification />
 					</PrivateRoute>
 				}
 			/>
@@ -194,7 +217,7 @@ const Router = () => {
 					path=''
 					element={
 						<PrivateRoute>
-							<Pages.Verification />
+							<Verification />
 						</PrivateRoute>
 					}
 				/>
@@ -202,7 +225,7 @@ const Router = () => {
 					path='kyc'
 					element={
 						<PrivateRoute>
-							<Pages.Kyc />
+							<Kyc />
 						</PrivateRoute>
 					}
 				/>
@@ -211,7 +234,7 @@ const Router = () => {
 				path={'suspension'}
 				element={
 					<PrivateRoute>
-						<Pages.Suspension />
+						<Suspension />
 					</PrivateRoute>
 				}
 			/>
@@ -219,7 +242,7 @@ const Router = () => {
 				path={'audit-logs'}
 				element={
 					<PrivateRoute>
-						<Pages.AuditLogs />
+						<AuditLogs />
 					</PrivateRoute>
 				}
 			/>

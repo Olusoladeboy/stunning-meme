@@ -3,14 +3,12 @@ import { Box, useTheme } from '@mui/material';
 import { useNavigate, useLocation } from 'react-router-dom';
 import queryString from 'query-string';
 import { useQuery } from 'react-query';
-import Layout from '../../components/layout';
+import { Layout, Pagination, VerificationTable } from '../../components';
 import { useAppSelector } from '../../store/hooks';
 import Api from '../../utilities/api';
 import { QueryKey } from '../../utilities/types';
-import Pagination from '../../components/pagination';
 import { MAX_RECORDS } from '../../utilities/constant';
 import LINKS from '../../utilities/links';
-import VerificationTable from '../../components/table/verification-table';
 import { useAlert } from '../../utilities/hooks';
 
 const Verification = () => {

@@ -1,12 +1,11 @@
 import React from 'react';
-import AuthContainer from '../../components/layout/auth';
-import ForgetPasswordForm from '../../components/forms/forget-password-form';
+import { AuthLayout, ForgetPasswordForm } from '../../components';
 
 const ForgetPassword = () => {
 	return (
-		<AuthContainer>
+		<AuthLayout>
 			<ForgetPasswordForm />
-		</AuthContainer>
+		</AuthLayout>
 	);
 };
 

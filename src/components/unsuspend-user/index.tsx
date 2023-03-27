@@ -58,8 +58,9 @@ const UnsuspendUserButton = ({
 		<Switch onChange={() => handleUnSuspendUser()} checked={isSuspended} />
 	) : (
 		<Button
+			{...buttonProps}
 			loading={isLoading}
-			buttonProps={{ ...buttonProps, onClick: () => handleUnSuspendUser() }}
+			onClick={() => handleUnSuspendUser()}
 		>
 			{text}
 		</Button>

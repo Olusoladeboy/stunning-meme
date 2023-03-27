@@ -45,7 +45,8 @@ const VerifyUser = ({ text = 'Verify user', buttonProps, user, id }: Props) => {
 	return (
 		<Button
 			loading={isLoading}
-			buttonProps={{ ...buttonProps, onClick: () => setVerifyUser(true) }}
+			{...buttonProps}
+			onClick={() => setVerifyUser(true)}
 		>
 			{text}
 		</Button>

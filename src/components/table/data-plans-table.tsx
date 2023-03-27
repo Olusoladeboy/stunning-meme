@@ -78,7 +78,7 @@ interface ExtendedDataPlan extends DataPlan {
 	id: string;
 }
 
-const ViewDataPlansTable = () => {
+const DataPlansTable = () => {
 	const theme = useTheme();
 	const setAlert = useAlert();
 	const styles = useStyles(theme);
@@ -370,4 +370,4 @@ const useStyles = (theme: any) => ({
 	},
 });
 
-export default ViewDataPlansTable;
+export default DataPlansTable;

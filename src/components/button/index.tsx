@@ -9,10 +9,9 @@ interface Props extends ButtonProps {
 	loading?: boolean;
 }
 
-const Button = (props: Props) => {
-	const { children, loading } = props;
+const Button: React.FC<Props> = ({ loading, children, ...rest }) => {
 	return (
-		<MuiButton disabled={loading} {...props}>
+		<MuiButton disabled={loading} {...rest}>
 			{loading ? <CircularProgress /> : children}
 		</MuiButton>
 	);

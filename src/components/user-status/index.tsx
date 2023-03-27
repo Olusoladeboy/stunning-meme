@@ -59,17 +59,18 @@ const UserStatus = ({ user }: Props) => {
 				<UserAvatarWithDetails user={user} />
 				<CustomButton
 					loading={isLoading}
-					buttonProps={{
-						sx: {
-							border: `1px solid ${theme.palette.secondary.main}`,
-							':hover': {
-								backgroundColor: theme.palette.secondary.main,
-								color: grey[50],
-							},
-						},
-						size: 'large',
-						onClick: () => handleSuspendWithdraw(),
+					onClick={(e: React.FormEvent<HTMLButtonElement>) => {
+						e.preventDefault();
+						handleSuspendWithdraw();
 					}}
+					sx={{
+						border: `1px solid ${theme.palette.secondary.main}`,
+						':hover': {
+							backgroundColor: theme.palette.secondary.main,
+							color: grey[50],
+						},
+					}}
+					size={'large'}
 				>
 					{user?.suspendWithdrawal
 						? 'Unsuspend withdrawal'

@@ -1,15 +1,17 @@
 import React from 'react';
 import { Box, useTheme } from '@mui/material';
-import Layout from '../../components/layout';
-import WalletBalance from '../../components/wallet-balance';
-import TotalTransactions from '../../components/summary-item/total-transactions';
-import TotalUsers from '../../components/summary-item/total-users';
-import TotalConversions from '../../components/summary-item/total-conversions';
-import WalletOverview from '../../components/wallet-overview';
-import UserRecords from '../../components/user-record';
-import TaskList from '../../components/task-list';
-import RecentConversionsTable from '../../components/table/recent-conversions';
-import RecentTransactionsTable from '../../components/table/recent-transactions';
+import {
+	Layout,
+	WalletBalance,
+	TotalTransactions,
+	TotalUsers,
+	TotalConversions,
+	WalletOverview,
+	UserRecord,
+	TaskList,
+	RecentConversionsTable,
+	RecentTransactionsTable,
+} from '../../components';
 
 const Dashboard = () => {
 	const theme = useTheme();
@@ -50,7 +52,7 @@ const Dashboard = () => {
 						}}
 					>
 						<WalletOverview />
-						<UserRecords />
+						<UserRecord />
 						<TaskList />
 					</Box>
 				</Box>

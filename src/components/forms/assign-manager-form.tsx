@@ -113,15 +113,13 @@ const AssignManagerForm = ({ userDetails, close }: Props) => {
 
 			<CustomButton
 				loading={isLoading}
-				buttonProps={{
-					onClick: (e: any) => {
-						e.preventDefault();
-						handleSubmit();
-					},
-					style: styles.btn,
-					size: 'large',
-					type: 'submit',
+				onClick={(e: React.FormEvent<HTMLButtonElement>) => {
+					e.preventDefault();
+					handleSubmit();
 				}}
+				style={styles.btn}
+				size={'large'}
+				type={'submit'}
 			>
 				Submit
 			</CustomButton>

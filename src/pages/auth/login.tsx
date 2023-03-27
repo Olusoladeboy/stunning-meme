@@ -1,12 +1,10 @@
 import React from 'react';
 import { Box } from '@mui/material';
-import AuthContainer from '../../components/layout/auth';
-import LoginForm from '../../components/forms/login-form';
-import Image from '../../components/image';
+import { AuthLayout, LoginForm, Image } from '../../components';
 
 const Login = () => {
 	return (
-		<AuthContainer>
+		<AuthLayout>
 			<Box>
 				<Image
 					sx={{
@@ -21,7 +19,7 @@ const Login = () => {
 				/>
 				<LoginForm />
 			</Box>
-		</AuthContainer>
+		</AuthLayout>
 	);
 };
 

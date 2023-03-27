@@ -3,14 +3,12 @@ import { Box } from '@mui/material';
 import { useNavigate, useLocation } from 'react-router-dom';
 import queryString from 'query-string';
 import { useQuery } from 'react-query';
-import Layout from '../../components/layout';
+import { Layout, Pagination, SuspensionTable } from '../../components';
 import { useAppSelector } from '../../store/hooks';
 import Api from '../../utilities/api';
 import { QueryKey } from '../../utilities/types';
-import Pagination from '../../components/pagination';
 import { MAX_RECORDS } from '../../utilities/constant';
 import LINKS from '../../utilities/links';
-import SuspensionTable from '../../components/table/suspension-table';
 import { useAlert } from '../../utilities/hooks';
 
 const Suspension = () => {

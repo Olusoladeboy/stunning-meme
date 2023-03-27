@@ -20,11 +20,13 @@ import {
 	TicketStatus,
 } from '../../utilities/types';
 import { useAlert } from '../../utilities/hooks';
-import CircularProgress from '../../components/loader/circular-progress';
+import {
+	CircularProgress,
+	MessageItem,
+	CloseDisputeButton,
+	ReplyTicketForm,
+} from '../../components';
 import ErrorBoundary from '../../utilities/helpers/error-boundary';
-import MessageItem from '../../components/message-item';
-import ReplyTicketForm from '../../components/forms/reply-ticket-form';
-import CloseDispute from '../../components/close-dispute-button';
 
 const Message = () => {
 	const alert = useAlert();
@@ -83,7 +85,7 @@ const Message = () => {
 								>
 									<Title variant={'h6'}>{data.payload[0].subject}</Title>
 									{data.payload[0].status === TicketStatus.OPENED && (
-										<CloseDispute ticket={data.payload[0]} />
+										<CloseDisputeButton ticket={data.payload[0]} />
 									)}
 								</Box>
 								<Box

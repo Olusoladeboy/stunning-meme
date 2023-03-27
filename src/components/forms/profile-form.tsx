@@ -4,7 +4,7 @@ import TextInput from '../form-components/TextInput';
 import Button from '../button';
 import { grey } from '@mui/material/colors';
 
-const EditProfileForm = () => {
+const ProfileForm = () => {
 	const theme = useTheme();
 	const styles = useStyles(theme);
 	return (
@@ -81,4 +81,4 @@ const useStyles = (theme: any) => ({
 	},
 });
 
-export default EditProfileForm;
+export default ProfileForm;

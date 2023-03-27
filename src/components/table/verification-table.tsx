@@ -178,11 +178,9 @@ const VerificationTable = ({ users, isLoading }: Props) => {
 																		? true
 																		: false
 																}
-																buttonProps={{
-																	style: styles.verifyBtn as CSSProperties,
-																	size: 'small',
-																	onClick: () => setSelectUser(row),
-																}}
+																onClick={() => setSelectUser(row)}
+																style={styles.verifyBtn as CSSProperties}
+																size={'small'}
 															>
 																Verify user
 															</CustomButton>

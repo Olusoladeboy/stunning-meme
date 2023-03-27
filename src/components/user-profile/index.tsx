@@ -5,7 +5,7 @@ import moment from 'moment';
 import DetailItem from './detail-item';
 import Button from '../button';
 import ModalWrapper from '../modal/Wrapper';
-import EditProfileForm from '../forms/edit-profile';
+import EditProfileForm from '../forms/profile-form';
 import UserAvatarWithDetails from '../avatar-with-details';
 import UserWallet from '../user-wallet';
 import { UserDetails } from '../../utilities/types';

@@ -1,11 +1,10 @@
 import React from 'react';
 import { Box } from '@mui/material';
 import { useQuery } from 'react-query';
-import Layout from '../../components/layout';
+import { Layout, AdminUserTable } from '../../components';
 import { useAppSelector } from '../../store/hooks';
 import { QueryKey } from '../../utilities/types';
 import Api from '../../utilities/api';
-import AdminUserTable from '../../components/table/admin-user-table';
 import { useAlert } from '../../utilities/hooks';
 
 const Admin = () => {

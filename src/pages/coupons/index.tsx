@@ -2,15 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { Box } from '@mui/material';
 import { useNavigate, useLocation } from 'react-router-dom';
 import queryString from 'query-string';
-import Layout from '../../components/layout';
+import { Layout, Pagination, CouponsTable } from '../../components';
 import { useAppSelector } from '../../store/hooks';
 import Api from '../../utilities/api';
 import { QueryKey } from '../../utilities/types';
-import Pagination from '../../components/pagination';
 import { MAX_RECORDS } from '../../utilities/constant';
 import LINKS from '../../utilities/links';
 import { useQueryHook } from '../../utilities/api/hooks';
-import CouponsTable from '../../components/table/coupons-table';
 
 const Coupons = () => {
 	const { token } = useAppSelector((store) => store.authState);

@@ -99,14 +99,13 @@ const LoginForm = () => {
 
 			<CustomButton
 				loading={isLoading && isLoading}
-				buttonProps={{
-					onClick: (e: any) => {
-						handleSubmit();
-					},
-					style: styles.btn,
-					size: 'large',
-					type: 'submit',
+				onClick={(e: React.FormEvent<HTMLButtonElement>) => {
+					e.preventDefault();
+					handleSubmit();
 				}}
+				style={styles.btn}
+				size={'large'}
+				type={'submit'}
 			>
 				Login
 			</CustomButton>

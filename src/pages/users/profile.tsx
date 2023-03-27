@@ -4,22 +4,24 @@ import { useQuery } from 'react-query';
 import queryString from 'query-string';
 import { Box, useTheme, CircularProgress, Typography } from '@mui/material';
 import { grey } from '@mui/material/colors';
-import Layout from '../../components/layout';
-import BackButton from '../../components/back-button';
+import {
+	Layout,
+	BackButton,
+	UserTab,
+	UserProfile,
+	UserStatus,
+	UserTransaction,
+	UserWalletSummary,
+	UserManagerInfo,
+	ModalLayout,
+	AssignManagerForm,
+	Button,
+} from '../../components';
 import { BOX_SHADOW } from '../../utilities/constant';
-import UserTab from '../../components/tabs/user';
 import LINKS from '../../utilities/links';
 import { UserNavList, QueryKey, UserDetails } from '../../utilities/types';
-import UserProfile from '../../components/user-profile';
-import UserStatus from '../../components/user-status';
-import UserTransaction from '../../components/user-transaction';
-import UserWalletSummary from '../../components/user-wallet-summary';
 import Api from '../../utilities/api';
 import { useAppSelector } from '../../store/hooks';
-import ManagerInfo from '../../components/user-manager-info';
-import Button from '../../components/button';
-import Modal from '../../components/modal/Wrapper';
-import AssignManagerForm from '../../components/forms/assign-manager-form';
 import ErrorBoundary from '../../utilities/helpers/error-boundary';
 
 interface User extends UserDetails {
@@ -97,7 +99,7 @@ const Profile = () => {
 	return (
 		<>
 			{isDisplayModal && (
-				<Modal
+				<ModalLayout
 					title={'Assign Manager to User'}
 					hasCloseButton
 					closeModal={() => setDisplayModal(false)}
@@ -106,7 +108,7 @@ const Profile = () => {
 						close={() => setDisplayModal(false)}
 						userDetails={userDetails}
 					/>
-				</Modal>
+				</ModalLayout>
 			)}
 			<Layout>
 				{isLoading ? (
@@ -180,7 +182,7 @@ const Profile = () => {
 									hidden={currentTab !== UserNavList.Manager}
 								>
 									{userDetails && userDetails.manager ? (
-										<ManagerInfo
+										<UserManagerInfo
 											changeManager={() => setDisplayModal(true)}
 											manager={userDetails.manager}
 										/>

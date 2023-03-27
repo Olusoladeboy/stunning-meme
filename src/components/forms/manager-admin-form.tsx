@@ -285,15 +285,13 @@ const ManagerAdminForm = ({
 					isCreatingStaff ||
 					isUpdatingStaff
 				}
-				buttonProps={{
-					type: 'submit',
-					onClick: (e) => {
-						e.preventDefault();
-						handleSubmit();
-					},
-					size: 'large',
-					style: styles.btn,
+				onClick={(e: React.FormEvent<HTMLButtonElement>) => {
+					e.preventDefault();
+					handleSubmit();
 				}}
+				type={'submit'}
+				size={'large'}
+				style={styles.btn}
 			>
 				Save
 			</Button>

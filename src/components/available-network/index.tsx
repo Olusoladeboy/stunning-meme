@@ -5,14 +5,14 @@ import { Box, useTheme, CircularProgress, Typography } from '@mui/material';
 import { grey } from '@mui/material/colors';
 import Button from '../button';
 import AvaliableNetworkItem from './available-network-item';
-import Api from '../../utilities/api';
-import { QueryKey, API_ENDPOINTS } from '../../utilities/types';
+import { QueryKey, API_ENDPOINTS, LINKS } from '../../utilities';
 import { useAppSelector } from '../../store/hooks';
-import LINKS from '../../utilities/links';
-import { useAlert } from '../../utilities/hooks';
+import { useAlert, useHandleError } from '../../hooks';
+import { networks } from '../../api';
 
 const AvailableNetwork = () => {
 	const theme = useTheme();
+	const handleError = useHandleError();
 	const setAlert = useAlert();
 	const navigate = useNavigate();
 	const styles = useStyles(theme);
@@ -21,15 +21,17 @@ const AvailableNetwork = () => {
 	const { isLoading, data } = useQuery(
 		QueryKey.ConvertNetwork,
 		() =>
-			Api.Network.GetNetwork({
-				token: token || '',
+			networks({
 				url: API_ENDPOINTS.ConvertNetworks,
 			}),
 		{
 			enabled: !!token,
 			onSettled: (data, error) => {
 				if (error) {
-					setAlert({ data: error, type: 'error' });
+					const response = handleError({ error });
+					if (response?.message) {
+						setAlert({ message: response.message, type: 'error' });
+					}
 				}
 			},
 		}

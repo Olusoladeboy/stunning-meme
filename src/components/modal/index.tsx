@@ -4,8 +4,7 @@ import Lottie from 'react-lottie';
 import Button from '../button';
 import { grey } from '@mui/material/colors';
 import ModalWrapper from './Wrapper';
-import { DANGER_COLOR } from '../../utilities/constant';
-import { ModalDetails } from '../../utilities/types';
+import { DANGER_COLOR,ModalDetails  } from '../../utilities';
 import * as success from '../../assets/json-file/success.json';
 import * as failed from '../../assets/json-file/failed.json';
 

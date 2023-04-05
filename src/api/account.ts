@@ -1,19 +1,14 @@
 import apiRequest from './apiRequest';
 import { LoginData, ENDPOINTS } from '../utilities';
 
-const Account = {
-	Login: async (data: LoginData) =>
-		apiRequest({
-			method: 'POST',
-			url: `${ENDPOINTS.Staff}/login`,
-			data,
-		}),
-	GetUser: async (token: string) =>
-		apiRequest({
-			method: 'GET',
-			url: `${ENDPOINTS.Staff}/me`,
-			token,
-		}),
-};
-
-export default Account;
+export const login = async (data: LoginData): Promise<any> =>
+	apiRequest({
+		method: 'POST',
+		url: `${ENDPOINTS.Staff}/login`,
+		data,
+	});
+export const me = async (): Promise<any> =>
+	apiRequest({
+		method: 'GET',
+		url: `${ENDPOINTS.Staff}/me`,
+	});

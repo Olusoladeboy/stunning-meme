@@ -5,10 +5,11 @@ import { grey } from '@mui/material/colors';
 
 type Props = {
 	description: string;
-	amount: string | number;
+	value: string | number;
+	isAmount?: boolean;
 };
 
-const ListItem = ({ amount, description }: Props) => {
+const ListItem = ({ value, description, isAmount = true }: Props) => {
 	const theme = useTheme();
 	const styles = useStyles(theme);
 	return (
@@ -21,7 +22,11 @@ const ListItem = ({ amount, description }: Props) => {
 				style={styles.text}
 				variant={'body1'}
 			>
-				{amount ? formatNumberToCurrency(amount) : formatNumberToCurrency(0)}
+				{isAmount
+					? value
+						? formatNumberToCurrency(value)
+						: formatNumberToCurrency(0)
+					: value}
 			</Typography>
 		</Box>
 	);

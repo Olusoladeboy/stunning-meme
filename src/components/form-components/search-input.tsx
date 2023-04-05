@@ -8,7 +8,7 @@ import {
 } from '@mui/material';
 import { Search } from '@mui/icons-material';
 import { useAppSelector } from '../../store/hooks';
-import { ThemeModeType } from '../../utilities/types';
+import { ThemeModeType } from '../../utilities';
 import { grey } from '@mui/material/colors';
 
 interface Props extends BoxProps {

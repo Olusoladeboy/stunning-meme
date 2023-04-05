@@ -3,36 +3,30 @@ import { useParams } from 'react-router-dom';
 import { useMutation, useQueryClient } from 'react-query';
 import * as yup from 'yup';
 import { Box, useTheme, Typography, MenuItem } from '@mui/material';
+import { grey } from '@mui/material/colors';
 import { useFormik } from 'formik';
 import TextInput from '../form-components/TextInput';
 import Button from '../button/custom-button';
-import { grey } from '@mui/material/colors';
-import { DataPlan, DataPlanType } from '../../utilities/types';
+import { DataPlan, DataPlanType, QueryKeys } from '../../utilities';
 import Select from '../form-components/Select';
-import Api from '../../utilities/api';
-import { QueryKey } from '../../utilities/types';
-import { useAppSelector } from '../../store/hooks';
 import TextPlaceholder from '../partials/text-placeholder';
-import { useAlert } from '../../utilities/hooks';
-
-interface ExtendedDataType extends DataPlan {
-	id: string;
-}
+import { useAlert, useHandleError } from '../../hooks';
+import { createDataPlan, updateDataPlan } from '../../api';
 
 type Props = {
-	dataPayload?: ExtendedDataType;
-	handleOnSubmit?: () => void;
+	dataPayload?: DataPlan;
+	callback?: () => void;
 };
 
 const SELECT_PLAN = 'Select plan';
 
-const DataPlanForm = ({ dataPayload, handleOnSubmit }: Props) => {
+const DataPlanForm = ({ dataPayload, callback }: Props) => {
 	const theme = useTheme();
+	const handleError = useHandleError();
 	const setAlert = useAlert();
 	const styles = useStyles(theme);
 	const params = useParams();
 	const [dataPlanType, setDataPlanType] = useState('');
-	const { token } = useAppSelector((store) => store.authState);
 
 	const validationSchema = yup.object().shape({
 		name: yup.string().required('Enter name'),
@@ -59,41 +53,49 @@ const DataPlanForm = ({ dataPayload, handleOnSubmit }: Props) => {
 	const queryClient = useQueryClient();
 
 	const { isLoading: isCreatingPlan, mutate: createPlan } = useMutation(
-		Api.DataPlan.CreatePlan,
+		createDataPlan,
 		{
 			onSettled: (data, error) => {
 				if (error) {
-					setAlert({ data: error, type: 'error' });
+					const response = handleError({ error });
+
+					if (response?.message) {
+						setAlert({ message: response.message, type: 'error' });
+					}
 				}
 
 				if (data && data.success) {
-					typeof handleOnSubmit !== 'undefined' && handleOnSubmit();
+					typeof callback !== 'undefined' && callback();
 					setAlert({
-						data: data.message,
+						message: data.message,
 						type: 'success',
 					});
 					resetForm();
-					queryClient.invalidateQueries(QueryKey.DataPlans);
+					queryClient.invalidateQueries(QueryKeys.DataPlans);
 				}
 			},
 		}
 	);
 
 	const { isLoading: isUpdatingPlan, mutate: updatePlan } = useMutation(
-		Api.DataPlan.UpdatePlan,
+		updateDataPlan,
 		{
 			onSettled: (data, error) => {
 				if (error) {
-					setAlert({ data: error, type: 'error' });
+					const response = handleError({ error });
+
+					if (response?.message) {
+						setAlert({ message: response.message, type: 'error' });
+					}
 				}
 
 				if (data && data.success) {
-					typeof handleOnSubmit !== 'undefined' && handleOnSubmit();
+					typeof callback !== 'undefined' && callback();
 					setAlert({
-						data: data.message,
+						message: data.message,
 						type: 'success',
 					});
-					queryClient.invalidateQueries(QueryKey.DataPlans);
+					queryClient.invalidateQueries(QueryKeys.DataPlans);
 				}
 			},
 		}
@@ -121,7 +123,6 @@ const DataPlanForm = ({ dataPayload, handleOnSubmit }: Props) => {
 
 		if (dataPayload && Object.keys(dataPayload).length > 0) {
 			updatePlan({
-				token: token || '',
 				data:
 					data.type === DataPlanType.SMS
 						? {
@@ -130,13 +131,10 @@ const DataPlanForm = ({ dataPayload, handleOnSubmit }: Props) => {
 								shortcode_sms: data.shortcode_sms,
 						  }
 						: updataDataPlan,
-				id: dataPayload.id,
+				id: dataPayload?.id as string,
 			});
 		} else {
-			createPlan({
-				token: token || '',
-				data: data.type === DataPlanType.SMS ? data : createPlanData,
-			});
+			createPlan(data.type === DataPlanType.SMS ? data : createPlanData);
 		}
 	};
 

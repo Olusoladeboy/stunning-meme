@@ -17,7 +17,10 @@ const Header = () => {
 	const theme = useTheme();
 	const styles = useStyles(theme);
 	const dispatch = useAppDispatch();
-	const { isToggleDrawer } = useAppSelector((store) => store.appState);
+	const {
+		appState: { isToggleDrawer },
+		authState: { user },
+	} = useAppSelector((store) => store);
 	return (
 		<AppBar position={'sticky'} style={styles.appBar}>
 			<Toolbar style={styles.toolbar}>
@@ -39,10 +42,10 @@ const Header = () => {
 				<Box style={styles.avatarUserNameWrapper}>
 					<Box>
 						<Typography style={styles.userName} variant={'body1'}>
-							user name
+							{user && `${user.firstname} ${user.lastname}`}
 						</Typography>
 						<Typography style={styles.roleText} variant={'body2'}>
-							role
+							{user && `${user.role.replace(/_/gi, ' ')}`}
 						</Typography>
 					</Box>
 					<Avatar />

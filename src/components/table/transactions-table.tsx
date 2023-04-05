@@ -13,7 +13,7 @@ import {
 	PENDING_COLOR,
 	DANGER_COLOR,
 } from '../../utilities/constant';
-import { TransactionStatus } from '../../utilities/types';
+import { Transaction, TransactionStatus } from '../../utilities/types';
 import FilterIcon from '../icons/filter';
 import { StyledTableCell, StyledTableRow } from './components';
 import Empty from '../empty/table-empty';
@@ -21,11 +21,7 @@ import Loader from '../loader/table-loader';
 import formatNumberToCurrency from '../../utilities/helpers/formatNumberToCurrency';
 
 type Props = {
-	data:
-		| {
-				[key: string]: any;
-		  }[]
-		| null;
+	data: Transaction[] | null;
 	isLoading?: boolean;
 };
 
@@ -102,7 +98,7 @@ const TransactionsTable = ({ data, isLoading }: Props) => {
 						data && (
 							<>
 								{data.length > 0 ? (
-									data.map((data, key) => (
+									data.map((data: Transaction, key: number) => (
 										<StyledTableRow key={key}>
 											<StyledTableCell style={styles.text}>
 												<Box
@@ -112,7 +108,10 @@ const TransactionsTable = ({ data, isLoading }: Props) => {
 														gap: theme.spacing(2),
 													}}
 												>
-													<Avatar style={styles.avatar} src={data.avatar} />
+													<Avatar
+														style={styles.avatar}
+														src={data.user.photoUrl as string}
+													/>
 													<Typography>
 														{data.user?.firstname} {data.user?.lastname}
 													</Typography>
@@ -121,7 +120,9 @@ const TransactionsTable = ({ data, isLoading }: Props) => {
 											<StyledTableCell style={styles.text}>
 												{data.transaction
 													? data.transaction.service
-													: data.service}
+													: data.service
+													? data.service
+													: data.type}
 											</StyledTableCell>
 
 											<StyledTableCell style={styles.text}>
@@ -180,7 +181,11 @@ const TransactionsTable = ({ data, isLoading }: Props) => {
 												</Box>
 											</StyledTableCell>
 											<StyledTableCell style={styles.text}>
-												{formatNumberToCurrency(data.amount.$numberDecimal)}
+												{formatNumberToCurrency(
+													typeof data.amount !== 'string'
+														? data.amount.$numberDecimal
+														: data.amount
+												)}
 											</StyledTableCell>
 										</StyledTableRow>
 									))

@@ -11,7 +11,10 @@ import {
 	SUCCESS_COLOR,
 	BOX_SHADOW,
 	DANGER_COLOR,
-} from '../../utilities/constant';
+	LINKS,
+	UserDetails,
+	QueryKeys,
+} from '../../utilities';
 import FilterIcon from '../icons/filter';
 import {
 	StyledTableCell as TableCell,
@@ -21,12 +24,10 @@ import TableHeader from '../header/table-header';
 import Empty from '../empty';
 import Button from '../button';
 import CustomButton from '../button/custom-button';
-import LINKS from '../../utilities/links';
 import Loader from '../loader/table-loader';
-import { UserDetails, QueryKey } from '../../utilities/types';
-import { useAlert } from '../../utilities/hooks';
+import { useAlert, useHandleError } from '../../hooks';
 import { useAppSelector } from '../../store/hooks';
-import Api from '../../utilities/api';
+import { verifyUser } from '../../api';
 
 type Props = {
 	users: UserDetails[] | null;
@@ -35,7 +36,7 @@ type Props = {
 
 const VerificationTable = ({ users, isLoading }: Props) => {
 	const navigate = useNavigate();
-
+	const handleError = useHandleError();
 	const theme = useTheme();
 	const styles = useStyles(theme);
 
@@ -47,8 +48,7 @@ const VerificationTable = ({ users, isLoading }: Props) => {
 	const { isLoading: isVerifyingUser } = useQuery(
 		'',
 		() =>
-			Api.User.VerifyUser({
-				token: token as string,
+			verifyUser({
 				id: selectedUser?.id as string,
 			}),
 		{
@@ -56,14 +56,17 @@ const VerificationTable = ({ users, isLoading }: Props) => {
 			onSettled: (data, error) => {
 				setSelectUser(null);
 				if (error) {
-					setAlert({ data: error, isError: true });
+					const response = handleError({ error });
+					if (response?.message) {
+						setAlert({ message: response?.message, type: 'error' });
+					}
 				}
 
 				if (data && data.success) {
-					setAlert({ data: data.message, type: 'success' });
-					queryClient.invalidateQueries(QueryKey.AllUsers);
-					queryClient.invalidateQueries(QueryKey.GetSingleUser);
-					queryClient.invalidateQueries(QueryKey.Statistics);
+					setAlert({ message: data.message, type: 'success' });
+					queryClient.invalidateQueries(QueryKeys.AllUsers);
+					queryClient.invalidateQueries(QueryKeys.GetSingleUser);
+					queryClient.invalidateQueries(QueryKeys.Statistics);
 				}
 			},
 		}

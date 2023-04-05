@@ -45,6 +45,7 @@ export const StyledTableHeaderCell = styled(TableCell)(({ theme }) => ({
 
 export const StyledTableRow = styled(TableRow)(({ theme }) => ({
 	color: theme.palette.primary.main,
+	cursor: 'pointer',
 	'&:nth-of-type(odd)': {
 		backgroundColor: '#FDF8F1',
 	},

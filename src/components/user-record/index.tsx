@@ -6,8 +6,8 @@ import {
 	BOX_SHADOW,
 	SUCCESS_COLOR,
 	DANGER_COLOR,
-} from '../../utilities/constant';
-import LINKS from '../../utilities/links';
+	LINKS,
+} from '../../utilities';
 import { useAppSelector } from '../../store/hooks';
 
 const UserRecords = () => {

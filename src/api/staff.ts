@@ -5,38 +5,29 @@ interface StaffDetails extends ManagerDetailsData {
 	role: string;
 }
 
-const Staff = {
-	Create: async ({ token, data }: { token: string; data: StaffDetails }) =>
-		apiRequest({
-			method: 'POST',
-			url: ENDPOINTS.Staff,
-			token,
-			data,
-		}),
-	Update: async ({
-		token,
+export const createStaff = async (data: StaffDetails): Promise<any> =>
+	apiRequest({
+		method: 'POST',
+		url: ENDPOINTS.Staff,
 		data,
-		id,
-	}: {
-		token: string;
-		data: StaffDetails;
-		id: string;
-	}) =>
-		apiRequest({
-			method: 'PUT',
-			url: `${ENDPOINTS.Staff}/${id}`,
-			token,
-			data,
-		}),
-	RetrieveAll: async (token: string) =>
-		apiRequest({
-			method: 'GET',
-			url: `${ENDPOINTS.Staff}`,
-			token,
-			params: {
-				sort: '-createdAt',
-			},
-		}),
-};
+	});
 
-export default Staff;
+export const updateStaff = async ({
+	data,
+	id,
+}: {
+	data: StaffDetails;
+	id: string;
+}): Promise<any> =>
+	apiRequest({
+		method: 'PUT',
+		url: `${ENDPOINTS.Staff}/${id}`,
+		data,
+	});
+
+export const staffs = async ({ params }: { params: any }): Promise<any> =>
+	apiRequest({
+		method: 'GET',
+		url: `${ENDPOINTS.Staff}`,
+		params,
+	});

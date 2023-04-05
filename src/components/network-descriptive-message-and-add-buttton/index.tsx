@@ -3,7 +3,7 @@ import { Box, Typography, useTheme } from '@mui/material';
 import { grey } from '@mui/material/colors';
 import { AddCircle } from '@mui/icons-material';
 import Button from '../button';
-import { NetworkPage } from '../../utilities/types';
+import { NetworkPage } from '../../utilities';
 import AddNetworkForm from '../forms/network-form';
 import ModalWrapper from '../modal/Wrapper';
 

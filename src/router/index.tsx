@@ -1,7 +1,6 @@
 import React from 'react';
 import { Route, Routes, Navigate } from 'react-router-dom';
-import LINKS from '../utilities/links';
-import { NetworkPage } from '../utilities/types';
+import { LINKS, NetworkPage } from '../utilities';
 import PrivateRoute from '../utilities/helpers/PrivateRoute';
 import {
 	Login,
@@ -26,6 +25,8 @@ import {
 	Users,
 	Conversions,
 	Referrals,
+	DataTypes,
+	Messages,
 } from '../pages';
 
 const Router = () => {
@@ -89,6 +90,16 @@ const Router = () => {
 					</PrivateRoute>
 				}
 			/>
+			<Route path={'messages'}>
+				<Route
+					path={''}
+					element={
+						<PrivateRoute>
+							<Messages />
+						</PrivateRoute>
+					}
+				/>
+			</Route>
 			<Route
 				path={'conversions'}
 				element={
@@ -122,6 +133,18 @@ const Router = () => {
 						</PrivateRoute>
 					}
 				/>
+			</Route>
+			<Route path={'data-types'}>
+				<Route path={':plan'}>
+					<Route
+						path={':id'}
+						element={
+							<PrivateRoute>
+								<DataTypes />
+							</PrivateRoute>
+						}
+					/>
+				</Route>
 			</Route>
 			<Route path={'data-plan'}>
 				<Route path={':plan'}>

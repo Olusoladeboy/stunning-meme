@@ -13,8 +13,8 @@ import {
 	SUCCESS_COLOR,
 	PENDING_COLOR,
 	DANGER_COLOR,
-} from '../../utilities/constant';
-import { TransactionStatus } from '../../utilities/types';
+	TransactionStatus,
+} from '../../utilities';
 import { grey } from '@mui/material/colors';
 import FilterIcon from '../icons/filter';
 import SearchInput from '../form-components/search-input';

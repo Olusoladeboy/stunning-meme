@@ -18,7 +18,8 @@ import {
 	SUCCESS_COLOR,
 	BOX_SHADOW,
 	DANGER_COLOR,
-} from '../../utilities/constant';
+	LINKS,
+} from '../../utilities';
 import ModalWrapper from '../modal/Wrapper';
 import FilterIcon from '../icons/filter';
 import {
@@ -31,7 +32,6 @@ import Empty from '../empty';
 import Pagination from '../pagination';
 import Button from '../button';
 import RegularAlert from '../modal/regular-modal';
-import LINKS from '../../utilities/links';
 import PushNotificationForm from '../forms/push-notification-form';
 
 const NotificationsTable = () => {

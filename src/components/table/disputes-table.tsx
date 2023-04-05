@@ -56,14 +56,7 @@ const DisputeTable = ({ data, isLoading }: Props) => {
 					>
 						<TableRow>
 							<TableCell sx={{ paddingLeft: '30px' }}>Code</TableCell>
-							<TableCell>
-								<Box style={styles.filterWrapper}>
-									<Typography style={styles.tableHeaderText} variant={'body1'}>
-										Type
-									</Typography>
-									<FilterIcon />
-								</Box>
-							</TableCell>
+
 							<TableCell>
 								<Box style={styles.filterWrapper}>
 									<Typography style={styles.tableHeaderText} variant={'body1'}>
@@ -112,9 +105,7 @@ const DisputeTable = ({ data, isLoading }: Props) => {
 												>
 													{row.code}
 												</TableCell>
-												<TableCell style={styles.tableText}>
-													{row.type}
-												</TableCell>
+
 												<TableCell style={styles.tableText}>
 													{row.subject}
 												</TableCell>
@@ -156,7 +147,7 @@ const DisputeTable = ({ data, isLoading }: Props) => {
 														}
 														style={styles.viewDisputeBtn}
 													>
-														View dispute message
+														View dispute
 													</Button>
 												</TableCell>
 											</TableRow>

@@ -1,8 +1,7 @@
 import React, { CSSProperties } from 'react';
 import { Box } from '@mui/material';
 import Button from '../button';
-import { LIGHT_PRIMARY_COLOR } from '../../utilities/constant';
-import { UserNavList } from '../../utilities/types';
+import { LIGHT_PRIMARY_COLOR, UserNavList } from '../../utilities';
 
 type Props = {
 	handleChange: (value: string) => void;

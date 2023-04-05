@@ -7,7 +7,7 @@ import TableBody from '@mui/material/TableBody';
 import TableHead from '@mui/material/TableHead';
 import { grey } from '@mui/material/colors';
 import { AddCircle } from '@mui/icons-material';
-import { SUCCESS_COLOR, BOX_SHADOW } from '../../utilities/constant';
+import { SUCCESS_COLOR, BOX_SHADOW, LINKS } from '../../utilities';
 import FilterIcon from '../icons/filter';
 import {
 	StyledTableCell as TableCell,
@@ -18,7 +18,6 @@ import REFERRALS from '../../utilities/data/referrals';
 import Empty from '../empty';
 import Pagination from '../pagination';
 import Button from '../button';
-import LINKS from '../../utilities/links';
 
 const ReferralTableWithAvatar = () => {
 	const [data] = useState<{ [key: string]: any }[] | null>(REFERRALS);

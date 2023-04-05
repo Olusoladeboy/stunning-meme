@@ -6,57 +6,54 @@ import {
 } from '../utilities';
 import apiRequest from './apiRequest';
 
-const Ticket = {
-	Create: async ({ token, data }: { token: string; data: CreateTicket }) =>
-		apiRequest({
-			url: ENDPOINTS.Ticket,
-			method: 'POST',
-			token,
-			data,
-		}),
-	Close: async ({
-		token,
-		data,
-		id,
-	}: {
-		token: string;
-		data: CloseTicket;
-		id: string;
-	}) =>
-		apiRequest({
-			url: `${ENDPOINTS.Ticket}/${id}`,
-			method: 'PUT',
-			token,
-			data,
-		}),
-	ReplyTicket: async ({
-		token,
-		data,
-		code,
-	}: {
-		token: string;
-		data: TicketReply;
-		code: string;
-	}) =>
-		apiRequest({
-			url: `${ENDPOINTS.Ticket}/reply/${code}`,
-			method: 'PUT',
-			token,
-			data,
-		}),
-	Records: async ({
-		token,
-		params,
-	}: {
-		token: string;
-		params?: { [key: string]: any };
-	}) =>
-		apiRequest({
-			url: `${ENDPOINTS.Ticket}`,
-			method: 'GET',
-			token,
-			params,
-		}),
-};
+export const createTicket = async ({
+	data,
+}: {
+	data: CreateTicket;
+}): Promise<any> =>
+	apiRequest({
+		url: ENDPOINTS.Ticket,
+		method: 'POST',
 
-export default Ticket;
+		data,
+	});
+
+export const closeTicket = async ({
+	data,
+	id,
+}: {
+	data: CloseTicket;
+	id: string;
+}): Promise<any> =>
+	apiRequest({
+		url: `${ENDPOINTS.Ticket}/${id}`,
+		method: 'PUT',
+
+		data,
+	});
+
+export const replyTicket = async ({
+	data,
+	code,
+}: {
+	data: TicketReply;
+	code: string;
+}): Promise<any> =>
+	apiRequest({
+		url: `${ENDPOINTS.Ticket}/reply/${code}`,
+		method: 'PUT',
+
+		data,
+	});
+
+export const tickets = async ({
+	params,
+}: {
+	params?: { [key: string]: any };
+}): Promise<any> =>
+	apiRequest({
+		url: `${ENDPOINTS.Ticket}`,
+		method: 'GET',
+
+		params,
+	});

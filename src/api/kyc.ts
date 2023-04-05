@@ -1,24 +1,18 @@
 import apiRequest from './apiRequest';
 import { ENDPOINTS } from '../utilities';
 
-const KycLimits = {
-	Retrieve: async (token: string) =>
-		apiRequest({ url: ENDPOINTS.Kyc, method: 'GET', token }),
-	Update: async ({
-		token,
-		data,
-		id,
-	}: {
-		token: string;
-		data: any;
-		id: string;
-	}) =>
-		apiRequest({
-			url: `${ENDPOINTS.Kyc}/${id}`,
-			method: 'PUT',
-			token,
-			data,
-		}),
-};
+export const kycs = async (token: string): Promise<any> =>
+	apiRequest({ url: ENDPOINTS.Kyc, method: 'GET' });
 
-export default KycLimits;
+export const updateKyc = async ({
+	data,
+	id,
+}: {
+	data: any;
+	id: string;
+}): Promise<any> =>
+	apiRequest({
+		url: `${ENDPOINTS.Kyc}/${id}`,
+		method: 'PUT',
+		data,
+	});

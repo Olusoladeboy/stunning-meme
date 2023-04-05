@@ -5,14 +5,6 @@ export enum ThemeModeType {
 	dark = 'dark',
 }
 
-export enum StorageKeys {
-	themeMode = '@Storage_theme_mode',
-	UserToken = '@Storage:user_token',
-	UserDetails = '@Storage:user_details',
-	Application = '@Storage:key_application',
-	SignUpDetails = '@Storage:key_signUp_Details',
-}
-
 export enum QueryKey {
 	LoginUserDetails = '@Query:Login_user_details',
 	AllManagers = '@Query:All_manager',
@@ -73,6 +65,7 @@ export type UserDetails = {
 	restricted: boolean;
 	twoFactorAuth: boolean;
 	isLoggedIn: boolean;
+	role: string;
 	suspendWalletTransactions: boolean;
 	firstname: string;
 	lastname: string;
@@ -106,17 +99,6 @@ export type VerificationData = {
 		phone?: VerificationInput.phone;
 	};
 };
-
-export enum HttpStatusCode {
-	OK = 200,
-	BadRequest = 400,
-	Unauthorized = 401,
-	Forbidden = 403,
-	NotFound = 404,
-	InternalServerError = 500,
-	BadGateway = 502,
-	ServiceUnavailable = 503,
-}
 
 export enum TransactionStatus {
 	PENDING = 'PENDING',
@@ -252,6 +234,8 @@ export type DataPlan = {
 	code: string;
 	shortcode?: string;
 	shortcode_sms?: string;
+	isActive?: boolean;
+	id?: string;
 };
 
 export enum DataPlanType {
@@ -259,6 +243,15 @@ export enum DataPlanType {
 	SMS = 'SMS',
 	MANUAL = 'MANUAL',
 	KETTLESUB = 'KETTLESUB',
+}
+
+export interface DataType {
+	isActive?: boolean;
+	id?: string;
+	name?: string;
+	createdAt?: string;
+	no_of_plans?: number;
+	network?: string;
 }
 
 export type SuspendUser = {
@@ -430,6 +423,7 @@ export type User = {
 	lastname: string;
 	email: string;
 	kycLevel: number;
+	createdAt: Date;
 	username: string;
 	phone: string;
 	hasPin: boolean;
@@ -474,7 +468,7 @@ export interface Transaction {
 	createdBy: string;
 	reference: string;
 	user: User;
-	amount: string;
+	amount: string | Amount;
 	balanceBefore: string;
 	balanceAfter: string;
 	name: string;

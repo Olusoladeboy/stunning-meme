@@ -25,19 +25,20 @@ import {
 	DANGER_COLOR,
 	LIGHT_GRAY,
 	SUCCESS_COLOR,
-} from '../../utilities/constant';
+	DataPlan,
+	QueryKeys,
+} from '../../utilities';
 import FilterIcon from '../icons/filter';
 import TableHeader from '../header/table-header';
 import DataPlanForm from '../forms/data-plan-form';
 import ModalWrapper from '../modal/Wrapper';
 import RegularAlert from '../modal/regular-modal';
-import Api from '../../utilities/api';
-import { DataPlan, QueryKey } from '../../utilities/types';
 import { useAppSelector } from '../../store/hooks';
 import TableLoader from '../loader/table-loader';
 import TableEmpty from '../empty/table-empty';
 import Loader from '../loader';
-import { useAlert } from '../../utilities/hooks';
+import { useAlert, useHandleError } from '../../hooks';
+import { dataPlans, updateDataPlan } from '../../api';
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
 	[`&.${tableCellClasses.head}`]: {
@@ -71,21 +72,12 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 	},
 }));
 
-interface ExtendedDataPlan extends DataPlan {
-	shortcode: string;
-	shortcode_sms: string;
-	isActive: boolean;
-	id: string;
-}
-
 const DataPlansTable = () => {
 	const theme = useTheme();
+	const handleError = useHandleError();
 	const setAlert = useAlert();
 	const styles = useStyles(theme);
-	const [plans, setPlans] = useState<null | ExtendedDataPlan[]>(null);
-	const [selectedPlan, setSelectedPlan] = useState<null | ExtendedDataPlan>(
-		null
-	);
+	const [selectedPlan, setSelectedPlan] = useState<null | DataPlan>(null);
 
 	const { token } = useAppSelector((store) => store.authState);
 	const params = useParams();
@@ -104,10 +96,10 @@ const DataPlansTable = () => {
 		);
 	};
 
-	const { isLoading } = useQuery(
-		[QueryKey.DataPlans, params.id],
+	const { isLoading, data } = useQuery(
+		[QueryKeys.DataPlans, params.id],
 		() =>
-			Api.DataPlan.Plans({
+			dataPlans({
 				token: token || '',
 				network: params ? params.id : '',
 			}),
@@ -115,28 +107,30 @@ const DataPlansTable = () => {
 			enabled: !!token,
 			onSettled: (data, error) => {
 				if (error) {
-					setAlert({ data: error, type: 'error' });
-				}
-
-				if (data && data.success) {
-					setPlans(data.payload);
+					const response = handleError({ error });
+					if (response?.message) {
+						setAlert({ message: response.message, type: 'error' });
+					}
 				}
 			},
 		}
 	);
 
 	const { isLoading: isEnablingDisablingPlan, mutate } = useMutation(
-		Api.DataPlan.UpdatePlan,
+		updateDataPlan,
 		{
 			onSettled: (data, error) => {
 				if (error) {
-					setAlert({ data: error, type: 'error' });
+					const response = handleError({ error });
+					if (response?.message) {
+						setAlert({ message: response.message, type: 'error' });
+					}
 				}
 
 				if (data && data.success) {
-					queryClient.invalidateQueries(QueryKey.DataPlans);
+					queryClient.invalidateQueries(QueryKeys.DataPlans);
 					setAlert({
-						data: 'Data plan updated successfully!',
+						message: 'Data plan updated successfully!',
 						type: 'success',
 					});
 				}
@@ -147,11 +141,10 @@ const DataPlansTable = () => {
 	const handleEnableDisablePlan = () => {
 		if (selectedPlan) {
 			mutate({
-				token: token || '',
 				data: {
 					isActive: !selectedPlan.isActive,
 				},
-				id: selectedPlan.id,
+				id: selectedPlan?.id as string,
 			});
 		}
 	};
@@ -170,7 +163,7 @@ const DataPlansTable = () => {
 					title={'EDIT DATA PLAN'}
 				>
 					<DataPlanForm
-						handleOnSubmit={() => closePlanModal()}
+						callback={() => closePlanModal()}
 						dataPayload={selectedPlan}
 					/>
 				</ModalWrapper>
@@ -247,10 +240,10 @@ const DataPlansTable = () => {
 							{isLoading ? (
 								<TableLoader colSpan={6} />
 							) : (
-								plans && (
+								data && (
 									<>
-										{plans.length > 0 ? (
-											plans.map((plan, key) => (
+										{data.payload.length > 0 ? (
+											data.payload.map((plan: DataPlan, key: number) => (
 												<StyledTableRow key={key}>
 													<StyledTableCell
 														sx={{ paddingLeft: '40px' }}

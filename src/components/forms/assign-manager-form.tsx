@@ -4,13 +4,11 @@ import * as yup from 'yup';
 import { useMutation, useQueryClient } from 'react-query';
 import { useFormik } from 'formik';
 import { grey } from '@mui/material/colors';
-import { QueryKey } from '../../utilities/types';
-import Api from '../../utilities/api';
-import { useAppSelector } from '../../store/hooks';
+import { QueryKeys } from '../../utilities';
 import CustomButton from '../button/custom-button';
 import Select from '../form-components/Select';
-import { useQueryHook } from '../../utilities/api/hooks';
-import { useAlert } from '../../utilities/hooks';
+import { useAlert, useHandleError, useQueryHook } from '../../hooks';
+import { managers, assignManagerToUser } from '../../api';
 
 type Props = {
 	userDetails: any;
@@ -21,21 +19,21 @@ const SELECT_MANAGER = 'Select manager';
 
 const AssignManagerForm = ({ userDetails, close }: Props) => {
 	const theme = useTheme();
-	const setAlert = useAlert();
+	const handleError = useHandleError();
+	const alert = useAlert();
 	const styles = useStyles(theme);
-	const { token } = useAppSelector((store) => store.authState);
 
 	const queryClient = useQueryClient();
-	const { isLoading: isLoadingManager, data: managers } = useQueryHook({
-		queryKey: QueryKey.AllManagers,
+	const { isLoading: isLoadingManager, data: managersData } = useQueryHook({
+		queryKey: QueryKeys.AllManagers,
 		queryFn: () =>
-			Api.Manager.AllManagers({
-				token: token as string,
+			managers({
 				params: {
 					sort: '-createdAt',
 				},
 			}),
 	});
+
 	const validationSchema = yup.object().shape({
 		manager: yup
 			.string()
@@ -47,18 +45,21 @@ const AssignManagerForm = ({ userDetails, close }: Props) => {
 		manager: SELECT_MANAGER,
 	};
 
-	const { isLoading, mutate } = useMutation(Api.User.AssignManagerToUser, {
+	const { isLoading, mutate } = useMutation(assignManagerToUser, {
 		onSettled: (data, error) => {
 			if (error) {
-				setAlert({ data: error, type: 'error' });
+				const response = handleError({ error });
+				if (response?.message) {
+					alert({ message: response.message, type: 'error' });
+				}
 			}
 			if (data && data.success) {
-				setAlert({
-					data: data.message,
+				alert({
+					message: data.message,
 					type: 'success',
 				});
-				queryClient.invalidateQueries(QueryKey.AllUsers);
-				queryClient.invalidateQueries(QueryKey.GetSingleUser);
+				queryClient.invalidateQueries(QueryKeys.AllUsers);
+				queryClient.invalidateQueries(QueryKeys.GetSingleUser);
 				resetForm();
 				typeof close !== 'undefined' && close();
 			}
@@ -71,7 +72,6 @@ const AssignManagerForm = ({ userDetails, close }: Props) => {
 			validationSchema,
 			onSubmit: (values) => {
 				mutate({
-					token: token || '',
 					data: values,
 					id: userDetails ? userDetails.id : '',
 				});
@@ -98,8 +98,8 @@ const AssignManagerForm = ({ userDetails, close }: Props) => {
 					</MenuItem>
 					{isLoadingManager ? (
 						<MenuItem>loading...</MenuItem>
-					) : managers && managers.payload.length > 0 ? (
-						managers.payload.map((manager: any) => (
+					) : managersData && managersData.payload.length > 0 ? (
+						managersData.payload.map((manager: any) => (
 							<MenuItem
 								value={manager.id}
 								key={manager.id}

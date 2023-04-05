@@ -6,12 +6,11 @@ import { Box, useTheme, Typography, Switch } from '@mui/material';
 import TextInput from '../form-components/TextInput';
 import Button from '../button/custom-button';
 import { grey } from '@mui/material/colors';
-import { UserDetails, QueryKey } from '../../utilities/types';
+import { UserDetails, QueryKeys } from '../../utilities';
 import TextArea from '../form-components/text-area';
-import Api from '../../utilities/api';
-import { useAppSelector } from '../../store/hooks';
-import { useAlert } from '../../utilities/hooks';
+import { useAlert, useHandleError } from '../../hooks';
 import UnsuspendUser from '../unsuspend-user';
+import { suspendUser } from '../../api';
 
 type Props = {
 	user: UserDetails | null;
@@ -19,9 +18,9 @@ type Props = {
 
 const SuspendUserForm = ({ user }: Props) => {
 	const theme = useTheme();
+	const handleError = useHandleError();
 	const styles = useStyles(theme);
 	const setAlert = useAlert();
-	const { token } = useAppSelector((store) => store.authState);
 
 	const validationSchema = yup.object().shape({
 		suspended: yup.boolean().required('Suspend or unsuspend user'),
@@ -32,18 +31,21 @@ const SuspendUserForm = ({ user }: Props) => {
 	});
 
 	const queryClient = useQueryClient();
-	const { isLoading, mutate } = useMutation(Api.User.SuspendUser, {
+	const { isLoading, mutate } = useMutation(suspendUser, {
 		onSettled: (data, error) => {
 			if (error) {
-				setAlert({ data: error, isError: true });
+				const response = handleError({ error });
+				if (response?.message) {
+					setAlert({ message: response.message, type: 'error' });
+				}
 			}
 
 			if (data && data.success) {
-				setAlert({ data: data.message, type: 'success' });
+				setAlert({ message: data.message, type: 'success' });
 				resetForm();
-				queryClient.invalidateQueries(QueryKey.AllUsers);
-				queryClient.invalidateQueries(QueryKey.GetSingleUser);
-				queryClient.invalidateQueries(QueryKey.Statistics);
+				queryClient.invalidateQueries(QueryKeys.AllUsers);
+				queryClient.invalidateQueries(QueryKeys.GetSingleUser);
+				queryClient.invalidateQueries(QueryKeys.Statistics);
 			}
 		},
 	});
@@ -67,7 +69,6 @@ const SuspendUserForm = ({ user }: Props) => {
 		validationSchema,
 		onSubmit: (values) => {
 			mutate({
-				token: token as string,
 				data: values,
 				id: user?.id as string,
 			});

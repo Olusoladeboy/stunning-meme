@@ -8,10 +8,9 @@ import Button from '../button';
 import CustomButton from '../button/custom-button';
 import { grey } from '@mui/material/colors';
 import Select from '../form-components/Select';
-import { UserDetails, QueryKey } from '../../utilities/types';
-import Api from '../../utilities/api';
-import { useAlert } from '../../utilities/hooks';
-import { useAppSelector } from '../../store/hooks';
+import { UserDetails, QueryKeys } from '../../utilities';
+import { useAlert, useHandleError } from '../../hooks';
+import { transactUser } from '../../api';
 
 type Props = {
 	user: UserDetails | null;
@@ -33,11 +32,11 @@ enum ServiceType {
 
 const EditWalletForm = ({ user, close }: Props) => {
 	const theme = useTheme();
+	const handleError = useHandleError();
 	const styles = useStyles(theme);
 	const queryClient = useQueryClient();
 	const setAlert = useAlert();
 	const [isDone, setDone] = useState<boolean>(false);
-	const { token } = useAppSelector((store) => store.authState);
 
 	const validationSchema = yup.object().shape({
 		type: yup
@@ -51,18 +50,21 @@ const EditWalletForm = ({ user, close }: Props) => {
 			.required('Select service'),
 	});
 
-	const { mutate, isLoading } = useMutation(Api.Transactions.TransactUser, {
+	const { mutate, isLoading } = useMutation(transactUser, {
 		onSettled: (data, error) => {
 			if (error) {
-				setAlert({ data: error, isError: true });
+				const response = handleError({ error });
+				if (response?.message) {
+					setAlert({ message: response.message, type: 'error' });
+				}
 			}
 
 			if (data && data.success) {
 				setDone(true);
-				setAlert({ data: data.message, type: 'success' });
-				queryClient.invalidateQueries(QueryKey.GetSingleUser);
-				queryClient.invalidateQueries(QueryKey.UserWallet);
-				queryClient.invalidateQueries(QueryKey.UserWalletTransaction);
+				setAlert({ message: data.message, type: 'success' });
+				queryClient.invalidateQueries(QueryKeys.GetSingleUser);
+				queryClient.invalidateQueries(QueryKeys.UserWallet);
+				queryClient.invalidateQueries(QueryKeys.UserWalletTransaction);
 			}
 		},
 	});
@@ -79,7 +81,6 @@ const EditWalletForm = ({ user, close }: Props) => {
 			validationSchema,
 			onSubmit: (values) => {
 				mutate({
-					token: token as string,
 					data: values,
 					id: user?.id as string,
 				});

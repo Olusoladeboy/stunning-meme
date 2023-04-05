@@ -6,11 +6,10 @@ import TableBody from '@mui/material/TableBody';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import { StyledTableCell, StyledTableRow } from './components';
-import { LIGHT_GRAY } from '../../utilities/constant';
+import { LIGHT_GRAY, formatNumberToCurrency } from '../../utilities';
 import FilterIcon from '../icons/filter';
 import Loader from '../loader/table-loader';
 import Empty from '../empty/table-empty';
-import formatNumberToCurrency from '../../utilities/helpers/formatNumberToCurrency';
 import SearchInput from '../form-components/search-input';
 
 type Props = {

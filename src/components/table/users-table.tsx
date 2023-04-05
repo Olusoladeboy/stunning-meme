@@ -8,11 +8,13 @@ import TableBody from '@mui/material/TableBody';
 import TableHead from '@mui/material/TableHead';
 import { grey } from '@mui/material/colors';
 import {
+	UserStatus,
+	User,
 	SUCCESS_COLOR,
 	DANGER_COLOR,
 	BOX_SHADOW,
-} from '../../utilities/constant';
-import { UserStatus } from '../../utilities/types';
+	LINKS,
+} from '../../utilities';
 import FilterIcon from '../icons/filter';
 import {
 	StyledTableCell as TableCell,
@@ -26,14 +28,12 @@ import SuspendedUserIcon from '../icons/suspended-user';
 import DeletedUserIcon from '../icons/deleted-user';
 import UnverifiedUserIcon from '../icons/unverified-user';
 import Empty from '../empty';
-import LINKS from '../../utilities/links';
-import { UserDetails } from '../../utilities/types';
 import TableLoader from '../loader/table-loader';
 import { useAppSelector } from '../../store/hooks';
 
 type Props = {
 	isLoading?: boolean;
-	users?: UserDetails[] | null;
+	users?: User[] | null;
 };
 
 const UsersTable = ({ isLoading, users = null }: Props) => {
@@ -171,13 +171,13 @@ const UsersTable = ({ isLoading, users = null }: Props) => {
 					{isLoading ? (
 						<TableLoader colSpan={6} />
 					) : users && users.length > 0 ? (
-						users.map((user, key) => (
+						users.map((user: User, key: number) => (
 							<TableRow
 								onClick={() => navigate(`${LINKS.User}/${user.id}`)}
 								key={key}
 							>
 								<TableCell sx={{ maxWidth: '60px' }}>
-									<Avatar src={user.avatar} />
+									<Avatar src={user.photoUrl as string} />
 								</TableCell>
 								<TableCell
 									style={styles.tableText}

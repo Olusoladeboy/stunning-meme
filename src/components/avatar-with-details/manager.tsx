@@ -1,6 +1,6 @@
 import React, { CSSProperties } from 'react';
 import { Box, Avatar, Typography, useTheme } from '@mui/material';
-import { ManagerDetailsData } from '../../utilities/types';
+import { ManagerDetailsData } from '../../utilities';
 
 interface ManagerDetails extends ManagerDetailsData {
 	role?: string;

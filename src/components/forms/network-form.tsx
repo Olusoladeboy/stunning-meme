@@ -9,12 +9,11 @@ import {
 	NetworkData as INetworkData,
 	QueryKey,
 	API_ENDPOINTS,
-} from '../../utilities/types';
-import ValidationSchema from '../../utilities/validationSchema';
+	validationSchema,
+} from '../../utilities';
 import Button from '../button/custom-button';
-import Api from '../../utilities/api';
-import { useAppSelector } from '../../store/hooks';
-import { useAlert } from '../../utilities/hooks';
+import { useAlert, useHandleError } from '../../hooks';
+import { createNetwork, updateNetwork } from '../../api';
 
 interface NetworkData extends INetworkData {
 	id?: string;
@@ -32,10 +31,10 @@ type Props = {
 
 const NetworkForm = ({ type, handleContinue, network, isEdit }: Props) => {
 	const theme = useTheme();
+	const handleError = useHandleError();
 	const setAlert = useAlert();
 	const styles = useStyles(theme);
 	const queryClient = useQueryClient();
-	const { token } = useAppSelector((store) => store.authState);
 
 	const initialValues: NetworkData = {
 		name: '',
@@ -44,17 +43,20 @@ const NetworkForm = ({ type, handleContinue, network, isEdit }: Props) => {
 		number: '',
 	};
 
-	const { isLoading, mutate: createNetwork } = useMutation(
-		Api.Network.CreateNetwork,
+	const { isLoading, mutate: mutateCreateNetwork } = useMutation(
+		createNetwork,
 		{
 			onSettled: (data, error) => {
 				if (error) {
-					setAlert({ data: error, type: 'error' });
+					const response = handleError({ error });
+					if (response?.message) {
+						setAlert({ message: response.message, type: 'error' });
+					}
 				}
 
 				if (data && data.success) {
 					setAlert({
-						data: data.message,
+						message: data.message,
 						type: 'success',
 					});
 					queryClient.invalidateQueries(QueryKey.DataNetwork);
@@ -108,32 +110,33 @@ const NetworkForm = ({ type, handleContinue, network, isEdit }: Props) => {
 				  };
 
 		if (isEdit && network) {
-			return updateNetwork({
+			return mutateUpdateNetwork({
 				url,
 				data: updateDataPayload,
-				token: token as string,
 				id: network.id as string,
 			});
 		}
 
-		createNetwork({
+		mutateCreateNetwork({
 			url,
 			data: createDataPayload,
-			token: token as string,
 		});
 	};
 
-	const { isLoading: isUpdating, mutate: updateNetwork } = useMutation(
-		Api.Network.UpdateNetwork,
+	const { isLoading: isUpdating, mutate: mutateUpdateNetwork } = useMutation(
+		updateNetwork,
 		{
 			onSettled: (data, error) => {
 				if (error) {
-					setAlert({ data: error, type: 'error' });
+					const response = handleError({ error });
+					if (response?.message) {
+						setAlert({ message: response.message, type: 'error' });
+					}
 				}
 
 				if (data && data.success) {
 					setAlert({
-						data: data.message,
+						message: data.message,
 						type: 'success',
 					});
 					queryClient.invalidateQueries(QueryKey.AirtimeNetwork);
@@ -145,16 +148,16 @@ const NetworkForm = ({ type, handleContinue, network, isEdit }: Props) => {
 		}
 	);
 
-	const validationSchema =
+	const $validationSchema =
 		type === NetworkPage.DATA_NETWORK
-			? ValidationSchema.DataNetwork
+			? validationSchema.DataNetwork
 			: type === NetworkPage.AIRTIME_NETWORK
-			? ValidationSchema.AirtimeNetwork
-			: ValidationSchema.ConvertNetwork;
+			? validationSchema.AirtimeNetwork
+			: validationSchema.ConvertNetwork;
 
 	const { errors, touched, values, handleChange, handleSubmit } = useFormik({
 		initialValues: network ? network : initialValues,
-		validationSchema,
+		validationSchema: $validationSchema,
 		onSubmit: (values) => {
 			handleMutateNetwork(values);
 		},

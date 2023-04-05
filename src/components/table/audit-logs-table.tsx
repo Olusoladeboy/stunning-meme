@@ -5,7 +5,7 @@ import { Avatar, Typography, useTheme } from '@mui/material';
 import TableBody from '@mui/material/TableBody';
 import TableHead from '@mui/material/TableHead';
 import { grey } from '@mui/material/colors';
-import { SUCCESS_COLOR, BOX_SHADOW } from '../../utilities/constant';
+import { SUCCESS_COLOR, BOX_SHADOW } from '../../utilities';
 import FilterIcon from '../icons/filter';
 import {
 	StyledTableCell as TableCell,

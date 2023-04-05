@@ -1,46 +1,29 @@
 import apiRequest from './apiRequest';
 import { ENDPOINTS, DataPlan as DataPlanType } from '../utilities';
 
-const DataPlan = {
-	Plans: async ({
-		token,
-		sort = '-createdAt',
-		network,
-	}: {
-		token: string;
-		sort?: string;
-		network?: string;
-	}) =>
-		apiRequest({
-			method: 'GET',
-			url: network
-				? `${ENDPOINTS.DataPlans}?sort=${sort}&network=${network}`
-				: `${ENDPOINTS.DataPlans}?sort=${sort}`,
-			token,
-		}),
-	CreatePlan: async ({ token, data }: { token: string; data: DataPlanType }) =>
-		apiRequest({
-			method: 'POST',
-			url: ENDPOINTS.DataPlans,
-			token,
-			data,
-		}),
-	UpdatePlan: async ({
-		token,
+export const dataPlans = async (params: { [key: string]: any }): Promise<any> =>
+	apiRequest({
+		url: ENDPOINTS.DataPlans,
+		method: 'GET',
+		params,
+	});
+
+export const createDataPlan = async (data: DataPlanType): Promise<any> =>
+	apiRequest({
+		method: 'POST',
+		url: ENDPOINTS.DataPlans,
 		data,
-		id,
-	}: {
-		token: string;
+	});
 
-		data: any;
-		id: string;
-	}) =>
-		apiRequest({
-			method: 'PUT',
-			url: `${ENDPOINTS.DataPlans}/${id}`,
-			token,
-			data,
-		}),
-};
-
-export default DataPlan;
+export const updateDataPlan = async ({
+	data,
+	id,
+}: {
+	data: any;
+	id: string;
+}): Promise<any> =>
+	apiRequest({
+		method: 'PUT',
+		url: `${ENDPOINTS.DataPlans}/${id}`,
+		data,
+	});

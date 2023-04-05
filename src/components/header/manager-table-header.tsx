@@ -13,8 +13,7 @@ import {
 import { ArrowDropDown } from '@mui/icons-material';
 import Search from '../form-components/search-input';
 import { grey } from '@mui/material/colors';
-import { BOX_SHADOW } from '../../utilities/constant';
-import LINKS from '../../utilities/links';
+import { BOX_SHADOW, LINKS } from '../../utilities';
 
 interface Props extends BoxProps {
 	title?: any;

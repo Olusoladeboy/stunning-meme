@@ -1,10 +1,6 @@
 import React from 'react';
 import { Drawer as MuiDrawer, useTheme } from '@mui/material';
-import {
-	DRAWER_WIDTH,
-	MIN_DRAWER_WIDTH,
-	TRANSITION,
-} from '../../utilities/constant';
+import { DRAWER_WIDTH, MIN_DRAWER_WIDTH, TRANSITION } from '../../utilities';
 import DrawerList from '../list/drawer-list';
 import { useAppSelector } from '../../store/hooks';
 

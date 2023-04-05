@@ -7,7 +7,12 @@ import TableHead from '@mui/material/TableHead';
 import { grey } from '@mui/material/colors';
 import { AddCircle } from '@mui/icons-material';
 import moment from 'moment';
-import { SUCCESS_COLOR, BOX_SHADOW } from '../../utilities/constant';
+import {
+	SUCCESS_COLOR,
+	BOX_SHADOW,
+	ManagerTypes,
+	ManagerDetailsData,
+} from '../../utilities';
 import ModalWrapper from '../modal/Wrapper';
 import FilterIcon from '../icons/filter';
 import {
@@ -17,7 +22,6 @@ import {
 import Empty from '../empty';
 import Pagination from '../pagination';
 import Button from '../button';
-import { ManagerTypes, ManagerDetailsData } from '../../utilities/types';
 import AddManagerForm from '../forms/manager-admin-form';
 import ManagerDetails from '../manager-details';
 import TableLoader from '../loader/table-loader';
@@ -95,7 +99,7 @@ const ManagersTable = ({ managers, isLoading }: Props) => {
 					}
 				>
 					<AddManagerForm
-						onSuccess={() => onSuccess()}
+						callback={() => onSuccess()}
 						isEdit={isEditManager}
 						type={ManagerTypes.Manager}
 						managerDetails={selectedManager}

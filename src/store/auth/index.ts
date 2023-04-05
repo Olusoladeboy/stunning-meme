@@ -1,6 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import Storage from '../../utilities/storage';
-import { StorageKeys, AuthState, UserDetails } from '../../utilities/types';
+import { StorageKeys, AuthState, UserDetails, Storage } from '../../utilities';
 
 // Define the initial state using that type
 const initialState: AuthState = {
@@ -27,9 +26,15 @@ export const userSlice = createSlice({
 			}
 			state.token = action.payload;
 		},
+		logout: (state) => {
+			Storage.deleteItem(StorageKeys.UserToken);
+			state.isAuthenticated = false;
+			state.token = '';
+			state.user = null;
+		},
 	},
 });
 
-export const { setToken, setUser } = userSlice.actions;
+export const { setToken, setUser, logout } = userSlice.actions;
 
 export default userSlice.reducer;

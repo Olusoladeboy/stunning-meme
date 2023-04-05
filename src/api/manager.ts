@@ -1,48 +1,34 @@
 import apiRequest from './apiRequest';
 import { ENDPOINTS, ManagerDetailsData } from '../utilities';
 
-const Manager = {
-	CreateManager: async ({
-		token,
-		data,
-	}: {
-		token: string;
-		data: ManagerDetailsData;
-	}) =>
-		apiRequest({
-			method: 'POST',
-			url: ENDPOINTS.Manager,
-			token,
-			data,
-		}),
-	UpdateManager: async ({
-		token,
-		data,
-		id,
-	}: {
-		token: string;
-		data: ManagerDetailsData;
-		id: string;
-	}) =>
-		apiRequest({
-			method: 'PUT',
-			url: `${ENDPOINTS.Manager}/${id}`,
-			token,
-			data,
-		}),
-	AllManagers: async ({
-		token,
-		params,
-	}: {
-		token: string;
-		params: { [key: string]: any };
-	}) =>
-		apiRequest({
-			method: 'GET',
-			url: `${ENDPOINTS.Manager}`,
-			token,
-			params,
-		}),
-};
+export const createManager = async (data: ManagerDetailsData): Promise<any> =>
+	apiRequest({
+		method: 'POST',
+		url: ENDPOINTS.Manager,
 
-export default Manager;
+		data,
+	});
+export const updateManager = async ({
+	data,
+	id,
+}: {
+	data: ManagerDetailsData;
+	id: string;
+}): Promise<any> =>
+	apiRequest({
+		method: 'PUT',
+		url: `${ENDPOINTS.Manager}/${id}`,
+
+		data,
+	});
+export const managers = async ({
+	params,
+}: {
+	params: { [key: string]: any };
+}): Promise<any> =>
+	apiRequest({
+		method: 'GET',
+		url: `${ENDPOINTS.Manager}`,
+
+		params,
+	});

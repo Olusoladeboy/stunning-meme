@@ -7,17 +7,19 @@ import TableCell, { tableCellClasses } from '@mui/material/TableCell';
 import { styled } from '@mui/material';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
-import { LIGHT_GRAY, BOX_SHADOW } from '../../utilities/constant';
+import {
+	LIGHT_GRAY,
+	BOX_SHADOW,
+	LINKS,
+	QueryKeys,
+	formatNumberToCurrency,
+} from '../../utilities';
 import { grey } from '@mui/material/colors';
 import Link from '../link';
 import Empty from '../empty/table-empty';
 import Loader from '../loader/table-loader';
-import LINKS from '../../utilities/links';
 import { useQueryHook } from '../../utilities/api/hooks';
-import { QueryKey } from '../../utilities/types';
-import Api from '../../utilities/api';
-import { useAppSelector } from '../../store/hooks';
-import formatNumberToCurrency from '../../utilities/helpers/formatNumberToCurrency';
+import { transactions } from '../../api';
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
 	[`&.${tableCellClasses.head}`]: {
@@ -51,13 +53,11 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 const RecentTransactionsTable = () => {
 	const theme = useTheme();
 	const styles = useStyles(theme);
-	const { token } = useAppSelector((store) => store.authState);
 
 	const { isLoading, data } = useQueryHook({
-		queryKey: QueryKey.RecentTransactions,
+		queryKey: QueryKeys.RecentTransactions,
 		queryFn: () =>
-			Api.Transactions.All({
-				token: token as string,
+			transactions({
 				params: { sort: '-createdAt', limit: 4, populate: 'user' },
 			}),
 	});

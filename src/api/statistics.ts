@@ -1,11 +1,8 @@
 import apiRequest from './apiRequest';
 import { ENDPOINTS } from '../utilities';
 
-const statistic = async (token: string) =>
+export const statistic = async (): Promise<any> =>
 	apiRequest({
 		method: 'GET',
 		url: `${ENDPOINTS.Staff}/dashboard`,
-		token,
 	});
-
-export default statistic;

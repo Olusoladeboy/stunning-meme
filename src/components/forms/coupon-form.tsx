@@ -2,21 +2,20 @@ import React, { CSSProperties } from 'react';
 import { Box, useTheme, Typography, MenuItem } from '@mui/material';
 import { useFormik } from 'formik';
 import moment from 'moment';
+import { grey } from '@mui/material/colors';
 import { useMutation, useQueryClient } from 'react-query';
 import TextInput from '../form-components/TextInput';
 import Button from '../button/custom-button';
-import { grey } from '@mui/material/colors';
 import Select from '../form-components/Select';
 import {
 	Coupon,
 	CouponType,
 	CouponStatus,
 	QueryKey,
-} from '../../utilities/types';
-import ValidationSchema from '../../utilities/validationSchema';
-import Api from '../../utilities/api';
-import { useAlert } from '../../utilities/hooks';
-import { useAppSelector } from '../../store/hooks';
+	validationSchema,
+} from '../../utilities';
+import { useAlert, useHandleError } from '../../hooks';
+import { createCoupon, updateCoupon } from '../../api';
 
 const COUPON_TYPES = [CouponType.PERCENT, CouponType.AMOUNT];
 const COUPON_STATUS = [
@@ -37,8 +36,8 @@ const SELECT_COUPON_STATUS = 'Select coupon status';
 
 const CouponForm = ({ data, isEdit, onSuccess }: Props) => {
 	const theme = useTheme();
+	const handleError = useHandleError();
 	const queryClient = useQueryClient();
-	const { token } = useAppSelector((store) => store.authState);
 	const setAlert = useAlert();
 	const styles = useStyles(theme);
 	const initialValues: Coupon = {
@@ -49,39 +48,47 @@ const CouponForm = ({ data, isEdit, onSuccess }: Props) => {
 		status: SELECT_COUPON_STATUS,
 	};
 
-	const { mutate: createCoupon, isLoading: isCreatingCoupon } = useMutation(
-		Api.Coupon.Create,
-		{
+	const { mutate: mutateCreateCoupon, isLoading: isCreatingCoupon } =
+		useMutation(createCoupon, {
 			onSettled: (data, error) => {
 				if (error) {
-					setAlert({ data: error, type: 'error' });
+					const response = handleError({ error });
+					if (response?.message) {
+						setAlert({ message: response.message, type: 'error' });
+					}
 				}
 
 				if (data && data.success) {
 					queryClient.invalidateQueries(QueryKey.Coupon);
-					setAlert({ data: 'Coupon created successfully!', type: 'success' });
+					setAlert({
+						message: 'Coupon created successfully!',
+						type: 'success',
+					});
 					typeof onSuccess !== 'undefined' && onSuccess();
 				}
 			},
-		}
-	);
+		});
 
-	const { mutate: updateCoupon, isLoading: isUpdatingCoupon } = useMutation(
-		Api.Coupon.Update,
-		{
+	const { mutate: mutateUpdateCoupon, isLoading: isUpdatingCoupon } =
+		useMutation(updateCoupon, {
 			onSettled: (data, error) => {
 				if (error) {
-					setAlert({ data: error, type: 'error' });
+					const response = handleError({ error });
+					if (response?.message) {
+						setAlert({ message: response.message, type: 'error' });
+					}
 				}
 
 				if (data && data.success) {
 					queryClient.invalidateQueries(QueryKey.Coupon);
-					setAlert({ data: 'Coupon updated successfully!', type: 'success' });
+					setAlert({
+						message: 'Coupon updated successfully!',
+						type: 'success',
+					});
 					typeof onSuccess !== 'undefined' && onSuccess();
 				}
 			},
-		}
-	);
+		});
 
 	const { values, handleChange, errors, touched, handleSubmit } = useFormik({
 		initialValues: data
@@ -95,12 +102,11 @@ const CouponForm = ({ data, isEdit, onSuccess }: Props) => {
 			  }
 			: initialValues,
 		validationSchema: isEdit
-			? ValidationSchema.EditCoupon
-			: ValidationSchema.Coupon,
+			? validationSchema.EditCoupon
+			: validationSchema.Coupon,
 		onSubmit: (values) => {
 			if (isEdit) {
-				return updateCoupon({
-					token: token as string,
+				return mutateUpdateCoupon({
 					data: {
 						type: values.type,
 						gift: values.gift,
@@ -108,14 +114,11 @@ const CouponForm = ({ data, isEdit, onSuccess }: Props) => {
 					id: data?.id as string,
 				});
 			}
-			createCoupon({
-				token: token as string,
-				data: {
-					code: values.code,
-					type: values.type,
-					expiresIn: values.expiresIn,
-					gift: values.gift,
-				},
+			mutateCreateCoupon({
+				code: values.code,
+				type: values.type,
+				expiresIn: values.expiresIn,
+				gift: values.gift,
 			});
 		},
 	});

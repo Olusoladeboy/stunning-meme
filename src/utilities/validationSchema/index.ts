@@ -1,5 +1,5 @@
 import * as yup from 'yup';
-import { PHONE_REX } from '../helpers/RegExpressions';
+import { PHONE_REX } from '../helpers/reg-expression';
 
 const ValidationSchema = {
 	OtpVerificationRequest: yup.object().shape({

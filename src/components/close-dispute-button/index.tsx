@@ -3,13 +3,10 @@ import { Button as MuiButton } from '@mui/material';
 import { grey } from '@mui/material/colors';
 import { useMutation, useQueryClient } from 'react-query';
 import { styled } from '@mui/material/styles';
-import { Ticket } from '../../utilities/types';
-import { DANGER_COLOR } from '../../utilities/constant';
-import Api from '../../utilities/api';
+import { DANGER_COLOR, Ticket, QueryKeys } from '../../utilities';
 import Spinner from '../loader';
-import { useAlert } from '../../utilities/hooks';
-import { QueryKey } from '../../utilities/types';
-import { useAppSelector } from '../../store/hooks';
+import { useHandleError, useAlert } from '../../hooks';
+import { closeTicket } from '../../api';
 
 interface Props {
 	ticket: Ticket;
@@ -17,19 +14,22 @@ interface Props {
 
 const CloseDispute = ({ ticket }: Props) => {
 	const queryClient = useQueryClient();
-	const { token } = useAppSelector((store) => store.authState);
+	const handleError = useHandleError();
 	const alert = useAlert();
 
-	const { isLoading, mutate } = useMutation(Api.Ticket.Close, {
+	const { isLoading, mutate } = useMutation(closeTicket, {
 		onSettled: (data, error) => {
 			if (error) {
-				alert({ data: error, type: 'error' });
+				const response = handleError({ error });
+				if (response?.message) {
+					alert({ message: response.message, type: 'error' });
+				}
 			}
 
 			if (data && data.success) {
-				queryClient.invalidateQueries(QueryKey.Ticket);
+				queryClient.invalidateQueries(QueryKeys.Ticket);
 				queryClient.invalidateQueries(ticket.id);
-				alert({ data: data.message, type: 'success' });
+				alert({ message: data.message, type: 'success' });
 			}
 		},
 	});
@@ -44,7 +44,6 @@ const CloseDispute = ({ ticket }: Props) => {
 			<Button
 				onClick={() =>
 					mutate({
-						token: token as string,
 						id: ticket.id,
 						data,
 					})

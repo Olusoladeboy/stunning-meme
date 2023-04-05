@@ -11,19 +11,24 @@ import TableRow from '@mui/material/TableRow';
 import moment from 'moment';
 import { LIGHT_GRAY } from '../../utilities/constant';
 import { StyledTableRow, StyledTableCell } from './components';
-import { UserDetails, QueryKey, UserNavList } from '../../utilities/types';
+import {
+	UserDetails,
+	QueryKey,
+	UserNavList,
+	Transaction,
+	MAX_RECORDS,
+	LINKS,
+	formatNumberToCurrency,
+	ErrorBoundary,
+} from '../../utilities';
 import FilterIcon from '../icons/filter';
 import SearchInput from '../form-components/search-input';
 import Api from '../../utilities/api';
 import { useAppSelector } from '../../store/hooks';
 import Loader from '../loader/table-loader';
 import Empty from '../empty/table-empty';
-import formatNumberToCurrency from '../../utilities/helpers/formatNumberToCurrency';
 import Pagination from '../pagination';
-import { MAX_RECORDS } from '../../utilities/constant';
-import LINKS from '../../utilities/links';
 import { useAlert } from '../../utilities/hooks';
-import ErrorBoundary from '../../utilities/helpers/error-boundary';
 
 type Props = {
 	user: UserDetails | null;
@@ -159,13 +164,19 @@ const TransactionHistoryTable = ({ user }: Props) => {
 							data && (
 								<>
 									{data.payload.length > 0 ? (
-										data.payload.map((row: any) => (
+										data.payload.map((row: Transaction) => (
 											<StyledTableRow key={row.id}>
 												<StyledTableCell style={styles.text}>
-													{row.service}
+													{row.transaction
+														? row.transaction.service
+														: row.service
+														? row.service
+														: row.type}
 												</StyledTableCell>
 												<StyledTableCell style={styles.text}>
-													{row.reference}
+													{row.transaction
+														? row.transaction.reference
+														: row.reference}
 												</StyledTableCell>
 												<StyledTableCell style={styles.text}>
 													{moment.utc(row.createdAt).format('ll')}
@@ -177,7 +188,11 @@ const TransactionHistoryTable = ({ user }: Props) => {
 													status
 												</StyledTableCell>
 												<StyledTableCell style={styles.text}>
-													{formatNumberToCurrency(row.amount)}
+													{formatNumberToCurrency(
+														typeof row.amount !== 'string'
+															? row.amount.$numberDecimal
+															: row.amount
+													)}
 												</StyledTableCell>
 											</StyledTableRow>
 										))

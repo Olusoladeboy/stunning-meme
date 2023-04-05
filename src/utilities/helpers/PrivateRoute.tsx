@@ -1,7 +1,6 @@
 import React from 'react';
 import { Navigate } from 'react-router-dom';
-import { StorageKeys } from '../types';
-import Storage from '../storage';
+import { StorageKeys, Storage } from '..';
 
 type Props = {
 	children: any;

@@ -17,7 +17,7 @@ import {
 	SUCCESS_COLOR,
 	BOX_SHADOW,
 	DANGER_COLOR,
-} from '../../utilities/constant';
+} from '../../utilities';
 import ModalWrapper from '../modal/Wrapper';
 import FilterIcon from '../icons/filter';
 import {

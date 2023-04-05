@@ -1,6 +1,5 @@
-import { HttpStatusCode } from '../types';
-import Storage from '../storage';
-import { StorageKeys } from '../types';
+import { HttpStatusCode } from '../constant';
+import { Storage, StorageKeys } from '..';
 
 type PropsType = {
 	payload: any;

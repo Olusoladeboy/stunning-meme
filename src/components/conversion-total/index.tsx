@@ -2,7 +2,7 @@ import React from 'react';
 import { Box, Typography, useTheme, IconButton } from '@mui/material';
 import { grey } from '@mui/material/colors';
 import { Refresh } from '@mui/icons-material';
-import formatNumberToCurrency from '../../utilities/helpers/formatNumberToCurrency';
+import { formatNumberToCurrency } from '../../utilities';
 
 type Props = {
 	total?: number;

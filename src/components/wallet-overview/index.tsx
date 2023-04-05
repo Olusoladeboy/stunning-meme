@@ -20,23 +20,24 @@ const WalletOverview = () => {
 			<Box>
 				<ListItem
 					description={'Total Data Sold'}
-					amount={statistics ? statistics.total_data_sold : ''}
+					value={statistics ? statistics.total_data_sold : ''}
 				/>
 				<ListItem
 					description={'Total Airtime Converted'}
-					amount={statistics ? statistics.total_conversions : ''}
+					value={statistics ? statistics.total_conversions : ''}
+					isAmount={false}
 				/>
 				<ListItem
 					description={'Total Amount Withdrawn'}
-					amount={statistics ? statistics.total_amount_withdrawn : ''}
+					value={statistics ? statistics.total_amount_withdrawn : ''}
 				/>
 				<ListItem
 					description={'Total Wallet Transfer'}
-					amount={statistics ? statistics.total_wallet_transfer : ''}
+					value={statistics ? statistics.total_wallet_transfer : ''}
 				/>
 				<ListItem
 					description={'Total Wallet Transaction(Credit)'}
-					amount={statistics ? statistics.total_wallet_transaction.credit : ''}
+					value={statistics ? statistics.total_wallet_transaction.credit : ''}
 				/>
 			</Box>
 		</Box>

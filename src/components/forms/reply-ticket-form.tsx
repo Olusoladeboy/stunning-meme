@@ -13,12 +13,12 @@ import {
 	ModalDetails,
 	TicketReplyType,
 	TicketStatus,
-} from '../../utilities/types';
+} from '../../utilities';
 import { grey } from '@mui/material/colors';
 import Button from '../button/custom-button';
-import Api from '../../utilities/api';
 import Modal from '../modal';
-import { useAlert } from '../../utilities/hooks';
+import { useAlert, useHandleError } from '../../hooks';
+import { replyTicket } from '../../api';
 
 interface Props {
 	ticket: Ticket | null;
@@ -26,9 +26,9 @@ interface Props {
 
 const ReplyTicketForm = ({ ticket }: Props) => {
 	const alert = useAlert();
+	const handleError = useHandleError();
 	const {
 		theme: { mode },
-		authState: { token },
 	} = useAppSelector((store) => store);
 	const theme = useTheme();
 	const queryClient = useQueryClient();
@@ -43,10 +43,13 @@ const ReplyTicketForm = ({ ticket }: Props) => {
 		reply: '',
 	};
 
-	const { isLoading, mutate } = useMutation(Api.Ticket.ReplyTicket, {
+	const { isLoading, mutate } = useMutation(replyTicket, {
 		onSettled: (data, error) => {
 			if (error) {
-				alert({ data: error, type: 'error' });
+				const response = handleError({ error });
+				if (response?.message) {
+					alert({ message: response.message, type: 'error' });
+				}
 			}
 
 			if (data && data.success) {
@@ -63,7 +66,6 @@ const ReplyTicketForm = ({ ticket }: Props) => {
 			validationSchema,
 			onSubmit: (values) => {
 				mutate({
-					token: token as string,
 					data: values,
 					code: ticket?.code as string,
 				});

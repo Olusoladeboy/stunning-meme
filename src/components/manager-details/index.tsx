@@ -3,7 +3,7 @@ import { Box, Typography, useTheme } from '@mui/material';
 import { grey, red } from '@mui/material/colors';
 import UserAvatarWithDetails from '../avatar-with-details/manager';
 import Button from '../button';
-import { ManagerDetailsData, ManagerTypes } from '../../utilities/types';
+import { ManagerDetailsData, ManagerTypes } from '../../utilities';
 
 interface ManagerDetailsTypes extends ManagerDetailsData {
 	role?: string;

@@ -15,11 +15,7 @@ import TableHead from '@mui/material/TableHead';
 import moment from 'moment';
 import { grey } from '@mui/material/colors';
 import { AddCircle, MoreHoriz } from '@mui/icons-material';
-import {
-	SUCCESS_COLOR,
-	BOX_SHADOW,
-	DANGER_COLOR,
-} from '../../utilities/constant';
+
 import ModalWrapper from '../modal/Wrapper';
 import FilterIcon from '../icons/filter';
 import {
@@ -32,16 +28,18 @@ import Button from '../button';
 import CouponForm from '../forms/coupon-form';
 import Modal from '../modal';
 import {
+	SUCCESS_COLOR,
+	BOX_SHADOW,
+	DANGER_COLOR,
 	Coupon,
-	QueryKey,
+	QueryKeys,
 	CouponStatus,
 	ModalDetails,
-} from '../../utilities/types';
+} from '../../utilities';
 import TableLoader from '../loader/table-loader';
-import Api from '../../utilities/api';
-import { useAlert } from '../../utilities/hooks';
-import { useAppSelector } from '../../store/hooks';
+import { useAlert, useHandleError } from '../../hooks';
 import Loader from '../loader';
+import { updateCouponStatus } from '../../api';
 
 interface Props {
 	data: Coupon[] | null;
@@ -51,7 +49,7 @@ interface Props {
 const CouponsTable = ({ data, isLoading }: Props) => {
 	const [isCreateCoupon, setCreateCoupon] = useState<boolean>(false);
 	const setAlert = useAlert();
-	const { token } = useAppSelector((store) => store.authState);
+	const handleError = useHandleError();
 	const theme = useTheme();
 	const styles = useStyles(theme);
 	const queryClient = useQueryClient();
@@ -61,24 +59,25 @@ const CouponsTable = ({ data, isLoading }: Props) => {
 	const [isEdit, setEdit] = useState<boolean>(false);
 	const [modalAlert, setModalAlert] = useState<ModalDetails | null>(null);
 
-	const { isLoading: isUpdatingCoupon, mutate: updateCoupon } = useMutation(
-		Api.Coupon.UpdateStatus,
-		{
+	const { isLoading: isUpdatingCoupon, mutate: mutateUpdateCouponState } =
+		useMutation(updateCouponStatus, {
 			onSettled: (data, error) => {
 				if (error) {
-					setAlert({
-						data: error,
-						type: 'error',
-					});
+					const response = handleError({ error });
+					if (response?.message) {
+						setAlert({ message: response.message, type: 'error' });
+					}
 				}
 
 				if (data && data.success) {
-					setAlert({ data: 'Coupon updated successfully!!', type: 'success' });
-					queryClient.invalidateQueries(QueryKey.Coupon);
+					setAlert({
+						message: 'Coupon updated successfully!!',
+						type: 'success',
+					});
+					queryClient.invalidateQueries(QueryKeys.Coupon);
 				}
 			},
-		}
-	);
+		});
 
 	const handleClickAction = (
 		event: MouseEvent<HTMLElement>,
@@ -106,8 +105,7 @@ const CouponsTable = ({ data, isLoading }: Props) => {
 			| CouponStatus.EXPIRED
 			| CouponStatus.CANCELLED
 	) => {
-		updateCoupon({
-			token: token as string,
+		mutateUpdateCouponState({
 			data: { status },
 			id: selectedCoupon?.id as string,
 		});

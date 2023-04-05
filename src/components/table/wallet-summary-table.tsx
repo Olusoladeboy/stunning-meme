@@ -168,7 +168,11 @@ const WalletSummaryTable = ({ user }: Props) => {
 												{row.reference}
 											</StyledTableCell>
 											<StyledTableCell style={styles.text}>
-												{formatNumberToCurrency(row.amount)}
+												{formatNumberToCurrency(
+													typeof row.amount !== 'string'
+														? row.amount.$numberDecimal
+														: row.amount
+												)}
 											</StyledTableCell>
 											<StyledTableCell style={styles.text}>
 												{row.service}

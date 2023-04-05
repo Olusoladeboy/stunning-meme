@@ -7,12 +7,12 @@ import {
 	BackButton,
 	Button,
 	ModalLayout,
-	DataPlanForm,
+	DataTypesTable,
+	DataTypeForm,
 } from '../../components';
-import { BOX_SHADOW } from '../../utilities/constant';
-import ViewDataPlansTable from '../../components/table/data-plans-table';
+import { BOX_SHADOW } from '../../utilities';
 
-const ViewDataPlan = () => {
+const DataTypes = () => {
 	const theme = useTheme();
 	const styles = useStyles(theme);
 	const [isDisplayModal, setDisplayModal] = useState<boolean>(false);
@@ -23,7 +23,7 @@ const ViewDataPlan = () => {
 					closeModal={() => setDisplayModal(false)}
 					title={'Add new plan'}
 				>
-					<DataPlanForm handleOnSubmit={() => setDisplayModal(false)} />
+					<DataTypeForm callback={() => setDisplayModal(false)} />
 				</ModalLayout>
 			)}
 			<Box style={styles.container as CSSProperties}>
@@ -34,10 +34,10 @@ const ViewDataPlan = () => {
 						startIcon={<AddCircle />}
 						style={styles.addPlanBtn as CSSProperties}
 					>
-						Add new plan
+						Add new type
 					</Button>
 				</Box>
-				<ViewDataPlansTable />
+				<DataTypesTable />
 			</Box>
 		</Layout>
 	);
@@ -71,4 +71,4 @@ const useStyles = (theme: any) => ({
 	},
 });
 
-export default ViewDataPlan;
+export default DataTypes;

@@ -2,7 +2,7 @@ import React from 'react';
 import { Select as MuiSelect, SelectProps, Typography } from '@mui/material';
 import { grey } from '@mui/material/colors';
 import { red } from '@mui/material/colors';
-import { ThemeModeType } from '../../utilities/types';
+import { ThemeModeType } from '../../utilities';
 import { useAppSelector } from '../../store/hooks';
 
 interface Props extends SelectProps {

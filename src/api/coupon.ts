@@ -1,57 +1,48 @@
 import apiRequest from './apiRequest';
 import { ENDPOINTS, Coupon as ICoupon, UpdateCouponStatus } from '../utilities';
 
-const Coupon = {
-	RetrieveAll: async ({
-		token,
-		params,
-	}: {
-		token: string;
-		params?: { [key: string]: any };
-	}) =>
-		apiRequest({
-			method: 'GET',
-			url: ENDPOINTS.Coupon,
-			token,
-			params,
-		}),
-	Create: async ({ token, data }: { token: string; data: ICoupon }) =>
-		apiRequest({
-			method: 'POST',
-			url: ENDPOINTS.Coupon,
-			token,
-			data,
-		}),
-	Update: async ({
-		token,
-		data,
-		id,
-	}: {
-		token: string;
-		data: ICoupon;
-		id: string;
-	}) =>
-		apiRequest({
-			method: 'PUT',
-			url: `${ENDPOINTS.Coupon}/${id}`,
-			token,
-			data,
-		}),
-	UpdateStatus: async ({
-		token,
-		data,
-		id,
-	}: {
-		token: string;
-		data: UpdateCouponStatus;
-		id: string;
-	}) =>
-		apiRequest({
-			method: 'PUT',
-			url: `${ENDPOINTS.Coupon}/status/${id}`,
-			token,
-			data,
-		}),
-};
+export const coupons = async ({
+	params,
+}: {
+	params?: { [key: string]: any };
+}): Promise<any> =>
+	apiRequest({
+		method: 'GET',
+		url: ENDPOINTS.Coupon,
 
-export default Coupon;
+		params,
+	});
+
+export const createCoupon = async (data: ICoupon): Promise<any> =>
+	apiRequest({
+		method: 'POST',
+		url: ENDPOINTS.Coupon,
+
+		data,
+	});
+
+export const updateCoupon = async ({
+	data,
+	id,
+}: {
+	data: ICoupon;
+	id: string;
+}): Promise<any> =>
+	apiRequest({
+		method: 'PUT',
+		url: `${ENDPOINTS.Coupon}/${id}`,
+		data,
+	});
+
+export const updateCouponStatus = async ({
+	data,
+	id,
+}: {
+	data: UpdateCouponStatus;
+	id: string;
+}): Promise<any> =>
+	apiRequest({
+		method: 'PUT',
+		url: `${ENDPOINTS.Coupon}/status/${id}`,
+		data,
+	});

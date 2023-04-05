@@ -80,3 +80,5 @@ export { default as WalletOverview } from './wallet-overview';
 export { default as VerifyUser } from './verify-user';
 export { default as ImagePreview } from './image-preview';
 export { default as UploadImage } from './form-components/upload-image';
+export { default as DataTypesTable } from './table/data-types-table';
+export { default as DataTypeForm } from './forms/data-type-form';

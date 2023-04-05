@@ -8,13 +8,17 @@ import { grey } from '@mui/material/colors';
 import {
 	ManagerTypes,
 	ManagerDetailsData,
-	QueryKey,
-} from '../../utilities/types';
-import Api from '../../utilities/api';
-import ValidationSchema from '../../utilities/validationSchema';
-import { useAppSelector } from '../../store/hooks';
+	QueryKeys,
+	validationSchema,
+} from '../../utilities';
 import Select from '../form-components/Select';
-import { useAlert } from '../../utilities/hooks';
+import { useAlert, useHandleError } from '../../hooks';
+import {
+	createStaff,
+	updateStaff,
+	createManager,
+	updateManager,
+} from '../../api';
 
 const AMIN_ROLES = ['OPERATIONS', 'CUSTOMER_SUPPORT'];
 const SELECT_ADMIN_PRIVILEDGE = 'Select Admin Priviledge';
@@ -26,22 +30,22 @@ interface ManagerDetails extends ManagerDetailsData {
 
 type Props = {
 	type: ManagerTypes.Admin | ManagerTypes.Manager | null;
-	onSuccess?: () => void;
+	callback?: () => void;
 	managerDetails?: ManagerDetails | null;
 	isEdit?: boolean;
 };
 
 const ManagerAdminForm = ({
 	type,
-	onSuccess,
+	callback,
 	managerDetails,
 	isEdit,
 }: Props) => {
 	const theme = useTheme();
 	const setAlert = useAlert();
+	const handleError = useHandleError();
 	const styles = useStyles(theme);
 	const queryClient = useQueryClient();
-	const { token } = useAppSelector((store) => store.authState);
 
 	const initialValues: ManagerDetails = {
 		firstname: '',
@@ -51,84 +55,90 @@ const ManagerAdminForm = ({
 		role: SELECT_ADMIN_PRIVILEDGE,
 	};
 
-	const { isLoading: isCreatingManager, mutate: createManager } = useMutation(
-		Api.Manager.CreateManager,
+	const { isLoading: isCreatingManager, mutate: mutateCreateManager } =
+		useMutation(createManager, {
+			onSettled: (data, error) => {
+				if (data && data.success) {
+					resetForm();
+					queryClient.invalidateQueries(QueryKeys.AllManagers);
+					setAlert({
+						message: data.message,
+						type: 'success',
+					});
+					typeof callback !== 'undefined' && callback();
+				}
+				if (error) {
+					const response = handleError({ error });
+					if (response?.message) {
+						setAlert({ message: response.message, type: 'error' });
+					}
+				}
+			},
+		});
+
+	const { isLoading: isCreatingStaff, mutate: mutateCreateStaff } = useMutation(
+		createStaff,
 		{
 			onSettled: (data, error) => {
 				if (data && data.success) {
 					resetForm();
-					queryClient.invalidateQueries(QueryKey.AllManagers);
 					setAlert({
-						data: data.message,
+						message: data.message,
 						type: 'success',
 					});
-					typeof onSuccess !== 'undefined' && onSuccess();
+
+					typeof callback !== 'undefined' && callback();
 				}
 				if (error) {
-					setAlert({ data: error, type: 'error' });
+					const response = handleError({ error });
+					if (response?.message) {
+						setAlert({ message: response.message, type: 'error' });
+					}
 				}
 			},
 		}
 	);
 
-	const { isLoading: isCreatingStaff, mutate: createStaff } = useMutation(
-		Api.Staff.Create,
-		{
+	const { isLoading: isUpdatingManager, mutate: mutateUpdateManager } =
+		useMutation(updateManager, {
 			onSettled: (data, error) => {
 				if (data && data.success) {
 					resetForm();
+					queryClient.invalidateQueries(QueryKeys.AllManagers);
 					setAlert({
-						data: data.message,
+						message: data.message,
 						type: 'success',
 					});
-					setAlert({
-						data: data.message,
-						type: 'success',
-					});
-					typeof onSuccess !== 'undefined' && onSuccess();
+					typeof callback !== 'undefined' && callback();
 				}
 				if (error) {
-					setAlert({ data: error, type: 'error' });
+					const response = handleError({ error });
+
+					if (response?.message) {
+						setAlert({ message: response.message, type: 'error' });
+					}
 				}
 			},
-		}
-	);
+		});
 
-	const { isLoading: isUpdatingManager, mutate: updateManager } = useMutation(
-		Api.Manager.UpdateManager,
+	const { isLoading: isUpdatingStaff, mutate: mutateUpdateStaff } = useMutation(
+		updateStaff,
 		{
 			onSettled: (data, error) => {
 				if (data && data.success) {
 					resetForm();
-					queryClient.invalidateQueries(QueryKey.AllManagers);
+					queryClient.invalidateQueries(QueryKeys.AllStaff);
 					setAlert({
-						data: data.message,
+						message: data.message,
 						type: 'success',
 					});
-					typeof onSuccess !== 'undefined' && onSuccess();
+					typeof callback !== 'undefined' && callback();
 				}
 				if (error) {
-					setAlert({ data: error, type: 'error' });
-				}
-			},
-		}
-	);
-
-	const { isLoading: isUpdatingStaff, mutate: updateStaff } = useMutation(
-		Api.Staff.Update,
-		{
-			onSettled: (data, error) => {
-				if (data && data.success) {
-					resetForm();
-					queryClient.invalidateQueries(QueryKey.AllStaff);
-					setAlert({
-						data: data.message,
-						type: 'success',
-					});
-					typeof onSuccess !== 'undefined' && onSuccess();
-				}
-				if (error) {
-					setAlert({ data: error, type: 'error' });
+					const response = handleError({ error });
+					if (response?.message) {
+						setAlert({ message: response.message, type: 'error' });
+					}
 				}
 			},
 		}
@@ -148,33 +158,25 @@ const ManagerAdminForm = ({
 								: SELECT_ADMIN_PRIVILEDGE,
 				  }
 				: initialValues,
-			validationSchema: ValidationSchema.ManagerDetails,
+			validationSchema: validationSchema.ManagerDetails,
 			onSubmit: (values) => {
 				const { role, ...rest } = values;
 				if (type === ManagerTypes.Manager) {
 					if (isEdit && managerDetails && managerDetails.id) {
-						return updateManager({
-							token: token as string,
+						return mutateUpdateManager({
 							data: rest,
 							id: managerDetails.id,
 						});
 					}
-					createManager({
-						data: rest,
-						token: token as string,
-					});
+					mutateCreateManager(rest);
 				} else {
 					if (isEdit && managerDetails && managerDetails.id) {
-						return updateStaff({
-							token: token as string,
+						return mutateUpdateStaff({
 							data: { ...rest, role: role as string },
 							id: managerDetails.id,
 						});
 					}
-					createStaff({
-						data: { ...rest, role: role as string },
-						token: token as string,
-					});
+					mutateCreateStaff({ ...rest, role: role as string });
 				}
 			},
 		});

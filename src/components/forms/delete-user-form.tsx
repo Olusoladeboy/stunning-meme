@@ -3,19 +3,18 @@ import { Box, useTheme, Typography, Switch } from '@mui/material';
 import { useMutation, useQueryClient } from 'react-query';
 // import Button from '../button';
 import { grey } from '@mui/material/colors';
-import { UserDetailsType } from '../../utilities/types';
-import Api from '../../utilities/api';
-import { QueryKeyTypes } from '../../utilities/types';
-import { useAlert } from '../../utilities/hooks';
+import { UserDetails, QueryKeys } from '../../utilities';
 import Loader from '../loader';
-import { useAppSelector } from '../../store/hooks';
+import { useAlert, useHandleError } from '../../hooks';
+import { activateOrDeativateUser } from '../../api';
 
 type Props = {
-	user: UserDetailsType | null;
+	user: UserDetails | null;
 };
 
 const DeleteUserForm = ({ user }: Props) => {
 	const theme = useTheme();
+	const handleError = useHandleError();
 	const styles = useStyles(theme);
 	const setAlert = useAlert();
 	const queryClient = useQueryClient();
@@ -23,18 +22,20 @@ const DeleteUserForm = ({ user }: Props) => {
 		user?.isActive ? true : false
 	);
 
-	const { token } = useAppSelector((store) => store.authState);
-	const { isLoading, mutate } = useMutation(Api.User.ActivateOrDeativateUser, {
+	const { isLoading, mutate } = useMutation(activateOrDeativateUser, {
 		onSettled: (data, error) => {
 			if (error) {
-				setAlert({ alert: error, isError: true });
+				const response = handleError({ error });
+				if (response?.message) {
+					setAlert({ message: response.message, type: 'error' });
+				}
 			}
 
 			if (data && data.success) {
-				setAlert({ alert: data.message, type: 'success' });
+				setAlert({ message: data.message, type: 'success' });
 
-				queryClient.invalidateQueries(QueryKeyTypes.GetSingleUser);
-				queryClient.invalidateQueries(QueryKeyTypes.AllUsers);
+				queryClient.invalidateQueries(QueryKeys.GetSingleUser);
+				queryClient.invalidateQueries(QueryKeys.AllUsers);
 			}
 		},
 	});
@@ -42,7 +43,6 @@ const DeleteUserForm = ({ user }: Props) => {
 	const handleSwitch = () => {
 		setActive(!isActive);
 		mutate({
-			token: token as string,
 			data: {
 				isActive: !user?.isActive,
 			},

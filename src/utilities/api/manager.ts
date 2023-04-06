@@ -1,5 +1,5 @@
 import apiRequest from './apiRequest';
-import { API_ENDPOINTS, ManagerDetailsDataTypes } from '../types';
+import { API_ENDPOINTS, ManagerDetailsData } from '../types';
 
 const Manager = {
 	CreateManager: async ({
@@ -7,7 +7,7 @@ const Manager = {
 		data,
 	}: {
 		token: string;
-		data: ManagerDetailsDataTypes;
+		data: ManagerDetailsData;
 	}) =>
 		apiRequest({
 			method: 'POST',
@@ -21,7 +21,7 @@ const Manager = {
 		id,
 	}: {
 		token: string;
-		data: ManagerDetailsDataTypes;
+		data: ManagerDetailsData;
 		id: string;
 	}) =>
 		apiRequest({

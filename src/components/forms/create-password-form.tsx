@@ -4,7 +4,7 @@ import TextInput from '../form-components/TextInput';
 import Button from '../button';
 import { grey } from '@mui/material/colors';
 
-const CreateNewPasswordForm = () => {
+const CreatePasswordForm = () => {
 	const theme = useTheme();
 	const styles = useStyles(theme);
 	return (
@@ -76,4 +76,4 @@ const useStyles = (theme: any) => ({
 	},
 });
 
-export default CreateNewPasswordForm;
+export default CreatePasswordForm;

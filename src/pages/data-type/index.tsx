@@ -2,27 +2,29 @@ import React, { CSSProperties, useState } from 'react';
 import { Box, useTheme } from '@mui/material';
 import { grey } from '@mui/material/colors';
 import { AddCircle } from '@mui/icons-material';
-import Layout from '../../components/layout';
-import BackButton from '../../components/back-button';
-import { BOX_SHADOW } from '../../utilities/constant';
-import Button from '../../components/button';
-import ViewDataPlansTable from '../../components/table/view-data-plans-table';
-import ModalWrapper from '../../components/modal/Wrapper';
-import DataPlanForm from '../../components/forms/data-plan-form';
+import {
+	Layout,
+	BackButton,
+	Button,
+	ModalLayout,
+	DataTypesTable,
+	DataTypeForm,
+} from '../../components';
+import { BOX_SHADOW } from '../../utilities';
 
-const ViewDataPlan = () => {
+const DataTypes = () => {
 	const theme = useTheme();
 	const styles = useStyles(theme);
 	const [isDisplayModal, setDisplayModal] = useState<boolean>(false);
 	return (
 		<Layout>
 			{isDisplayModal && (
-				<ModalWrapper
-					close={() => setDisplayModal(false)}
+				<ModalLayout
+					closeModal={() => setDisplayModal(false)}
 					title={'Add new plan'}
 				>
-					<DataPlanForm handleOnSubmit={() => setDisplayModal(false)} />
-				</ModalWrapper>
+					<DataTypeForm callback={() => setDisplayModal(false)} />
+				</ModalLayout>
 			)}
 			<Box style={styles.container as CSSProperties}>
 				<Box style={styles.header}>
@@ -32,10 +34,10 @@ const ViewDataPlan = () => {
 						startIcon={<AddCircle />}
 						style={styles.addPlanBtn as CSSProperties}
 					>
-						Add new plan
+						Add new type
 					</Button>
 				</Box>
-				<ViewDataPlansTable />
+				<DataTypesTable />
 			</Box>
 		</Layout>
 	);
@@ -69,4 +71,4 @@ const useStyles = (theme: any) => ({
 	},
 });
 
-export default ViewDataPlan;
+export default DataTypes;

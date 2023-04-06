@@ -3,9 +3,8 @@ import { Typography, useTheme } from '@mui/material';
 import { grey } from '@mui/material/colors';
 import SummaryWrapper from './wrapper';
 import TransactionIcon from '../icons/transaction';
-import { SECOUNDARY_COLOR } from '../../utilities/constant';
+import { SECOUNDARY_COLOR, LINKS } from '../../utilities';
 import Link from '../link';
-import LINKS from '../../utilities/links';
 import { useAppSelector } from '../../store/hooks';
 
 const TotalTransactions = () => {

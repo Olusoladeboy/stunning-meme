@@ -14,8 +14,6 @@ const ReferralForm = ({ data, isEdit }: Props) => {
 	const theme = useTheme();
 	const styles = useStyles(theme);
 
-	console.log(data);
-
 	const initialValues: { [key: string]: any } = {
 		referral_bonus: '',
 		transaction_limit: '',

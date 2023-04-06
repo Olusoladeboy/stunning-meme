@@ -1,49 +1,43 @@
 import React, { useState } from 'react';
 import { Box, useTheme, InputAdornment, Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import { useSnackbar } from 'notistack';
 import { useMutation } from 'react-query';
 import { useFormik } from 'formik';
 import TextInput from '../form-components/TextInput';
 import Button from '../button';
 import { grey } from '@mui/material/colors';
 import Link from '../link';
-import LINKS from '../../utilities/links';
-import ValidationSchema from '../../utilities/validationSchema';
-import { LoginDataTypes } from '../../utilities/types';
-import Api from '../../utilities/api';
-import handleResponse from '../../utilities/helpers/handleResponse';
+import { LINKS, LoginData, validationSchema } from '../../utilities';
 import { useAppDispatch } from '../../store/hooks';
 import { setToken, setUser } from '../../store/auth';
 import CustomButton from '../button/custom-button';
+import { useAlert, useHandleError } from '../../hooks';
+import { login } from '../../api';
 
 const LoginForm = () => {
 	const theme = useTheme();
+	const setAlert = useAlert();
+	const handleError = useHandleError();
 	const styles = useStyles(theme);
-	const { enqueueSnackbar } = useSnackbar();
 	const [isDisplayPassword, setDisplayPassword] = useState<boolean>(false);
 	const dispatch = useAppDispatch();
 	const navigate = useNavigate();
 
-	const initialValues: LoginDataTypes = {
+	const initialValues: LoginData = {
 		email: '',
 		password: '',
 	};
 
-	const { isLoading, mutate } = useMutation(Api.Account.Login, {
+	const { isLoading, mutate } = useMutation(login, {
 		onSettled: (data, error) => {
 			if (error) {
-				const res = handleResponse({ error, isDisplayMessage: true });
-				if (res?.message) {
-					enqueueSnackbar(res.message, { variant: 'error' });
-				} else {
-					enqueueSnackbar('Something went wrong, try again', {
-						variant: 'error',
-					});
+				const response = handleError({ error });
+				if (response?.message) {
+					setAlert({ message: response.message, type: 'error' });
 				}
 			}
 			if (data && data.success) {
-				enqueueSnackbar(data.message, { variant: 'success' });
+				setAlert({ message: data.message, type: 'success' });
 				dispatch(setToken(data.payload.token));
 				dispatch(setUser(data.payload.user));
 				navigate(LINKS.Dashboard);
@@ -53,7 +47,7 @@ const LoginForm = () => {
 
 	const { handleChange, errors, touched, values, handleSubmit } = useFormik({
 		initialValues,
-		validationSchema: ValidationSchema.Login,
+		validationSchema: validationSchema.Login,
 		onSubmit: (values) => {
 			mutate(values);
 		},
@@ -107,14 +101,13 @@ const LoginForm = () => {
 
 			<CustomButton
 				loading={isLoading && isLoading}
-				buttonProps={{
-					onClick: (e: any) => {
-						handleSubmit();
-					},
-					style: styles.btn,
-					size: 'large',
-					type: 'submit',
+				onClick={(e: React.FormEvent<HTMLButtonElement>) => {
+					e.preventDefault();
+					handleSubmit();
 				}}
+				style={styles.btn}
+				size={'large'}
+				type={'submit'}
 			>
 				Login
 			</CustomButton>

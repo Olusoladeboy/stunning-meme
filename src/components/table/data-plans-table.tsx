@@ -20,25 +20,25 @@ import { tableCellClasses } from '@mui/material/TableCell';
 import { MoreHoriz } from '@mui/icons-material';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { grey } from '@mui/material/colors';
-import { useSnackbar } from 'notistack';
 import {
 	BOX_SHADOW,
 	DANGER_COLOR,
 	LIGHT_GRAY,
 	SUCCESS_COLOR,
-} from '../../utilities/constant';
+	DataPlan,
+	QueryKeys,
+} from '../../utilities';
 import FilterIcon from '../icons/filter';
 import TableHeader from '../header/table-header';
 import DataPlanForm from '../forms/data-plan-form';
 import ModalWrapper from '../modal/Wrapper';
 import RegularAlert from '../modal/regular-modal';
-import Api from '../../utilities/api';
-import handleResponse from '../../utilities/helpers/handleResponse';
-import { DataPlan, QueryKeyTypes } from '../../utilities/types';
 import { useAppSelector } from '../../store/hooks';
 import TableLoader from '../loader/table-loader';
 import TableEmpty from '../empty/table-empty';
 import Loader from '../loader';
+import { useAlert, useHandleError } from '../../hooks';
+import { dataPlans, updateDataPlan } from '../../api';
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
 	[`&.${tableCellClasses.head}`]: {
@@ -72,27 +72,20 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 	},
 }));
 
-interface ExtendedDataPlan extends DataPlan {
-	shortcode: string;
-	shortcode_sms: string;
-	isActive: boolean;
-	id: string;
-}
-
-const ViewDataPlansTable = () => {
+const DataPlansTable = () => {
 	const theme = useTheme();
+	const handleError = useHandleError();
+	const setAlert = useAlert();
 	const styles = useStyles(theme);
-	const [plans, setPlans] = useState<null | ExtendedDataPlan[]>(null);
-	const [selectedPlan, setSelectedPlan] = useState<null | ExtendedDataPlan>(
-		null
-	);
+	const [selectedPlan, setSelectedPlan] = useState<null | DataPlan>(null);
 
 	const { token } = useAppSelector((store) => store.authState);
-	const { enqueueSnackbar } = useSnackbar();
 	const params = useParams();
 	const queryClient = useQueryClient();
 
-	const [alert, setAlert] = useState<{ [key: string]: any } | null>(null);
+	const [modalAlert, setModalAlert] = useState<{ [key: string]: any } | null>(
+		null
+	);
 
 	const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 	const [isEditPlan, setEditPlan] = useState<boolean>(false);
@@ -103,10 +96,10 @@ const ViewDataPlansTable = () => {
 		);
 	};
 
-	const { isLoading } = useQuery(
-		[QueryKeyTypes.DataPlans, params.id],
+	const { isLoading, data } = useQuery(
+		[QueryKeys.DataPlans, params.id],
 		() =>
-			Api.DataPlan.Plans({
+			dataPlans({
 				token: token || '',
 				network: params ? params.id : '',
 			}),
@@ -114,34 +107,31 @@ const ViewDataPlansTable = () => {
 			enabled: !!token,
 			onSettled: (data, error) => {
 				if (error) {
-					const res = handleResponse({ error, isDisplayMessage: true });
-					if (res?.message) {
-						enqueueSnackbar(res.message, { variant: 'error' });
+					const response = handleError({ error });
+					if (response?.message) {
+						setAlert({ message: response.message, type: 'error' });
 					}
-				}
-
-				if (data && data.success) {
-					setPlans(data.payload);
 				}
 			},
 		}
 	);
 
 	const { isLoading: isEnablingDisablingPlan, mutate } = useMutation(
-		Api.DataPlan.UpdatePlan,
+		updateDataPlan,
 		{
 			onSettled: (data, error) => {
 				if (error) {
-					const res = handleResponse({ error, isDisplayMessage: true });
-					if (res?.message) {
-						enqueueSnackbar(res.message, { variant: 'error' });
+					const response = handleError({ error });
+					if (response?.message) {
+						setAlert({ message: response.message, type: 'error' });
 					}
 				}
 
 				if (data && data.success) {
-					queryClient.invalidateQueries(QueryKeyTypes.DataPlans);
-					enqueueSnackbar('Data plan updated successfully!', {
-						variant: 'success',
+					queryClient.invalidateQueries(QueryKeys.DataPlans);
+					setAlert({
+						message: 'Data plan updated successfully!',
+						type: 'success',
 					});
 				}
 			},
@@ -151,11 +141,10 @@ const ViewDataPlansTable = () => {
 	const handleEnableDisablePlan = () => {
 		if (selectedPlan) {
 			mutate({
-				token: token || '',
 				data: {
 					isActive: !selectedPlan.isActive,
 				},
-				id: selectedPlan.id,
+				id: selectedPlan?.id as string,
 			});
 		}
 	};
@@ -169,21 +158,24 @@ const ViewDataPlansTable = () => {
 		<>
 			{isEnablingDisablingPlan && <Loader />}
 			{isEditPlan && selectedPlan && (
-				<ModalWrapper close={() => closePlanModal()} title={'EDIT DATA PLAN'}>
+				<ModalWrapper
+					closeModal={() => closePlanModal()}
+					title={'EDIT DATA PLAN'}
+				>
 					<DataPlanForm
-						handleOnSubmit={() => closePlanModal()}
+						callback={() => closePlanModal()}
 						dataPayload={selectedPlan}
 					/>
 				</ModalWrapper>
 			)}
-			{alert && (
+			{modalAlert && (
 				<RegularAlert
-					close={() => setAlert(null)}
+					close={() => setModalAlert(null)}
 					width={'480px'}
-					title={alert.title}
-					btnText={alert.btnText}
-					message={alert.message}
-					alertType={alert.alertType}
+					title={modalAlert.title}
+					btnText={modalAlert.btnText}
+					message={modalAlert.message}
+					alertType={modalAlert.alertType}
 				/>
 			)}
 			<ClickAwayListener onClickAway={() => setAnchorEl(null)}>
@@ -248,10 +240,10 @@ const ViewDataPlansTable = () => {
 							{isLoading ? (
 								<TableLoader colSpan={6} />
 							) : (
-								plans && (
+								data && (
 									<>
-										{plans.length > 0 ? (
-											plans.map((plan, key) => (
+										{data.payload.length > 0 ? (
+											data.payload.map((plan: DataPlan, key: number) => (
 												<StyledTableRow key={key}>
 													<StyledTableCell
 														sx={{ paddingLeft: '40px' }}
@@ -371,4 +363,4 @@ const useStyles = (theme: any) => ({
 	},
 });
 
-export default ViewDataPlansTable;
+export default DataPlansTable;

@@ -6,32 +6,36 @@ import CustomButton from '../button/custom-button';
 import { grey } from '@mui/material/colors';
 import SuspendUserForm from '../forms/suspend-user-form';
 import DeleteUserForm from '../forms/delete-user-form';
-import { UserDetailsType, QueryKeyTypes } from '../../utilities/types';
+import { UserDetails, QueryKey } from '../../utilities';
 import Api from '../../utilities/api';
-import { useAlert } from '../../utilities/hooks';
 import { useAppSelector } from '../../store/hooks';
+import { useAlert, useHandleError } from '../../hooks';
 
 type Props = {
-	user: UserDetailsType | null;
+	user: UserDetails | null;
 };
 
 const UserStatus = ({ user }: Props) => {
 	const theme = useTheme();
 	const setAlert = useAlert();
+	const handleError = useHandleError();
 	const { token } = useAppSelector((store) => store.authState);
 	const queryClient = useQueryClient();
 
 	const { mutate, isLoading } = useMutation(Api.Wallet.SuspendWithdraw, {
 		onSettled: (data, error) => {
 			if (error) {
-				setAlert({ alert: error, isError: true });
+				const response = handleError({ error });
+				if (response?.message) {
+					setAlert({ message: response.message, type: 'error' });
+				}
 			}
 
 			if (data && data.success) {
-				setAlert({ alert: data.message, type: 'success' });
-				queryClient.invalidateQueries(QueryKeyTypes.AllUsers);
-				queryClient.invalidateQueries(QueryKeyTypes.GetSingleUser);
-				queryClient.invalidateQueries(QueryKeyTypes.Statistics);
+				setAlert({ message: data.message, type: 'success' });
+				queryClient.invalidateQueries(QueryKey.AllUsers);
+				queryClient.invalidateQueries(QueryKey.GetSingleUser);
+				queryClient.invalidateQueries(QueryKey.Statistics);
 			}
 		},
 	});
@@ -59,17 +63,18 @@ const UserStatus = ({ user }: Props) => {
 				<UserAvatarWithDetails user={user} />
 				<CustomButton
 					loading={isLoading}
-					buttonProps={{
-						sx: {
-							border: `1px solid ${theme.palette.secondary.main}`,
-							':hover': {
-								backgroundColor: theme.palette.secondary.main,
-								color: grey[50],
-							},
-						},
-						size: 'large',
-						onClick: () => handleSuspendWithdraw(),
+					onClick={(e: React.FormEvent<HTMLButtonElement>) => {
+						e.preventDefault();
+						handleSuspendWithdraw();
 					}}
+					sx={{
+						border: `1px solid ${theme.palette.secondary.main}`,
+						':hover': {
+							backgroundColor: theme.palette.secondary.main,
+							color: grey[50],
+						},
+					}}
+					size={'large'}
 				>
 					{user?.suspendWithdrawal
 						? 'Unsuspend withdrawal'

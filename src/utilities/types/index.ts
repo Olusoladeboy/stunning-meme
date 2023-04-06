@@ -5,15 +5,7 @@ export enum ThemeModeType {
 	dark = 'dark',
 }
 
-export enum StorageKeys {
-	themeMode = '@Storage_theme_mode',
-	UserToken = '@Storage:user_token',
-	UserDetails = '@Storage:user_details',
-	Application = '@Storage:key_application',
-	SignUpDetails = '@Storage:key_signUp_Details',
-}
-
-export enum QueryKeyTypes {
+export enum QueryKey {
 	LoginUserDetails = '@Query:Login_user_details',
 	AllManagers = '@Query:All_manager',
 	AllUsers = '@Query:All_Users',
@@ -31,9 +23,12 @@ export enum QueryKeyTypes {
 	RecentTransactions = '@Query:Recent_Transactions',
 	AllStaff = '@Query:All_Staff',
 	Statistics = '@Query:Statistics',
+	Coupon = '@Query:Coupon',
+	Tickets = '@Query:Tickets',
+	Ticket = '@Query:Ticket',
 }
 
-export enum RegistrationStepTypes {
+export enum RegistrationStep {
 	EMAIL_VERIFICATION = 'email_verification',
 	BVN_VERIFICATION = 'bvn_verification',
 	CREATE_ACCOUNT = 'create_account',
@@ -43,19 +38,19 @@ export type AppStore = {
 	theme: ThemeModeType;
 };
 
-export type AxiosConfigTypes = {
+export type AxiosConfig = {
 	url: string;
 	baseUrl: string;
 	method: any;
 };
 
-export type LoginDataTypes = {
+export type LoginData = {
 	email?: string;
 	phone?: string;
 	password: string;
 };
 
-export type UserDetailsType = {
+export type UserDetails = {
 	suspensionDuration: { [key: string]: any };
 	suspendWithdrawal: boolean;
 	userType: string;
@@ -70,6 +65,7 @@ export type UserDetailsType = {
 	restricted: boolean;
 	twoFactorAuth: boolean;
 	isLoggedIn: boolean;
+	role: string;
 	suspendWalletTransactions: boolean;
 	firstname: string;
 	lastname: string;
@@ -82,7 +78,7 @@ export type UserDetailsType = {
 	kycLevel: string;
 };
 
-export type LoginDetailsType = {
+export type LoginDetails = {
 	email: string;
 	password: string;
 };
@@ -92,50 +88,39 @@ export type RouteTypes = {
 	path: string;
 };
 
-export enum VerificationInputTypes {
+export enum VerificationInput {
 	email = 'email',
 	phone = 'phone',
 }
 
-export type VerificationDataTypes = {
+export type VerificationData = {
 	data: {
-		email?: VerificationInputTypes.email;
-		phone?: VerificationInputTypes.phone;
+		email?: VerificationInput.email;
+		phone?: VerificationInput.phone;
 	};
 };
 
-export enum HttpStatusCodeTypes {
-	OK = 200,
-	BadRequest = 400,
-	Unauthorized = 401,
-	Forbidden = 403,
-	NotFound = 404,
-	InternalServerError = 500,
-	BadGateway = 502,
-	ServiceUnavailable = 503,
-}
-
-export enum TransactionStatusTypes {
+export enum TransactionStatus {
 	PENDING = 'PENDING',
 	FAILED = 'FAILED',
 	SUCCESSFUL = 'SUCCESSFUL',
 }
 
-export enum UserStatusTypes {
+export enum UserStatus {
 	Verified = 'verified',
 	Unverified = 'unverified',
 	Suspended = 'suspended',
 	Deleted = 'deleted',
 }
 
-export enum BillTabTypes {
+export enum BillTab {
 	CablePayment = 'cable-payment',
 	PowerBill = 'power-bill',
 	Education = 'education',
 	InternetSubscription = 'internet-subscription',
 }
 
-export enum EPinsTypes {
+export enum EPins {
 	Airtime = 'Airtime epin',
 	InternetSubscription = 'Internet subscription',
 	Cable = 'Cable',
@@ -143,13 +128,13 @@ export enum EPinsTypes {
 	Education = 'Education',
 }
 
-export type AuthStateTypes = {
+export type AuthState = {
 	isAuthenticated: boolean;
-	user: UserDetailsType | null;
+	user: UserDetails | null;
 	token: string | null;
 };
 
-export enum SettingsTabTypes {
+export enum SettingsTab {
 	Profile = 'profile',
 	Security = 'security',
 	Notification = 'Notification',
@@ -157,9 +142,40 @@ export enum SettingsTabTypes {
 	ReferAndWin = 'Refer-and-win',
 }
 
-export enum ReferralHistoryTypes {
+export enum ReferralHistory {
 	PendingReferral = 'pending',
 	AllReferral = 'all',
+}
+
+export interface ModalDetails {
+	type?: 'success' | 'failed';
+	title: string;
+	message?: string;
+	buttonText?: string;
+	handlePress?: () => void | null;
+	handleTryAgain?: () => void;
+	handleClose?: () => void | null;
+	isLoading?: boolean;
+	children?: React.ReactNode;
+	contentWidth?: string;
+}
+
+export interface IModal {
+	type?: 'success' | 'error' | 'info' | 'pending' | 'verify';
+	description?: string;
+	title?: string;
+	message?: string;
+	buttonText?: string;
+	handlePrimaryButton?: () => void | null;
+	hasSecondaryButton?: boolean;
+	handleSecondaryButton?: () => void;
+	secondaryButtonText?: string;
+	handleContactUs?: () => void;
+	closeModal?: () => void | null;
+	isLoading?: boolean;
+	children?: React.ReactNode;
+	isContactSupport?: boolean;
+	hasCloseButton?: boolean;
 }
 
 export enum UserNavList {
@@ -175,13 +191,13 @@ export enum ManagerTypes {
 	Admin = 'Admin',
 }
 
-export enum NetworkPageTypes {
+export enum NetworkPage {
 	DATA_NETWORK = 'Data network',
 	AIRTIME_NETWORK = 'Airtime network',
 	CONVERSION_NETWORK = 'Conversion network',
 }
 
-export enum NetworkStatusTypes {
+export enum NetworkStatus {
 	ENABLE = 'enable',
 	DISABLE = 'disable',
 }
@@ -200,9 +216,11 @@ export enum API_ENDPOINTS {
 	Kyc = '/kyc',
 	Transaction = '/transaction',
 	Wallet = '/wallet',
+	Coupon = '/coupon',
+	Ticket = '/ticket',
 }
 
-export type ManagerDetailsDataTypes = {
+export type ManagerDetailsData = {
 	firstname: string;
 	lastname: string;
 	email: string;
@@ -210,7 +228,7 @@ export type ManagerDetailsDataTypes = {
 	avatar?: string;
 };
 
-export type NetworkDataTypes = {
+export type NetworkData = {
 	name?: string;
 	rate?: string;
 	number?: string;
@@ -218,7 +236,7 @@ export type NetworkDataTypes = {
 	isActive?: boolean;
 };
 
-export type KycDataTypes = {
+export type KycData = {
 	level?: number;
 	dailyLimit: number;
 	weeklyLimit: number;
@@ -234,6 +252,8 @@ export type DataPlan = {
 	code: string;
 	shortcode?: string;
 	shortcode_sms?: string;
+	isActive?: boolean;
+	id?: string;
 };
 
 export enum DataPlanType {
@@ -243,13 +263,22 @@ export enum DataPlanType {
 	KETTLESUB = 'KETTLESUB',
 }
 
-export type SuspendUserType = {
+export interface DataType {
+	isActive?: boolean;
+	id?: string;
+	name?: string;
+	createdAt?: string;
+	no_of_plans?: number;
+	network?: string;
+}
+
+export type SuspendUser = {
 	suspended: boolean;
 	suspensionDurationInDays?: string;
 	suspensionReason?: string;
 };
 
-export type StatisticsType = {
+export type Statistics = {
 	total_transactions: number;
 	total_users: number;
 	total_conversions: number;
@@ -267,3 +296,218 @@ export type StatisticsType = {
 	};
 	total_wallet_balance: number;
 };
+
+export interface Amount {
+	$numberDecimal: string;
+}
+
+export interface Coupon {
+	code?: string;
+	name?: string;
+	type?: string;
+	expiresIn?: string;
+	gift?: Amount | string;
+	createdBy?: UserDetails;
+	createdAt?: string;
+	id?: string;
+	status?: string;
+}
+
+export enum TransactionServices {
+	CardTopUp = 'CARD TOP UP',
+	DataSubscription = 'DATA SUBSCRIPTION',
+	Education = 'EDUCATION',
+	Electricity = 'ELECTRICITY',
+	CableSubscription = 'CABLE',
+	AirtimeConversion = 'AIRTIME CONVERSION',
+	WalletTopup = 'WALLET TOP UP',
+	Epin = 'EPIN',
+	AirtimeTop = 'Airtime Top Up',
+	WITHDRAWAL = 'WITHDRAWAL',
+}
+
+export enum RelatedTransactionTypes {
+	BillPayment = 'BillPayment',
+	Airtime = 'Airtime',
+	DataSubscription = 'DataSubscription',
+	AirtimeConvert = 'AirtimeConvert',
+}
+
+export enum CouponStatus {
+	UNVERIFIED = 'UNVERIFIED',
+	VERIFIED = 'VERIFIED',
+	CANCELLED = 'CANCELLED',
+	EXPIRED = 'EXPIRED',
+}
+
+export interface UpdateCouponStatus {
+	status:
+		| CouponStatus.VERIFIED
+		| CouponStatus.UNVERIFIED
+		| CouponStatus.CANCELLED
+		| CouponStatus.EXPIRED;
+}
+
+export enum CouponType {
+	PERCENT = 'PERCENT',
+	AMOUNT = 'AMOUNT',
+}
+
+export enum Priority {
+	HIGH = 'HIGH',
+	MEDIUM = 'MEDIUM',
+	LOW = 'LOW',
+}
+
+export enum TicketStatus {
+	OPENED = 'OPENED',
+	CLOSED = 'CLOSED',
+}
+
+export enum TicketType {
+	COMPLAINT = 'COMPLAINT',
+	DISPUTE = 'DISPUTE',
+}
+
+export interface RelatedTransaction {
+	status: TransactionStatus;
+	name: string;
+	amount: string;
+	reference: string;
+	user: string;
+	transaction: string;
+	type: TransactionServices;
+	card_number?: string;
+	createdAt: string;
+	updatedAt: string;
+	id: string;
+}
+
+export interface TicketReply {
+	reply_type: TicketReplyType;
+	id?: string;
+	repliedBy?: string;
+	reply: string;
+}
+
+export interface Ticket {
+	type: TicketType;
+	status: TicketStatus;
+	priority: Priority;
+	related_transaction_type?: RelatedTransactionTypes;
+	subject: String;
+	related_transaction?: RelatedTransaction | null;
+	message: string;
+	code: string;
+	user: string;
+	replies: TicketReply[];
+	createdAt: string;
+	updatedAt: string;
+	id: string;
+}
+
+export interface CreateTicket {
+	priority: Priority.HIGH | Priority.LOW | Priority.LOW | string;
+	subject: string;
+	related_transaction?: string;
+	related_transaction_type?: string;
+	message: string;
+	type: TicketType.COMPLAINT | TicketType.DISPUTE | string;
+}
+
+export interface CloseTicket {
+	status: string;
+}
+
+export enum TicketReplyType {
+	Staff = 'Staff',
+	User = 'User',
+}
+
+export type User = {
+	id: string;
+	suspensionDuration: { [key: string]: any };
+	userType: string;
+	biometricLogin: boolean;
+	verified: boolean;
+	bvnVerified: boolean;
+	suspended: boolean;
+	deleted: boolean;
+	restricted: boolean;
+	twoFactorAuth: boolean;
+	isLoggedIn: boolean;
+	suspendWalletTransactions: boolean;
+	firstname: string;
+	lastname: string;
+	email: string;
+	kycLevel: number;
+	createdAt: Date;
+	username: string;
+	phone: string;
+	hasPin: boolean;
+	manager: string | { [key: string]: any };
+	defaultBank: string;
+	photoUrl: string | null;
+	code: string;
+};
+
+export interface PinData {
+	network?: string;
+	amount?: number;
+	plan?: string;
+	service_type?: string;
+	product_code?: string;
+	price?: number;
+	monthsPaidFor?: number;
+	numberOfPins?: number;
+}
+
+export interface EducationPin {
+	serialNumber: string;
+	pin: string;
+}
+
+export interface ElectricityToken {
+	token: string;
+	unit: number;
+	amount: string;
+	transId: string;
+}
+
+export interface Transaction {
+	id: string;
+	status:
+		| TransactionStatus.FAILED
+		| TransactionStatus.PENDING
+		| TransactionStatus.SUCCESSFUL;
+	plan: string;
+	service: string;
+	number: string;
+	createdBy: string;
+	reference: string;
+	user: User;
+	amount: string | Amount;
+	balanceBefore: string;
+	balanceAfter: string;
+	name: string;
+	type: string;
+	createdAt: string;
+	pin_data?: PinData;
+	pin?: string;
+	pins?: EducationPin[];
+	transaction: {
+		id: string;
+		amount: Amount;
+		discount_code?: string | Coupon;
+		balanceBefore: Amount;
+		balanceAfter: Amount;
+		type: string;
+		service: string;
+		createdBy: string;
+		user: string;
+		reference: string;
+		createdAt: string;
+		updatedAt: string;
+	};
+	electricity_token?: ElectricityToken;
+}

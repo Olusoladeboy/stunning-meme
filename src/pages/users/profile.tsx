@@ -4,28 +4,27 @@ import { useQuery } from 'react-query';
 import queryString from 'query-string';
 import { Box, useTheme, CircularProgress, Typography } from '@mui/material';
 import { grey } from '@mui/material/colors';
-import Layout from '../../components/layout';
-import BackButton from '../../components/back-button';
-import { BOX_SHADOW } from '../../utilities/constant';
-import UserTab from '../../components/tabs/user';
-import LINKS from '../../utilities/links';
 import {
-	UserNavList,
-	QueryKeyTypes,
-	UserDetailsType,
-} from '../../utilities/types';
-import UserProfile from '../../components/user-profile';
-import UserStatus from '../../components/user-status';
-import UserTransaction from '../../components/user-transaction';
-import UserWalletSummary from '../../components/user-wallet-summary';
+	Layout,
+	BackButton,
+	UserTab,
+	UserProfile,
+	UserStatus,
+	UserTransaction,
+	UserWalletSummary,
+	UserManagerInfo,
+	ModalLayout,
+	AssignManagerForm,
+	Button,
+} from '../../components';
+import { BOX_SHADOW } from '../../utilities/constant';
+import LINKS from '../../utilities/links';
+import { UserNavList, QueryKey, UserDetails } from '../../utilities/types';
 import Api from '../../utilities/api';
 import { useAppSelector } from '../../store/hooks';
-import ManagerInfo from '../../components/user-manager-info';
-import Button from '../../components/button';
-import Modal from '../../components/modal/Wrapper';
-import AssignManagerForm from '../../components/forms/assign-manager-form';
+import ErrorBoundary from '../../utilities/helpers/error-boundary';
 
-interface UserDetails extends UserDetailsType {
+interface User extends UserDetails {
 	manager: any;
 }
 
@@ -34,7 +33,7 @@ const Profile = () => {
 	const styles = useStyles(theme);
 	const { id } = useParams();
 	const { token } = useAppSelector((store) => store.authState);
-	const [userDetails, setUserDetails] = useState<null | UserDetails>(null);
+	const [userDetails, setUserDetails] = useState<null | User>(null);
 	const [isDisplayModal, setDisplayModal] = useState<boolean>(false);
 
 	const location = useLocation();
@@ -81,7 +80,7 @@ const Profile = () => {
 	}, [tab]);
 
 	const { isLoading, data } = useQuery(
-		QueryKeyTypes.GetSingleUser,
+		QueryKey.GetSingleUser,
 		() =>
 			Api.User.GetUserById({
 				token: token || '',
@@ -100,15 +99,16 @@ const Profile = () => {
 	return (
 		<>
 			{isDisplayModal && (
-				<Modal
+				<ModalLayout
 					title={'Assign Manager to User'}
-					close={() => setDisplayModal(false)}
+					hasCloseButton
+					closeModal={() => setDisplayModal(false)}
 				>
 					<AssignManagerForm
 						close={() => setDisplayModal(false)}
 						userDetails={userDetails}
 					/>
-				</Modal>
+				</ModalLayout>
 			)}
 			<Layout>
 				{isLoading ? (
@@ -134,7 +134,7 @@ const Profile = () => {
 									handleChange={handleChangeTab}
 								/>
 							</Box>
-							<>
+							<ErrorBoundary>
 								<Box
 									sx={{ padding: { xs: '0px 1rem', md: '0px 2rem' } }}
 									hidden={currentTab !== UserNavList.Profile}
@@ -182,7 +182,7 @@ const Profile = () => {
 									hidden={currentTab !== UserNavList.Manager}
 								>
 									{userDetails && userDetails.manager ? (
-										<ManagerInfo
+										<UserManagerInfo
 											changeManager={() => setDisplayModal(true)}
 											manager={userDetails.manager}
 										/>
@@ -200,7 +200,7 @@ const Profile = () => {
 										</Box>
 									)}
 								</Box>
-							</>
+							</ErrorBoundary>
 						</Box>
 					</>
 				)}

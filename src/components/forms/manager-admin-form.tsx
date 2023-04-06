@@ -2,47 +2,50 @@ import React, { CSSProperties } from 'react';
 import { Box, useTheme, Typography, MenuItem } from '@mui/material';
 import { useFormik } from 'formik';
 import { useMutation, useQueryClient } from 'react-query';
-import { useSnackbar } from 'notistack';
 import TextInput from '../form-components/TextInput';
 import Button from '../button/custom-button';
 import { grey } from '@mui/material/colors';
 import {
 	ManagerTypes,
-	ManagerDetailsDataTypes,
-	QueryKeyTypes,
-} from '../../utilities/types';
-import Api from '../../utilities/api';
-import ValidationSchema from '../../utilities/validationSchema';
-import { useAppSelector } from '../../store/hooks';
-import handleResponse from '../../utilities/helpers/handleResponse';
+	ManagerDetailsData,
+	QueryKeys,
+	validationSchema,
+	AMIN_ROLE,
+} from '../../utilities';
 import Select from '../form-components/Select';
+import { useAlert, useHandleError } from '../../hooks';
+import {
+	createStaff,
+	updateStaff,
+	createManager,
+	updateManager,
+} from '../../api';
 
-const AMIN_ROLES = ['OPERATIONS', 'CUSTOMER_SUPPORT'];
 const SELECT_ADMIN_PRIVILEDGE = 'Select Admin Priviledge';
 
-interface ManagerDetails extends ManagerDetailsDataTypes {
+interface ManagerDetails extends ManagerDetailsData {
 	id?: string;
 	role?: string;
 }
 
 type Props = {
 	type: ManagerTypes.Admin | ManagerTypes.Manager | null;
-	onSuccess?: () => void;
+	callback?: () => void;
 	managerDetails?: ManagerDetails | null;
 	isEdit?: boolean;
 };
 
 const ManagerAdminForm = ({
 	type,
-	onSuccess,
+	callback,
 	managerDetails,
 	isEdit,
 }: Props) => {
 	const theme = useTheme();
+	const setAlert = useAlert();
+	const handleError = useHandleError();
 	const styles = useStyles(theme);
 	const queryClient = useQueryClient();
-	const { enqueueSnackbar } = useSnackbar();
-	const { token } = useAppSelector((store) => store.authState);
 
 	const initialValues: ManagerDetails = {
 		firstname: '',
@@ -52,80 +55,91 @@ const ManagerAdminForm = ({
 		role: SELECT_ADMIN_PRIVILEDGE,
 	};
 
-	const { isLoading: isCreatingManager, mutate: createManager } = useMutation(
-		Api.Manager.CreateManager,
+	const { isLoading: isCreatingManager, mutate: mutateCreateManager } =
+		useMutation(createManager, {
+			onSettled: (data, error) => {
+				if (data && data.success) {
+					resetForm();
+					queryClient.invalidateQueries(QueryKeys.AllManagers);
+					setAlert({
+						message: data.message,
+						type: 'success',
+					});
+					typeof callback !== 'undefined' && callback();
+				}
+				if (error) {
+					const response = handleError({ error });
+					if (response?.message) {
+						setAlert({ message: response.message, type: 'error' });
+					}
+				}
+			},
+		});
+
+	const { isLoading: isCreatingStaff, mutate: mutateCreateStaff } = useMutation(
+		createStaff,
 		{
 			onSettled: (data, error) => {
 				if (data && data.success) {
 					resetForm();
-					queryClient.invalidateQueries(QueryKeyTypes.AllManagers);
-					enqueueSnackbar(data.message, { variant: 'success' });
-					typeof onSuccess !== 'undefined' && onSuccess();
+					setAlert({
+						message: data.message,
+						type: 'success',
+					});
+
+					queryClient.invalidateQueries(QueryKeys.AllStaff);
+
+					typeof callback !== 'undefined' && callback();
 				}
 				if (error) {
-					const res = handleResponse({ error, isDisplayMessage: true });
-					if (res?.message) {
-						enqueueSnackbar(res.message, { variant: 'error' });
+					const response = handleError({ error });
+					if (response?.message) {
+						setAlert({ message: response.message, type: 'error' });
 					}
 				}
 			},
 		}
 	);
 
-	const { isLoading: isCreatingStaff, mutate: createStaff } = useMutation(
-		Api.Staff.Create,
-		{
+	const { isLoading: isUpdatingManager, mutate: mutateUpdateManager } =
+		useMutation(updateManager, {
 			onSettled: (data, error) => {
 				if (data && data.success) {
 					resetForm();
-					queryClient.invalidateQueries(QueryKeyTypes.AllStaff);
-					enqueueSnackbar(data.message, { variant: 'success' });
-					typeof onSuccess !== 'undefined' && onSuccess();
+					queryClient.invalidateQueries(QueryKeys.AllManagers);
+					setAlert({
+						message: data.message,
+						type: 'success',
+					});
+					typeof callback !== 'undefined' && callback();
 				}
 				if (error) {
-					const res = handleResponse({ error, isDisplayMessage: true });
-					if (res?.message) {
-						enqueueSnackbar(res.message, { variant: 'error' });
+					const response = handleError({ error });
+
+					if (response?.message) {
+						setAlert({ message: response.message, type: 'error' });
 					}
 				}
 			},
-		}
-	);
+		});
 
-	const { isLoading: isUpdatingManager, mutate: updateManager } = useMutation(
-		Api.Manager.UpdateManager,
+	const { isLoading: isUpdatingStaff, mutate: mutateUpdateStaff } = useMutation(
+		updateStaff,
 		{
 			onSettled: (data, error) => {
 				if (data && data.success) {
 					resetForm();
-					queryClient.invalidateQueries(QueryKeyTypes.AllManagers);
-					enqueueSnackbar(data.message, { variant: 'success' });
-					typeof onSuccess !== 'undefined' && onSuccess();
+					queryClient.invalidateQueries(QueryKeys.AllStaff);
+					setAlert({
+						message: data.message,
+						type: 'success',
+					});
+					typeof callback !== 'undefined' && callback();
 				}
 				if (error) {
-					const res = handleResponse({ error, isDisplayMessage: true });
-					if (res?.message) {
-						enqueueSnackbar(res.message, { variant: 'error' });
-					}
-				}
-			},
-		}
-	);
-
-	const { isLoading: isUpdatingStaff, mutate: updateStaff } = useMutation(
-		Api.Staff.Update,
-		{
-			onSettled: (data, error) => {
-				if (data && data.success) {
-					resetForm();
-					queryClient.invalidateQueries(QueryKeyTypes.AllStaff);
-					enqueueSnackbar(data.message, { variant: 'success' });
-					typeof onSuccess !== 'undefined' && onSuccess();
-				}
-				if (error) {
-					const res = handleResponse({ error, isDisplayMessage: true });
-					if (res?.message) {
-						enqueueSnackbar(res.message, { variant: 'error' });
+					const response = handleError({ error });
+					if (response?.message) {
+						setAlert({ message: response.message, type: 'error' });
 					}
 				}
 			},
@@ -146,33 +160,25 @@ const ManagerAdminForm = ({
 								: SELECT_ADMIN_PRIVILEDGE,
 				  }
 				: initialValues,
-			validationSchema: ValidationSchema.ManagerDetails,
+			validationSchema: validationSchema.ManagerDetails,
 			onSubmit: (values) => {
 				const { role, ...rest } = values;
 				if (type === ManagerTypes.Manager) {
 					if (isEdit && managerDetails && managerDetails.id) {
-						return updateManager({
-							token: token as string,
+						return mutateUpdateManager({
 							data: rest,
 							id: managerDetails.id,
 						});
 					}
-					createManager({
-						data: rest,
-						token: token as string,
-					});
+					mutateCreateManager(rest);
 				} else {
 					if (isEdit && managerDetails && managerDetails.id) {
-						return updateStaff({
-							token: token as string,
+						return mutateUpdateStaff({
 							data: { ...rest, role: role as string },
 							id: managerDetails.id,
 						});
 					}
-					createStaff({
-						data: { ...rest, role: role as string },
-						token: token as string,
-					});
+					mutateCreateStaff({ ...rest, role: role as string });
 				}
 			},
 		});
@@ -268,11 +274,12 @@ const ManagerAdminForm = ({
 						<MenuItem value={SELECT_ADMIN_PRIVILEDGE}>
 							{SELECT_ADMIN_PRIVILEDGE}
 						</MenuItem>
-						{AMIN_ROLES.map((role) => (
-							<MenuItem value={role} key={role}>
-								{role}
-							</MenuItem>
-						))}
+						<MenuItem value={AMIN_ROLE.OPERATIONS}>
+							{AMIN_ROLE.OPERATIONS}
+						</MenuItem>
+						<MenuItem value={AMIN_ROLE.CUSTOMER_SUPPORT}>
+							{AMIN_ROLE.CUSTOMER_SUPPORT}
+						</MenuItem>
 					</Select>
 				</Box>
 			</Box>
@@ -283,15 +290,13 @@ const ManagerAdminForm = ({
 					isCreatingStaff ||
 					isUpdatingStaff
 				}
-				buttonProps={{
-					type: 'submit',
-					onClick: (e) => {
-						e.preventDefault();
-						handleSubmit();
-					},
-					size: 'large',
-					style: styles.btn,
+				onClick={(e: React.FormEvent<HTMLButtonElement>) => {
+					e.preventDefault();
+					handleSubmit();
 				}}
+				type={'submit'}
+				size={'large'}
+				style={styles.btn}
 			>
 				Save
 			</Button>

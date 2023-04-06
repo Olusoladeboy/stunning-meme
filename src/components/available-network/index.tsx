@@ -2,37 +2,35 @@ import React, { CSSProperties } from 'react';
 import { useQuery } from 'react-query';
 import { useNavigate } from 'react-router-dom';
 import { Box, useTheme, CircularProgress, Typography } from '@mui/material';
-import { useSnackbar } from 'notistack';
 import { grey } from '@mui/material/colors';
 import Button from '../button';
 import AvaliableNetworkItem from './available-network-item';
-import handleResponse from '../../utilities/helpers/handleResponse';
-import Api from '../../utilities/api';
-import { QueryKeyTypes, API_ENDPOINTS } from '../../utilities/types';
+import { QueryKey, API_ENDPOINTS, LINKS } from '../../utilities';
 import { useAppSelector } from '../../store/hooks';
-import LINKS from '../../utilities/links';
+import { useAlert, useHandleError } from '../../hooks';
+import { networks } from '../../api';
 
 const AvailableNetwork = () => {
 	const theme = useTheme();
+	const handleError = useHandleError();
+	const setAlert = useAlert();
 	const navigate = useNavigate();
 	const styles = useStyles(theme);
-	const { enqueueSnackbar } = useSnackbar();
 	const { token } = useAppSelector((store) => store.authState);
 
 	const { isLoading, data } = useQuery(
-		QueryKeyTypes.ConvertNetwork,
+		QueryKey.ConvertNetwork,
 		() =>
-			Api.Network.GetNetwork({
-				token: token || '',
+			networks({
 				url: API_ENDPOINTS.ConvertNetworks,
 			}),
 		{
 			enabled: !!token,
 			onSettled: (data, error) => {
 				if (error) {
-					const res = handleResponse({ error });
-					if (res?.message) {
-						enqueueSnackbar(res.message, { variant: 'error' });
+					const response = handleError({ error });
+					if (response?.message) {
+						setAlert({ message: response.message, type: 'error' });
 					}
 				}
 			},

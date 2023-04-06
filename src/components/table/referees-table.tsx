@@ -13,11 +13,7 @@ import TableBody from '@mui/material/TableBody';
 import TableHead from '@mui/material/TableHead';
 import { grey } from '@mui/material/colors';
 import { AddCircle, MoreHoriz } from '@mui/icons-material';
-import {
-	SUCCESS_COLOR,
-	BOX_SHADOW,
-	DANGER_COLOR,
-} from '../../utilities/constant';
+import { SUCCESS_COLOR, BOX_SHADOW, DANGER_COLOR } from '../../utilities';
 import ModalWrapper from '../modal/Wrapper';
 import FilterIcon from '../icons/filter';
 import {
@@ -65,7 +61,7 @@ const AllReferralsTable = () => {
 		<>
 			{isCreateReferral && (
 				<ModalWrapper
-					close={() => setCreateReferral(false)}
+					closeModal={() => setCreateReferral(false)}
 					title={'CREATE REFERRAL'}
 				>
 					<ReferralForm />
@@ -82,7 +78,10 @@ const AllReferralsTable = () => {
 				/>
 			)}
 			{currentRow && (
-				<ModalWrapper close={() => setCurrentRow(null)} title={'EDIT COUPON'}>
+				<ModalWrapper
+					closeModal={() => setCurrentRow(null)}
+					title={'EDIT COUPON'}
+				>
 					<ReferralForm isEdit data={currentRow} />
 				</ModalWrapper>
 			)}

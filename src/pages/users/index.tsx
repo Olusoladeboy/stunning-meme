@@ -2,12 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { Box } from '@mui/material';
 import { useNavigate, useLocation } from 'react-router-dom';
 import queryString from 'query-string';
-import Layout from '../../components/layout';
-import UsersTable from '../../components/table/users-table';
+import { Layout, UsersTable, Pagination } from '../../components';
 import { useAppSelector } from '../../store/hooks';
 import Api from '../../utilities/api';
-import { QueryKeyTypes } from '../../utilities/types';
-import Pagination from '../../components/pagination';
+import { QueryKey } from '../../utilities/types';
 import { MAX_RECORDS } from '../../utilities/constant';
 import LINKS from '../../utilities/links';
 import { useQueryHook } from '../../utilities/api/hooks';
@@ -29,7 +27,7 @@ const Users = () => {
 	}, [query, query.page]);
 
 	const { isLoading, data } = useQueryHook({
-		queryKey: QueryKeyTypes.AllUsers,
+		queryKey: QueryKey.AllUsers,
 		queryFn: () =>
 			Api.User.AllUsers({
 				token: token as string,

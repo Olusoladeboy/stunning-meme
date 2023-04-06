@@ -1,5 +1,5 @@
 import apiRequest from './apiRequest';
-import { NetworkDataTypes } from '../types';
+import { NetworkData } from '../types';
 
 const Network = {
 	GetNetwork: async ({
@@ -23,7 +23,7 @@ const Network = {
 	}: {
 		token: string;
 		url: string;
-		data: NetworkDataTypes;
+		data: NetworkData;
 	}) =>
 		apiRequest({
 			method: 'POST',
@@ -39,7 +39,7 @@ const Network = {
 	}: {
 		token: string;
 		url: string;
-		data: NetworkDataTypes;
+		data: NetworkData;
 		id: string;
 	}) =>
 		apiRequest({

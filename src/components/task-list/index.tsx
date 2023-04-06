@@ -3,7 +3,7 @@ import { Box, Typography, useTheme } from '@mui/material';
 import { grey } from '@mui/material/colors';
 import { AddCircle } from '@mui/icons-material';
 import Button from '../button';
-import { BOX_SHADOW, DANGER_COLOR } from '../../utilities/constant';
+import { BOX_SHADOW, DANGER_COLOR } from '../../utilities';
 import TaskListTab from '../tabs/task-list';
 import List from './list';
 import { TODAY_LISTS, TOMORROW_LISTS } from './data';

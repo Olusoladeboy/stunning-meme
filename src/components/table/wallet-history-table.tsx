@@ -13,8 +13,8 @@ import {
 	SUCCESS_COLOR,
 	PENDING_COLOR,
 	DANGER_COLOR,
-} from '../../utilities/constant';
-import { TransactionStatusTypes } from '../../utilities/types';
+	TransactionStatus,
+} from '../../utilities';
 import { grey } from '@mui/material/colors';
 import FilterIcon from '../icons/filter';
 import SearchInput from '../form-components/search-input';
@@ -54,9 +54,9 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 }));
 
 const setColor = (status: string) => {
-	if (status === TransactionStatusTypes.SUCCESSFUL) {
+	if (status === TransactionStatus.SUCCESSFUL) {
 		return SUCCESS_COLOR;
-	} else if (status === TransactionStatusTypes.PENDING) {
+	} else if (status === TransactionStatus.PENDING) {
 		return PENDING_COLOR;
 	} else {
 		return DANGER_COLOR;
@@ -167,9 +167,9 @@ const WalletHistoryTable = ({ data }: Props) => {
 											},
 										}}
 									>
-										{data.status === TransactionStatusTypes.SUCCESSFUL ? (
+										{data.status === TransactionStatus.SUCCESSFUL ? (
 											<Check />
-										) : data.status === TransactionStatusTypes.PENDING ? (
+										) : data.status === TransactionStatus.PENDING ? (
 											<AccessTime />
 										) : (
 											<Close />

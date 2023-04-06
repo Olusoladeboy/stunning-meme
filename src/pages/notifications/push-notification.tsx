@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
 import { Box, useTheme } from '@mui/material';
 import { grey } from '@mui/material/colors';
-import Layout from '../../components/layout';
+import {
+	Layout,
+	PushNotificationForm,
+	ImagePreview,
+	UploadImage,
+} from '../../components';
 import { BOX_SHADOW } from '../../utilities/constant';
 import BackButton from '../../components/back-button';
-import UploadImage from '../../components/form-components/upload-image';
-import ImagePreview from '../../components/image-preview';
-import PushNotificationForm from '../../components/forms/push-notification-form';
 
 const PushNotification = () => {
 	const theme = useTheme();

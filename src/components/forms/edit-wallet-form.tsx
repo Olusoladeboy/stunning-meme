@@ -8,13 +8,12 @@ import Button from '../button';
 import CustomButton from '../button/custom-button';
 import { grey } from '@mui/material/colors';
 import Select from '../form-components/Select';
-import { UserDetailsType, QueryKeyTypes } from '../../utilities/types';
-import Api from '../../utilities/api';
-import { useAlert } from '../../utilities/hooks';
-import { useAppSelector } from '../../store/hooks';
+import { UserDetails, QueryKeys } from '../../utilities';
+import { useAlert, useHandleError } from '../../hooks';
+import { transactUser } from '../../api';
 
 type Props = {
-	user: UserDetailsType | null;
+	user: UserDetails | null;
 	close?: () => void;
 };
 
@@ -33,11 +32,11 @@ enum ServiceType {
 
 const EditWalletForm = ({ user, close }: Props) => {
 	const theme = useTheme();
+	const handleError = useHandleError();
 	const styles = useStyles(theme);
 	const queryClient = useQueryClient();
 	const setAlert = useAlert();
 	const [isDone, setDone] = useState<boolean>(false);
-	const { token } = useAppSelector((store) => store.authState);
 
 	const validationSchema = yup.object().shape({
 		type: yup
@@ -51,17 +50,21 @@ const EditWalletForm = ({ user, close }: Props) => {
 			.required('Select service'),
 	});
 
-	const { mutate, isLoading } = useMutation(Api.Transactions.TransactUser, {
+	const { mutate, isLoading } = useMutation(transactUser, {
 		onSettled: (data, error) => {
 			if (error) {
-				setAlert({ alert: error, isError: true });
+				const response = handleError({ error });
+				if (response?.message) {
+					setAlert({ message: response.message, type: 'error' });
+				}
 			}
 
 			if (data && data.success) {
 				setDone(true);
-				setAlert({ alert: data.message, type: 'success' });
-				queryClient.invalidateQueries(QueryKeyTypes.GetSingleUser);
-				queryClient.invalidateQueries(QueryKeyTypes.UserWallet);
+				setAlert({ message: data.message, type: 'success' });
+				queryClient.invalidateQueries(QueryKeys.GetSingleUser);
+				queryClient.invalidateQueries(QueryKeys.UserWallet);
+				queryClient.invalidateQueries(QueryKeys.UserWalletTransaction);
 			}
 		},
 	});
@@ -78,7 +81,6 @@ const EditWalletForm = ({ user, close }: Props) => {
 			validationSchema,
 			onSubmit: (values) => {
 				mutate({
-					token: token as string,
 					data: values,
 					id: user?.id as string,
 				});
@@ -167,15 +169,13 @@ const EditWalletForm = ({ user, close }: Props) => {
 			<Box style={styles.btnWrapper}>
 				<CustomButton
 					loading={isLoading}
-					buttonProps={{
-						variant: 'outlined',
-						size: 'large',
-						style: styles.btnOutline,
-						onClick: (e: SyntheticEvent) => {
-							e.preventDefault();
-							handleSubmit();
-						},
+					onClick={(e: React.FormEvent<HTMLButtonElement>) => {
+						e.preventDefault();
+						handleSubmit();
 					}}
+					variant={'outlined'}
+					size={'large'}
+					style={styles.btnOutline}
 				>
 					Update
 				</CustomButton>

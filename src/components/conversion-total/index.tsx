@@ -2,7 +2,7 @@ import React from 'react';
 import { Box, Typography, useTheme, IconButton } from '@mui/material';
 import { grey } from '@mui/material/colors';
 import { Refresh } from '@mui/icons-material';
-import formatNumberToCurrency from '../../utilities/helpers/formatNumberToCurrency';
+import { formatNumberToCurrency } from '../../utilities';
 
 type Props = {
 	total?: number;
@@ -17,7 +17,7 @@ const ConversionTotal = ({ total = 0, handleRefresh }: Props) => {
 			<Box style={styles.main}>
 				<Box>
 					<Typography sx={{ marginBottom: theme.spacing(2) }} variant={'h6'}>
-						Main Balance
+						Total Conversions
 					</Typography>
 					<Typography variant={'h4'}>
 						{formatNumberToCurrency(500000)}

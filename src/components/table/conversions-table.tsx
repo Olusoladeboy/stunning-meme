@@ -6,11 +6,10 @@ import TableBody from '@mui/material/TableBody';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import { StyledTableCell, StyledTableRow } from './components';
-import { LIGHT_GRAY } from '../../utilities/constant';
+import { LIGHT_GRAY, formatNumberToCurrency } from '../../utilities';
 import FilterIcon from '../icons/filter';
 import Loader from '../loader/table-loader';
 import Empty from '../empty/table-empty';
-import formatNumberToCurrency from '../../utilities/helpers/formatNumberToCurrency';
 import SearchInput from '../form-components/search-input';
 
 type Props = {
@@ -144,7 +143,7 @@ const ConversionsTable = ({
 													{conversion.user && conversion.user.lastname}
 												</StyledTableCell>
 												<StyledTableCell style={styles.text}>
-													{conversion.id}
+													{conversion.reference}
 												</StyledTableCell>
 												<StyledTableCell style={styles.text}>
 													{conversion.network.name}
@@ -153,14 +152,10 @@ const ConversionsTable = ({
 													{conversion.phone_number}
 												</StyledTableCell>
 												<StyledTableCell style={styles.text}>
-													{formatNumberToCurrency(
-														conversion.amount.$numberDecimal
-													)}
+													{formatNumberToCurrency(conversion.amount)}
 												</StyledTableCell>
 												<StyledTableCell style={styles.text}>
-													{formatNumberToCurrency(
-														conversion.return_amount.$numberDecimal
-													)}
+													{formatNumberToCurrency(conversion.return_amount)}
 												</StyledTableCell>
 												<StyledTableCell style={styles.text}>
 													{conversion.status}

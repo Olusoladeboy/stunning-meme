@@ -5,7 +5,7 @@ import {
 	DRAWER_WIDTH,
 	MIN_DRAWER_WIDTH,
 	TRANSITION,
-} from '../../utilities/constant';
+} from '../../utilities';
 import Header from '../header';
 import { useAppSelector } from '../../store/hooks';
 

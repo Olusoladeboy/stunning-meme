@@ -1,6 +1,6 @@
 import React, { ReactNode } from 'react';
 import { Box, Container, Typography, useTheme } from '@mui/material';
-import { SECOUNDARY_COLOR } from '../../utilities/constant';
+import { SECOUNDARY_COLOR } from '../../utilities';
 import { grey } from '@mui/material/colors';
 
 type Props = {

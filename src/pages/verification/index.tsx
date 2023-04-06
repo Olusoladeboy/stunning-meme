@@ -3,20 +3,17 @@ import { Box, useTheme } from '@mui/material';
 import { useNavigate, useLocation } from 'react-router-dom';
 import queryString from 'query-string';
 import { useQuery } from 'react-query';
-import { useSnackbar } from 'notistack';
-import Layout from '../../components/layout';
+import { Layout, Pagination, VerificationTable } from '../../components';
 import { useAppSelector } from '../../store/hooks';
 import Api from '../../utilities/api';
-import { QueryKeyTypes } from '../../utilities/types';
-import handleResponse from '../../utilities/helpers/handleResponse';
-import Pagination from '../../components/pagination';
+import { QueryKey } from '../../utilities/types';
 import { MAX_RECORDS } from '../../utilities/constant';
 import LINKS from '../../utilities/links';
-import VerificationTable from '../../components/table/verification-table';
+import { useAlert } from '../../utilities/hooks';
 
 const Verification = () => {
 	const { token } = useAppSelector((store) => store.authState);
-	const { enqueueSnackbar } = useSnackbar();
+	const setAlert = useAlert();
 	const theme = useTheme();
 	const navigate = useNavigate();
 	const [count, setCount] = useState<number>(1);
@@ -32,7 +29,7 @@ const Verification = () => {
 	}, [query, query.page]);
 
 	const { isLoading, data } = useQuery(
-		QueryKeyTypes.AllUsers,
+		QueryKey.AllUsers,
 		() =>
 			Api.User.AllUsers({
 				token: token as string,
@@ -47,10 +44,7 @@ const Verification = () => {
 			enabled: !!token,
 			onSettled: (data, error) => {
 				if (error) {
-					const res = handleResponse({ error, isDisplayMessage: true });
-					if (res?.message) {
-						enqueueSnackbar(res.message, { variant: 'error' });
-					}
+					setAlert({ data: error, type: 'error' });
 				}
 				if (data && data.success) {
 					const total = data.metadata.total;

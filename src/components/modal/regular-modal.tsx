@@ -32,7 +32,7 @@ const RegularModal = ({
 }: Props) => {
 	const theme = useTheme();
 	return (
-		<ModalWrapper close={close} contentWidth={width}>
+		<ModalWrapper closeModal={close} contentWidth={width as string}>
 			<Box
 				sx={{
 					display: 'flex',

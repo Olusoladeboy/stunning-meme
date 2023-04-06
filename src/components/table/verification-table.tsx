@@ -11,7 +11,10 @@ import {
 	SUCCESS_COLOR,
 	BOX_SHADOW,
 	DANGER_COLOR,
-} from '../../utilities/constant';
+	LINKS,
+	UserDetails,
+	QueryKeys,
+} from '../../utilities';
 import FilterIcon from '../icons/filter';
 import {
 	StyledTableCell as TableCell,
@@ -21,49 +24,49 @@ import TableHeader from '../header/table-header';
 import Empty from '../empty';
 import Button from '../button';
 import CustomButton from '../button/custom-button';
-import LINKS from '../../utilities/links';
 import Loader from '../loader/table-loader';
-import { UserDetailsType, QueryKeyTypes } from '../../utilities/types';
-import { useAlert } from '../../utilities/hooks';
+import { useAlert, useHandleError } from '../../hooks';
 import { useAppSelector } from '../../store/hooks';
-import Api from '../../utilities/api';
+import { verifyUser } from '../../api';
 
 type Props = {
-	users: UserDetailsType[] | null;
+	users: UserDetails[] | null;
 	isLoading?: boolean;
 };
 
 const VerificationTable = ({ users, isLoading }: Props) => {
 	const navigate = useNavigate();
-
+	const handleError = useHandleError();
 	const theme = useTheme();
 	const styles = useStyles(theme);
 
 	const queryClient = useQueryClient();
 	const setAlert = useAlert();
 	const { token } = useAppSelector((store) => store.authState);
-	const [selectedUser, setSelectUser] = useState<null | UserDetailsType>(null);
+	const [selectedUser, setSelectUser] = useState<null | UserDetails>(null);
 
 	const { isLoading: isVerifyingUser } = useQuery(
 		'',
 		() =>
-			Api.User.VerifyUser({
-				token: token as string,
-				id: selectedUser?.id as string,
-			}),
+			verifyUser(
+				selectedUser?.id as string,
+			),
 		{
 			enabled: !!(token && selectedUser),
 			onSettled: (data, error) => {
 				setSelectUser(null);
 				if (error) {
-					setAlert({ alert: error, isError: true });
+					const response = handleError({ error });
+					if (response?.message) {
+						setAlert({ message: response?.message, type: 'error' });
+					}
 				}
 
 				if (data && data.success) {
-					setAlert({ alert: data.message, type: 'success' });
-					queryClient.invalidateQueries(QueryKeyTypes.AllUsers);
-					queryClient.invalidateQueries(QueryKeyTypes.GetSingleUser);
-					queryClient.invalidateQueries(QueryKeyTypes.Statistics);
+					setAlert({ message: data.message, type: 'success' });
+					queryClient.invalidateQueries(QueryKeys.AllUsers);
+					queryClient.invalidateQueries(QueryKeys.GetSingleUser);
+					queryClient.invalidateQueries(QueryKeys.Statistics);
 				}
 			},
 		}
@@ -178,11 +181,9 @@ const VerificationTable = ({ users, isLoading }: Props) => {
 																		? true
 																		: false
 																}
-																buttonProps={{
-																	style: styles.verifyBtn as CSSProperties,
-																	size: 'small',
-																	onClick: () => setSelectUser(row),
-																}}
+																onClick={() => setSelectUser(row)}
+																style={styles.verifyBtn as CSSProperties}
+																size={'small'}
 															>
 																Verify user
 															</CustomButton>

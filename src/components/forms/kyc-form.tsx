@@ -1,16 +1,13 @@
 import React, { useEffect } from 'react';
 import { useMutation, useQueryClient } from 'react-query';
 import { useFormik } from 'formik';
-import { useSnackbar } from 'notistack';
 import { Box, useTheme, Typography } from '@mui/material';
 import TextInput from '../form-components/TextInput';
 import Button from '../button/custom-button';
 import { grey } from '@mui/material/colors';
-import { QueryKeyTypes } from '../../utilities/types';
-import Api from '../../utilities/api';
-import { useAppSelector } from '../../store/hooks';
-import handleResponse from '../../utilities/helpers/handleResponse';
-import ValidationSchemas from '../../utilities/validationSchema';
+import { QueryKeys, validationSchema } from '../../utilities';
+import { useAlert, useHandleError } from '../../hooks';
+import { updateKyc } from '../../api';
 
 type Props = {
 	data?: { [key: string]: any };
@@ -19,9 +16,9 @@ type Props = {
 
 const KycForm = ({ data, level }: Props) => {
 	const theme = useTheme();
+	const handleError = useHandleError();
+	const setAlert = useAlert();
 	const styles = useStyles(theme);
-	const { token } = useAppSelector((store) => store.authState);
-	const { enqueueSnackbar } = useSnackbar();
 
 	const initialValues = {
 		dailyLimit: '',
@@ -31,19 +28,21 @@ const KycForm = ({ data, level }: Props) => {
 	};
 
 	const queryClient = useQueryClient();
-	const { isLoading, mutate } = useMutation(Api.KycLimits.Update, {
+	const { isLoading, mutate } = useMutation(updateKyc, {
 		onSettled: (data, error) => {
 			if (error) {
-				const res = handleResponse({ error, isDisplayMessage: true });
-				if (res?.message) {
-					enqueueSnackbar(res.message, { variant: 'error' });
+				const response = handleError({ error });
+
+				if (response?.message) {
+					setAlert({ message: response.message, type: 'error' });
 				}
 			}
 			if (data && data.success) {
-				enqueueSnackbar(data.message, {
-					variant: 'success',
+				setAlert({
+					message: data.message,
+					type: 'success',
 				});
-				queryClient.invalidateQueries(QueryKeyTypes.KycLimit);
+				queryClient.invalidateQueries(QueryKeys.KycLimit);
 			}
 		},
 	});
@@ -51,9 +50,9 @@ const KycForm = ({ data, level }: Props) => {
 	const { touched, errors, handleSubmit, handleChange, values, setValues } =
 		useFormik({
 			initialValues,
-			validationSchema: ValidationSchemas.KycLimit,
+			validationSchema: validationSchema.KycLimit,
 			onSubmit: (values) => {
-				mutate({ token: token || '', data: values, id: data ? data.id : '' });
+				mutate({ data: values, id: data ? data.id : '' });
 			},
 		});
 
@@ -158,14 +157,12 @@ const KycForm = ({ data, level }: Props) => {
 			</Box>
 			<Button
 				loading={isLoading}
-				buttonProps={{
-					style: styles.btn,
-					size: 'large',
-					onClick: (e) => {
-						e.preventDefault();
-						handleSubmit();
-					},
+				onClick={(e: React.FormEvent<HTMLButtonElement>) => {
+					e.preventDefault();
+					handleSubmit();
 				}}
+				style={styles.btn}
+				size={'large'}
 			>
 				Save
 			</Button>

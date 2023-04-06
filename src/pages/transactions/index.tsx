@@ -3,17 +3,19 @@ import queryString from 'query-string';
 import { Box, Typography, useTheme } from '@mui/material';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { grey } from '@mui/material/colors';
-import Layout from '../../components/layout';
-import TransactionsTable from '../../components/table/transactions-table';
-import { BOX_SHADOW } from '../../utilities/constant';
-import TransactionMainBalance from '../../components/transaction-main-balance';
+import {
+	Layout,
+	TransactionsTable,
+	TransactionMainBalance,
+	Pagination,
+} from '../../components';
+import { BOX_SHADOW } from '../../utilities';
 import { useQueryHook } from '../../utilities/api/hooks';
 import { useAppSelector } from '../../store/hooks';
 import Api from '../../utilities/api';
-import { QueryKeyTypes } from '../../utilities/types';
+import { QueryKey } from '../../utilities/types';
 import { MAX_RECORDS } from '../../utilities/constant';
 import LINKS from '../../utilities/links';
-import Pagination from '../../components/pagination';
 
 const Transactions = () => {
 	const theme = useTheme();
@@ -34,7 +36,7 @@ const Transactions = () => {
 
 	const { isLoading, data } = useQueryHook({
 		keepPreviousData: true,
-		queryKey: [QueryKeyTypes.AllTransactions, page],
+		queryKey: [QueryKey.AllTransactions, page],
 		queryFn: () =>
 			Api.Transactions.All({
 				token: token as string,

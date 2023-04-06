@@ -1,12 +1,11 @@
 import React from 'react';
-import AuthContainer from '../../components/layout/auth';
-import CreateNewPasswordForm from '../../components/forms/create-new-password-form';
+import { AuthLayout, CreatePasswordForm } from '../../components';
 
 const CreateNewPassword = () => {
 	return (
-		<AuthContainer>
-			<CreateNewPasswordForm />
-		</AuthContainer>
+		<AuthLayout>
+			<CreatePasswordForm />
+		</AuthLayout>
 	);
 };
 

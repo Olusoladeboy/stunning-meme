@@ -2,7 +2,7 @@ import React from 'react';
 import { Box, Typography, useTheme } from '@mui/material';
 import { ArrowDropDown } from '@mui/icons-material';
 import { useAppSelector } from '../../store/hooks';
-import { ThemeModeType } from '../../utilities/types';
+import { ThemeModeType } from '../../utilities';
 import { grey } from '@mui/material/colors';
 
 type Props = {

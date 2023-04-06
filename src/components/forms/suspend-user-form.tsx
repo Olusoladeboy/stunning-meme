@@ -1,4 +1,4 @@
-import React, { CSSProperties, useEffect, SyntheticEvent } from 'react';
+import React, { CSSProperties, useEffect } from 'react';
 import { useFormik } from 'formik';
 import { useMutation, useQueryClient } from 'react-query';
 import * as yup from 'yup';
@@ -6,22 +6,21 @@ import { Box, useTheme, Typography, Switch } from '@mui/material';
 import TextInput from '../form-components/TextInput';
 import Button from '../button/custom-button';
 import { grey } from '@mui/material/colors';
-import { UserDetailsType, QueryKeyTypes } from '../../utilities/types';
+import { UserDetails, QueryKeys } from '../../utilities';
 import TextArea from '../form-components/text-area';
-import Api from '../../utilities/api';
-import { useAppSelector } from '../../store/hooks';
-import { useAlert } from '../../utilities/hooks';
+import { useAlert, useHandleError } from '../../hooks';
 import UnsuspendUser from '../unsuspend-user';
+import { suspendUser } from '../../api';
 
 type Props = {
-	user: UserDetailsType | null;
+	user: UserDetails | null;
 };
 
 const SuspendUserForm = ({ user }: Props) => {
 	const theme = useTheme();
+	const handleError = useHandleError();
 	const styles = useStyles(theme);
 	const setAlert = useAlert();
-	const { token } = useAppSelector((store) => store.authState);
 
 	const validationSchema = yup.object().shape({
 		suspended: yup.boolean().required('Suspend or unsuspend user'),
@@ -32,18 +31,21 @@ const SuspendUserForm = ({ user }: Props) => {
 	});
 
 	const queryClient = useQueryClient();
-	const { isLoading, mutate } = useMutation(Api.User.SuspendUser, {
+	const { isLoading, mutate } = useMutation(suspendUser, {
 		onSettled: (data, error) => {
 			if (error) {
-				setAlert({ alert: error, isError: true });
+				const response = handleError({ error });
+				if (response?.message) {
+					setAlert({ message: response.message, type: 'error' });
+				}
 			}
 
 			if (data && data.success) {
-				setAlert({ alert: data.message, type: 'success' });
+				setAlert({ message: data.message, type: 'success' });
 				resetForm();
-				queryClient.invalidateQueries(QueryKeyTypes.AllUsers);
-				queryClient.invalidateQueries(QueryKeyTypes.GetSingleUser);
-				queryClient.invalidateQueries(QueryKeyTypes.Statistics);
+				queryClient.invalidateQueries(QueryKeys.AllUsers);
+				queryClient.invalidateQueries(QueryKeys.GetSingleUser);
+				queryClient.invalidateQueries(QueryKeys.Statistics);
 			}
 		},
 	});
@@ -67,7 +69,6 @@ const SuspendUserForm = ({ user }: Props) => {
 		validationSchema,
 		onSubmit: (values) => {
 			mutate({
-				token: token as string,
 				data: values,
 				id: user?.id as string,
 			});
@@ -150,14 +151,12 @@ const SuspendUserForm = ({ user }: Props) => {
 
 						<Button
 							loading={isLoading}
-							buttonProps={{
-								size: 'large',
-								style: styles.btn,
-								onClick: (e: SyntheticEvent) => {
-									e.preventDefault();
-									handleSubmit();
-								},
+							onClick={(e: React.FormEvent<HTMLButtonElement>) => {
+								e.preventDefault();
+								handleSubmit();
 							}}
+							size={'large'}
+							style={styles.btn}
 						>
 							Suspend user
 						</Button>

@@ -23,8 +23,8 @@ import CouponIcon from '../icons/coupon';
 import ShareIcon from '../icons/share';
 import { useAppSelector } from '../../store/hooks';
 import Image from '../image';
-import getActiveLink from '../../utilities/helpers/getActivePath';
-import LINKS from '../../utilities/links';
+import { getActiveLink, LINKS } from '../../utilities';
+import { useLogoutUser } from '../../hooks';
 
 type ListItemButtonProps = {
 	icon: any;
@@ -84,6 +84,7 @@ const DrawerList = () => {
 	const theme = useTheme();
 	const initialColor = theme.palette.primary.main;
 	const activeColor = theme.palette.secondary.main;
+	const logout = useLogoutUser();
 
 	const styles = useStyles(theme);
 	const { isToggleDrawer } = useAppSelector((store) => store.appState);
@@ -281,6 +282,25 @@ const DrawerList = () => {
 					}
 				/>
 				<ListItemButton
+					name={'Messages'}
+					link={LINKS.Messages}
+					isActive={
+						getActiveLink({ name: 'messages', currentPath: pathname }).isActive
+					}
+					icon={
+						<CouponIcon
+							color={
+								getActiveLink({
+									name: 'messages',
+									currentPath: pathname,
+								}).isActive
+									? activeColor
+									: initialColor
+							}
+						/>
+					}
+				/>
+				<ListItemButton
 					name={'Referral'}
 					link={LINKS.Referrals}
 					isActive={
@@ -375,6 +395,7 @@ const DrawerList = () => {
 					}
 				/>
 				<MuiListItemButton
+					onClick={logout}
 					style={{
 						marginTop: '3rem',
 						alignItems: 'center',

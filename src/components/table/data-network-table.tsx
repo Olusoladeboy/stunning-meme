@@ -2,7 +2,6 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import Table from '@mui/material/Table';
 import { useQuery, useQueryClient, useMutation } from 'react-query';
-import { useSnackbar } from 'notistack';
 import Box from '@mui/material/Box';
 import { useTheme } from '@mui/material';
 import TableBody from '@mui/material/TableBody';
@@ -14,62 +13,66 @@ import {
 	BOX_SHADOW,
 	SUCCESS_COLOR,
 	DANGER_COLOR,
-} from '../../utilities/constant';
+	QueryKeys,
+	API_ENDPOINTS,
+	LINKS,
+} from '../../utilities';
 import {
 	StyledTableCell as TableCell,
 	StyledTableRow as TableRow,
 } from './components';
 import Button from '../button';
-import { QueryKeyTypes, API_ENDPOINTS } from '../../utilities/types';
-import LINKS from '../../utilities/links';
-import Api from '../../utilities/api';
 import { useAppSelector } from '../../store/hooks';
 import TableLoader from '../loader/table-loader';
-import handleResponse from '../../utilities/helpers/handleResponse';
 import Loader from '../loader';
+import { useAlert, useHandleError } from '../../hooks';
+import { networks, updateNetwork } from '../../api';
 
 const DataNetworkTable = () => {
 	const theme = useTheme();
+	const setAlert = useAlert();
+	const handleError = useHandleError();
 	const styles = useStyles(theme);
-	const { enqueueSnackbar } = useSnackbar();
 	const queryClient = useQueryClient();
 	const navigate = useNavigate();
 	const { token } = useAppSelector((store) => store.authState);
 
 	const { isLoading, data } = useQuery(
-		QueryKeyTypes.DataNetwork,
+		QueryKeys.DataNetwork,
 		() =>
-			Api.Network.GetNetwork({
-				token: token || '',
+			networks({
 				url: API_ENDPOINTS.DataNetwork,
 			}),
 		{
 			enabled: !!token,
 			onSettled: (data, error) => {
 				if (error) {
-					const res = handleResponse({ error, isDisplayMessage: true });
-					if (res?.message) {
-						enqueueSnackbar(res.message, { variant: 'error' });
+					const response = handleError({ error });
+					if (response?.message) {
+						setAlert({ message: response.message, type: 'error' });
 					}
 				}
 			},
 		}
 	);
 
-	const { isLoading: isUpdating, mutate: updateNetwork } = useMutation(
-		Api.Network.UpdateNetwork,
+	const { isLoading: isUpdating, mutate: mutateUpdateNetwork } = useMutation(
+		updateNetwork,
 		{
 			onSettled: (data, error) => {
 				if (error) {
-					const res = handleResponse({ error, isDisplayMessage: true });
-					if (res?.message) {
-						enqueueSnackbar(res.message, { variant: 'error' });
+					const response = handleError({ error });
+					if (response?.message) {
+						setAlert({ message: response.message, type: 'error' });
 					}
 				}
 
 				if (data && data.success) {
-					enqueueSnackbar(data.message, { variant: 'success' });
-					queryClient.invalidateQueries(QueryKeyTypes.DataNetwork);
+					setAlert({
+						message: data.message,
+						type: 'success',
+					});
+					queryClient.invalidateQueries(QueryKeys.DataNetwork);
 				}
 			},
 		}
@@ -82,8 +85,7 @@ const DataNetworkTable = () => {
 		status: boolean;
 		id: string;
 	}) => {
-		updateNetwork({
-			token: token || '',
+		mutateUpdateNetwork({
 			data: {
 				isActive: status,
 			},
@@ -107,7 +109,7 @@ const DataNetworkTable = () => {
 					>
 						<TableRow>
 							<TableCell>Network Name</TableCell>
-							<TableCell>Number of plans</TableCell>
+							<TableCell>Number of Types</TableCell>
 							<TableCell sx={{ minWidth: '50px', maxWidth: '100px' }} />
 							<TableCell />
 						</TableRow>
@@ -176,7 +178,11 @@ const DataNetworkTable = () => {
 									</TableCell>
 									<TableCell
 										onClick={() =>
-											navigate(`${LINKS.DataPlan}/${data.name}/${data.id}`)
+											navigate(
+												`${LINKS.DataTypes}/${data.name
+													.toString()
+													.toLowerCase()}/${data.id}`
+											)
 										}
 										sx={{
 											':hover': {
@@ -185,7 +191,7 @@ const DataNetworkTable = () => {
 										}}
 										style={styles.viewPlan}
 									>
-										View plan
+										View Types
 									</TableCell>
 								</TableRow>
 							))

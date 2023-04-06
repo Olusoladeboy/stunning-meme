@@ -1,5 +1,5 @@
 import * as yup from 'yup';
-import { PHONE_REX } from '../helpers/RegExpressions';
+import { PHONE_REX } from '../helpers/reg-expression';
 
 const ValidationSchema = {
 	OtpVerificationRequest: yup.object().shape({
@@ -52,6 +52,28 @@ const ValidationSchema = {
 		weeklyLimit: yup.number().required('Specify weekly limit'),
 		monthlyLimit: yup.number().required('Specify mothly limit'),
 		perTransactionLimit: yup.number().required('Specify transaction per limit'),
+	}),
+	Coupon: yup.object().shape({
+		code: yup.string().required('Specify coupon code'),
+		type: yup
+			.string()
+			.notOneOf(['Select coupon type'], 'Select coupon type')
+			.required('Select coupon type'),
+		expiresIn: yup.date().required('Specify expire date'),
+		gift: yup
+			.number()
+			.positive('Gift must be positive number')
+			.required('Specify gift in number'),
+	}),
+	EditCoupon: yup.object().shape({
+		gift: yup
+			.number()
+			.positive('Gift must be positive number')
+			.required('Specify gift in number'),
+		type: yup
+			.string()
+			.notOneOf(['Select coupon type'], 'Select coupon type')
+			.required('Select coupon type'),
 	}),
 };
 

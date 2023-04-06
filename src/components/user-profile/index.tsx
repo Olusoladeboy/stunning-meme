@@ -5,15 +5,15 @@ import moment from 'moment';
 import DetailItem from './detail-item';
 import Button from '../button';
 import ModalWrapper from '../modal/Wrapper';
-import EditProfileForm from '../forms/edit-profile';
+import EditProfileForm from '../forms/profile-form';
 import UserAvatarWithDetails from '../avatar-with-details';
 import UserWallet from '../user-wallet';
-import { UserDetailsType } from '../../utilities/types';
+import { UserDetails } from '../../utilities/types';
 import { SUCCESS_COLOR } from '../../utilities/constant';
 import VerifyUser from '../verify-user';
 
 type Props = {
-	user: UserDetailsType | null;
+	user: UserDetails | null;
 };
 
 const UserProfile = ({ user }: Props) => {
@@ -37,7 +37,7 @@ const UserProfile = ({ user }: Props) => {
 			<Box sx={{ marginTop: theme.spacing(5) }}>
 				{isEditProfile && (
 					<ModalWrapper
-						close={() => setEditProfile(false)}
+						closeModal={() => setEditProfile(false)}
 						title={'Edit Profile'}
 					>
 						<EditProfileForm />

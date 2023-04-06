@@ -2,41 +2,39 @@ import React, { CSSProperties } from 'react';
 import { Box, useTheme, Typography } from '@mui/material';
 import { useFormik } from 'formik';
 import { useMutation, useQueryClient } from 'react-query';
-import { useSnackbar } from 'notistack';
 import TextInput from '../form-components/TextInput';
 import { grey } from '@mui/material/colors';
 import {
-	NetworkPageTypes,
-	NetworkDataTypes,
-	QueryKeyTypes,
+	NetworkPage,
+	NetworkData as INetworkData,
+	QueryKey,
 	API_ENDPOINTS,
-} from '../../utilities/types';
-import ValidationSchema from '../../utilities/validationSchema';
+	validationSchema,
+} from '../../utilities';
 import Button from '../button/custom-button';
-import Api from '../../utilities/api';
-import handleResponse from '../../utilities/helpers/handleResponse';
-import { useAppSelector } from '../../store/hooks';
+import { useAlert, useHandleError } from '../../hooks';
+import { createNetwork, updateNetwork } from '../../api';
 
-interface NetworkData extends NetworkDataTypes {
+interface NetworkData extends INetworkData {
 	id?: string;
 }
 
 type Props = {
 	type:
-		| NetworkPageTypes.DATA_NETWORK
-		| NetworkPageTypes.AIRTIME_NETWORK
-		| NetworkPageTypes.CONVERSION_NETWORK;
+		| NetworkPage.DATA_NETWORK
+		| NetworkPage.AIRTIME_NETWORK
+		| NetworkPage.CONVERSION_NETWORK;
 	handleContinue?: () => void;
 	network?: NetworkData;
 	isEdit?: boolean;
 };
 
-const AddNetworkForm = ({ type, handleContinue, network, isEdit }: Props) => {
+const NetworkForm = ({ type, handleContinue, network, isEdit }: Props) => {
 	const theme = useTheme();
+	const handleError = useHandleError();
+	const setAlert = useAlert();
 	const styles = useStyles(theme);
-	const { enqueueSnackbar } = useSnackbar();
 	const queryClient = useQueryClient();
-	const { token } = useAppSelector((store) => store.authState);
 
 	const initialValues: NetworkData = {
 		name: '',
@@ -45,22 +43,25 @@ const AddNetworkForm = ({ type, handleContinue, network, isEdit }: Props) => {
 		number: '',
 	};
 
-	const { isLoading, mutate: createNetwork } = useMutation(
-		Api.Network.CreateNetwork,
+	const { isLoading, mutate: mutateCreateNetwork } = useMutation(
+		createNetwork,
 		{
 			onSettled: (data, error) => {
 				if (error) {
-					const res = handleResponse({ error, isDisplayMessage: true });
-					if (res?.message) {
-						enqueueSnackbar(res.message, { variant: 'error' });
+					const response = handleError({ error });
+					if (response?.message) {
+						setAlert({ message: response.message, type: 'error' });
 					}
 				}
 
 				if (data && data.success) {
-					enqueueSnackbar(data.message, { variant: 'success' });
-					queryClient.invalidateQueries(QueryKeyTypes.DataNetwork);
-					queryClient.invalidateQueries(QueryKeyTypes.AirtimeNetwork);
-					queryClient.invalidateQueries(QueryKeyTypes.ConvertNetwork);
+					setAlert({
+						message: data.message,
+						type: 'success',
+					});
+					queryClient.invalidateQueries(QueryKey.DataNetwork);
+					queryClient.invalidateQueries(QueryKey.AirtimeNetwork);
+					queryClient.invalidateQueries(QueryKey.ConvertNetwork);
 					typeof handleContinue !== 'undefined' && handleContinue();
 				}
 			},
@@ -70,18 +71,18 @@ const AddNetworkForm = ({ type, handleContinue, network, isEdit }: Props) => {
 	const handleMutateNetwork = (values: NetworkData) => {
 		const { name, rate, ussd, number } = values;
 		const url =
-			type === NetworkPageTypes.DATA_NETWORK
+			type === NetworkPage.DATA_NETWORK
 				? API_ENDPOINTS.DataNetwork
-				: type === NetworkPageTypes.AIRTIME_NETWORK
+				: type === NetworkPage.AIRTIME_NETWORK
 				? API_ENDPOINTS.AirtimeNetwork
 				: API_ENDPOINTS.ConvertNetworks;
 
 		const createDataPayload =
-			type === NetworkPageTypes.DATA_NETWORK
+			type === NetworkPage.DATA_NETWORK
 				? {
 						name,
 				  }
-				: type === NetworkPageTypes.AIRTIME_NETWORK
+				: type === NetworkPage.AIRTIME_NETWORK
 				? {
 						name,
 						rate,
@@ -94,11 +95,11 @@ const AddNetworkForm = ({ type, handleContinue, network, isEdit }: Props) => {
 				  };
 
 		const updateDataPayload =
-			type === NetworkPageTypes.DATA_NETWORK
+			type === NetworkPage.DATA_NETWORK
 				? {
 						name,
 				  }
-				: type === NetworkPageTypes.AIRTIME_NETWORK
+				: type === NetworkPage.AIRTIME_NETWORK
 				? {
 						rate,
 						ussd,
@@ -109,53 +110,54 @@ const AddNetworkForm = ({ type, handleContinue, network, isEdit }: Props) => {
 				  };
 
 		if (isEdit && network) {
-			return updateNetwork({
+			return mutateUpdateNetwork({
 				url,
 				data: updateDataPayload,
-				token: token as string,
 				id: network.id as string,
 			});
 		}
 
-		createNetwork({
+		mutateCreateNetwork({
 			url,
 			data: createDataPayload,
-			token: token as string,
 		});
 	};
 
-	const { isLoading: isUpdating, mutate: updateNetwork } = useMutation(
-		Api.Network.UpdateNetwork,
+	const { isLoading: isUpdating, mutate: mutateUpdateNetwork } = useMutation(
+		updateNetwork,
 		{
 			onSettled: (data, error) => {
 				if (error) {
-					const res = handleResponse({ error, isDisplayMessage: true });
-					if (res?.message) {
-						enqueueSnackbar(res.message, { variant: 'error' });
+					const response = handleError({ error });
+					if (response?.message) {
+						setAlert({ message: response.message, type: 'error' });
 					}
 				}
 
 				if (data && data.success) {
-					enqueueSnackbar(data.message, { variant: 'success' });
-					queryClient.invalidateQueries(QueryKeyTypes.AirtimeNetwork);
-					queryClient.invalidateQueries(QueryKeyTypes.ConvertNetwork);
-					queryClient.invalidateQueries(QueryKeyTypes.DataNetwork);
+					setAlert({
+						message: data.message,
+						type: 'success',
+					});
+					queryClient.invalidateQueries(QueryKey.AirtimeNetwork);
+					queryClient.invalidateQueries(QueryKey.ConvertNetwork);
+					queryClient.invalidateQueries(QueryKey.DataNetwork);
 					typeof handleContinue !== 'undefined' && handleContinue();
 				}
 			},
 		}
 	);
 
-	const validationSchema =
-		type === NetworkPageTypes.DATA_NETWORK
-			? ValidationSchema.DataNetwork
-			: type === NetworkPageTypes.AIRTIME_NETWORK
-			? ValidationSchema.AirtimeNetwork
-			: ValidationSchema.ConvertNetwork;
+	const $validationSchema =
+		type === NetworkPage.DATA_NETWORK
+			? validationSchema.DataNetwork
+			: type === NetworkPage.AIRTIME_NETWORK
+			? validationSchema.AirtimeNetwork
+			: validationSchema.ConvertNetwork;
 
 	const { errors, touched, values, handleChange, handleSubmit } = useFormik({
 		initialValues: network ? network : initialValues,
-		validationSchema,
+		validationSchema: $validationSchema,
 		onSubmit: (values) => {
 			handleMutateNetwork(values);
 		},
@@ -175,7 +177,11 @@ const AddNetworkForm = ({ type, handleContinue, network, isEdit }: Props) => {
 				<Box
 					sx={{
 						display: 'grid',
-						gridTemplateColumns: { xs: '1fr', md: 'repeat(2, 1fr)' },
+						gridTemplateColumns: {
+							xs: '1fr',
+							md:
+								type === NetworkPage.AIRTIME_NETWORK ? 'repeat(2, 1fr)' : '1fr',
+						},
 						gap: theme.spacing(4),
 					}}
 				>
@@ -195,8 +201,7 @@ const AddNetworkForm = ({ type, handleContinue, network, isEdit }: Props) => {
 					</Box>
 					<Box
 						sx={{
-							display:
-								type === NetworkPageTypes.AIRTIME_NETWORK ? 'block' : 'none',
+							display: type === NetworkPage.AIRTIME_NETWORK ? 'block' : 'none',
 						}}
 					>
 						<Typography variant={'body1'} style={styles.label}>
@@ -214,7 +219,7 @@ const AddNetworkForm = ({ type, handleContinue, network, isEdit }: Props) => {
 					<Box
 						sx={{
 							display:
-								type === NetworkPageTypes.CONVERSION_NETWORK ? 'block' : 'none',
+								type === NetworkPage.CONVERSION_NETWORK ? 'block' : 'none',
 						}}
 					>
 						<Typography variant={'body1'} style={styles.label}>
@@ -232,8 +237,8 @@ const AddNetworkForm = ({ type, handleContinue, network, isEdit }: Props) => {
 					<Box
 						sx={{
 							display:
-								type === NetworkPageTypes.AIRTIME_NETWORK ||
-								type === NetworkPageTypes.CONVERSION_NETWORK
+								type === NetworkPage.AIRTIME_NETWORK ||
+								type === NetworkPage.CONVERSION_NETWORK
 									? 'block'
 									: 'none',
 						}}
@@ -253,15 +258,13 @@ const AddNetworkForm = ({ type, handleContinue, network, isEdit }: Props) => {
 				</Box>
 			</Box>
 			<Button
-				loading={isLoading || isUpdating}
-				buttonProps={{
-					size: 'large',
-					style: styles.btn,
-					onClick: (e) => {
-						e.preventDefault();
-						handleSubmit();
-					},
+				onClick={(e: React.FormEvent<HTMLButtonElement>) => {
+					e.preventDefault();
+					handleSubmit();
 				}}
+				loading={isLoading || isUpdating}
+				size={'large'}
+				style={styles.btn}
 			>
 				Save
 			</Button>
@@ -301,4 +304,4 @@ const useStyles = (theme: any) => ({
 	},
 });
 
-export default AddNetworkForm;
+export default NetworkForm;

@@ -1,39 +1,32 @@
 import React, { CSSProperties, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { useSnackbar } from 'notistack';
 import { useMutation, useQueryClient } from 'react-query';
 import * as yup from 'yup';
 import { Box, useTheme, Typography, MenuItem } from '@mui/material';
+import { grey } from '@mui/material/colors';
 import { useFormik } from 'formik';
 import TextInput from '../form-components/TextInput';
 import Button from '../button/custom-button';
-import { grey } from '@mui/material/colors';
-import { DataPlan, DataPlanType } from '../../utilities/types';
+import { DataPlan, DataPlanType, QueryKeys } from '../../utilities';
 import Select from '../form-components/Select';
-import Api from '../../utilities/api';
-import handleResponse from '../../utilities/helpers/handleResponse';
-import { QueryKeyTypes } from '../../utilities/types';
-import { useAppSelector } from '../../store/hooks';
 import TextPlaceholder from '../partials/text-placeholder';
-
-interface ExtendedDataType extends DataPlan {
-	id: string;
-}
+import { useAlert, useHandleError } from '../../hooks';
+import { createDataPlan, updateDataPlan } from '../../api';
 
 type Props = {
-	dataPayload?: ExtendedDataType;
-	handleOnSubmit?: () => void;
+	dataPayload?: DataPlan;
+	callback?: () => void;
 };
 
 const SELECT_PLAN = 'Select plan';
 
-const DataPlanForm = ({ dataPayload, handleOnSubmit }: Props) => {
+const DataPlanForm = ({ dataPayload, callback }: Props) => {
 	const theme = useTheme();
+	const handleError = useHandleError();
+	const setAlert = useAlert();
 	const styles = useStyles(theme);
 	const params = useParams();
-	const { enqueueSnackbar } = useSnackbar();
 	const [dataPlanType, setDataPlanType] = useState('');
-	const { token } = useAppSelector((store) => store.authState);
 
 	const validationSchema = yup.object().shape({
 		name: yup.string().required('Enter name'),
@@ -60,41 +53,49 @@ const DataPlanForm = ({ dataPayload, handleOnSubmit }: Props) => {
 	const queryClient = useQueryClient();
 
 	const { isLoading: isCreatingPlan, mutate: createPlan } = useMutation(
-		Api.DataPlan.CreatePlan,
+		createDataPlan,
 		{
 			onSettled: (data, error) => {
 				if (error) {
-					const res = handleResponse({ error });
-					if (res?.message) {
-						enqueueSnackbar(res.message, { variant: 'error' });
+					const response = handleError({ error });
+
+					if (response?.message) {
+						setAlert({ message: response.message, type: 'error' });
 					}
 				}
 
 				if (data && data.success) {
-					typeof handleOnSubmit !== 'undefined' && handleOnSubmit();
-					enqueueSnackbar(data.message, { variant: 'success' });
+					typeof callback !== 'undefined' && callback();
+					setAlert({
+						message: data.message,
+						type: 'success',
+					});
 					resetForm();
-					queryClient.invalidateQueries(QueryKeyTypes.DataPlans);
+					queryClient.invalidateQueries(QueryKeys.DataPlans);
 				}
 			},
 		}
 	);
 
 	const { isLoading: isUpdatingPlan, mutate: updatePlan } = useMutation(
-		Api.DataPlan.UpdatePlan,
+		updateDataPlan,
 		{
 			onSettled: (data, error) => {
 				if (error) {
-					const res = handleResponse({ error });
-					if (res?.message) {
-						enqueueSnackbar(res.message, { variant: 'error' });
+					const response = handleError({ error });
+
+					if (response?.message) {
+						setAlert({ message: response.message, type: 'error' });
 					}
 				}
 
 				if (data && data.success) {
-					typeof handleOnSubmit !== 'undefined' && handleOnSubmit();
-					enqueueSnackbar(data.message, { variant: 'success' });
-					queryClient.invalidateQueries(QueryKeyTypes.DataPlans);
+					typeof callback !== 'undefined' && callback();
+					setAlert({
+						message: data.message,
+						type: 'success',
+					});
+					queryClient.invalidateQueries(QueryKeys.DataPlans);
 				}
 			},
 		}
@@ -122,7 +123,6 @@ const DataPlanForm = ({ dataPayload, handleOnSubmit }: Props) => {
 
 		if (dataPayload && Object.keys(dataPayload).length > 0) {
 			updatePlan({
-				token: token || '',
 				data:
 					data.type === DataPlanType.SMS
 						? {
@@ -131,13 +131,10 @@ const DataPlanForm = ({ dataPayload, handleOnSubmit }: Props) => {
 								shortcode_sms: data.shortcode_sms,
 						  }
 						: updataDataPlan,
-				id: dataPayload.id,
+				id: dataPayload?.id as string,
 			});
 		} else {
-			createPlan({
-				token: token || '',
-				data: data.type === DataPlanType.SMS ? data : createPlanData,
-			});
+			createPlan(data.type === DataPlanType.SMS ? data : createPlanData);
 		}
 	};
 
@@ -209,9 +206,62 @@ const DataPlanForm = ({ dataPayload, handleOnSubmit }: Props) => {
 						/>
 					)}
 				</Box>
+
 				<Box>
 					<Typography variant={'body1'} style={styles.label}>
-						Data type
+						Plan Amount
+					</Typography>
+					<TextInput
+						fullWidth
+						placeholder={'Plan amount'}
+						error={errors && touched.amount && errors.amount ? true : false}
+						helperText={errors && touched.amount && errors.amount}
+						value={amount}
+						onChange={handleChange('amount')}
+					/>
+				</Box>
+				<Box>
+					<Typography variant={'body1'} style={styles.label}>
+						Merchant Amount
+					</Typography>
+					<TextInput
+						fullWidth
+						placeholder={'Merchant Amount'}
+						error={errors && touched.code && errors.code ? true : false}
+						helperText={errors && touched.code && errors.code}
+						value={code}
+						onChange={handleChange('code')}
+					/>
+				</Box>
+				<Box>
+					<Typography variant={'body1'} style={styles.label}>
+						Data Unit
+					</Typography>
+					<TextInput
+						fullWidth
+						placeholder={'Data Unit'}
+						error={errors && touched.code && errors.code ? true : false}
+						helperText={errors && touched.code && errors.code}
+						value={code}
+						onChange={handleChange('code')}
+					/>
+				</Box>
+				<Box>
+					<Typography variant={'body1'} style={styles.label}>
+						Data Code
+					</Typography>
+					<TextInput
+						fullWidth
+						placeholder={'Plan Code'}
+						error={errors && touched.code && errors.code ? true : false}
+						helperText={errors && touched.code && errors.code}
+						value={code}
+						onChange={handleChange('code')}
+					/>
+				</Box>
+				<Box>
+					<Typography variant={'body1'} style={styles.label}>
+						Data Source
 					</Typography>
 					{dataPayload && Object.keys(dataPayload).length > 0 ? (
 						<TextPlaceholder text={type} hasArrowDropDown />
@@ -241,32 +291,6 @@ const DataPlanForm = ({ dataPayload, handleOnSubmit }: Props) => {
 							</MenuItem>
 						</Select>
 					)}
-				</Box>
-				<Box>
-					<Typography variant={'body1'} style={styles.label}>
-						Plan Amount
-					</Typography>
-					<TextInput
-						fullWidth
-						placeholder={'Plan amount'}
-						error={errors && touched.amount && errors.amount ? true : false}
-						helperText={errors && touched.amount && errors.amount}
-						value={amount}
-						onChange={handleChange('amount')}
-					/>
-				</Box>
-				<Box>
-					<Typography variant={'body1'} style={styles.label}>
-						Plan Code
-					</Typography>
-					<TextInput
-						fullWidth
-						placeholder={'Plan Code'}
-						error={errors && touched.code && errors.code ? true : false}
-						helperText={errors && touched.code && errors.code}
-						value={code}
-						onChange={handleChange('code')}
-					/>
 				</Box>
 				{type === DataPlanType.SMS && (
 					<>
@@ -309,14 +333,12 @@ const DataPlanForm = ({ dataPayload, handleOnSubmit }: Props) => {
 			</Box>
 			<Button
 				loading={isCreatingPlan || isUpdatingPlan}
-				buttonProps={{
-					style: styles.btn,
-					size: 'large',
-					type: 'submit',
-					onClick: (e) => {
-						e.preventDefault();
-						handleSubmit();
-					},
+				style={styles.btn}
+				type={'submit'}
+				size={'large'}
+				onClick={(e: React.FormEvent<HTMLButtonElement>) => {
+					e.preventDefault();
+					handleSubmit();
 				}}
 			>
 				Save

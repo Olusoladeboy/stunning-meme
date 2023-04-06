@@ -29,7 +29,7 @@ const useQueryHook = ({
 		keepPreviousData,
 		onSettled: (data: any, error) => {
 			if (error) {
-				const res = handleResponse({ error, isDisplayMessage });
+				const res = handleResponse({ payload: error, isDisplayMessage });
 				if (res?.message) {
 					enqueueSnackbar(res.message, { variant: 'error' });
 				}

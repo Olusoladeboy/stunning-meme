@@ -6,18 +6,20 @@ import Box from '@mui/material/Box';
 import { Typography, useTheme } from '@mui/material';
 import TableBody from '@mui/material/TableBody';
 import { useQuery } from 'react-query';
-import { useSnackbar } from 'notistack';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import moment from 'moment';
 import { LIGHT_GRAY } from '../../utilities/constant';
 import { StyledTableRow, StyledTableCell } from './components';
-import { UserDetailsType, UserNavList } from '../../utilities/types';
+import {
+	UserDetails,
+	QueryKey,
+	UserNavList,
+	Transaction,
+} from '../../utilities/types';
 import FilterIcon from '../icons/filter';
 import SearchInput from '../form-components/search-input';
 import Api from '../../utilities/api';
-import handleResponse from '../../utilities/helpers/handleResponse';
-import { QueryKeyTypes } from '../../utilities/types';
 import { useAppSelector } from '../../store/hooks';
 import Loader from '../loader/table-loader';
 import Empty from '../empty/table-empty';
@@ -25,13 +27,15 @@ import formatNumberToCurrency from '../../utilities/helpers/formatNumberToCurren
 import Pagination from '../pagination';
 import { MAX_RECORDS } from '../../utilities/constant';
 import LINKS from '../../utilities/links';
+import { useAlert } from '../../utilities/hooks';
 
 type Props = {
-	user: UserDetailsType | null;
+	user: UserDetails | null;
 };
 
 const WalletSummaryTable = ({ user }: Props) => {
 	const theme = useTheme();
+	const setAlert = useAlert();
 	const styles = useStyles(theme);
 	const navigate = useNavigate();
 	const [count, setCount] = useState<number>(1);
@@ -46,11 +50,10 @@ const WalletSummaryTable = ({ user }: Props) => {
 		}
 	}, [query, query.page]);
 
-	const { enqueueSnackbar } = useSnackbar();
 	const { token } = useAppSelector((store) => store.authState);
 
 	const { isLoading, data } = useQuery(
-		[QueryKeyTypes.UserWalletTransaction, user?.id, page],
+		[QueryKey.UserWalletTransaction, user?.id, page],
 		() =>
 			Api.Wallet.Transactions({
 				token: token as string,
@@ -65,10 +68,7 @@ const WalletSummaryTable = ({ user }: Props) => {
 			enabled: !!(token && user),
 			onSettled: (data, error) => {
 				if (error) {
-					const res = handleResponse({ error });
-					if (res?.message) {
-						enqueueSnackbar(res.message, { variant: 'error' });
-					}
+					setAlert({ data: error, type: 'error' });
 				}
 
 				if (data && data.success) {
@@ -162,26 +162,26 @@ const WalletSummaryTable = ({ user }: Props) => {
 						data && (
 							<>
 								{data.payload.length > 0 ? (
-									data.payload.map((row: any) => (
+									data.payload.map((row: Transaction) => (
 										<StyledTableRow key={row.id}>
 											<StyledTableCell style={styles.text}>
 												{row.reference}
 											</StyledTableCell>
 											<StyledTableCell style={styles.text}>
-												{formatNumberToCurrency(row.amount.$numberDecimal)}
+												{formatNumberToCurrency(
+													typeof row.amount !== 'string'
+														? row.amount.$numberDecimal
+														: row.amount
+												)}
 											</StyledTableCell>
 											<StyledTableCell style={styles.text}>
 												{row.service}
 											</StyledTableCell>
 											<StyledTableCell style={styles.text}>
-												{formatNumberToCurrency(
-													row.balanceBefore.$numberDecimal
-												)}
+												{formatNumberToCurrency(row.balanceBefore)}
 											</StyledTableCell>
 											<StyledTableCell style={styles.text}>
-												{formatNumberToCurrency(
-													row.balanceAfter.$numberDecimal
-												)}
+												{formatNumberToCurrency(row.balanceAfter)}
 											</StyledTableCell>
 
 											<StyledTableCell style={styles.text}>

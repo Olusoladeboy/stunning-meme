@@ -1,9 +1,8 @@
-import { HttpStatusCodeTypes } from '../types';
-import Storage from '../storage';
-import { StorageKeys } from '../types';
+import { HttpStatusCode } from '../constant';
+import { Storage, StorageKeys } from '..';
 
 type PropsType = {
-	error: any;
+	payload: any;
 	handler?: () => void;
 	isDisplayMessage?: boolean;
 };
@@ -14,32 +13,32 @@ type ReturnTypes = {
 };
 
 const handleResponse = ({
-	error,
+	payload,
 	handler,
 	isDisplayMessage = false,
 }: PropsType): ReturnTypes | null | undefined => {
-	if (error.response !== 'undefined' && error.response.data) {
-		const data = error.response.data;
-		const status = error.response.status;
+	if (payload.response !== 'undefined' && payload.response.data) {
+		const data = payload.response.data;
+		const status = payload.response.status;
 
 		if (status) {
 			switch (status) {
-				case HttpStatusCodeTypes.OK:
+				case HttpStatusCode.OK:
 					return { data, message: isDisplayMessage ? data.message : null };
-				case HttpStatusCodeTypes.Forbidden:
+				case HttpStatusCode.Forbidden:
 					Storage.deleteItem(StorageKeys.UserToken);
 					typeof handler !== 'undefined' && handler();
 					return { data, message: data.message };
 
-				case HttpStatusCodeTypes.BadRequest:
+				case HttpStatusCode.BadRequest:
 					return { data, message: data.message };
 
-				case HttpStatusCodeTypes.Unauthorized:
+				case HttpStatusCode.Unauthorized:
 					Storage.deleteItem(StorageKeys.UserToken);
 					typeof handler !== 'undefined' && handler();
 					return { data, message: data.message };
 
-				case HttpStatusCodeTypes.NotFound:
+				case HttpStatusCode.NotFound:
 					return { data, message: data.message };
 
 				default:
@@ -49,7 +48,7 @@ const handleResponse = ({
 			return null;
 		}
 	} else {
-		return error.message;
+		return payload.message;
 	}
 };
 

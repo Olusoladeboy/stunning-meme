@@ -6,33 +6,38 @@ import Box from '@mui/material/Box';
 import { Typography, useTheme } from '@mui/material';
 import TableBody from '@mui/material/TableBody';
 import { useQuery } from 'react-query';
-import { useSnackbar } from 'notistack';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import moment from 'moment';
 import { LIGHT_GRAY } from '../../utilities/constant';
 import { StyledTableRow, StyledTableCell } from './components';
-import { UserDetailsType, UserNavList } from '../../utilities/types';
+import {
+	UserDetails,
+	QueryKey,
+	UserNavList,
+	Transaction,
+	MAX_RECORDS,
+	LINKS,
+	formatNumberToCurrency,
+	ErrorBoundary,
+} from '../../utilities';
 import FilterIcon from '../icons/filter';
 import SearchInput from '../form-components/search-input';
 import Api from '../../utilities/api';
-import handleResponse from '../../utilities/helpers/handleResponse';
-import { QueryKeyTypes } from '../../utilities/types';
 import { useAppSelector } from '../../store/hooks';
 import Loader from '../loader/table-loader';
 import Empty from '../empty/table-empty';
-import formatNumberToCurrency from '../../utilities/helpers/formatNumberToCurrency';
 import Pagination from '../pagination';
-import { MAX_RECORDS } from '../../utilities/constant';
-import LINKS from '../../utilities/links';
+import { useAlert } from '../../utilities/hooks';
 
 type Props = {
-	user: UserDetailsType | null;
+	user: UserDetails | null;
 };
 
 const TransactionHistoryTable = ({ user }: Props) => {
 	const theme = useTheme();
 	const styles = useStyles(theme);
+	const setAlert = useAlert();
 	const navigate = useNavigate();
 	const [count, setCount] = useState<number>(1);
 	const [page, setPage] = useState<number>(1);
@@ -46,11 +51,10 @@ const TransactionHistoryTable = ({ user }: Props) => {
 		}
 	}, [query, query.page]);
 
-	const { enqueueSnackbar } = useSnackbar();
 	const { token } = useAppSelector((store) => store.authState);
 
 	const { isLoading, data } = useQuery(
-		[QueryKeyTypes.UserTransactions, user?.id, page],
+		[QueryKey.UserTransactions, user?.id, page],
 		() =>
 			Api.Transactions.All({
 				token: token as string,
@@ -65,10 +69,7 @@ const TransactionHistoryTable = ({ user }: Props) => {
 			enabled: !!(token && user),
 			onSettled: (data, error) => {
 				if (error) {
-					const res = handleResponse({ error });
-					if (res?.message) {
-						enqueueSnackbar(res.message, { variant: 'error' });
-					}
+					setAlert({ data: error, type: 'error' });
 				}
 
 				if (data && data.success) {
@@ -111,99 +112,111 @@ const TransactionHistoryTable = ({ user }: Props) => {
 					<SearchInput fullWidth placeholder={'Search...'} />
 				</Box>
 			</Box>
-			<Table sx={{ overflow: 'auto' }} stickyHeader>
-				<TableHead
-					sx={{
-						'& tr': {
-							backgroundColor: LIGHT_GRAY,
-							color: theme.palette.primary.main,
-						},
-					}}
-				>
-					<TableRow>
-						<StyledTableCell>Transaction</StyledTableCell>
-						<StyledTableCell>Reference</StyledTableCell>
-						<StyledTableCell>
-							<Box style={styles.filterWrapper}>
-								<Typography>Date</Typography>
-								<FilterIcon />
-							</Box>
-						</StyledTableCell>
-						<StyledTableCell>
-							<Box style={styles.filterWrapper}>
-								<Typography>Time</Typography>
-								<FilterIcon />
-							</Box>
-						</StyledTableCell>
-						<StyledTableCell>
-							<Box style={styles.filterWrapper}>
-								<Typography>Status</Typography>
-								<FilterIcon />
-							</Box>
-						</StyledTableCell>
-						<StyledTableCell>
-							<Box style={styles.filterWrapper}>
-								<Typography>Amount</Typography>
-								<FilterIcon />
-							</Box>
-						</StyledTableCell>
-					</TableRow>
-				</TableHead>
-				<TableBody
-					sx={{
-						'& tr': {
-							color: theme.palette.primary.main,
-						},
-					}}
-				>
-					{isLoading ? (
-						<Loader colSpan={6} />
-					) : (
-						data && (
-							<>
-								{data.payload.length > 0 ? (
-									data.payload.map((row: any) => (
-										<StyledTableRow key={row.id}>
-											<StyledTableCell style={styles.text}>
-												{row.service}
-											</StyledTableCell>
-											<StyledTableCell style={styles.text}>
-												{row.reference}
-											</StyledTableCell>
-											<StyledTableCell style={styles.text}>
-												{moment.utc(row.createdAt).format('ll')}
-											</StyledTableCell>
-											<StyledTableCell style={styles.text}>
-												{moment.utc(row.createdAt).format('LT')}
-											</StyledTableCell>
-											<StyledTableCell style={styles.text}>
-												status
-											</StyledTableCell>
-											<StyledTableCell style={styles.text}>
-												{formatNumberToCurrency(row.amount.$numberDecimal)}
-											</StyledTableCell>
-										</StyledTableRow>
-									))
-								) : (
-									<Empty colSpan={6} text={'No Wallet Summary'} />
-								)}
-							</>
-						)
-					)}
-				</TableBody>
-			</Table>
+			<ErrorBoundary>
+				<Table sx={{ overflow: 'auto' }} stickyHeader>
+					<TableHead
+						sx={{
+							'& tr': {
+								backgroundColor: LIGHT_GRAY,
+								color: theme.palette.primary.main,
+							},
+						}}
+					>
+						<TableRow>
+							<StyledTableCell>Transaction</StyledTableCell>
+							<StyledTableCell>Reference</StyledTableCell>
+							<StyledTableCell>
+								<Box style={styles.filterWrapper}>
+									<Typography>Date</Typography>
+									<FilterIcon />
+								</Box>
+							</StyledTableCell>
+							<StyledTableCell>
+								<Box style={styles.filterWrapper}>
+									<Typography>Time</Typography>
+									<FilterIcon />
+								</Box>
+							</StyledTableCell>
+							<StyledTableCell>
+								<Box style={styles.filterWrapper}>
+									<Typography>Status</Typography>
+									<FilterIcon />
+								</Box>
+							</StyledTableCell>
+							<StyledTableCell>
+								<Box style={styles.filterWrapper}>
+									<Typography>Amount</Typography>
+									<FilterIcon />
+								</Box>
+							</StyledTableCell>
+						</TableRow>
+					</TableHead>
+					<TableBody
+						sx={{
+							'& tr': {
+								color: theme.palette.primary.main,
+							},
+						}}
+					>
+						{isLoading ? (
+							<Loader colSpan={6} />
+						) : (
+							data && (
+								<>
+									{data.payload.length > 0 ? (
+										data.payload.map((row: Transaction) => (
+											<StyledTableRow key={row.id}>
+												<StyledTableCell style={styles.text}>
+													{row.transaction
+														? row.transaction.service
+														: row.service
+														? row.service
+														: row.type}
+												</StyledTableCell>
+												<StyledTableCell style={styles.text}>
+													{row.transaction
+														? row.transaction.reference
+														: row.reference}
+												</StyledTableCell>
+												<StyledTableCell style={styles.text}>
+													{moment.utc(row.createdAt).format('ll')}
+												</StyledTableCell>
+												<StyledTableCell style={styles.text}>
+													{moment.utc(row.createdAt).format('LT')}
+												</StyledTableCell>
+												<StyledTableCell style={styles.text}>
+													{row.status}
+												</StyledTableCell>
+												<StyledTableCell style={styles.text}>
+													{formatNumberToCurrency(
+														typeof row.amount !== 'string'
+															? row.amount.$numberDecimal
+															: row.amount
+													)}
+												</StyledTableCell>
+											</StyledTableRow>
+										))
+									) : (
+										<Empty colSpan={6} text={'No Wallet Summary'} />
+									)}
+								</>
+							)
+						)}
+					</TableBody>
+				</Table>
 
-			{total > MAX_RECORDS && (
-				<Pagination
-					sx={{ marginLeft: '20px', marginTop: '2rem' }}
-					size={'large'}
-					variant={'outlined'}
-					shape={'rounded'}
-					page={page}
-					count={count}
-					onChange={(e, number) => handlePageChange(number)}
-				/>
-			)}
+				{total > MAX_RECORDS && (
+					<Pagination
+						sx={{ marginLeft: '20px', marginTop: '2rem' }}
+						size={'large'}
+						variant={'outlined'}
+						shape={'rounded'}
+						page={page}
+						count={count}
+						onChange={(e, number) => handlePageChange(number)}
+					/>
+				)}
+			</ErrorBoundary>
 		</Box>
 	);
 };

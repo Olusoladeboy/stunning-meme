@@ -1,6 +1,6 @@
 import React from 'react';
 import { Box, CircularProgress } from '@mui/material';
-import { SECOUNDARY_COLOR } from '../../utilities/constant';
+import { SECOUNDARY_COLOR } from '../../utilities';
 
 const Loader = () => {
 	return (

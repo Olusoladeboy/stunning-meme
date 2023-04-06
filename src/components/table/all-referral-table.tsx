@@ -17,7 +17,7 @@ import {
 	SUCCESS_COLOR,
 	BOX_SHADOW,
 	DANGER_COLOR,
-} from '../../utilities/constant';
+} from '../../utilities';
 import ModalWrapper from '../modal/Wrapper';
 import FilterIcon from '../icons/filter';
 import {
@@ -65,7 +65,8 @@ const AllReferralTable = () => {
 		<>
 			{isCreateReferral && (
 				<ModalWrapper
-					close={() => setCreateReferral(false)}
+					hasCloseButton
+					closeModal={() => setCreateReferral(false)}
 					title={'CREATE REFERRAL'}
 				>
 					<ReferralForm />
@@ -82,7 +83,11 @@ const AllReferralTable = () => {
 				/>
 			)}
 			{currentRow && (
-				<ModalWrapper close={() => setCurrentRow(null)} title={'EDIT COUPON'}>
+				<ModalWrapper
+					hasCloseButton
+					closeModal={() => setCurrentRow(null)}
+					title={'EDIT COUPON'}
+				>
 					<ReferralForm isEdit data={currentRow} />
 				</ModalWrapper>
 			)}

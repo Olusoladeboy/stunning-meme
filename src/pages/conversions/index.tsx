@@ -4,24 +4,26 @@ import queryString from 'query-string';
 import { Box, Typography, useTheme } from '@mui/material';
 import { grey } from '@mui/material/colors';
 import { useQuery } from 'react-query';
-import { useSnackbar } from 'notistack';
-import Layout from '../../components/layout';
+import {
+	Layout,
+	ConversionsTable,
+	ConversionTotal,
+	AvailableNetwork,
+	Pagination,
+} from '../../components';
 import { BOX_SHADOW } from '../../utilities/constant';
-import ConversionsTable from '../../components/table/conversions-table';
-import ConversionTotal from '../../components/conversion-total';
-import AvailableNetwork from '../../components/available-network';
 import Api from '../../utilities/api';
-import handleResponse from '../../utilities/helpers/handleResponse';
-import { QueryKeyTypes } from '../../utilities/types';
+import { QueryKey } from '../../utilities/types';
 import { useAppSelector } from '../../store/hooks';
 import { MAX_RECORDS } from '../../utilities/constant';
-import Pagination from '../../components/pagination';
 import LINKS from '../../utilities/links';
+import { useAlert } from '../../utilities/hooks';
+import ErrorBoundary from '../../utilities/helpers/error-boundary';
 
 const Conversions = () => {
 	const theme = useTheme();
+	const setAlert = useAlert();
 	const styles = useStyles(theme);
-	const { enqueueSnackbar } = useSnackbar();
 	const [isReload, setReload] = useState<boolean>(false);
 	const [sort, setSort] = useState('-createdAt');
 	const [isReloading, setReloading] = useState<boolean>(false);
@@ -56,7 +58,7 @@ const Conversions = () => {
 	};
 
 	const { isLoading, data } = useQuery(
-		[QueryKeyTypes.ConvertAirtime, page],
+		[QueryKey.ConvertAirtime, page],
 		() =>
 			Api.ConvertAirtime.Records({
 				token: token as string,
@@ -69,10 +71,7 @@ const Conversions = () => {
 				setReload(false);
 				setReloading(false);
 				if (error) {
-					const res = handleResponse({ error });
-					if (res?.message) {
-						enqueueSnackbar(res.message, { variant: 'error' });
-					}
+					setAlert({ data: error, type: 'error' });
 				}
 
 				if (data && data.success) {
@@ -136,24 +135,26 @@ const Conversions = () => {
 						<AvailableNetwork />
 					</Box>
 				</Box>
-				<ConversionsTable
-					isLoading={isLoading || isReloading}
-					conversions={data && data.payload}
-					handleSort={handleSort}
-					handleSearch={handleSearch}
-				/>
-
-				{total > MAX_RECORDS && !isReloading && (
-					<Pagination
-						sx={{ marginLeft: '20px' }}
-						size={'large'}
-						variant={'outlined'}
-						shape={'rounded'}
-						page={page}
-						count={count}
-						onChange={(e, number) => handlePageChange(number)}
+				<ErrorBoundary>
+					<ConversionsTable
+						isLoading={isLoading || isReloading}
+						conversions={data && data.payload}
+						handleSort={handleSort}
+						handleSearch={handleSearch}
 					/>
-				)}
+
+					{total > MAX_RECORDS && !isReloading && (
+						<Pagination
+							sx={{ marginLeft: '20px' }}
+							size={'large'}
+							variant={'outlined'}
+							shape={'rounded'}
+							page={page}
+							count={count}
+							onChange={(e, number) => handlePageChange(number)}
+						/>
+					)}
+				</ErrorBoundary>
 			</Box>
 		</Layout>
 	);

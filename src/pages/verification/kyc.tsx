@@ -1,33 +1,27 @@
 import React, { useState } from 'react';
 import { Box, useTheme } from '@mui/material';
 import { useQuery } from 'react-query';
-import { useSnackbar } from 'notistack';
 import { grey } from '@mui/material/colors';
-import Layout from '../../components/layout';
-import BackButton from '../../components/back-button';
+import { Layout, BackButton, KycForm } from '../../components';
 import { BOX_SHADOW } from '../../utilities/constant';
-import KycForm from '../../components/forms/kyc-form';
-import { QueryKeyTypes } from '../../utilities/types';
-import handleResponse from '../../utilities/helpers/handleResponse';
+import { QueryKey } from '../../utilities/types';
 import { useAppSelector } from '../../store/hooks';
 import Api from '../../utilities/api';
+import { useAlert } from '../../utilities/hooks';
 
 const Kyc = () => {
 	const theme = useTheme();
 	const styles = useStyles(theme);
-	const { enqueueSnackbar } = useSnackbar();
+	const setAlert = useAlert();
 	const [kycLimits, setKycLimits] = useState<{ [key: string]: any } | null>(
 		null
 	);
 	const { token } = useAppSelector((store) => store.authState);
 
-	useQuery(QueryKeyTypes.KycLimit, () => Api.KycLimits.Retrieve(token || ''), {
+	useQuery(QueryKey.KycLimit, () => Api.KycLimits.Retrieve(token || ''), {
 		onSettled: (data, error) => {
 			if (error) {
-				const res = handleResponse({ error, isDisplayMessage: true });
-				if (res?.message) {
-					enqueueSnackbar(res.message, { variant: 'error' });
-				}
+				setAlert({ data: error, type: 'error' });
 			}
 			if (data && data.success) {
 				const payload = data.payload;

@@ -8,11 +8,7 @@ import { styled } from '@mui/material';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import { SquareRounded } from '@mui/icons-material';
-import {
-	LIGHT_GRAY,
-	SUCCESS_COLOR,
-	PRIMARY_COLOR,
-} from '../../utilities/constant';
+import { LIGHT_GRAY, SUCCESS_COLOR, PRIMARY_COLOR } from '../../utilities';
 import { grey } from '@mui/material/colors';
 import Pagination from '../pagination';
 import Empty from '../empty';
@@ -26,7 +22,7 @@ type Props = {
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
 	[`&.${tableCellClasses.head}`]: {
-		backgroundImage: `url(${require('../../assets/images/bgImage.png')})`,
+		// backgroundImage: `url(${require('../../assets/images/bgImage.png')})`,
 		backgroundColor: LIGHT_GRAY,
 		backgroundSize: 'cover',
 		backgroundPosition: 'top-left',

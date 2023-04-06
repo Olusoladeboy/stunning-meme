@@ -4,14 +4,17 @@ import Table from '@mui/material/Table';
 import Box from '@mui/material/Box';
 import { useTheme } from '@mui/material';
 import TableBody from '@mui/material/TableBody';
-import { useSnackbar } from 'notistack';
 import TableHead from '@mui/material/TableHead';
 import {
 	LIGHT_GRAY,
 	BOX_SHADOW,
 	SUCCESS_COLOR,
 	DANGER_COLOR,
-} from '../../utilities/constant';
+	QueryKeys,
+	API_ENDPOINTS,
+	NetworkData,
+	NetworkPage,
+} from '../../utilities';
 import {
 	StyledTableCell as TableCell,
 	StyledTableRow as TableRow,
@@ -20,71 +23,67 @@ import { grey } from '@mui/material/colors';
 import Image from '../image';
 import Button from '../button/custom-button';
 import Empty from '../empty';
-import {
-	QueryKeyTypes,
-	API_ENDPOINTS,
-	NetworkDataTypes,
-	NetworkPageTypes,
-} from '../../utilities/types';
-import LINKS from '../../utilities/links';
-import Api from '../../utilities/api';
+import { networks, updateNetwork } from '../../api';
 import { useAppSelector } from '../../store/hooks';
 import TableLoader from '../loader/table-loader';
-import handleResponse from '../../utilities/helpers/handleResponse';
-import NetworkForm from '../forms/add-network-form';
+import NetworkForm from '../forms/network-form';
 import Modal from '../modal/Wrapper';
 import Loader from '../loader';
+import { useAlert, useHandleError } from '../../hooks';
 
-interface AitimeNetworkTypes extends NetworkDataTypes {
+interface AitimeNetworkTypes extends NetworkData {
 	isActive: boolean;
 	id: string;
 }
 
 const AirtimeNetworkTable = () => {
 	const theme = useTheme();
+	const handleError = useHandleError();
+	const setAlert = useAlert();
 	const styles = useStyles(theme);
 	const queryClient = useQueryClient();
-	const [selectedNetwork, setSelectedNetwork] =
-		useState<NetworkDataTypes | null>(null);
+	const [selectedNetwork, setSelectedNetwork] = useState<NetworkData | null>(
+		null
+	);
 
-	const { enqueueSnackbar } = useSnackbar();
 	const { token } = useAppSelector((store) => store.authState);
 
 	const { isLoading, data } = useQuery(
-		QueryKeyTypes.AirtimeNetwork,
+		QueryKeys.AirtimeNetwork,
 		() =>
-			Api.Network.GetNetwork({
-				token: token || '',
+			networks({
 				url: API_ENDPOINTS.AirtimeNetwork,
 			}),
 		{
 			enabled: !!token,
 			onSettled: (data, error) => {
 				if (error) {
-					const res = handleResponse({ error, isDisplayMessage: true });
-					if (res?.message) {
-						enqueueSnackbar(res.message, { variant: 'error' });
+					const response = handleError({ error });
+
+					if (response?.message) {
+						setAlert({ message: response.message, type: 'error' });
 					}
 				}
 			},
 		}
 	);
 
-	const { isLoading: isUpdating, mutate: updateNetwork } = useMutation(
-		Api.Network.UpdateNetwork,
+	const { isLoading: isUpdating, mutate: mutateUpdateNetwork } = useMutation(
+		updateNetwork,
 		{
 			onSettled: (data, error) => {
 				if (error) {
-					const res = handleResponse({ error, isDisplayMessage: true });
-					if (res?.message) {
-						enqueueSnackbar(res.message, { variant: 'error' });
+					const response = handleError({ error });
+
+					if (response?.message) {
+						setAlert({ message: response.message, type: 'error' });
 					}
 				}
 
 				if (data && data.success) {
-					enqueueSnackbar(data.message, { variant: 'success' });
-					queryClient.invalidateQueries(QueryKeyTypes.DataNetwork);
-					queryClient.invalidateQueries(QueryKeyTypes.AirtimeNetwork);
+					setAlert({ message: data.message, type: 'success' });
+					queryClient.invalidateQueries(QueryKeys.DataNetwork);
+					queryClient.invalidateQueries(QueryKeys.AirtimeNetwork);
 				}
 			},
 		}
@@ -97,8 +96,7 @@ const AirtimeNetworkTable = () => {
 		status: boolean;
 		id: string;
 	}) => {
-		updateNetwork({
-			token: token || '',
+		mutateUpdateNetwork({
 			data: {
 				isActive: status,
 			},
@@ -112,13 +110,14 @@ const AirtimeNetworkTable = () => {
 			{isUpdating && <Loader />}
 			{selectedNetwork && (
 				<Modal
+					hasCloseButton
 					title={`Edit ${selectedNetwork.name}`}
-					close={() => setSelectedNetwork(null)}
+					closeModal={() => setSelectedNetwork(null)}
 				>
 					<NetworkForm
 						isEdit
 						network={selectedNetwork}
-						type={NetworkPageTypes.AIRTIME_NETWORK}
+						type={NetworkPage.AIRTIME_NETWORK}
 						handleContinue={() => setSelectedNetwork(null)}
 					/>
 				</Modal>
@@ -185,37 +184,35 @@ const AirtimeNetworkTable = () => {
 											style={styles.statusBtnWrapper}
 										>
 											<Button
-												buttonProps={{
-													style: {
-														backgroundColor: data.isActive
-															? SUCCESS_COLOR
-															: grey[400],
-														color: grey[50],
-													},
-													disabled: data.isActive,
-													onClick: () =>
-														handleEnableDisableNetwork({
-															status: true,
-															id: data.id,
-														}),
+												disabled={data.isActive}
+												style={{
+													backgroundColor: data.isActive
+														? SUCCESS_COLOR
+														: grey[400],
+													color: grey[50],
 												}}
+												onClick={() =>
+													handleEnableDisableNetwork({
+														status: true,
+														id: data.id,
+													})
+												}
 											>
 												Enable
 											</Button>
 											<Button
-												buttonProps={{
-													style: {
-														backgroundColor: !data.isActive
-															? DANGER_COLOR
-															: grey[400],
-														color: grey[50],
-													},
-													disabled: !data.isActive,
-													onClick: () =>
-														handleEnableDisableNetwork({
-															status: false,
-															id: data.id,
-														}),
+												disabled={!data.isActive}
+												onClick={() =>
+													handleEnableDisableNetwork({
+														status: false,
+														id: data.id,
+													})
+												}
+												style={{
+													backgroundColor: !data.isActive
+														? DANGER_COLOR
+														: grey[400],
+													color: grey[50],
 												}}
 											>
 												Disable

@@ -12,13 +12,13 @@ import {
 	StyledTableRow as TableRow,
 } from './components';
 import TableHeader from '../header/table-header';
-import { UserDetailsType } from '../../utilities/types';
+import { UserDetails } from '../../utilities/types';
 import Loader from '../loader/table-loader';
 import Empty from '../empty/table-empty';
 import UnsuspendUser from '../unsuspend-user';
 
 type Props = {
-	users: UserDetailsType[] | null;
+	users: UserDetails[] | null;
 	isLoading: boolean;
 };
 

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Box, Typography, useTheme } from '@mui/material';
 import { grey } from '@mui/material/colors';
-import formatNumberToCurrency from '../../utilities/helpers/formatNumberToCurrency';
+import { formatNumberToCurrency } from '../../utilities';
 import { useAppSelector } from '../../store/hooks';
 
 const WalletBalance = () => {

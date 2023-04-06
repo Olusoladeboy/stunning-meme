@@ -2,7 +2,7 @@ import { useSnackbar } from 'notistack';
 import handleResponse from '../helpers/handleResponse';
 
 type Props = {
-	alert: string | any;
+	data: string | any;
 	type?: 'error' | 'info' | 'success';
 	isError?: boolean;
 };
@@ -10,14 +10,14 @@ type Props = {
 const useAlert = () => {
 	const { enqueueSnackbar } = useSnackbar();
 
-	const setAlert = ({ alert, type, isError }: Props) => {
-		if (isError) {
-			const res = handleResponse({ error: alert });
-			if (res?.message) {
-				enqueueSnackbar(res.message, { variant: 'error' });
-			}
+	const setAlert = ({ data, type, isError }: Props) => {
+		if (typeof data === 'string') {
+			enqueueSnackbar(data, { variant: type });
 		} else {
-			enqueueSnackbar(alert, { variant: type });
+			const res = handleResponse({ payload: data });
+			if (res?.message) {
+				enqueueSnackbar(res.message, { variant: type });
+			}
 		}
 	};
 

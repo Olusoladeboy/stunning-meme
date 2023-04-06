@@ -206,9 +206,62 @@ const DataPlanForm = ({ dataPayload, callback }: Props) => {
 						/>
 					)}
 				</Box>
+
 				<Box>
 					<Typography variant={'body1'} style={styles.label}>
-						Data type
+						Plan Amount
+					</Typography>
+					<TextInput
+						fullWidth
+						placeholder={'Plan amount'}
+						error={errors && touched.amount && errors.amount ? true : false}
+						helperText={errors && touched.amount && errors.amount}
+						value={amount}
+						onChange={handleChange('amount')}
+					/>
+				</Box>
+				<Box>
+					<Typography variant={'body1'} style={styles.label}>
+						Merchant Amount
+					</Typography>
+					<TextInput
+						fullWidth
+						placeholder={'Merchant Amount'}
+						error={errors && touched.code && errors.code ? true : false}
+						helperText={errors && touched.code && errors.code}
+						value={code}
+						onChange={handleChange('code')}
+					/>
+				</Box>
+				<Box>
+					<Typography variant={'body1'} style={styles.label}>
+						Data Unit
+					</Typography>
+					<TextInput
+						fullWidth
+						placeholder={'Data Unit'}
+						error={errors && touched.code && errors.code ? true : false}
+						helperText={errors && touched.code && errors.code}
+						value={code}
+						onChange={handleChange('code')}
+					/>
+				</Box>
+				<Box>
+					<Typography variant={'body1'} style={styles.label}>
+						Data Code
+					</Typography>
+					<TextInput
+						fullWidth
+						placeholder={'Plan Code'}
+						error={errors && touched.code && errors.code ? true : false}
+						helperText={errors && touched.code && errors.code}
+						value={code}
+						onChange={handleChange('code')}
+					/>
+				</Box>
+				<Box>
+					<Typography variant={'body1'} style={styles.label}>
+						Data Source
 					</Typography>
 					{dataPayload && Object.keys(dataPayload).length > 0 ? (
 						<TextPlaceholder text={type} hasArrowDropDown />
@@ -238,32 +291,6 @@ const DataPlanForm = ({ dataPayload, callback }: Props) => {
 							</MenuItem>
 						</Select>
 					)}
-				</Box>
-				<Box>
-					<Typography variant={'body1'} style={styles.label}>
-						Plan Amount
-					</Typography>
-					<TextInput
-						fullWidth
-						placeholder={'Plan amount'}
-						error={errors && touched.amount && errors.amount ? true : false}
-						helperText={errors && touched.amount && errors.amount}
-						value={amount}
-						onChange={handleChange('amount')}
-					/>
-				</Box>
-				<Box>
-					<Typography variant={'body1'} style={styles.label}>
-						Plan Code
-					</Typography>
-					<TextInput
-						fullWidth
-						placeholder={'Plan Code'}
-						error={errors && touched.code && errors.code ? true : false}
-						helperText={errors && touched.code && errors.code}
-						value={code}
-						onChange={handleChange('code')}
-					/>
 				</Box>
 				{type === DataPlanType.SMS && (
 					<>

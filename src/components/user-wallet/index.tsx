@@ -2,14 +2,13 @@ import React, { CSSProperties, useState } from 'react';
 import { Box, Typography, useTheme } from '@mui/material';
 import { grey } from '@mui/material/colors';
 import { useQuery } from 'react-query';
-import formatNumberToCurrency from '../../utilities/helpers/formatNumberToCurrency';
+import { formatNumberToCurrency, QueryKey, UserDetails } from '../../utilities';
 import Button from '../button';
 import ModalWrapper from '../modal/Wrapper';
 import EditWalletForm from '../forms/edit-wallet-form';
-import Api from '../../utilities/api';
 import { useAppSelector } from '../../store/hooks';
-import { QueryKey, UserDetails } from '../../utilities/types';
-import { useAlert } from '../../utilities/hooks';
+import { useAlert, useHandleError } from '../../hooks';
+import { walletAccount } from '../../api';
 
 type Props = {
 	user: UserDetails | null;
@@ -18,6 +17,7 @@ type Props = {
 const UserWallet = ({ user }: Props) => {
 	const theme = useTheme();
 	const setAlert = useAlert();
+	const handleError = useHandleError();
 	const styles = useStyles(theme);
 	const [amount, setAmount] = useState<string>('');
 	const [isEditWallet, setEditWallet] = useState<boolean>(false);
@@ -26,8 +26,7 @@ const UserWallet = ({ user }: Props) => {
 	useQuery(
 		[QueryKey.UserWallet, user?.id],
 		() =>
-			Api.Wallet.Account({
-				token: token as string,
+			walletAccount({
 				params: {
 					user: user?.id,
 				},
@@ -36,7 +35,10 @@ const UserWallet = ({ user }: Props) => {
 			enabled: !!(token && user),
 			onSettled: (data, error) => {
 				if (error) {
-					setAlert({ data: error, type: 'error' });
+					const response = handleError({ error });
+					if (response?.message) {
+						setAlert({ message: response.message, type: 'error' });
+					}
 				}
 
 				if (data && data.success) {

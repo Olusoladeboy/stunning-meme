@@ -160,6 +160,24 @@ export interface ModalDetails {
 	contentWidth?: string;
 }
 
+export interface IModal {
+	type?: 'success' | 'error' | 'info' | 'pending' | 'verify';
+	description?: string;
+	title?: string;
+	message?: string;
+	buttonText?: string;
+	handlePrimaryButton?: () => void | null;
+	hasSecondaryButton?: boolean;
+	handleSecondaryButton?: () => void;
+	secondaryButtonText?: string;
+	handleContactUs?: () => void;
+	closeModal?: () => void | null;
+	isLoading?: boolean;
+	children?: React.ReactNode;
+	isContactSupport?: boolean;
+	hasCloseButton?: boolean;
+}
+
 export enum UserNavList {
 	Profile = 'profile',
 	Status = 'status',
@@ -480,7 +498,7 @@ export interface Transaction {
 	transaction: {
 		id: string;
 		amount: Amount;
-		discount_code?: string | null;
+		discount_code?: string | Coupon;
 		balanceBefore: Amount;
 		balanceAfter: Amount;
 		type: string;

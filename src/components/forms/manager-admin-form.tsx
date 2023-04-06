@@ -10,6 +10,7 @@ import {
 	ManagerDetailsData,
 	QueryKeys,
 	validationSchema,
+	AMIN_ROLE,
 } from '../../utilities';
 import Select from '../form-components/Select';
 import { useAlert, useHandleError } from '../../hooks';
@@ -20,7 +21,6 @@ import {
 	updateManager,
 } from '../../api';
 
-const AMIN_ROLES = ['OPERATIONS', 'CUSTOMER_SUPPORT'];
 const SELECT_ADMIN_PRIVILEDGE = 'Select Admin Priviledge';
 
 interface ManagerDetails extends ManagerDetailsData {
@@ -86,6 +86,8 @@ const ManagerAdminForm = ({
 						message: data.message,
 						type: 'success',
 					});
+
+					queryClient.invalidateQueries(QueryKeys.AllStaff);
 
 					typeof callback !== 'undefined' && callback();
 				}
@@ -272,11 +274,12 @@ const ManagerAdminForm = ({
 						<MenuItem value={SELECT_ADMIN_PRIVILEDGE}>
 							{SELECT_ADMIN_PRIVILEDGE}
 						</MenuItem>
-						{AMIN_ROLES.map((role) => (
-							<MenuItem value={role} key={role}>
-								{role}
-							</MenuItem>
-						))}
+						<MenuItem value={AMIN_ROLE.OPERATIONS}>
+							{AMIN_ROLE.OPERATIONS}
+						</MenuItem>
+						<MenuItem value={AMIN_ROLE.CUSTOMER_SUPPORT}>
+							{AMIN_ROLE.CUSTOMER_SUPPORT}
+						</MenuItem>
 					</Select>
 				</Box>
 			</Box>

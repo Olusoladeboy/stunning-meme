@@ -185,7 +185,7 @@ const TransactionHistoryTable = ({ user }: Props) => {
 													{moment.utc(row.createdAt).format('LT')}
 												</StyledTableCell>
 												<StyledTableCell style={styles.text}>
-													status
+													{row.status}
 												</StyledTableCell>
 												<StyledTableCell style={styles.text}>
 													{formatNumberToCurrency(

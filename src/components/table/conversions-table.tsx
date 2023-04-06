@@ -143,7 +143,7 @@ const ConversionsTable = ({
 													{conversion.user && conversion.user.lastname}
 												</StyledTableCell>
 												<StyledTableCell style={styles.text}>
-													{conversion.id}
+													{conversion.reference}
 												</StyledTableCell>
 												<StyledTableCell style={styles.text}>
 													{conversion.network.name}

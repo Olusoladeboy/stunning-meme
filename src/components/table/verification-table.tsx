@@ -48,9 +48,9 @@ const VerificationTable = ({ users, isLoading }: Props) => {
 	const { isLoading: isVerifyingUser } = useQuery(
 		'',
 		() =>
-			verifyUser({
-				id: selectedUser?.id as string,
-			}),
+			verifyUser(
+				selectedUser?.id as string,
+			),
 		{
 			enabled: !!(token && selectedUser),
 			onSettled: (data, error) => {

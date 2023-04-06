@@ -17,7 +17,7 @@ const ConversionTotal = ({ total = 0, handleRefresh }: Props) => {
 			<Box style={styles.main}>
 				<Box>
 					<Typography sx={{ marginBottom: theme.spacing(2) }} variant={'h6'}>
-						Main Balance
+						Total Conversions
 					</Typography>
 					<Typography variant={'h4'}>
 						{formatNumberToCurrency(500000)}

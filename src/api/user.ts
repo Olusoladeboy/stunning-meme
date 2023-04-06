@@ -72,7 +72,7 @@ export const suspendUser = async ({
 		data,
 	});
 
-export const verifyUser = async ({ id }: { id: string }): Promise<any> =>
+export const verifyUser = async (id: string): Promise<any> =>
 	apiRequest({
 		method: 'GET',
 		url: `${ENDPOINTS.User}/admin-verify/${id}`,

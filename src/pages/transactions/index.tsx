@@ -9,7 +9,7 @@ import {
 	TransactionMainBalance,
 	Pagination,
 } from '../../components';
-import { BOX_SHADOW } from '../../utilities/constant';
+import { BOX_SHADOW } from '../../utilities';
 import { useQueryHook } from '../../utilities/api/hooks';
 import { useAppSelector } from '../../store/hooks';
 import Api from '../../utilities/api';

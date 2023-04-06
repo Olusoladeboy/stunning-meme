@@ -6,63 +6,73 @@ import Box from '@mui/material/Box';
 import { useTheme } from '@mui/material';
 import TableBody from '@mui/material/TableBody';
 import TableHead from '@mui/material/TableHead';
-import { grey } from '@mui/material/colors';
+import { grey, red } from '@mui/material/colors';
 import Empty from '../empty';
-import {
-	LIGHT_GRAY,
-	BOX_SHADOW,
-	SUCCESS_COLOR,
-	DANGER_COLOR,
-} from '../../utilities/constant';
 import {
 	StyledTableCell as TableCell,
 	StyledTableRow as TableRow,
 } from './components';
 import Button from '../button';
-import { QueryKey, API_ENDPOINTS } from '../../utilities/types';
-import LINKS from '../../utilities/links';
-import Api from '../../utilities/api';
+import {
+	QueryKey,
+	API_ENDPOINTS,
+	LINKS,
+	LIGHT_GRAY,
+	BOX_SHADOW,
+	SUCCESS_COLOR,
+	DANGER_COLOR,
+} from '../../utilities';
 import { useAppSelector } from '../../store/hooks';
 import TableLoader from '../loader/table-loader';
 import Loader from '../loader';
-import { useAlert } from '../../utilities/hooks';
+import { networks, updateNetwork } from '../../api';
+import { useAlert, useHandleError } from '../../hooks';
 
 const DataTypesTable = () => {
 	const theme = useTheme();
 	const setAlert = useAlert();
+	const handleError = useHandleError();
 	const styles = useStyles(theme);
 	const queryClient = useQueryClient();
 	const navigate = useNavigate();
-	const { token } = useAppSelector((store) => store.authState);
+	const { isAuthenticated } = useAppSelector((store) => store.authState);
 
 	const { isLoading, data } = useQuery(
 		QueryKey.DataNetwork,
 		() =>
-			Api.Network.GetNetwork({
-				token: token || '',
+			networks({
 				url: API_ENDPOINTS.DataNetwork,
+				params: {
+					sort: '-createdAt',
+				},
 			}),
 		{
-			enabled: !!token,
+			enabled: isAuthenticated,
 			onSettled: (data, error) => {
 				if (error) {
-					setAlert({ data: error, type: 'error' });
+					const response = handleError({ error });
+					if (response?.message) {
+						setAlert({ message: response.message, type: 'error' });
+					}
 				}
 			},
 		}
 	);
 
-	const { isLoading: isUpdating, mutate: updateNetwork } = useMutation(
-		Api.Network.UpdateNetwork,
+	const { isLoading: isUpdating, mutate: mutateUpdateNetwork } = useMutation(
+		updateNetwork,
 		{
 			onSettled: (data, error) => {
 				if (error) {
-					setAlert({ data: error, type: 'error' });
+					const response = handleError({ error });
+					if (response?.message) {
+						setAlert({ message: response.message, type: 'error' });
+					}
 				}
 
 				if (data && data.success) {
 					setAlert({
-						data: data.message,
+						message: data.message,
 						type: 'success',
 					});
 					queryClient.invalidateQueries(QueryKey.DataNetwork);
@@ -78,8 +88,7 @@ const DataTypesTable = () => {
 		status: boolean;
 		id: string;
 	}) => {
-		updateNetwork({
-			token: token || '',
+		mutateUpdateNetwork({
 			data: {
 				isActive: status,
 			},
@@ -187,6 +196,17 @@ const DataTypesTable = () => {
 									>
 										View plans
 									</TableCell>
+									<TableCell
+										onClick={() => console.log('Delete')}
+										sx={{
+											':hover': {
+												textDecoration: 'underline',
+											},
+										}}
+										style={styles.deletePlan}
+									>
+										Delete
+									</TableCell>
 								</TableRow>
 							))
 						) : (
@@ -231,6 +251,9 @@ const useStyles = (theme: any) => ({
 	viewPlan: {
 		color: theme.palette.secondary.main,
 		cursor: 'pointer',
+	},
+	deletePlan: {
+		color: red['800'],
 	},
 });
 

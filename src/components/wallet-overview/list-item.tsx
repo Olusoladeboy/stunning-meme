@@ -1,6 +1,6 @@
 import React from 'react';
 import { Box, Typography, useTheme } from '@mui/material';
-import formatNumberToCurrency from '../../utilities/helpers/formatNumberToCurrency';
+import { formatNumberToCurrency } from '../../utilities';
 import { grey } from '@mui/material/colors';
 
 type Props = {

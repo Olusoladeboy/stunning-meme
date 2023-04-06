@@ -16,6 +16,7 @@ export const MAX_RECORDS = 20;
 export const QueryKeys = {
 	LoginUserDetails: '@Query:Login_user_details',
 	AllManagers: '@Query:All_manager',
+	RecentConvertAirtime: '@Query:RecentConvertAirtime',
 	AllUsers: '@Query:All_Users',
 	GetSingleUser: '@Query:Get_single_user',
 	DataNetwork: '@Query:Data_Network',
@@ -93,6 +94,11 @@ export const DRAWER_LINKS = {
 		name: 'Dashboard',
 		path: LINKS.Dashboard,
 	},
+};
+
+export const AMIN_ROLE = {
+	OPERATIONS: 'OPERATIONS',
+	CUSTOMER_SUPPORT: 'CUSTOMER_SUPPORT',
 };
 
 export const ENDPOINTS = {

@@ -1,3 +1,4 @@
+import { Coupon, CouponType } from '../types';
 export { default as PrivateRoute } from './PrivateRoute';
 export { default as ErrorBoundary } from './error-boundary';
 export { default as ScrollToTop } from './scroll-to-top';
@@ -66,4 +67,14 @@ export const Storage = {
 	deleteItem: (key: string) => {
 		localStorage.removeItem(key);
 	},
+};
+
+export const getCoupon = (coupon: Coupon) => {
+	const gift =
+		coupon.type === CouponType.PERCENT
+			? `${coupon.gift}%`
+			: coupon.type === CouponType.AMOUNT
+			? formatNumberToCurrency(coupon.gift as string)
+			: '';
+	return `${coupon.code}-${gift}`;
 };

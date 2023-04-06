@@ -49,7 +49,7 @@ const RecentConversionsTable = () => {
 	const styles = useStyles(theme);
 
 	const { isLoading, data } = useQueryHook({
-		queryKey: [QueryKeys.ConvertAirtime, 'recent-airtime-convert'],
+		queryKey: [QueryKeys.RecentConvertAirtime, 'recent-airtime-convert'],
 		queryFn: () =>
 			convertAirtimes({
 				params: {

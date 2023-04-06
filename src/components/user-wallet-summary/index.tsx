@@ -3,7 +3,7 @@ import { Box, useTheme } from '@mui/material';
 import UserAvatarWithDetails from '../avatar-with-details';
 import UserWallet from '../user-wallet';
 import WalletSummaryTable from '../table/wallet-summary-table';
-import { UserDetails } from '../../utilities/types';
+import { UserDetails } from '../../utilities';
 
 type Props = {
 	user: UserDetails | null;

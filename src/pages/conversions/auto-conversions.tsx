@@ -22,7 +22,7 @@ import { useAppSelector } from '../../store/hooks';
 import { useAlert, useHandleError } from '../../hooks';
 import { convertAirtimes } from '../../api';
 
-const Conversions = () => {
+const AutoConversions = () => {
 	const theme = useTheme();
 	const handleError = useHandleError();
 	const setAlert = useAlert();
@@ -92,9 +92,9 @@ const Conversions = () => {
 		setReload(true);
 		if (page !== 1) {
 			setPage(page);
-			navigate(`${LINKS.Conversions}?page=${page}`);
+			navigate(`${LINKS.AutoConversions}?page=${page}`);
 		} else {
-			navigate(LINKS.Conversions);
+			navigate(LINKS.AutoConversions);
 			setPage(page);
 		}
 	};
@@ -116,7 +116,7 @@ const Conversions = () => {
 			<Box style={styles.container}>
 				<Box sx={{ padding: '0px 2rem' }}>
 					<Typography sx={{ marginBottom: theme.spacing(2) }} variant={'h5'}>
-						Conversions
+						Auto Conversions
 					</Typography>
 					<Box
 						sx={{
@@ -177,4 +177,4 @@ const useStyles = (theme: any) => ({
 	},
 });
 
-export default Conversions;
+export default AutoConversions;

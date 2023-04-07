@@ -9,7 +9,6 @@ import { useQuery } from 'react-query';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import moment from 'moment';
-import { LIGHT_GRAY } from '../../utilities/constant';
 import { StyledTableRow, StyledTableCell } from './components';
 import {
 	UserDetails,
@@ -20,22 +19,24 @@ import {
 	LINKS,
 	formatNumberToCurrency,
 	ErrorBoundary,
+	LIGHT_GRAY,
 } from '../../utilities';
-import FilterIcon from '../icons/filter';
 import SearchInput from '../form-components/search-input';
-import Api from '../../utilities/api';
 import { useAppSelector } from '../../store/hooks';
 import Loader from '../loader/table-loader';
 import Empty from '../empty/table-empty';
 import Pagination from '../pagination';
-import { useAlert } from '../../utilities/hooks';
+import { useAlert, useHandleError } from '../../hooks';
+import { transactions } from '../../api';
+import CustomTableCell from './components/custom-table-cell';
 
 type Props = {
 	user: UserDetails | null;
 };
 
-const TransactionHistoryTable = ({ user }: Props) => {
+const UserTransactionsTable = ({ user }: Props) => {
 	const theme = useTheme();
+	const handleError = useHandleError();
 	const styles = useStyles(theme);
 	const setAlert = useAlert();
 	const navigate = useNavigate();
@@ -56,8 +57,7 @@ const TransactionHistoryTable = ({ user }: Props) => {
 	const { isLoading, data } = useQuery(
 		[QueryKey.UserTransactions, user?.id, page],
 		() =>
-			Api.Transactions.All({
-				token: token as string,
+			transactions({
 				params: {
 					user: user?.id,
 					sort: '-createdAt',
@@ -69,7 +69,9 @@ const TransactionHistoryTable = ({ user }: Props) => {
 			enabled: !!(token && user),
 			onSettled: (data, error) => {
 				if (error) {
-					setAlert({ data: error, type: 'error' });
+					const response = handleError({ error });
+					if (response?.message)
+						setAlert({ message: response.message, type: 'error' });
 				}
 
 				if (data && data.success) {
@@ -100,7 +102,7 @@ const TransactionHistoryTable = ({ user }: Props) => {
 				sx={{ padding: { xs: '0px 1rem', md: '0px 2rem' } }}
 				style={styles.tableHeader}
 			>
-				<Typography variant={'h5'}>User Wallet Summary</Typography>
+				<Typography variant={'h5'}>User Transaction Summary</Typography>
 				<Box
 					sx={{
 						display: 'flex',
@@ -123,32 +125,12 @@ const TransactionHistoryTable = ({ user }: Props) => {
 						}}
 					>
 						<TableRow>
-							<StyledTableCell>Transaction</StyledTableCell>
-							<StyledTableCell>Reference</StyledTableCell>
-							<StyledTableCell>
-								<Box style={styles.filterWrapper}>
-									<Typography>Date</Typography>
-									<FilterIcon />
-								</Box>
-							</StyledTableCell>
-							<StyledTableCell>
-								<Box style={styles.filterWrapper}>
-									<Typography>Time</Typography>
-									<FilterIcon />
-								</Box>
-							</StyledTableCell>
-							<StyledTableCell>
-								<Box style={styles.filterWrapper}>
-									<Typography>Status</Typography>
-									<FilterIcon />
-								</Box>
-							</StyledTableCell>
-							<StyledTableCell>
-								<Box style={styles.filterWrapper}>
-									<Typography>Amount</Typography>
-									<FilterIcon />
-								</Box>
-							</StyledTableCell>
+							<CustomTableCell isSortable label={'Transaction'} />
+							<CustomTableCell isSortable label={'Reference'} />
+							<CustomTableCell isSortable label={'Amount'} />
+							<CustomTableCell label={'Date'} />
+							<CustomTableCell label={'Time'} />
+							<CustomTableCell label={'Status'} />
 						</TableRow>
 					</TableHead>
 					<TableBody
@@ -179,20 +161,21 @@ const TransactionHistoryTable = ({ user }: Props) => {
 														: row.reference}
 												</StyledTableCell>
 												<StyledTableCell style={styles.text}>
-													{moment.utc(row.createdAt).format('ll')}
-												</StyledTableCell>
-												<StyledTableCell style={styles.text}>
-													{moment.utc(row.createdAt).format('LT')}
-												</StyledTableCell>
-												<StyledTableCell style={styles.text}>
-													{row.status}
-												</StyledTableCell>
-												<StyledTableCell style={styles.text}>
 													{formatNumberToCurrency(
 														typeof row.amount !== 'string'
 															? row.amount.$numberDecimal
 															: row.amount
 													)}
+												</StyledTableCell>
+												<StyledTableCell style={styles.text}>
+													{moment.utc(row.createdAt).format('ll')}
+												</StyledTableCell>
+												<StyledTableCell style={styles.text}>
+													{moment.utc(row.createdAt).format('LT')}
+												</StyledTableCell>
+
+												<StyledTableCell style={styles.text}>
+													{row.status}
 												</StyledTableCell>
 											</StyledTableRow>
 										))
@@ -238,4 +221,4 @@ const useStyles = (theme: any) => ({
 	},
 });
 
-export default TransactionHistoryTable;
+export default UserTransactionsTable;

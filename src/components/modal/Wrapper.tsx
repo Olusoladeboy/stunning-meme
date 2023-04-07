@@ -65,11 +65,14 @@ const ModalWrapper = ({
 				{title && (
 					<Box sx={{ marginBottom: theme.spacing(3) }}>
 						{typeof title === 'string' ? (
-							<Typography sx={{ fontWeight: 'bold' }} variant={'h6'}>
+							<Typography
+								sx={{ fontWeight: 'bold', marginBottom: '20px' }}
+								variant={'h6'}
+							>
 								{title}
 							</Typography>
 						) : (
-							title
+							<Box sx={{ marginBottom: '20px' }}>{title}</Box>
 						)}
 					</Box>
 				)}

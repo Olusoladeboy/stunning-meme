@@ -1,7 +1,7 @@
 import React from 'react';
 import { Box, useTheme } from '@mui/material';
 import UserAvatarWithDetails from '../avatar-with-details';
-import TransactionHistoryTable from '../table/transaction-history-table';
+import TransactionHistoryTable from '../table/user-transaction-table';
 import { UserDetails } from '../../utilities';
 
 type Props = {

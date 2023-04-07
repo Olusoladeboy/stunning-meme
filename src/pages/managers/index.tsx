@@ -1,18 +1,15 @@
 import React from 'react';
 import { Box } from '@mui/material';
 import { Layout, ManagersTable } from '../../components';
-import { useAppSelector } from '../../store/hooks';
-import { QueryKey } from '../../utilities/types';
-import Api from '../../utilities/api';
-import { useQueryHook } from '../../utilities/api/hooks';
+import { QueryKeys } from '../../utilities';
+import { useQueryHook } from '../../hooks';
+import { managers } from '../../api';
 
 const Managers = () => {
-	const { token } = useAppSelector((store) => store.authState);
 	const { data, isLoading } = useQueryHook({
-		queryKey: QueryKey.AllManagers,
+		queryKey: QueryKeys.AllManagers,
 		queryFn: () =>
-			Api.Manager.AllManagers({
-				token: token as string,
+			managers({
 				params: {
 					sort: '-createdAt',
 				},

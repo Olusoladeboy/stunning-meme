@@ -1,7 +1,7 @@
 import React from 'react';
 import { Box, Typography, BoxProps } from '@mui/material';
-import FilterWithSearch from '../filter-with-search';
 import BackButton from '../back-button';
+import SearchInput from '../form-components/search-input';
 
 interface Props extends BoxProps {
 	title?: any;
@@ -9,14 +9,19 @@ interface Props extends BoxProps {
 	isDisplayBackButton?: boolean;
 	backButtonText?: string;
 	isDisplayFilter?: boolean;
+	searchPlaceholder?: string;
+	handleSearch?: (value: string) => void;
+	clearSearch?: () => void;
 }
 
 const TableHeader = ({
 	title,
 	sx,
 	isDisplayBackButton,
+	searchPlaceholder = 'Search...',
 	backButtonText,
-	isDisplayFilter,
+	handleSearch,
+	clearSearch,
 	style,
 }: Props) => {
 	return (
@@ -44,7 +49,13 @@ const TableHeader = ({
 			) : (
 				isDisplayBackButton && <BackButton text={backButtonText} />
 			)}
-			<FilterWithSearch isDisplayFilter={isDisplayFilter} />
+			<SearchInput
+				fullWidth
+				sx={{ maxWidth: '320px' }}
+				placeholder={searchPlaceholder}
+				handleSearch={handleSearch}
+				clearSearch={clearSearch}
+			/>
 		</Box>
 	);
 };

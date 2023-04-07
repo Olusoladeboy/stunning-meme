@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import queryString from 'query-string';
-import { Box, Typography, useTheme } from '@mui/material';
+import { Box, useTheme } from '@mui/material';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { grey } from '@mui/material/colors';
 import {
@@ -8,6 +8,7 @@ import {
 	TransactionsTable,
 	TransactionMainBalance,
 	Pagination,
+	TableHeader,
 } from '../../components';
 import { BOX_SHADOW } from '../../utilities';
 import { useQueryHook } from '../../utilities/api/hooks';
@@ -67,10 +68,8 @@ const Transactions = () => {
 	return (
 		<Layout>
 			<Box style={styles.container}>
-				<Box sx={{ padding: '0px 2rem' }}>
-					<Typography sx={{ marginBottom: theme.spacing(2) }} variant={'h5'}>
-						Transactions
-					</Typography>
+				<Box sx={{ padding: '0px 2rem', display: 'grid', gap: '10px' }}>
+					<TableHeader title={'Transactions'} />
 					<TransactionMainBalance />
 				</Box>
 				<TransactionsTable isLoading={isLoading} data={data && data.payload} />

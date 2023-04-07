@@ -1,9 +1,13 @@
 import React, { CSSProperties, useState } from 'react';
-import Table from '@mui/material/Table';
-import Box from '@mui/material/Box';
-import { Avatar, Typography, useTheme } from '@mui/material';
-import TableBody from '@mui/material/TableBody';
-import TableHead from '@mui/material/TableHead';
+import {
+	Table,
+	TableHead,
+	TableBody,
+	Avatar,
+	Typography,
+	useTheme,
+	Box,
+} from '@mui/material';
 import { grey } from '@mui/material/colors';
 import { AddCircle } from '@mui/icons-material';
 import moment from 'moment';
@@ -26,6 +30,7 @@ import AddManagerForm from '../forms/manager-admin-form';
 import ManagerDetails from '../manager-details';
 import TableLoader from '../loader/table-loader';
 import ManagerTableHeader from '../header/manager-table-header';
+import CustomTableCell from './components/custom-table-cell';
 
 interface ManagerDetailsType extends ManagerDetailsData {
 	avatar: string;
@@ -158,46 +163,11 @@ const ManagersTable = ({ managers, isLoading }: Props) => {
 					>
 						<TableRow>
 							<TableCell />
-							<TableCell>
-								<Box style={styles.filterWrapper}>
-									<Typography style={styles.tableHeaderText} variant={'body1'}>
-										Name
-									</Typography>
-									<FilterIcon />
-								</Box>
-							</TableCell>
-							<TableCell>
-								<Box style={styles.filterWrapper}>
-									<Typography style={styles.tableHeaderText} variant={'body1'}>
-										Email
-									</Typography>
-									<FilterIcon />
-								</Box>
-							</TableCell>
-							<TableCell>
-								<Box style={styles.filterWrapper}>
-									<Typography style={styles.tableHeaderText} variant={'body1'}>
-										Phone no.
-									</Typography>
-									<FilterIcon />
-								</Box>
-							</TableCell>
-							<TableCell>
-								<Box style={styles.filterWrapper}>
-									<Typography style={styles.tableHeaderText} variant={'body1'}>
-										Date
-									</Typography>
-									<FilterIcon />
-								</Box>
-							</TableCell>
-							<TableCell>
-								<Box style={styles.filterWrapper}>
-									<Typography style={styles.tableHeaderText} variant={'body1'}>
-										User
-									</Typography>
-									<FilterIcon />
-								</Box>
-							</TableCell>
+							<CustomTableCell label={'Name'} isSortable />
+							<CustomTableCell label={'Email'} isSortable />
+							<CustomTableCell label={'Phone No.'} isSortable />
+							<CustomTableCell label={'Date'} isSortable />
+							<CustomTableCell label={'User'} />
 						</TableRow>
 					</TableHead>
 					<TableBody

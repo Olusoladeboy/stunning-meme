@@ -487,8 +487,8 @@ export interface Transaction {
 	reference: string;
 	user: User;
 	amount: string | Amount;
-	balanceBefore: string;
-	balanceAfter: string;
+	balanceBefore?: string | Amount;
+	balanceAfter?: string | Amount;
 	name: string;
 	type: string;
 	createdAt: string;

@@ -24,3 +24,4 @@ export { default as Admin } from './admin';
 export { default as Message } from './dispute/message';
 export { default as DataTypes } from './data-type';
 export { default as Messages } from './messages';
+export { default as AutoConversions } from './conversions/auto-conversions';

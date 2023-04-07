@@ -1,33 +1,36 @@
 import React, { useState, useEffect } from 'react';
-import Table from '@mui/material/Table';
+import {
+	Table,
+	Box,
+	Typography,
+	useTheme,
+	TableBody,
+	TableHead,
+	TableRow,
+} from '@mui/material';
 import { useLocation, useNavigate } from 'react-router-dom';
 import queryString from 'query-string';
-import Box from '@mui/material/Box';
-import { Typography, useTheme } from '@mui/material';
-import TableBody from '@mui/material/TableBody';
 import { useQuery } from 'react-query';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
 import moment from 'moment';
-import { LIGHT_GRAY } from '../../utilities/constant';
 import { StyledTableRow, StyledTableCell } from './components';
 import {
 	UserDetails,
 	QueryKey,
 	UserNavList,
 	Transaction,
-} from '../../utilities/types';
-import FilterIcon from '../icons/filter';
+	formatNumberToCurrency,
+	LINKS,
+	MAX_RECORDS,
+	LIGHT_GRAY,
+} from '../../utilities';
 import SearchInput from '../form-components/search-input';
-import Api from '../../utilities/api';
 import { useAppSelector } from '../../store/hooks';
 import Loader from '../loader/table-loader';
 import Empty from '../empty/table-empty';
-import formatNumberToCurrency from '../../utilities/helpers/formatNumberToCurrency';
 import Pagination from '../pagination';
-import { MAX_RECORDS } from '../../utilities/constant';
-import LINKS from '../../utilities/links';
-import { useAlert } from '../../utilities/hooks';
+import { useAlert, useHandleError } from '../../hooks';
+import { transactions } from '../../api';
+import CustomTableCell from './components/custom-table-cell';
 
 type Props = {
 	user: UserDetails | null;
@@ -36,6 +39,7 @@ type Props = {
 const WalletSummaryTable = ({ user }: Props) => {
 	const theme = useTheme();
 	const setAlert = useAlert();
+	const handleError = useHandleError();
 	const styles = useStyles(theme);
 	const navigate = useNavigate();
 	const [count, setCount] = useState<number>(1);
@@ -55,8 +59,7 @@ const WalletSummaryTable = ({ user }: Props) => {
 	const { isLoading, data } = useQuery(
 		[QueryKey.UserWalletTransaction, user?.id, page],
 		() =>
-			Api.Wallet.Transactions({
-				token: token as string,
+			transactions({
 				params: {
 					user: user?.id,
 					sort: '-createdAt',
@@ -68,7 +71,9 @@ const WalletSummaryTable = ({ user }: Props) => {
 			enabled: !!(token && user),
 			onSettled: (data, error) => {
 				if (error) {
-					setAlert({ data: error, type: 'error' });
+					const response = handleError({ error });
+					if (response?.message)
+						setAlert({ message: response.message, type: 'error' });
 				}
 
 				if (data && data.success) {
@@ -121,32 +126,14 @@ const WalletSummaryTable = ({ user }: Props) => {
 					}}
 				>
 					<TableRow>
-						<StyledTableCell>Reference</StyledTableCell>
-						<StyledTableCell>Amount</StyledTableCell>
-						<StyledTableCell>
-							<Box style={styles.filterWrapper}>
-								<Typography>Product</Typography>
-								<FilterIcon />
-							</Box>
-						</StyledTableCell>
-						<StyledTableCell>
-							<Box style={styles.filterWrapper}>
-								<Typography>Previous Balance</Typography>
-								<FilterIcon />
-							</Box>
-						</StyledTableCell>
-						<StyledTableCell>
-							<Box style={styles.filterWrapper}>
-								<Typography>New Balance</Typography>
-								<FilterIcon />
-							</Box>
-						</StyledTableCell>
-						<StyledTableCell>
-							<Box style={styles.filterWrapper}>
-								<Typography>Date</Typography>
-								<FilterIcon />
-							</Box>
-						</StyledTableCell>
+						<CustomTableCell label={'Reference'} isSortable />
+						<CustomTableCell label={'Amount'} isSortable />
+						<CustomTableCell label={'Product'} isSortable />
+						<CustomTableCell label={'Prev Balance'} />
+						<CustomTableCell label={'New Balance'} isSortable />
+
+						<CustomTableCell label={'Date'} isSortable />
+						<CustomTableCell label={'Time'} isSortable />
 					</TableRow>
 				</TableHead>
 				<TableBody
@@ -175,17 +162,36 @@ const WalletSummaryTable = ({ user }: Props) => {
 												)}
 											</StyledTableCell>
 											<StyledTableCell style={styles.text}>
-												{row.service}
+												{row.transaction
+													? row.transaction.service
+													: row.type
+													? row.type
+													: 'No Available Service'}
 											</StyledTableCell>
 											<StyledTableCell style={styles.text}>
-												{formatNumberToCurrency(row.balanceBefore)}
+												{formatNumberToCurrency(
+													row.balanceBefore
+														? typeof row.balanceBefore !== 'string'
+															? row.balanceBefore.$numberDecimal
+															: row.balanceBefore
+														: 0
+												)}
 											</StyledTableCell>
 											<StyledTableCell style={styles.text}>
-												{formatNumberToCurrency(row.balanceAfter)}
+												{formatNumberToCurrency(
+													row.balanceAfter
+														? typeof row.balanceAfter !== 'string'
+															? row.balanceAfter.$numberDecimal
+															: row.balanceAfter
+														: 0
+												)}
 											</StyledTableCell>
 
 											<StyledTableCell style={styles.text}>
 												{moment.utc(row.createdAt).format('ll')}
+											</StyledTableCell>
+											<StyledTableCell style={styles.text}>
+												{moment.utc(row.createdAt).format('LT')}
 											</StyledTableCell>
 										</StyledTableRow>
 									))

@@ -27,6 +27,7 @@ import {
 	Referrals,
 	DataTypes,
 	Messages,
+	AutoConversions,
 } from '../pages';
 
 const Router = () => {
@@ -105,6 +106,14 @@ const Router = () => {
 				element={
 					<PrivateRoute>
 						<Conversions />
+					</PrivateRoute>
+				}
+			/>
+			<Route
+				path={'auto-conversions'}
+				element={
+					<PrivateRoute>
+						<AutoConversions />
 					</PrivateRoute>
 				}
 			/>

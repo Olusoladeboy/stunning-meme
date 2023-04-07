@@ -6,16 +6,17 @@ import {
 	BoxProps,
 	Box,
 } from '@mui/material';
-import { Search } from '@mui/icons-material';
+import { Search, Close } from '@mui/icons-material';
 import { useAppSelector } from '../../store/hooks';
 import { ThemeModeType } from '../../utilities';
-import { grey } from '@mui/material/colors';
+import { grey, red } from '@mui/material/colors';
 
 interface Props extends BoxProps {
 	isLoading?: boolean;
 	handleSearch?: (value: string) => void;
 	placeholder?: string;
 	fullWidth?: boolean;
+	clearSearch?: () => void;
 }
 
 const SearchInput = ({
@@ -23,10 +24,15 @@ const SearchInput = ({
 	handleSearch,
 	fullWidth,
 	placeholder,
+	clearSearch,
 	...rest
 }: Props) => {
 	const { mode } = useAppSelector((store) => store.theme);
 	const [value, setValue] = useState('');
+	const handleClose = () => {
+		setValue('');
+		typeof clearSearch !== 'undefined' && clearSearch();
+	};
 	return (
 		<Box {...rest} sx={{ ...rest.sx, width: fullWidth ? '100%' : 'undefined' }}>
 			<TextField
@@ -50,16 +56,29 @@ const SearchInput = ({
 				InputProps={{
 					endAdornment: (
 						<InputAdornment position='start'>
-							<IconButton
-								onClick={() =>
-									typeof handleSearch !== 'undefined' &&
-									value.length > 0 &&
-									handleSearch(value)
-								}
-								size={'small'}
-							>
-								<Search />
-							</IconButton>
+							<Box sx={{ display: 'flex', alignItems: 'center', gap: '3px' }}>
+								{value && (
+									<IconButton
+										sx={{
+											color: red['600'],
+										}}
+										onClick={handleClose}
+										size={'small'}
+									>
+										<Close />
+									</IconButton>
+								)}
+								<IconButton
+									onClick={() =>
+										typeof handleSearch !== 'undefined' &&
+										value.length > 0 &&
+										handleSearch(value)
+									}
+									size={'small'}
+								>
+									<Search />
+								</IconButton>
+							</Box>
 						</InputAdornment>
 					),
 				}}

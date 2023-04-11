@@ -144,7 +144,7 @@ const WalletSummaryTable = ({ user }: Props) => {
 					}}
 				>
 					{isLoading ? (
-						<Loader colSpan={6} />
+						<Loader colSpan={7} />
 					) : (
 						data && (
 							<>
@@ -196,7 +196,7 @@ const WalletSummaryTable = ({ user }: Props) => {
 										</StyledTableRow>
 									))
 								) : (
-									<Empty colSpan={6} text={'No Wallet Summary'} />
+									<Empty colSpan={7} text={'No Wallet Summary'} />
 								)}
 							</>
 						)

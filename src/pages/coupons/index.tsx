@@ -3,22 +3,19 @@ import { Box } from '@mui/material';
 import { useNavigate, useLocation } from 'react-router-dom';
 import queryString from 'query-string';
 import { Layout, Pagination, CouponsTable } from '../../components';
-import { useAppSelector } from '../../store/hooks';
-import Api from '../../utilities/api';
-import { QueryKey } from '../../utilities/types';
-import { MAX_RECORDS } from '../../utilities/constant';
-import LINKS from '../../utilities/links';
-import { useQueryHook } from '../../utilities/api/hooks';
+import { MAX_RECORDS, LINKS, QueryKeys } from '../../utilities';
+import { useSearchCoupon, useQueryHook } from '../../hooks';
+import { coupons } from '../../api';
 
 const Coupons = () => {
-	const { token } = useAppSelector((store) => store.authState);
-
 	const navigate = useNavigate();
 	const [count, setCount] = useState<number>(1);
 	const [page, setPage] = useState<number>(1);
 	const [total, setTotal] = useState<number>(0);
 	const location = useLocation();
 	const query = queryString.parse(location.search);
+
+	const { isSearching, searchCoupon, search, clearSearch } = useSearchCoupon();
 
 	useEffect(() => {
 		if (query && query.page) {
@@ -27,10 +24,9 @@ const Coupons = () => {
 	}, [query, query.page]);
 
 	const { isLoading, data } = useQueryHook({
-		queryKey: QueryKey.Coupon,
+		queryKey: QueryKeys.Coupon,
 		queryFn: () =>
-			Api.Coupon.RetrieveAll({
-				token: token as string,
+			coupons({
 				params: {
 					sort: '-createdAt',
 					limit: MAX_RECORDS,
@@ -59,8 +55,13 @@ const Coupons = () => {
 	return (
 		<Layout>
 			<Box>
-				<CouponsTable isLoading={isLoading} data={data && data.payload} />
-				{total > MAX_RECORDS && (
+				<CouponsTable
+					isLoading={isLoading || isSearching}
+					data={search ? search : data && data.payload}
+					clearSearch={clearSearch}
+					searchCoupon={searchCoupon}
+				/>
+				{!search && total > MAX_RECORDS && (
 					<Box sx={{}}>
 						<Pagination
 							sx={{}}

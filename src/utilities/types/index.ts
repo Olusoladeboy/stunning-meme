@@ -51,31 +51,31 @@ export type LoginData = {
 };
 
 export type UserDetails = {
-	suspensionDuration: { [key: string]: any };
-	suspendWithdrawal: boolean;
-	userType: string;
-	hasPin: boolean;
-	isActive: boolean;
-	biometricLogin: boolean;
-	verified: boolean;
-	bvnVerified: boolean;
-	suspended: boolean;
-	suspensionReason: string;
-	deleted: boolean;
-	restricted: boolean;
-	twoFactorAuth: boolean;
-	isLoggedIn: boolean;
-	role: string;
-	suspendWalletTransactions: boolean;
-	firstname: string;
-	lastname: string;
-	email: string;
-	username: string;
-	phone: string;
-	createdAt: string;
-	id: string;
-	avatar: string;
-	kycLevel: string;
+	suspensionDuration?: { [key: string]: any };
+	suspendWithdrawal?: boolean;
+	userType?: string;
+	hasPin?: boolean;
+	isActive?: boolean;
+	biometricLogin?: boolean;
+	verified?: boolean;
+	bvnVerified?: boolean;
+	suspended?: boolean;
+	suspensionReason?: string;
+	deleted?: boolean;
+	restricted?: boolean;
+	twoFactorAuth?: boolean;
+	isLoggedIn?: boolean;
+	role?: string;
+	suspendWalletTransactions?: boolean;
+	firstname?: string;
+	lastname?: string;
+	email?: string;
+	username?: string;
+	phone?: string;
+	createdAt?: string;
+	id?: string;
+	avatar?: string;
+	kycLevel?: string;
 };
 
 export type LoginDetails = {
@@ -197,6 +197,20 @@ export enum NetworkPage {
 	CONVERSION_NETWORK = 'Conversion network',
 }
 
+export interface AirtimeConversion {
+	amount: Amount | string;
+	status: TransactionStatus;
+	return_amount: Amount | string;
+	phone_number: string;
+	network: NetworkData;
+	user: UserDetails;
+	reference: string;
+	sentTo: string;
+	createdAt: Date;
+	updatedAt: Date;
+	id: string;
+}
+
 export enum NetworkStatus {
 	ENABLE = 'enable',
 	DISABLE = 'disable',
@@ -220,13 +234,12 @@ export enum API_ENDPOINTS {
 	Ticket = '/ticket',
 }
 
-export type ManagerDetailsData = {
+export interface ManagerDetailsData extends UserDetails {
 	firstname: string;
 	lastname: string;
 	email: string;
 	phone: string;
-	avatar?: string;
-};
+}
 
 export type NetworkData = {
 	name?: string;
@@ -234,6 +247,7 @@ export type NetworkData = {
 	number?: string;
 	ussd?: string;
 	isActive?: boolean;
+	createdAt?: Date;
 };
 
 export type KycData = {

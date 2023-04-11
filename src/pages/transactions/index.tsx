@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import queryString from 'query-string';
 import { Box, useTheme } from '@mui/material';
+import { useQuery } from 'react-query';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { grey } from '@mui/material/colors';
 import {
@@ -10,17 +11,16 @@ import {
 	Pagination,
 	TableHeader,
 } from '../../components';
-import { BOX_SHADOW } from '../../utilities';
-import { useQueryHook } from '../../utilities/api/hooks';
+import { BOX_SHADOW, QueryKeys, MAX_RECORDS, LINKS } from '../../utilities';
 import { useAppSelector } from '../../store/hooks';
-import Api from '../../utilities/api';
-import { QueryKey } from '../../utilities/types';
-import { MAX_RECORDS } from '../../utilities/constant';
-import LINKS from '../../utilities/links';
+import { transactions } from '../../api';
+import { useHandleError, useAlert, useSearchTransaction } from '../../hooks';
 
 const Transactions = () => {
 	const theme = useTheme();
+	const handleError = useHandleError();
 	const styles = useStyles(theme);
+	const alert = useAlert();
 	const { token } = useAppSelector((store) => store.authState);
 	const navigate = useNavigate();
 	const [count, setCount] = useState<number>(1);
@@ -28,6 +28,8 @@ const Transactions = () => {
 	const [total, setTotal] = useState<number>(0);
 	const location = useLocation();
 	const query = queryString.parse(location.search);
+	const { isSearching, searchTransaction, clearSearch, search } =
+		useSearchTransaction();
 
 	useEffect(() => {
 		if (query && query.page) {
@@ -35,25 +37,34 @@ const Transactions = () => {
 		}
 	}, [query, query.page]);
 
-	const { isLoading, data } = useQueryHook({
-		keepPreviousData: true,
-		queryKey: [QueryKey.AllTransactions, page],
-		queryFn: () =>
-			Api.Transactions.All({
-				token: token as string,
+	const { isLoading, data } = useQuery(
+		[QueryKeys.AllTransactions],
+		() =>
+			transactions({
 				params: {
 					sort: '-createdAt',
 					limit: MAX_RECORDS,
 					skip: (page - 1) * MAX_RECORDS,
 				},
 			}),
-		onSuccessFn: (data: any) => {
-			const total = data.metadata.total;
-			setTotal(data.metadata.total);
-			const count = Math.ceil(total / MAX_RECORDS);
-			setCount(count);
-		},
-	});
+		{
+			enabled: !!token,
+			onSettled: (data: any, error) => {
+				if (error) {
+					const response = handleError({ error });
+					if (response?.message) {
+						alert({ message: response.message, type: 'error' });
+					}
+				}
+				if (data && data.success) {
+					const total = data.metadata.total;
+					setTotal(data.metadata.total);
+					const count = Math.ceil(total / MAX_RECORDS);
+					setCount(count);
+				}
+			},
+		}
+	);
 
 	const handlePageChange = (page: number) => {
 		if (page !== 1) {
@@ -69,10 +80,18 @@ const Transactions = () => {
 		<Layout>
 			<Box style={styles.container}>
 				<Box sx={{ padding: '0px 2rem', display: 'grid', gap: '10px' }}>
-					<TableHeader title={'Transactions'} />
+					<TableHeader
+						searchPlaceholder={'Search transaction by reference'}
+						title={'Transactions'}
+						handleSearch={searchTransaction}
+						clearSearch={clearSearch}
+					/>
 					<TransactionMainBalance />
 				</Box>
-				<TransactionsTable isLoading={isLoading} data={data && data.payload} />
+				<TransactionsTable
+					isLoading={isLoading || isSearching}
+					data={search ? search : data && data.payload}
+				/>
 				{total > MAX_RECORDS && (
 					<Box style={styles.paginationWrapper}>
 						<Pagination

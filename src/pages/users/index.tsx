@@ -4,22 +4,9 @@ import { useQuery } from 'react-query';
 import { useNavigate, useLocation } from 'react-router-dom';
 import queryString from 'query-string';
 import { Layout, UsersTable, Pagination } from '../../components';
-import {
-	MAX_RECORDS,
-	LINKS,
-	QueryKeys,
-	USERS_TAB,
-	EMAIL_REX,
-	PHONE_REX,
-	User,
-} from '../../utilities';
+import { MAX_RECORDS, LINKS, QueryKeys, USERS_TAB } from '../../utilities';
 import { users } from '../../api';
-import { useAlert, useHandleError } from '../../hooks';
-
-interface SearchPayload {
-	email?: string;
-	phone?: string;
-}
+import { useAlert, useHandleError, useSearchUser } from '../../hooks';
 
 const Users = () => {
 	const navigate = useNavigate();
@@ -35,8 +22,7 @@ const Users = () => {
 		{} as { [key: string]: boolean }
 	);
 	const [currentTab, setCurrentTab] = useState(USERS_TAB.All);
-	const [search, setSearch] = useState<null | User>(null);
-	const [isSearching, setSearching] = useState<boolean>(false);
+	const { isSearching, search, clearSearch, searchUser } = useSearchUser();
 
 	useEffect(() => {
 		setLoad(true);
@@ -116,42 +102,6 @@ const Users = () => {
 		setLoad(true);
 	};
 
-	/* 
-		@Search User
-	*/
-	const searchUser = async (value: string) => {
-		let params = {} as SearchPayload;
-		if (EMAIL_REX.test(value)) params.email = value;
-
-		if (PHONE_REX.test(value)) params.phone = value;
-
-		if (Object.keys(params).length === 0) {
-			return alert({
-				message: 'Search user with email or phone',
-				type: 'info',
-			});
-		}
-		setSearching(true);
-
-		try {
-			const data = await users({ params });
-			setSearching(false);
-			if (data && Array.isArray(data.payload)) {
-				if (data.payload.length === 0) {
-					return alert({ message: 'User not found', type: 'success' });
-				}
-
-				setSearch(data.payload);
-			}
-		} catch (error) {
-			setSearching(false);
-
-			const response = handleError({ error });
-			if (response?.message)
-				alert({ message: response.message, type: 'error' });
-		}
-	};
-
 	return (
 		<Layout>
 			<UsersTable
@@ -160,10 +110,10 @@ const Users = () => {
 				users={search ? search : data && data.payload}
 				currentTab={currentTab}
 				searchUser={searchUser}
-				clearSearch={() => setSearch(null)}
+				clearSearch={clearSearch}
 				isDisplayTab={!search}
 			/>
-			{total > MAX_RECORDS && (
+			{!search && total > MAX_RECORDS && (
 				<Box sx={{}}>
 					<Pagination
 						sx={{}}

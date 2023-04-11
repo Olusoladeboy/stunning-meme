@@ -1,11 +1,12 @@
 import React from 'react';
-import { Box } from '@mui/material';
 import { Layout, ManagersTable } from '../../components';
 import { QueryKeys } from '../../utilities';
-import { useQueryHook } from '../../hooks';
+import { useQueryHook, useSearchManager } from '../../hooks';
 import { managers } from '../../api';
 
 const Managers = () => {
+	const { isSearching, search, searchManager, clearSearch } =
+		useSearchManager();
 	const { data, isLoading } = useQueryHook({
 		queryKey: QueryKeys.AllManagers,
 		queryFn: () =>
@@ -18,9 +19,12 @@ const Managers = () => {
 
 	return (
 		<Layout>
-			<Box>
-				<ManagersTable isLoading={isLoading} managers={data && data.payload} />
-			</Box>
+			<ManagersTable
+				clearSearch={clearSearch}
+				searchManager={searchManager}
+				isLoading={isLoading || isSearching}
+				managers={search ? search : data && data.payload}
+			/>
 		</Layout>
 	);
 };

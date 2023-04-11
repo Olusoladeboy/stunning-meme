@@ -23,6 +23,7 @@ const TableHeader = ({
 	handleSearch,
 	clearSearch,
 	style,
+	...rest
 }: Props) => {
 	return (
 		<Box
@@ -52,7 +53,7 @@ const TableHeader = ({
 			<SearchInput
 				fullWidth
 				sx={{ maxWidth: '320px' }}
-				placeholder={searchPlaceholder}
+				placeholder={rest.placeholder || searchPlaceholder}
 				handleSearch={handleSearch}
 				clearSearch={clearSearch}
 			/>

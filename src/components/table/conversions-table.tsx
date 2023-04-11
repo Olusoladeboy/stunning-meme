@@ -26,6 +26,7 @@ type Props = {
 	isLoading?: boolean;
 	handleSort?: (filter: string) => void;
 	handleSearch?: (search: string) => void;
+	clearSearch?: () => void;
 };
 
 const ConversionsTable = ({
@@ -33,6 +34,7 @@ const ConversionsTable = ({
 	isLoading,
 	handleSort,
 	handleSearch,
+	clearSearch,
 }: Props) => {
 	const theme = useTheme();
 	const styles = useStyles(theme);
@@ -46,8 +48,9 @@ const ConversionsTable = ({
 			<SearchContainer>
 				<SearchInput
 					sx={{ maxWidth: '400px', width: '100%' }}
-					placeholder='Search...'
+					placeholder='Search conversion with phone or reference ID...'
 					handleSearch={handleSearch}
+					clearSearch={clearSearch}
 					fullWidth
 				/>
 			</SearchContainer>

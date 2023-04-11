@@ -32,9 +32,16 @@ import { verifyUser } from '../../api';
 type Props = {
 	users: UserDetails[] | null;
 	isLoading?: boolean;
+	clearSearch?(): void;
+	searchUser?(value: string): void;
 };
 
-const VerificationTable = ({ users, isLoading }: Props) => {
+const VerificationTable = ({
+	users,
+	isLoading,
+	searchUser,
+	clearSearch,
+}: Props) => {
 	const navigate = useNavigate();
 	const handleError = useHandleError();
 	const theme = useTheme();
@@ -47,10 +54,7 @@ const VerificationTable = ({ users, isLoading }: Props) => {
 
 	const { isLoading: isVerifyingUser } = useQuery(
 		'',
-		() =>
-			verifyUser(
-				selectedUser?.id as string,
-			),
+		() => verifyUser(selectedUser?.id as string),
 		{
 			enabled: !!(token && selectedUser),
 			onSettled: (data, error) => {
@@ -79,7 +83,12 @@ const VerificationTable = ({ users, isLoading }: Props) => {
 					style={styles.tableHeader as CSSProperties}
 					sx={{ padding: '0px 1rem' }}
 				>
-					<TableHeader title={'Verification'} />
+					<TableHeader
+						title={'Verification'}
+						placeholder={'Search User by Email'}
+						clearSearch={clearSearch}
+						handleSearch={searchUser}
+					/>
 					<Box
 						sx={{
 							alignSelf: 'flex-end',

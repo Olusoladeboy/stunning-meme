@@ -19,7 +19,7 @@ import {
 	ErrorBoundary,
 } from '../../utilities';
 import { useAppSelector } from '../../store/hooks';
-import { useAlert, useHandleError } from '../../hooks';
+import { useAlert, useHandleError, useSearchConversion } from '../../hooks';
 import { convertAirtimes } from '../../api';
 
 const Conversions = () => {
@@ -34,15 +34,13 @@ const Conversions = () => {
 	const [count, setCount] = useState<number>(1);
 	const [page, setPage] = useState<number>(1);
 	const [total, setTotal] = useState<number>(0);
-	const [search, setSearch] = useState('');
+
 	const location = useLocation();
 	const query = queryString.parse(location.search);
 	const { token } = useAppSelector((store) => store.authState);
 
-	useEffect(() => {
-		if (search.length === 0) {
-		}
-	});
+	const { isSearching, search, clearSearch, searchConversion } =
+		useSearchConversion();
 
 	useEffect(() => {
 		if (query && query.page) {
@@ -64,10 +62,10 @@ const Conversions = () => {
 		[QueryKeys.ConvertAirtime, page],
 		() =>
 			convertAirtimes({
-				params: search ? { ...params, q: search } : params,
+				params,
 			}),
 		{
-			enabled: !!(token && isReload),
+			enabled: !!(token || isReload),
 			keepPreviousData: true,
 			onSettled: (data, error) => {
 				setReload(false);
@@ -106,16 +104,14 @@ const Conversions = () => {
 		}
 	};
 
-	const handleSearch = (search: string) => {
-		setSearch(search);
-		setReload(true);
-	};
-
 	return (
 		<Layout>
 			<Box style={styles.container}>
 				<Box sx={{ padding: '0px 2rem' }}>
-					<Typography sx={{ marginBottom: theme.spacing(2) }} variant={'h5'}>
+					<Typography
+						sx={{ marginBottom: theme.spacing(4), fontWeight: 'bold' }}
+						variant={'h5'}
+					>
 						Conversions
 					</Typography>
 					<Box
@@ -130,7 +126,6 @@ const Conversions = () => {
 					>
 						<ConversionTotal
 							handleRefresh={() => {
-								setSearch('');
 								setReload(true);
 								setReloading(true);
 							}}
@@ -141,13 +136,14 @@ const Conversions = () => {
 				</Box>
 				<ErrorBoundary>
 					<ConversionsTable
-						isLoading={isLoading || isReloading}
-						conversions={data && data.payload}
+						isLoading={isLoading || isReloading || isSearching}
+						conversions={search ? search : data && data.payload}
 						handleSort={handleSort}
-						handleSearch={handleSearch}
+						handleSearch={searchConversion}
+						clearSearch={clearSearch}
 					/>
 
-					{total > MAX_RECORDS && !isReloading && (
+					{!search && total > MAX_RECORDS && !isReloading && (
 						<Pagination
 							sx={{ marginLeft: '20px' }}
 							size={'large'}

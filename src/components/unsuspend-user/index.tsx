@@ -26,7 +26,7 @@ const UnsuspendUserButton = ({
 	const [isSuspended, setSuspended] = useState(false);
 	useEffect(() => {
 		if (user) {
-			setSuspended(user.suspended);
+			setSuspended(user?.suspended as boolean);
 		}
 	}, [user, user?.suspended]);
 

@@ -16,11 +16,11 @@ import {
 	Transaction,
 	TransactionStatus,
 } from '../../utilities';
-import FilterIcon from '../icons/filter';
 import { StyledTableCell, StyledTableRow } from './components';
 import Empty from '../empty/table-empty';
 import Loader from '../loader/table-loader';
 import TransactionDetailsModal from '../modal/transaction-details-modal';
+import CustomTableCell from './components/custom-table-cell';
 
 type Props = {
 	data: Transaction[] | null;
@@ -62,38 +62,13 @@ const TransactionsTable = ({ data, isLoading }: Props) => {
 						}}
 					>
 						<TableRow>
-							<StyledTableCell>
-								<Box style={styles.filterWrapper}>
-									<Typography>User</Typography>
-									<FilterIcon />
-								</Box>
-							</StyledTableCell>
-							<StyledTableCell>Transaction</StyledTableCell>
-							<StyledTableCell>Reference</StyledTableCell>
-							<StyledTableCell>
-								<Box style={styles.filterWrapper}>
-									<Typography>Date</Typography>
-									<FilterIcon />
-								</Box>
-							</StyledTableCell>
-							<StyledTableCell>
-								<Box style={styles.filterWrapper}>
-									<Typography>Time</Typography>
-									<FilterIcon />
-								</Box>
-							</StyledTableCell>
-							<StyledTableCell>
-								<Box style={styles.filterWrapper}>
-									<Typography>Status</Typography>
-									<FilterIcon />
-								</Box>
-							</StyledTableCell>
-							<StyledTableCell>
-								<Box style={styles.filterWrapper}>
-									<Typography>Amount</Typography>
-									<FilterIcon />
-								</Box>
-							</StyledTableCell>
+							<CustomTableCell label={'User'} isSortable />
+							<CustomTableCell label={'Transaction'} />
+							<CustomTableCell label={'Reference'} />
+							<CustomTableCell label={'Date'} />
+							<CustomTableCell label={'Time'} />
+							<CustomTableCell label={'Status'} />
+							<CustomTableCell label={'Amount'} />
 						</TableRow>
 					</TableHead>
 					<TableBody

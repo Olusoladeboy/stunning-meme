@@ -5,12 +5,8 @@ import UserAvatarWithDetails from '../avatar-with-details/manager';
 import Button from '../button';
 import { ManagerDetailsData, ManagerTypes } from '../../utilities';
 
-interface ManagerDetailsTypes extends ManagerDetailsData {
-	role?: string;
-}
-
 type Props = {
-	managerDetail: ManagerDetailsTypes;
+	managerDetail: ManagerDetailsData;
 	handleEdit?: () => void;
 	type?: ManagerTypes.Manager | ManagerTypes.Admin;
 };

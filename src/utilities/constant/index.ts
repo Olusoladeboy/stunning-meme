@@ -68,6 +68,7 @@ export const LINKS = {
 	Managers: '/managers',
 	Transactions: '/transactions',
 	Conversions: '/conversions',
+	AutoConversions: '/auto-conversions',
 	Network: '/network',
 	DataNetwork: '/network/data',
 	ConversionNetwork: '/network/conversion',
@@ -117,4 +118,18 @@ export const ENDPOINTS = {
 	Wallet: '/wallet',
 	Coupon: '/coupon',
 	Ticket: '/ticket',
+};
+
+export const FUND_WALLET_SERVICE = {
+	CREDIT: 'CREDIT',
+	DEBIT: 'DEBIT',
+	REFUND: 'REFUND',
+};
+
+export const USERS_TAB = {
+	All: 'All',
+	Verified: 'Verified',
+	Unverified: 'Unverified',
+	Suspended: 'Suspended',
+	Deleted: 'Deleted',
 };

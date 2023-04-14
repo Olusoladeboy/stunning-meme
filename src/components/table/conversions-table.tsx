@@ -1,16 +1,21 @@
-import React, { CSSProperties } from 'react';
-import Table from '@mui/material/Table';
-import { Box, Typography } from '@mui/material';
-import { useTheme } from '@mui/material';
-import TableBody from '@mui/material/TableBody';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
+import React from 'react';
+import {
+	TableBody,
+	TableHead,
+	TableRow,
+	Table,
+	useTheme,
+	Box,
+	Button,
+	styled,
+} from '@mui/material';
+import { green, grey, red } from '@mui/material/colors';
 import { StyledTableCell, StyledTableRow } from './components';
 import { LIGHT_GRAY, formatNumberToCurrency } from '../../utilities';
-import FilterIcon from '../icons/filter';
 import Loader from '../loader/table-loader';
 import Empty from '../empty/table-empty';
 import SearchInput from '../form-components/search-input';
+import CustomTableCell from './components/custom-table-cell';
 
 type Props = {
 	conversions:
@@ -21,6 +26,7 @@ type Props = {
 	isLoading?: boolean;
 	handleSort?: (filter: string) => void;
 	handleSearch?: (search: string) => void;
+	clearSearch?: () => void;
 };
 
 const ConversionsTable = ({
@@ -28,6 +34,7 @@ const ConversionsTable = ({
 	isLoading,
 	handleSort,
 	handleSearch,
+	clearSearch,
 }: Props) => {
 	const theme = useTheme();
 	const styles = useStyles(theme);
@@ -37,15 +44,16 @@ const ConversionsTable = ({
 	};
 
 	return (
-		<Box style={styles.container as CSSProperties} sx={{ overflow: 'auto' }}>
-			<Box style={styles.searchInput}>
+		<Container sx={{ overflow: 'auto' }}>
+			<SearchContainer>
 				<SearchInput
 					sx={{ maxWidth: '400px', width: '100%' }}
-					placeholder='Search...'
+					placeholder='Search conversion with phone or reference ID...'
 					handleSearch={handleSearch}
+					clearSearch={clearSearch}
 					fullWidth
 				/>
-			</Box>
+			</SearchContainer>
 			<Table sx={{ overflow: 'auto' }} stickyHeader>
 				<TableHead
 					sx={{
@@ -56,70 +64,41 @@ const ConversionsTable = ({
 					}}
 				>
 					<TableRow>
-						<StyledTableCell
+						<CustomTableCell
 							onClick={() => handleSortRecord('user')}
-							style={styles.headTableCell}
-						>
-							<Box style={styles.filterWrapper}>
-								<Typography>User</Typography>
-								<FilterIcon />
-							</Box>
-						</StyledTableCell>
-						<StyledTableCell
+							label={'User'}
+							isSortable
+						/>
+						<CustomTableCell
 							onClick={() => handleSortRecord('id')}
-							style={styles.headTableCell}
-						>
-							<Box style={styles.filterWrapper}>
-								<Typography>Order ID</Typography>
-								<FilterIcon />
-							</Box>
-						</StyledTableCell>
-						<StyledTableCell
+							label={'Order ID'}
+						/>
+						<CustomTableCell
 							onClick={() => handleSortRecord('network')}
 							style={styles.headTableCell}
-						>
-							<Box style={styles.filterWrapper}>
-								<Typography>Network</Typography>
-								<FilterIcon />
-							</Box>
-						</StyledTableCell>
-						<StyledTableCell
+							label={'Network'}
+						/>
+						<CustomTableCell
 							onClick={() => handleSortRecord('number')}
 							style={styles.headTableCell}
-						>
-							<Box style={styles.filterWrapper}>
-								<Typography>Number</Typography>
-								<FilterIcon />
-							</Box>
-						</StyledTableCell>
+							label={'Number'}
+						/>
 
-						<StyledTableCell
+						<CustomTableCell
 							onClick={() => handleSortRecord('amount')}
 							style={styles.headTableCell}
-						>
-							<Box style={styles.filterWrapper}>
-								<Typography>Income</Typography>
-								<FilterIcon />
-							</Box>
-						</StyledTableCell>
-						<StyledTableCell
+							label={'Income'}
+						/>
+						<CustomTableCell
 							onClick={() => handleSortRecord('return_amount')}
 							style={styles.headTableCell}
-						>
-							<Box style={styles.filterWrapper}>
-								<Typography>Return</Typography>
-								<FilterIcon />
-							</Box>
-						</StyledTableCell>
-						<StyledTableCell
+							label={'Return'}
+						/>
+						<CustomTableCell
 							onClick={() => handleSortRecord('status')}
 							style={styles.headTableCell}
-						>
-							<Box style={styles.filterWrapper}>
-								<Typography>Status</Typography>
-								<FilterIcon />
-							</Box>
-						</StyledTableCell>
+							label={'Status'}
+						/>
 					</TableRow>
 				</TableHead>
 				<TableBody
@@ -158,7 +137,15 @@ const ConversionsTable = ({
 													{formatNumberToCurrency(conversion.return_amount)}
 												</StyledTableCell>
 												<StyledTableCell style={styles.text}>
-													{conversion.status}
+													{/* {conversion.status} */}
+													<Box sx={{ display: 'flex', gap: theme.spacing(2) }}>
+														<ApproveButton size={'small'}>
+															Approve
+														</ApproveButton>
+														<DeclineButton size={'small'}>
+															Decline
+														</DeclineButton>
+													</Box>
 												</StyledTableCell>
 											</StyledTableRow>
 										);
@@ -171,19 +158,34 @@ const ConversionsTable = ({
 					)}
 				</TableBody>
 			</Table>
-		</Box>
+		</Container>
 	);
 };
 
+const Container = styled(Box)(({ theme }) => ({
+	display: 'flex',
+	flexDirection: 'column',
+	overflow: 'auto',
+}));
+
+const SearchContainer = styled(Box)(({ theme }) => ({
+	display: 'flex',
+	justifyContent: 'flex-end',
+	padding: '0px 15px',
+	marginBottom: '2rem',
+}));
+
+const ApproveButton = styled(Button)(({ theme }) => ({
+	color: grey['50'],
+	backgroundColor: green['600'],
+}));
+
+const DeclineButton = styled(Button)(({ theme }) => ({
+	color: grey['50'],
+	backgroundColor: red['600'],
+}));
+
 const useStyles = (theme: any) => ({
-	container: {
-		display: 'flex',
-		flexDirection: 'column',
-	},
-	tableHeader: {
-		padding: '0px 32px',
-		marginBottom: theme.spacing(3),
-	},
 	headTableCell: {
 		cursor: 'pointer',
 	},

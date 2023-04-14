@@ -1,9 +1,13 @@
 import React, { CSSProperties, useState } from 'react';
-import Table from '@mui/material/Table';
-import Box from '@mui/material/Box';
-import { Avatar, Typography, useTheme } from '@mui/material';
-import TableBody from '@mui/material/TableBody';
-import TableHead from '@mui/material/TableHead';
+import {
+	Table,
+	TableHead,
+	TableBody,
+	Avatar,
+	Typography,
+	useTheme,
+	Box,
+} from '@mui/material';
 import { grey } from '@mui/material/colors';
 import { AddCircle } from '@mui/icons-material';
 import moment from 'moment';
@@ -14,7 +18,6 @@ import {
 	ManagerDetailsData,
 } from '../../utilities';
 import ModalWrapper from '../modal/Wrapper';
-import FilterIcon from '../icons/filter';
 import {
 	StyledTableCell as TableCell,
 	StyledTableRow as TableRow,
@@ -26,6 +29,7 @@ import AddManagerForm from '../forms/manager-admin-form';
 import ManagerDetails from '../manager-details';
 import TableLoader from '../loader/table-loader';
 import ManagerTableHeader from '../header/manager-table-header';
+import CustomTableCell from './components/custom-table-cell';
 
 interface ManagerDetailsType extends ManagerDetailsData {
 	avatar: string;
@@ -35,9 +39,16 @@ interface ManagerDetailsType extends ManagerDetailsData {
 type Props = {
 	managers: ManagerDetailsType[];
 	isLoading: boolean;
+	searchManager?: (value: string) => void;
+	clearSearch?: () => void;
 };
 
-const ManagersTable = ({ managers, isLoading }: Props) => {
+const ManagersTable = ({
+	managers,
+	isLoading,
+	clearSearch,
+	searchManager,
+}: Props) => {
 	const [managerType, setManagerType] = useState<ManagerTypes | null>(null);
 	const [formActionType, setFormActionType] = useState<'edit' | 'add' | ''>('');
 	const [selectedManager, setSelectedManager] =
@@ -123,7 +134,11 @@ const ManagersTable = ({ managers, isLoading }: Props) => {
 					style={styles.tableHeader as CSSProperties}
 					sx={{ padding: '0px 1rem' }}
 				>
-					<ManagerTableHeader title={'Managers'} />
+					<ManagerTableHeader
+						handleSearch={searchManager}
+						clearSearch={clearSearch}
+						title={'Managers'}
+					/>
 					<Box
 						sx={{
 							alignSelf: 'flex-end',
@@ -158,46 +173,11 @@ const ManagersTable = ({ managers, isLoading }: Props) => {
 					>
 						<TableRow>
 							<TableCell />
-							<TableCell>
-								<Box style={styles.filterWrapper}>
-									<Typography style={styles.tableHeaderText} variant={'body1'}>
-										Name
-									</Typography>
-									<FilterIcon />
-								</Box>
-							</TableCell>
-							<TableCell>
-								<Box style={styles.filterWrapper}>
-									<Typography style={styles.tableHeaderText} variant={'body1'}>
-										Email
-									</Typography>
-									<FilterIcon />
-								</Box>
-							</TableCell>
-							<TableCell>
-								<Box style={styles.filterWrapper}>
-									<Typography style={styles.tableHeaderText} variant={'body1'}>
-										Phone no.
-									</Typography>
-									<FilterIcon />
-								</Box>
-							</TableCell>
-							<TableCell>
-								<Box style={styles.filterWrapper}>
-									<Typography style={styles.tableHeaderText} variant={'body1'}>
-										Date
-									</Typography>
-									<FilterIcon />
-								</Box>
-							</TableCell>
-							<TableCell>
-								<Box style={styles.filterWrapper}>
-									<Typography style={styles.tableHeaderText} variant={'body1'}>
-										User
-									</Typography>
-									<FilterIcon />
-								</Box>
-							</TableCell>
+							<CustomTableCell label={'Name'} isSortable />
+							<CustomTableCell label={'Email'} isSortable />
+							<CustomTableCell label={'Phone No.'} isSortable />
+							<CustomTableCell label={'Date'} isSortable />
+							<CustomTableCell label={'User'} />
 						</TableRow>
 					</TableHead>
 					<TableBody
@@ -209,30 +189,43 @@ const ManagersTable = ({ managers, isLoading }: Props) => {
 					>
 						{isLoading ? (
 							<TableLoader colSpan={6} />
-						) : managers && managers.length > 0 ? (
-							managers.map((data, key) => (
-								<TableRow onClick={() => handleViewManager(data)} key={key}>
-									<TableCell sx={{ maxWidth: '60px' }}>
-										<Avatar src={data.avatar} />
-									</TableCell>
-									<TableCell
-										style={styles.tableText}
-									>{`${data.firstname} ${data.lastname}`}</TableCell>
-									<TableCell style={styles.tableText}>{data.email}</TableCell>
-									<TableCell style={styles.tableText}>{data.phone}</TableCell>
-									<TableCell style={styles.tableText}>
-										{moment.utc(data.createdAt).format('l')}
-									</TableCell>
-
-									<TableCell style={styles.tableText}>{0}</TableCell>
-								</TableRow>
-							))
 						) : (
-							<TableRow>
-								<TableCell colSpan={6}>
-									<Empty text={'No users'} />
-								</TableCell>
-							</TableRow>
+							managers && (
+								<>
+									{managers.length > 0 ? (
+										managers.map((data, key) => (
+											<TableRow
+												onClick={() => handleViewManager(data)}
+												key={key}
+											>
+												<TableCell sx={{ maxWidth: '60px' }}>
+													<Avatar src={data.avatar} />
+												</TableCell>
+												<TableCell
+													style={styles.tableText}
+												>{`${data.firstname} ${data.lastname}`}</TableCell>
+												<TableCell style={styles.tableText}>
+													{data.email}
+												</TableCell>
+												<TableCell style={styles.tableText}>
+													{data.phone}
+												</TableCell>
+												<TableCell style={styles.tableText}>
+													{moment.utc(data.createdAt).format('l')}
+												</TableCell>
+
+												<TableCell style={styles.tableText}>{0}</TableCell>
+											</TableRow>
+										))
+									) : (
+										<TableRow>
+											<TableCell colSpan={6}>
+												<Empty text={'No Manager(s)'} />
+											</TableCell>
+										</TableRow>
+									)}
+								</>
+							)
 						)}
 					</TableBody>
 				</Table>

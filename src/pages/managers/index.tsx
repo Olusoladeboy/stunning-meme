@@ -1,18 +1,16 @@
 import React from 'react';
-import { Box } from '@mui/material';
 import { Layout, ManagersTable } from '../../components';
-import { useAppSelector } from '../../store/hooks';
-import { QueryKey } from '../../utilities/types';
-import Api from '../../utilities/api';
-import { useQueryHook } from '../../utilities/api/hooks';
+import { QueryKeys } from '../../utilities';
+import { useQueryHook, useSearchManager } from '../../hooks';
+import { managers } from '../../api';
 
 const Managers = () => {
-	const { token } = useAppSelector((store) => store.authState);
+	const { isSearching, search, searchManager, clearSearch } =
+		useSearchManager();
 	const { data, isLoading } = useQueryHook({
-		queryKey: QueryKey.AllManagers,
+		queryKey: QueryKeys.AllManagers,
 		queryFn: () =>
-			Api.Manager.AllManagers({
-				token: token as string,
+			managers({
 				params: {
 					sort: '-createdAt',
 				},
@@ -21,9 +19,12 @@ const Managers = () => {
 
 	return (
 		<Layout>
-			<Box>
-				<ManagersTable isLoading={isLoading} managers={data && data.payload} />
-			</Box>
+			<ManagersTable
+				clearSearch={clearSearch}
+				searchManager={searchManager}
+				isLoading={isLoading || isSearching}
+				managers={search ? search : data && data.payload}
+			/>
 		</Layout>
 	);
 };

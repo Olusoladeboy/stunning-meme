@@ -8,7 +8,7 @@ import Button from '../button';
 import CustomButton from '../button/custom-button';
 import { grey } from '@mui/material/colors';
 import Select from '../form-components/Select';
-import { UserDetails, QueryKeys } from '../../utilities';
+import { UserDetails, QueryKeys, FUND_WALLET_SERVICE } from '../../utilities';
 import { useAlert, useHandleError } from '../../hooks';
 import { transactUser } from '../../api';
 
@@ -19,16 +19,6 @@ type Props = {
 
 const SELECT_CONDITION = 'Select condition';
 const SELECT_SERVICE = 'Select Service';
-
-enum ConditionType {
-	Credit = 'CREDIT',
-	Debit = 'DEBIT',
-}
-
-enum ServiceType {
-	Refund = 'REFUND',
-	Others = 'OTHERS',
-}
 
 const EditWalletForm = ({ user, close }: Props) => {
 	const theme = useTheme();
@@ -73,6 +63,7 @@ const EditWalletForm = ({ user, close }: Props) => {
 		type: SELECT_CONDITION,
 		amount: '',
 		service: SELECT_SERVICE,
+		reference: '',
 	};
 
 	const { values, handleChange, handleSubmit, errors, touched, resetForm } =
@@ -87,7 +78,7 @@ const EditWalletForm = ({ user, close }: Props) => {
 			},
 		});
 
-	const { type, amount, service } = values;
+	const { amount, service, reference } = values;
 
 	const handleDone = () => {
 		if (isDone) {
@@ -106,66 +97,91 @@ const EditWalletForm = ({ user, close }: Props) => {
 					display: 'grid',
 					gridTemplateColumns: {
 						xs: '1fr',
-						md: '3fr 7fr',
+						md: service === SELECT_SERVICE ? '1fr' : '3fr 7fr',
 					},
 					gap: theme.spacing(4),
 				}}
 			>
 				<Box>
 					<Typography variant={'body1'} style={styles.label}>
-						Condition
+						Service
 					</Typography>
 					<Select
 						fullWidth
-						error={errors && touched.type && errors.type ? true : false}
-						helpertext={errors && touched.type && errors.type}
-						value={type}
-						onChange={handleChange('type') as any}
+						error={errors && touched.service && errors.service ? true : false}
+						helpertext={errors && touched.service && errors.service}
+						value={service}
+						onChange={handleChange('service') as any}
 					>
-						<MenuItem disabled value={SELECT_CONDITION}>
-							{SELECT_CONDITION}
+						<MenuItem disabled value={SELECT_SERVICE}>
+							{SELECT_SERVICE}
 						</MenuItem>
-						<MenuItem value={ConditionType.Credit}>
-							{ConditionType.Credit}
+						<MenuItem value={FUND_WALLET_SERVICE.CREDIT}>
+							{FUND_WALLET_SERVICE.CREDIT}
 						</MenuItem>
-						<MenuItem value={ConditionType.Debit}>
-							{ConditionType.Debit}
+						<MenuItem value={FUND_WALLET_SERVICE.DEBIT}>
+							{FUND_WALLET_SERVICE.DEBIT}
+						</MenuItem>{' '}
+						<MenuItem value={FUND_WALLET_SERVICE.REFUND}>
+							{FUND_WALLET_SERVICE.REFUND}
 						</MenuItem>
 					</Select>
 				</Box>
+				{service !== SELECT_SERVICE && (
+					<>
+						{service === FUND_WALLET_SERVICE.REFUND ? (
+							<Box>
+								<Typography variant={'body1'} style={styles.label}>
+									Reference
+								</Typography>
+								<TextInput
+									fullWidth
+									placeholder={'Enter transaction reference'}
+									error={
+										errors && touched.reference && errors.reference
+											? true
+											: false
+									}
+									helperText={errors && touched.reference && errors.reference}
+									type={'number'}
+									value={reference}
+									onChange={handleChange('reference')}
+								/>
+							</Box>
+						) : (
+							<Box>
+								<Typography variant={'body1'} style={styles.label}>
+									Amount
+								</Typography>
+								<TextInput
+									fullWidth
+									placeholder={'Amount'}
+									error={
+										errors && touched.amount && errors.amount ? true : false
+									}
+									helperText={errors && touched.amount && errors.amount}
+									type={'number'}
+									value={amount}
+									onChange={handleChange('amount')}
+								/>
+							</Box>
+						)}
+					</>
+				)}
+			</Box>
+			{service !== SELECT_SERVICE && service !== FUND_WALLET_SERVICE.REFUND && (
 				<Box>
 					<Typography variant={'body1'} style={styles.label}>
-						Amount
+						Reason
 					</Typography>
 					<TextInput
+						placeholder={'Enter reason'}
 						fullWidth
-						placeholder={'Amount'}
-						error={errors && touched.amount && errors.amount ? true : false}
-						helperText={errors && touched.amount && errors.amount}
-						type={'number'}
-						value={amount}
-						onChange={handleChange('amount')}
+						multiline
+						rows={3}
 					/>
 				</Box>
-			</Box>
-			<Box>
-				<Typography variant={'body1'} style={styles.label}>
-					Select Service
-				</Typography>
-				<Select
-					fullWidth
-					error={errors && touched.service && errors.service ? true : false}
-					helpertext={errors && touched.service && errors.service}
-					value={service}
-					onChange={handleChange('service') as any}
-				>
-					<MenuItem disabled value={SELECT_SERVICE}>
-						{SELECT_SERVICE}
-					</MenuItem>
-					<MenuItem value={ServiceType.Refund}>{ServiceType.Refund}</MenuItem>
-					<MenuItem value={ServiceType.Others}>{ServiceType.Others}</MenuItem>
-				</Select>
-			</Box>
+			)}
 			<Box style={styles.btnWrapper}>
 				<CustomButton
 					loading={isLoading}

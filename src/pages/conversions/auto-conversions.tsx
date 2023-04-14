@@ -19,10 +19,10 @@ import {
 	ErrorBoundary,
 } from '../../utilities';
 import { useAppSelector } from '../../store/hooks';
-import { useAlert, useHandleError, useSearchConversion } from '../../hooks';
+import { useAlert, useHandleError } from '../../hooks';
 import { convertAirtimes } from '../../api';
 
-const Conversions = () => {
+const AutoConversions = () => {
 	const theme = useTheme();
 	const handleError = useHandleError();
 	const setAlert = useAlert();
@@ -34,13 +34,15 @@ const Conversions = () => {
 	const [count, setCount] = useState<number>(1);
 	const [page, setPage] = useState<number>(1);
 	const [total, setTotal] = useState<number>(0);
-
+	const [search, setSearch] = useState('');
 	const location = useLocation();
 	const query = queryString.parse(location.search);
 	const { token } = useAppSelector((store) => store.authState);
 
-	const { isSearching, search, clearSearch, searchConversion } =
-		useSearchConversion();
+	useEffect(() => {
+		if (search.length === 0) {
+		}
+	});
 
 	useEffect(() => {
 		if (query && query.page) {
@@ -62,10 +64,10 @@ const Conversions = () => {
 		[QueryKeys.ConvertAirtime, page],
 		() =>
 			convertAirtimes({
-				params,
+				params: search ? { ...params, q: search } : params,
 			}),
 		{
-			enabled: !!(token || isReload),
+			enabled: !!(token && isReload),
 			keepPreviousData: true,
 			onSettled: (data, error) => {
 				setReload(false);
@@ -90,9 +92,9 @@ const Conversions = () => {
 		setReload(true);
 		if (page !== 1) {
 			setPage(page);
-			navigate(`${LINKS.Conversions}?page=${page}`);
+			navigate(`${LINKS.AutoConversions}?page=${page}`);
 		} else {
-			navigate(LINKS.Conversions);
+			navigate(LINKS.AutoConversions);
 			setPage(page);
 		}
 	};
@@ -104,15 +106,17 @@ const Conversions = () => {
 		}
 	};
 
+	const handleSearch = (search: string) => {
+		setSearch(search);
+		setReload(true);
+	};
+
 	return (
 		<Layout>
 			<Box style={styles.container}>
 				<Box sx={{ padding: '0px 2rem' }}>
-					<Typography
-						sx={{ marginBottom: theme.spacing(4), fontWeight: 'bold' }}
-						variant={'h5'}
-					>
-						Conversions
+					<Typography sx={{ marginBottom: theme.spacing(2) }} variant={'h5'}>
+						Auto Conversions
 					</Typography>
 					<Box
 						sx={{
@@ -126,6 +130,7 @@ const Conversions = () => {
 					>
 						<ConversionTotal
 							handleRefresh={() => {
+								setSearch('');
 								setReload(true);
 								setReloading(true);
 							}}
@@ -136,14 +141,13 @@ const Conversions = () => {
 				</Box>
 				<ErrorBoundary>
 					<ConversionsTable
-						isLoading={isLoading || isReloading || isSearching}
-						conversions={search ? search : data && data.payload}
+						isLoading={isLoading || isReloading}
+						conversions={data && data.payload}
 						handleSort={handleSort}
-						handleSearch={searchConversion}
-						clearSearch={clearSearch}
+						handleSearch={handleSearch}
 					/>
 
-					{!search && total > MAX_RECORDS && !isReloading && (
+					{total > MAX_RECORDS && !isReloading && (
 						<Pagination
 							sx={{ marginLeft: '20px' }}
 							size={'large'}
@@ -173,4 +177,4 @@ const useStyles = (theme: any) => ({
 	},
 });
 
-export default Conversions;
+export default AutoConversions;

@@ -45,7 +45,7 @@ const Header = () => {
 							{user && `${user.firstname} ${user.lastname}`}
 						</Typography>
 						<Typography style={styles.roleText} variant={'body2'}>
-							{user && `${user.role.replace(/_/gi, ' ')}`}
+							{user && user.role && `${user.role.replace(/_/gi, ' ')}`}
 						</Typography>
 					</Box>
 					<Avatar />

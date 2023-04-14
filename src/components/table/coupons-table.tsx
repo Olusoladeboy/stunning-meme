@@ -44,9 +44,16 @@ import { updateCouponStatus } from '../../api';
 interface Props {
 	data: Coupon[] | null;
 	isLoading?: boolean;
+	searchCoupon?: (value: string) => void;
+	clearSearch?: () => void;
 }
 
-const CouponsTable = ({ data, isLoading }: Props) => {
+const CouponsTable = ({
+	data,
+	isLoading,
+	clearSearch,
+	searchCoupon,
+}: Props) => {
 	const [isCreateCoupon, setCreateCoupon] = useState<boolean>(false);
 	const setAlert = useAlert();
 	const handleError = useHandleError();
@@ -148,7 +155,11 @@ const CouponsTable = ({ data, isLoading }: Props) => {
 					style={styles.tableHeader as CSSProperties}
 					sx={{ padding: '0px 1rem' }}
 				>
-					<TableHeader title={'Coupons'} />
+					<TableHeader
+						title={'Coupons'}
+						clearSearch={clearSearch}
+						handleSearch={searchCoupon}
+					/>
 					<Box
 						sx={{
 							alignSelf: 'flex-end',

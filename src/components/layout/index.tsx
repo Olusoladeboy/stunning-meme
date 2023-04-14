@@ -5,6 +5,7 @@ import {
 	DRAWER_WIDTH,
 	MIN_DRAWER_WIDTH,
 	TRANSITION,
+	PrivateRoute,
 } from '../../utilities';
 import Header from '../header';
 import { useAppSelector } from '../../store/hooks';
@@ -17,25 +18,27 @@ const Layout = ({ children }: Props) => {
 	const theme = useTheme();
 	const { isToggleDrawer } = useAppSelector((store) => store.appState);
 	return (
-		<Box
-			sx={{ display: 'flex', justifyContent: 'flex-end', minHeight: '100vh' }}
-		>
-			<Drawer />
+		<PrivateRoute>
 			<Box
-				sx={{
-					display: 'flex',
-					flexDirection: 'column',
-					width: `calc(100% - ${
-						isToggleDrawer ? DRAWER_WIDTH : MIN_DRAWER_WIDTH
-					})`,
-					transition: TRANSITION,
-				}}
-				component={'main'}
+				sx={{ display: 'flex', justifyContent: 'flex-end', minHeight: '100vh' }}
 			>
-				<Header />
-				<Box sx={{ padding: theme.spacing(4), flex: 1 }}>{children}</Box>
+				<Drawer />
+				<Box
+					sx={{
+						display: 'flex',
+						flexDirection: 'column',
+						width: `calc(100% - ${
+							isToggleDrawer ? DRAWER_WIDTH : MIN_DRAWER_WIDTH
+						})`,
+						transition: TRANSITION,
+					}}
+					component={'main'}
+				>
+					<Header />
+					<Box sx={{ padding: theme.spacing(4), flex: 1 }}>{children}</Box>
+				</Box>
 			</Box>
-		</Box>
+		</PrivateRoute>
 	);
 };
 

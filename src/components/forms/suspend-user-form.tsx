@@ -1,4 +1,4 @@
-import React, { CSSProperties, useEffect } from 'react';
+import React, { CSSProperties, useEffect, useState } from 'react';
 import { useFormik } from 'formik';
 import { useMutation, useQueryClient } from 'react-query';
 import * as yup from 'yup';
@@ -9,8 +9,14 @@ import { grey } from '@mui/material/colors';
 import { UserDetails, QueryKeys } from '../../utilities';
 import TextArea from '../form-components/text-area';
 import { useAlert, useHandleError } from '../../hooks';
-import UnsuspendUser from '../unsuspend-user';
 import { suspendUser } from '../../api';
+import Loader from '../loader';
+
+interface InitialValues {
+	suspended: boolean;
+	suspensionDurationInDays: string;
+	suspensionReason: string;
+}
 
 type Props = {
 	user: UserDetails | null;
@@ -21,6 +27,7 @@ const SuspendUserForm = ({ user }: Props) => {
 	const handleError = useHandleError();
 	const styles = useStyles(theme);
 	const setAlert = useAlert();
+	const [isUnsuspending, setUnsuspending] = useState<boolean>(false);
 
 	const validationSchema = yup.object().shape({
 		suspended: yup.boolean().required('Suspend or unsuspend user'),
@@ -50,7 +57,7 @@ const SuspendUserForm = ({ user }: Props) => {
 		},
 	});
 
-	const initialValues = {
+	const initialValues: InitialValues = {
 		suspended: true,
 		suspensionDurationInDays: '',
 		suspensionReason: '',
@@ -69,7 +76,7 @@ const SuspendUserForm = ({ user }: Props) => {
 		validationSchema,
 		onSubmit: (values) => {
 			mutate({
-				data: values,
+				data: { ...values, suspended: true },
 				id: user?.id as string,
 			});
 		},
@@ -83,86 +90,110 @@ const SuspendUserForm = ({ user }: Props) => {
 
 	const { suspended, suspensionDurationInDays, suspensionReason } = values;
 
+	const handleUnsuspendUser = async () => {
+		setUnsuspending(true);
+		setFieldValue('suspended', !suspended);
+
+		try {
+			const data = await suspendUser({
+				data: { suspended: false },
+				id: user?.id as string,
+			});
+			if (data && data.success) {
+				queryClient.invalidateQueries(QueryKeys.AllUsers);
+				queryClient.invalidateQueries(QueryKeys.GetSingleUser);
+				queryClient.invalidateQueries(QueryKeys.Statistics);
+			}
+			setUnsuspending(false);
+		} catch (error) {
+			setUnsuspending(false);
+
+			const response = handleError({ error });
+			if (response?.message) {
+				alert({ message: response.message, type: 'error' });
+			}
+		}
+	};
+
 	return (
 		<>
-			{user?.suspended ? (
-				<Box>
-					<Box
-						sx={{
-							display: 'flex',
-							alignItems: 'center',
-							justifyContent: 'space-between',
-						}}
-					>
-						<Typography style={styles.text as CSSProperties} variant={'body1'}>
-							Unsuspend User
-						</Typography>
-						<UnsuspendUser isSwitch user={user} />
-					</Box>
-				</Box>
-			) : (
-				<Box component={'form'}>
-					<Box style={styles.switchWrapper}>
-						<Typography style={styles.text as CSSProperties}>
-							{user?.suspended ? 'Unsuspend user' : 'Suspend user'}
-						</Typography>
-						<Switch checked={suspended} onChange={handleChange('suspended')} />
-					</Box>
-					<Box style={styles.formWrapper as CSSProperties}>
-						<Box>
-							<TextInput
-								fullWidth
-								type={'number'}
-								placeholder={'Enter duration (in days)'}
-								error={
-									errors &&
-									touched.suspensionDurationInDays &&
-									errors.suspensionDurationInDays
-										? true
-										: false
-								}
-								helperText={
-									errors &&
-									touched.suspensionDurationInDays &&
-									errors.suspensionDurationInDays
-								}
-								value={suspensionDurationInDays}
-								onChange={handleChange('suspensionDurationInDays')}
-							/>
-						</Box>
-
-						<Box>
-							<TextArea
-								rows={4}
-								fullWidth
-								placeholder={'Enter suspension note'}
-								error={
-									errors && touched.suspensionReason && errors.suspensionReason
-										? true
-										: false
-								}
-								helperText={
-									errors && touched.suspensionReason && errors.suspensionReason
-								}
-								value={suspensionReason}
-								onChange={handleChange('suspensionReason')}
-							/>
-						</Box>
-
-						<Button
-							loading={isLoading}
-							onClick={(e: React.FormEvent<HTMLButtonElement>) => {
-								e.preventDefault();
-								handleSubmit();
+			{isUnsuspending && <Loader />}
+			<Box component={'form'}>
+				<Box style={styles.switchWrapper}>
+					<Typography style={styles.text as CSSProperties}>
+						{user?.suspended ? 'Unsuspend user' : 'Suspend user'}
+					</Typography>
+					{user?.suspended && (
+						<Switch
+							checked={suspended}
+							onChange={() => {
+								handleUnsuspendUser();
 							}}
-							size={'large'}
-							style={styles.btn}
-						>
-							Suspend user
-						</Button>
-					</Box>
+						/>
+					)}
 				</Box>
-			)}
+				{user && !user.suspended && (
+					<>
+						<Box style={styles.formWrapper as CSSProperties}>
+							<Box>
+								<TextInput
+									fullWidth
+									type={'number'}
+									placeholder={'Enter duration (in days)'}
+									error={
+										errors &&
+										touched.suspensionDurationInDays &&
+										errors.suspensionDurationInDays
+											? true
+											: false
+									}
+									helperText={
+										errors &&
+										touched.suspensionDurationInDays &&
+										errors.suspensionDurationInDays
+									}
+									value={suspensionDurationInDays}
+									onChange={handleChange('suspensionDurationInDays')}
+								/>
+							</Box>
+
+							<Box>
+								<TextArea
+									rows={4}
+									fullWidth
+									placeholder={'Enter suspension note'}
+									error={
+										errors &&
+										touched.suspensionReason &&
+										errors.suspensionReason
+											? true
+											: false
+									}
+									helperText={
+										errors &&
+										touched.suspensionReason &&
+										errors.suspensionReason
+									}
+									value={suspensionReason}
+									onChange={handleChange('suspensionReason')}
+								/>
+							</Box>
+
+							<Button
+								loading={isLoading}
+								onClick={(e: React.FormEvent<HTMLButtonElement>) => {
+									e.preventDefault();
+									handleSubmit();
+								}}
+								size={'large'}
+								style={styles.btn}
+							>
+								Suspend user
+							</Button>
+						</Box>
+					</>
+				)}
+			</Box>
 		</>
 	);
 };

@@ -143,7 +143,7 @@ const DrawerList = () => {
 					link={LINKS.Users}
 					name={'Users'}
 					isActive={
-						getActiveLink({ name: 'user', currentPath: pathname }).isActive
+						getActiveLink({ name: 'users', currentPath: pathname }).isActive
 					}
 					icon={
 						<UserIcon
@@ -202,6 +202,26 @@ const DrawerList = () => {
 							color={
 								getActiveLink({ name: 'conversions', currentPath: pathname })
 									.isActive
+									? activeColor
+									: initialColor
+							}
+						/>
+					}
+				/>
+				<ListItemButton
+					name={'Auto Conversions'}
+					link={LINKS.AutoConversions}
+					isActive={
+						getActiveLink({ name: 'auto-conversions', currentPath: pathname })
+							.isActive
+					}
+					icon={
+						<ConversionIcon
+							color={
+								getActiveLink({
+									name: 'auto-conversions',
+									currentPath: pathname,
+								}).isActive
 									? activeColor
 									: initialColor
 							}

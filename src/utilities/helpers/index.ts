@@ -37,7 +37,7 @@ export const getActiveLink = ({
 			isActive: true,
 		};
 	}
-	if (match && Array.isArray(match) && match[0] === name) {
+	if (match && Array.isArray(match) && match[0] === actualPathName) {
 		return {
 			isActive: true,
 		};

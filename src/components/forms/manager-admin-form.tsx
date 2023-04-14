@@ -20,18 +20,14 @@ import {
 	createManager,
 	updateManager,
 } from '../../api';
+import UploadUserAvatar from '../upload-user-avatar';
 
 const SELECT_ADMIN_PRIVILEDGE = 'Select Admin Priviledge';
-
-interface ManagerDetails extends ManagerDetailsData {
-	id?: string;
-	role?: string;
-}
 
 type Props = {
 	type: ManagerTypes.Admin | ManagerTypes.Manager | null;
 	callback?: () => void;
-	managerDetails?: ManagerDetails | null;
+	managerDetails?: ManagerDetailsData | null;
 	isEdit?: boolean;
 };
 
@@ -47,7 +43,7 @@ const ManagerAdminForm = ({
 	const styles = useStyles(theme);
 	const queryClient = useQueryClient();
 
-	const initialValues: ManagerDetails = {
+	const initialValues: ManagerDetailsData = {
 		firstname: '',
 		lastname: '',
 		phone: '',
@@ -194,6 +190,7 @@ const ManagerAdminForm = ({
 					gap: theme.spacing(4),
 				}}
 			>
+				<UploadUserAvatar />
 				<Box
 					sx={{
 						display: 'grid',
@@ -231,14 +228,6 @@ const ManagerAdminForm = ({
 							onChange={handleChange('lastname')}
 						/>
 					</Box>
-				</Box>
-				<Box
-					sx={{
-						display: 'grid',
-						gridTemplateColumns: { xs: '1fr', md: 'repeat(2, 1fr)' },
-						gap: theme.spacing(4),
-					}}
-				>
 					<Box>
 						<Typography variant={'body1'} style={styles.label}>
 							Email
@@ -252,7 +241,7 @@ const ManagerAdminForm = ({
 							onChange={handleChange('email')}
 						/>
 					</Box>
-					<Box>
+					{/* <Box>
 						<Typography variant={'body1'} style={styles.label}>
 							Phone number
 						</Typography>
@@ -264,23 +253,27 @@ const ManagerAdminForm = ({
 							value={phone}
 							onChange={handleChange('phone')}
 						/>
+					</Box> */}
+					<Box sx={{ display: type === ManagerTypes.Admin ? 'block' : 'none' }}>
+						<Typography variant={'body1'} style={styles.label}>
+							Select priviledge
+						</Typography>
+						<Select
+							fullWidth
+							value={role}
+							onChange={handleChange('role') as any}
+						>
+							<MenuItem value={SELECT_ADMIN_PRIVILEDGE}>
+								{SELECT_ADMIN_PRIVILEDGE}
+							</MenuItem>
+							<MenuItem value={AMIN_ROLE.OPERATIONS}>
+								{AMIN_ROLE.OPERATIONS}
+							</MenuItem>
+							<MenuItem value={AMIN_ROLE.CUSTOMER_SUPPORT}>
+								{AMIN_ROLE.CUSTOMER_SUPPORT}
+							</MenuItem>
+						</Select>
 					</Box>
-				</Box>
-				<Box sx={{ display: type === ManagerTypes.Admin ? 'block' : 'none' }}>
-					<Typography variant={'body1'} style={styles.label}>
-						Select priviledge
-					</Typography>
-					<Select fullWidth value={role} onChange={handleChange('role') as any}>
-						<MenuItem value={SELECT_ADMIN_PRIVILEDGE}>
-							{SELECT_ADMIN_PRIVILEDGE}
-						</MenuItem>
-						<MenuItem value={AMIN_ROLE.OPERATIONS}>
-							{AMIN_ROLE.OPERATIONS}
-						</MenuItem>
-						<MenuItem value={AMIN_ROLE.CUSTOMER_SUPPORT}>
-							{AMIN_ROLE.CUSTOMER_SUPPORT}
-						</MenuItem>
-					</Select>
 				</Box>
 			</Box>
 			<Button

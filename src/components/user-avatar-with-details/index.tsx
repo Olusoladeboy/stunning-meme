@@ -3,7 +3,7 @@ import { Box, Avatar, Typography, useTheme } from '@mui/material';
 import { ManagerDetailsData, UserDetails } from '../../utilities/types';
 
 interface ManagerDetails extends ManagerDetailsData {
-	role?: string;
+	// role?: string;
 	verifiedStatus?: boolean;
 }
 

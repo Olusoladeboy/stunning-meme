@@ -28,9 +28,16 @@ import LINKS from '../../utilities/links';
 interface Props {
 	data: Ticket[] | null;
 	isLoading?: boolean;
+	clearSearch?: () => void;
+	searchTicket?(value: string): void;
 }
 
-const DisputeTable = ({ data, isLoading }: Props) => {
+const DisputeTable = ({
+	data,
+	isLoading,
+	clearSearch,
+	searchTicket,
+}: Props) => {
 	const theme = useTheme();
 	const styles = useStyles(theme);
 	const navigate = useNavigate();
@@ -42,7 +49,12 @@ const DisputeTable = ({ data, isLoading }: Props) => {
 					style={styles.tableHeader as CSSProperties}
 					sx={{ padding: '0px 1rem' }}
 				>
-					<TableHeader title={'Dispute'} />
+					<TableHeader
+						title={'Dispute'}
+						placeholder={'Search Ticket by code...'}
+						clearSearch={clearSearch}
+						handleSearch={searchTicket}
+					/>
 				</Box>
 
 				<Table sx={{ overflow: 'auto' }}>

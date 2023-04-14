@@ -7,9 +7,7 @@ import Button from '../button';
 import ModalWrapper from '../modal/Wrapper';
 import EditProfileForm from '../forms/profile-form';
 import UserAvatarWithDetails from '../avatar-with-details';
-import UserWallet from '../user-wallet';
-import { UserDetails } from '../../utilities/types';
-import { SUCCESS_COLOR } from '../../utilities/constant';
+import { UserDetails, SUCCESS_COLOR } from '../../utilities';
 import VerifyUser from '../verify-user';
 
 type Props = {
@@ -32,7 +30,6 @@ const UserProfile = ({ user }: Props) => {
 				}}
 			>
 				<UserAvatarWithDetails user={user} />
-				<UserWallet user={user} />
 			</Box>
 			<Box sx={{ marginTop: theme.spacing(5) }}>
 				{isEditProfile && (
@@ -68,6 +65,10 @@ const UserProfile = ({ user }: Props) => {
 					<DetailItem text={'Username'} value={user && user.username} />
 					<DetailItem text={'pnone number'} value={user && user.phone} />
 					<DetailItem text={'email'} value={user && user.email} />
+					<DetailItem
+						text={'Kyc Level'}
+						value={user && `Level ${user.kycLevel}`}
+					/>
 					<DetailItem
 						text={'verification status'}
 						value={

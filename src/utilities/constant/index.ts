@@ -7,6 +7,7 @@ export const MIN_DRAWER_WIDTH = '80px';
 export const PENDING_COLOR = '#30AF9F';
 export const DANGER_COLOR = '#E84E51';
 export const SUCCESS_COLOR = '#389651';
+export const SEMI_GREEN_COLOR = '#2FAF9E';
 export const LIGHT_GRAY = '#DCE3E7';
 export const HEADER_HEIGHT = '70px';
 export const DARK_BACKGROUND_COLOR = '#09171f';
@@ -16,6 +17,7 @@ export const MAX_RECORDS = 20;
 export const QueryKeys = {
 	LoginUserDetails: '@Query:Login_user_details',
 	AllManagers: '@Query:All_manager',
+	Referrals: '@Query:Referrals',
 	RecentConvertAirtime: '@Query:RecentConvertAirtime',
 	AllUsers: '@Query:All_Users',
 	GetSingleUser: '@Query:Get_single_user',
@@ -67,13 +69,16 @@ export const LINKS = {
 	User: `/user`,
 	Managers: '/managers',
 	Transactions: '/transactions',
+	AllTransactions: '/transactions/all',
 	Conversions: '/conversions',
+	AllConversions: '/conversions/all',
 	AutoConversions: '/auto-conversions',
 	Network: '/network',
-	DataNetwork: '/network/data',
+	DataNetwork: '/data-network',
 	ConversionNetwork: '/network/conversion',
-	DataPlan: '/data-plan',
-	AirtimeNetwork: '/network/airtime',
+	DataPlan: '/data-network/plans',
+	DataTypes: '/data-network/types',
+	AirtimeNetwork: '/airtime-network',
 	Coupons: '/coupons',
 	Dispute: '/dispute',
 	Referrals: '/referrals',
@@ -87,7 +92,7 @@ export const LINKS = {
 	AuditLogs: '/audit-logs',
 	Message: '/support-ticket/message',
 	Messages: '/messages',
-	DataTypes: '/data-types',
+	Statistics: '/statistics',
 };
 
 export const DRAWER_LINKS = {
@@ -104,6 +109,7 @@ export const AMIN_ROLE = {
 
 export const ENDPOINTS = {
 	Login: '/staff/login',
+	Referrals: '/referrals',
 	GetUser: '/staff/me',
 	Staff: '/staff',
 	Manager: '/manager',
@@ -132,4 +138,25 @@ export const USERS_TAB = {
 	Unverified: 'Unverified',
 	Suspended: 'Suspended',
 	Deleted: 'Deleted',
+};
+
+export const TRANSACTIONS_TAB = {
+	ALL: 'ALL',
+	PENDING: 'PENDING',
+	FAILED: 'FAILED',
+	SUCCESSFUL: 'SUCCESSFUL',
+	APPROVED: 'APPROVED',
+	DECLINED: 'DECLINED',
+};
+
+export const CONVERSIONS_TAB = {
+	ALL: 'ALL',
+	PENDING: 'PENDING',
+	APPROVED: 'APPROVED',
+	DECLINED: 'DECLINED',
+};
+
+export const STATUS = {
+	APPROVED: 'APPROVED',
+	DECLINED: 'DECLINED',
 };

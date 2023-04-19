@@ -7,16 +7,22 @@ import { grey } from '@mui/material/colors';
 import {
 	Layout,
 	TransactionsTable,
-	TransactionMainBalance,
 	Pagination,
 	TableHeader,
+	TransactionsTab,
 } from '../../components';
-import { BOX_SHADOW, QueryKeys, MAX_RECORDS, LINKS } from '../../utilities';
+import {
+	BOX_SHADOW,
+	QueryKeys,
+	MAX_RECORDS,
+	LINKS,
+	TRANSACTIONS_TAB,
+} from '../../utilities';
 import { useAppSelector } from '../../store/hooks';
 import { transactions } from '../../api';
 import { useHandleError, useAlert, useSearchTransaction } from '../../hooks';
 
-const Transactions = () => {
+const AllTransactions = () => {
 	const theme = useTheme();
 	const handleError = useHandleError();
 	const styles = useStyles(theme);
@@ -30,6 +36,11 @@ const Transactions = () => {
 	const query = queryString.parse(location.search);
 	const { isSearching, searchTransaction, clearSearch, search } =
 		useSearchTransaction();
+	const [isLoad, setLoad] = useState<boolean>(false);
+	const [currentTab, setCurrentTab] = useState(TRANSACTIONS_TAB.ALL);
+	const [transactionStatus, setTransactionStatus] = useState<{
+		[key: string]: string;
+	}>({} as { [key: string]: string });
 
 	useEffect(() => {
 		if (query && query.page) {
@@ -38,18 +49,20 @@ const Transactions = () => {
 	}, [query, query.page]);
 
 	const { isLoading, data } = useQuery(
-		[QueryKeys.AllTransactions],
+		[QueryKeys.AllTransactions, query.page],
 		() =>
 			transactions({
 				params: {
 					sort: '-createdAt',
 					limit: MAX_RECORDS,
 					skip: (page - 1) * MAX_RECORDS,
+					...transactionStatus,
 				},
 			}),
 		{
-			enabled: !!token,
+			enabled: isLoad,
 			onSettled: (data: any, error) => {
+				setLoad(false);
 				if (error) {
 					const response = handleError({ error });
 					if (response?.message) {
@@ -67,6 +80,7 @@ const Transactions = () => {
 	);
 
 	const handlePageChange = (page: number) => {
+		setLoad(true);
 		if (page !== 1) {
 			setPage(page);
 			navigate(`${LINKS.Transactions}?&page=${page}`);
@@ -76,6 +90,34 @@ const Transactions = () => {
 		}
 	};
 
+	const switchUserType = (type?: string) => {
+		switch (type) {
+			case TRANSACTIONS_TAB.ALL:
+				setCurrentTab(TRANSACTIONS_TAB.ALL);
+				setTransactionStatus({});
+				break;
+
+			case TRANSACTIONS_TAB.SUCCESSFUL:
+				setCurrentTab(TRANSACTIONS_TAB.SUCCESSFUL);
+				setTransactionStatus({ status: TRANSACTIONS_TAB.SUCCESSFUL });
+				break;
+			case TRANSACTIONS_TAB.PENDING:
+				setCurrentTab(TRANSACTIONS_TAB.PENDING);
+				setTransactionStatus({ status: TRANSACTIONS_TAB.PENDING });
+				break;
+			case TRANSACTIONS_TAB.FAILED:
+				setCurrentTab(TRANSACTIONS_TAB.FAILED);
+				setTransactionStatus({ status: TRANSACTIONS_TAB.FAILED });
+				break;
+
+			default:
+				setCurrentTab(TRANSACTIONS_TAB.ALL);
+				setTransactionStatus({});
+				break;
+		}
+		setLoad(true);
+	};
+
 	return (
 		<Layout>
 			<Box style={styles.container}>
@@ -83,17 +125,21 @@ const Transactions = () => {
 					sx={{
 						padding: { xs: '0px 15px', md: '0px 2rem' },
 						display: 'grid',
-						gap: { xs: '2rem', sm: '10px' },
+						gap: '2rem',
 					}}
 				>
 					<TableHeader
 						searchPlaceholder={'Search transaction by reference'}
-						title={'Transactions'}
+						title={'All Transactions'}
 						handleSearch={searchTransaction}
 						clearSearch={clearSearch}
 					/>
-					<TransactionMainBalance />
+					<TransactionsTab
+						currentTab={currentTab}
+						changeCurrentTab={switchUserType}
+					/>
 				</Box>
+
 				<TransactionsTable
 					isLoading={isLoading || isSearching}
 					data={search ? search : data && data.payload}
@@ -134,4 +180,4 @@ const useStyles = (theme: any) => ({
 	},
 });
 
-export default Transactions;
+export default AllTransactions;

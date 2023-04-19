@@ -29,6 +29,7 @@ const UsersTab: React.FC<Props> = ({ currentTab, changeCurrentTab }) => {
 				gridTemplateColumns: 'repeat(5, 1fr)',
 				gap: (theme) => theme.spacing(3),
 				padding: '0px 1rem',
+				overflow: 'auto',
 			}}
 		>
 			<TransactionItem

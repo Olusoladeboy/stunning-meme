@@ -19,11 +19,11 @@ const useSearchUser = () => {
 	const [search, setSearch] = useState<UserDetails[] | null>(null);
 	const [isSearching, setSearching] = useState<boolean>(false);
 
-	/* 
-    @Search User
-    @Update found MUser State
-    @Handle Network error response, trigger an alert if any
-  */
+	/*
+	 *Search User
+	 *Update found MUser State
+	 *Handle Network error response, trigger an alert if any
+	 */
 	const searchUser = async (value: string) => {
 		if (!value) {
 			return alert({
@@ -34,9 +34,17 @@ const useSearchUser = () => {
 
 		let params = {} as SearchPayload;
 		const value$ = value.trim().toLowerCase();
-		if (EMAIL_REX.test(value$)) params.email = value$;
 
-		if (PHONE_REX.test(value$)) params.phone = value$;
+		if (EMAIL_REX.test(value$)) {
+			params.email = value$;
+		} else if (PHONE_REX.test(value$)) {
+			params.phone = value$;
+		} else {
+			return alert({
+				message: 'Search User with email or phone',
+				type: 'info',
+			});
+		}
 
 		setSearching(true);
 
@@ -63,14 +71,14 @@ const useSearchUser = () => {
 		}
 	};
 
-	/* 
-    @Clear User state
-  */
+	/*
+	 *Clear User state
+	 */
 	const clearSearch = () => setSearch(null);
 
-	/* 
-  @Returrns
-*/
+	/*
+	 *Returrns
+	 */
 	return {
 		isSearching,
 		searchUser,

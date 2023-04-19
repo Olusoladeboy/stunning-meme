@@ -97,7 +97,7 @@ const NotificationsTable = () => {
 					style={styles.tableHeader as CSSProperties}
 					sx={{ padding: '0px 1rem' }}
 				>
-					<TableHeader backButtonText={'Notifications'} isDisplayBackButton />
+					<TableHeader backButtonText={'Notifications'} />
 					<Box
 						sx={{
 							alignSelf: 'flex-end',

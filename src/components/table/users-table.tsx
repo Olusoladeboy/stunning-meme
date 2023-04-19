@@ -74,7 +74,6 @@ const UsersTable = ({
 					}}
 				>
 					<TableRow>
-						<TableCell />
 						<CustomTableCell label={'Name'} isSortable />
 						<CustomTableCell label={'Email'} isSortable />
 						<CustomTableCell label={'Phone Number'} isSortable />
@@ -90,19 +89,25 @@ const UsersTable = ({
 					}}
 				>
 					{isLoading ? (
-						<TableLoader colSpan={6} />
+						<TableLoader colSpan={5} />
 					) : users && users.length > 0 ? (
 						users.map((user: User, key: number) => (
 							<TableRow
 								onClick={() => navigate(`${LINKS.User}/${user.id}`)}
 								key={key}
 							>
-								<TableCell sx={{ maxWidth: '60px' }}>
-									<Avatar src={user.photoUrl as string} />
+								<TableCell style={styles.tableText}>
+									<Box
+										sx={{
+											display: 'flex',
+											alignItems: 'center',
+											gap: '10px',
+										}}
+									>
+										<Avatar src={user.photoUrl as string} />
+										<span>{`${user.firstname} ${user.lastname}`}</span>
+									</Box>
 								</TableCell>
-								<TableCell
-									style={styles.tableText}
-								>{`${user.firstname} ${user.lastname}`}</TableCell>
 								<TableCell style={styles.tableText}>{user.email}</TableCell>
 								<TableCell style={styles.tableText}>{user.phone}</TableCell>
 								<TableCell style={styles.tableText}>
@@ -132,7 +137,7 @@ const UsersTable = ({
 						))
 					) : (
 						<TableRow>
-							<TableCell colSpan={6}>
+							<TableCell colSpan={5}>
 								<Empty text={'No users'} />
 							</TableCell>
 						</TableRow>

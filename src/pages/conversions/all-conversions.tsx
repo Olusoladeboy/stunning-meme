@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import queryString from 'query-string';
-import { Box, Typography, useTheme } from '@mui/material';
+import { Box, useTheme } from '@mui/material';
 import { grey } from '@mui/material/colors';
 import { useQuery } from 'react-query';
 import {
 	Layout,
 	ConversionsTable,
-	ConversionTotal,
-	AvailableNetwork,
+	ConversionsTab,
 	Pagination,
+	TableHeader,
 } from '../../components';
 import {
 	BOX_SHADOW,
@@ -17,19 +17,18 @@ import {
 	MAX_RECORDS,
 	LINKS,
 	ErrorBoundary,
+	CONVERSIONS_TAB,
 } from '../../utilities';
 import { useAppSelector } from '../../store/hooks';
 import { useAlert, useHandleError, useSearchConversion } from '../../hooks';
 import { convertAirtimes } from '../../api';
 
-const Conversions = () => {
+const AllConversions = () => {
 	const theme = useTheme();
 	const handleError = useHandleError();
 	const setAlert = useAlert();
 	const styles = useStyles(theme);
-	const [isReload, setReload] = useState<boolean>(false);
 	const [sort, setSort] = useState('-createdAt');
-	const [isReloading, setReloading] = useState<boolean>(false);
 	const navigate = useNavigate();
 	const [count, setCount] = useState<number>(1);
 	const [page, setPage] = useState<number>(1);
@@ -37,7 +36,12 @@ const Conversions = () => {
 
 	const location = useLocation();
 	const query = queryString.parse(location.search);
-	const { token } = useAppSelector((store) => store.authState);
+
+	const [isLoad, setLoad] = useState<boolean>(false);
+	const [currentTab, setCurrentTab] = useState(CONVERSIONS_TAB.ALL);
+	const [conversionStatus, setConversionStatus] = useState<{
+		[key: string]: string;
+	}>({} as { [key: string]: string });
 
 	const { isSearching, search, clearSearch, searchConversion } =
 		useSearchConversion();
@@ -49,27 +53,26 @@ const Conversions = () => {
 	}, [query, query.page]);
 
 	useEffect(() => {
-		setReload(true);
+		setLoad(true);
 	}, []);
-
-	const params = {
-		limit: MAX_RECORDS,
-		skip: (page - 1) * MAX_RECORDS,
-		sort,
-	};
 
 	const { isLoading, data } = useQuery(
 		[QueryKeys.ConvertAirtime, page],
 		() =>
 			convertAirtimes({
-				params,
+				params: {
+					limit: MAX_RECORDS,
+					skip: (page - 1) * MAX_RECORDS,
+					sort,
+					...conversionStatus,
+				},
 			}),
 		{
-			enabled: !!(token || isReload),
+			enabled: isLoad,
 			keepPreviousData: true,
 			onSettled: (data, error) => {
-				setReload(false);
-				setReloading(false);
+				setLoad(false);
+
 				if (error) {
 					const response = handleError({ error });
 					if (response?.message)
@@ -87,7 +90,7 @@ const Conversions = () => {
 	);
 
 	const handlePageChange = (page: number) => {
-		setReload(true);
+		setLoad(true);
 		if (page !== 1) {
 			setPage(page);
 			navigate(`${LINKS.Conversions}?page=${page}`);
@@ -100,8 +103,36 @@ const Conversions = () => {
 	const handleSort = (sort: string) => {
 		if (data) {
 			setSort(sort);
-			setReload(true);
+			setLoad(true);
 		}
+	};
+
+	const switchUserType = (type?: string) => {
+		switch (type) {
+			case CONVERSIONS_TAB.ALL:
+				setCurrentTab(CONVERSIONS_TAB.ALL);
+				setConversionStatus({});
+				break;
+
+			case CONVERSIONS_TAB.APPROVED:
+				setCurrentTab(CONVERSIONS_TAB.APPROVED);
+				setConversionStatus({ status: CONVERSIONS_TAB.APPROVED });
+				break;
+			case CONVERSIONS_TAB.PENDING:
+				setCurrentTab(CONVERSIONS_TAB.PENDING);
+				setConversionStatus({ status: CONVERSIONS_TAB.PENDING });
+				break;
+			case CONVERSIONS_TAB.DECLINED:
+				setCurrentTab(CONVERSIONS_TAB.DECLINED);
+				setConversionStatus({ status: CONVERSIONS_TAB.DECLINED });
+				break;
+
+			default:
+				setCurrentTab(CONVERSIONS_TAB.ALL);
+				setConversionStatus({});
+				break;
+		}
+		setLoad(true);
 	};
 
 	return (
@@ -113,46 +144,28 @@ const Conversions = () => {
 						marginBottom: '2rem',
 					}}
 				>
-					<Typography
-						sx={{ marginBottom: theme.spacing(4), fontWeight: 'bold' }}
-						variant={'h5'}
-					>
-						Conversions
-					</Typography>
-					<Box
-						sx={{
-							display: 'grid',
-							gridTemplateColumns: {
-								xs: '1fr',
-								lg: 'repeat(2, 1fr)',
-							},
-							gap: {
-								xs: theme.spacing(3),
-								lg: theme.spacing(5),
-							},
-						}}
-					>
-						<ConversionTotal
-							handleRefresh={() => {
-								setReload(true);
-								setReloading(true);
-							}}
-							total={data && data.metadata.total}
-						/>
-						<AvailableNetwork />
-					</Box>
+					<TableHeader
+						sx={{ marginBottom: '2rem' }}
+						title={'All Conversions'}
+						searchPlaceholder={'Search Conversions by phone'}
+						handleSearch={searchConversion}
+						clearSearch={clearSearch}
+					/>
+					<ConversionsTab
+						currentTab={currentTab}
+						changeCurrentTab={switchUserType}
+					/>
 				</Box>
 				<ErrorBoundary>
 					<ConversionsTable
-						isDisplaySearchField
-						isLoading={isLoading || isReloading || isSearching}
+						isLoading={isLoading || isSearching}
 						conversions={search ? search : data && data.payload}
 						handleSort={handleSort}
 						handleSearch={searchConversion}
 						clearSearch={clearSearch}
 					/>
 
-					{!search && total > MAX_RECORDS && !isReloading && (
+					{!search && total > MAX_RECORDS && (
 						<Pagination
 							sx={{ marginLeft: '20px' }}
 							size={'large'}
@@ -179,4 +192,4 @@ const useStyles = (theme: any) => ({
 	},
 });
 
-export default Conversions;
+export default AllConversions;

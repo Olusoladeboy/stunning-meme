@@ -3,7 +3,7 @@ import { Typography, useTheme } from '@mui/material';
 import { grey } from '@mui/material/colors';
 import SummaryWrapper from './wrapper';
 import ConversionIcon from '../icons/conversion';
-import { SUCCESS_COLOR, LINKS } from '../../utilities';
+import { SEMI_GREEN_COLOR, LINKS } from '../../utilities';
 import Link from '../link';
 import { useAppSelector } from '../../store/hooks';
 
@@ -13,14 +13,14 @@ const TotalConversions = () => {
 	const { statistics } = useAppSelector((store) => store.appState);
 	return (
 		<SummaryWrapper
-			bgColor={SUCCESS_COLOR}
+			bgColor={SEMI_GREEN_COLOR}
 			amount={statistics ? statistics.total_conversions : '---'}
 			icon={<ConversionIcon color={grey[50]} />}
 		>
 			<Typography style={styles.text} variant={'h6'}>
 				Total Conversions
 			</Typography>
-			<Link to={LINKS.Conversions}>
+			<Link to={LINKS.AllConversions}>
 				<Typography style={styles.linkText} variant={'body1'}>
 					View all
 				</Typography>

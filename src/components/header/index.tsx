@@ -8,9 +8,9 @@ import {
 	Typography,
 	Avatar,
 } from '@mui/material';
-import Image from '../image';
+import { Menu } from '@mui/icons-material';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import { setToggleDrawer } from '../../store/app';
+import { setToggleDrawer, setToggleMobileDrawer } from '../../store/app';
 import { grey } from '@mui/material/colors';
 
 const Header = () => {
@@ -25,19 +25,29 @@ const Header = () => {
 		<AppBar position={'sticky'} style={styles.appBar}>
 			<Toolbar style={styles.toolbar}>
 				<IconButton
+					sx={{
+						color: 'white',
+						display: {
+							xs: 'none',
+							md: 'block',
+						},
+					}}
 					size={'large'}
 					onClick={() => dispatch(setToggleDrawer(!isToggleDrawer))}
 				>
-					<Image
-						style={styles.appMenu}
-						sx={{
-							img: {
-								width: '100%',
-								display: 'block',
-							},
-						}}
-						src={require('../../assets/icons/menu.png')}
-					/>
+					<Menu />
+				</IconButton>
+				<IconButton
+					sx={{
+						color: 'white',
+						display: {
+							md: 'none',
+						},
+					}}
+					size={'large'}
+					onClick={() => dispatch(setToggleMobileDrawer(true))}
+				>
+					<Menu />
 				</IconButton>
 				<Box style={styles.avatarUserNameWrapper}>
 					<Box>
@@ -70,6 +80,7 @@ const useStyles = (theme: any) => ({
 		display: 'flex',
 		alignItems: 'center',
 		justifyContent: 'space-between',
+		color: 'white',
 	},
 	avatarUserNameWrapper: {
 		display: 'flex',

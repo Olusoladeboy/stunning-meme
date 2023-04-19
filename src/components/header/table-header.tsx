@@ -30,7 +30,12 @@ const TableHeader = ({
 			style={style}
 			sx={{
 				display: 'flex',
-				alignItems: 'center',
+				alignItems: { sm: 'center' },
+				flexDirection: {
+					xs: 'column',
+					sm: 'row',
+				},
+				gap: '20px',
 				justifyContent:
 					title || isDisplayBackButton ? 'space-between' : 'flex-end',
 				padding: '10px 0px',
@@ -52,7 +57,7 @@ const TableHeader = ({
 			)}
 			<SearchInput
 				fullWidth
-				sx={{ maxWidth: '320px' }}
+				sx={{ maxWidth: { xs: '100%', sm: '320px' } }}
 				placeholder={rest.placeholder || searchPlaceholder}
 				handleSearch={handleSearch}
 				clearSearch={clearSearch}

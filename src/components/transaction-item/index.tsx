@@ -29,6 +29,7 @@ const TransactionItem = ({
 			onClick={onClick}
 			sx={{
 				backgroundColor: bgColor || grey[50],
+				minWidth: '200px',
 				cursor: 'pointer',
 				borderRadius: theme.spacing(2),
 				padding: theme.spacing(3),

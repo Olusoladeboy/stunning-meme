@@ -1,26 +1,35 @@
-import React, { CSSProperties, useState } from 'react';
-import Table from '@mui/material/Table';
+import React, { CSSProperties } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Box from '@mui/material/Box';
-import { Avatar, Typography, useTheme } from '@mui/material';
-import TableBody from '@mui/material/TableBody';
-import TableHead from '@mui/material/TableHead';
+import {
+	Avatar,
+	Typography,
+	useTheme,
+	Table,
+	Box,
+	TableBody,
+	TableHead,
+} from '@mui/material';
+
 import { grey } from '@mui/material/colors';
 import { AddCircle } from '@mui/icons-material';
-import { SUCCESS_COLOR, BOX_SHADOW, LINKS } from '../../utilities';
+import { SUCCESS_COLOR, LINKS } from '../../utilities';
 import FilterIcon from '../icons/filter';
 import {
 	StyledTableCell as TableCell,
 	StyledTableRow as TableRow,
 } from './components';
 import TableHeader from '../header/table-header';
-import REFERRALS from '../../utilities/data/referrals';
 import Empty from '../empty';
-import Pagination from '../pagination';
 import Button from '../button';
+import { IReferral } from '../../utilities';
+import TableLoader from '../loader/table-loader';
 
-const ReferralTableWithAvatar = () => {
-	const [data] = useState<{ [key: string]: any }[] | null>(REFERRALS);
+interface Props {
+	data: IReferral[] | null;
+	isLoading: boolean;
+}
+
+const ReferralTableWithAvatar: React.FC<Props> = ({ data, isLoading }) => {
 	const navigate = useNavigate();
 
 	const theme = useTheme();
@@ -46,7 +55,7 @@ const ReferralTableWithAvatar = () => {
 							startIcon={<AddCircle />}
 							style={styles.btnViewReferrals as CSSProperties}
 						>
-							View all referrals
+							View Referrals Bonus
 						</Button>
 					</Box>
 				</Box>
@@ -61,7 +70,6 @@ const ReferralTableWithAvatar = () => {
 						}}
 					>
 						<TableRow>
-							<TableCell />
 							<TableCell>
 								<Box style={styles.filterWrapper}>
 									<Typography variant={'body1'}>Referral Name</Typography>
@@ -90,45 +98,55 @@ const ReferralTableWithAvatar = () => {
 							},
 						}}
 					>
-						{data && data.length > 0 ? (
-							data.map((row, key) => (
-								<TableRow key={key}>
-									<TableCell sx={{ maxWidth: '30px' }}>
-										<Avatar src={row.avatar} />
-									</TableCell>
-									<TableCell style={styles.tableText}>{row.name}</TableCell>
-									<TableCell style={styles.tableText}>{row.email}</TableCell>
-									<TableCell style={styles.tableText}>
-										{row.number_of_referees}
-									</TableCell>
-									<TableCell
-										onClick={() => navigate(`${LINKS.Referee}/${row.id}`)}
-										style={styles.viewReferess}
-									>
-										view referees
-									</TableCell>
-								</TableRow>
-							))
+						{isLoading ? (
+							<TableLoader colSpan={5} />
 						) : (
-							<TableRow>
-								<TableCell colSpan={6}>
-									<Empty text={'No users'} />
-								</TableCell>
-							</TableRow>
+							data && (
+								<>
+									{data.length > 0 ? (
+										data.map((row: IReferral, key) => (
+											<TableRow key={row.id}>
+												<TableCell style={styles.tableText}>
+													<Box
+														sx={{
+															display: 'flex',
+															gap: '10px',
+															alignItems: 'center',
+														}}
+													>
+														<Avatar src={row.referredBy.photoUrl as string} />
+														<span>
+															{row.referredBy.firstname}
+															{row.referredBy.lastname}
+														</span>
+													</Box>
+												</TableCell>
+												<TableCell style={styles.tableText}>
+													{row.referredBy.email}
+												</TableCell>
+												<TableCell style={styles.tableText}>
+													{/* {row.number_of_referees} */}
+												</TableCell>
+												<TableCell
+													onClick={() => navigate(`${LINKS.Referee}/${row.id}`)}
+													style={styles.viewReferess}
+												>
+													view referees
+												</TableCell>
+											</TableRow>
+										))
+									) : (
+										<TableRow>
+											<TableCell colSpan={6}>
+												<Empty text={'No users'} />
+											</TableCell>
+										</TableRow>
+									)}
+								</>
+							)
 						)}
 					</TableBody>
 				</Table>
-				<Pagination
-					sx={{
-						display: 'flex',
-						justifyContent: 'flex-end',
-						marginTop: theme.spacing(4),
-						marginRight: '1rem',
-					}}
-					size={'large'}
-					shape={'rounded'}
-					variant={'outlined'}
-				/>
 			</Box>
 		</>
 	);
@@ -139,11 +157,6 @@ const useStyles = (theme: any) => ({
 		display: 'grid',
 		gridTemplateColumn: '1fr',
 		gap: theme.spacing(4),
-		border: `1px solid ${theme.palette.secondary.main}`,
-		padding: '1.5rem 0px',
-		backgroundColor: grey[50],
-		borderRadius: theme.spacing(2),
-		boxShadow: BOX_SHADOW,
 	},
 	filterWrapper: {
 		display: 'flex',

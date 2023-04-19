@@ -1,10 +1,13 @@
 import React, { useState } from 'react';
 import Table from '@mui/material/Table';
 import Box from '@mui/material/Box';
-import { Typography, useTheme, Avatar } from '@mui/material';
-import TableBody from '@mui/material/TableBody';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
+import {
+	Typography,
+	useTheme,
+	Avatar,
+	TableBody,
+	TableHead,
+} from '@mui/material';
 import { Check, Close, AccessTime } from '@mui/icons-material';
 import moment from 'moment';
 import {
@@ -61,7 +64,7 @@ const TransactionsTable = ({ data, isLoading }: Props) => {
 							},
 						}}
 					>
-						<TableRow>
+						<StyledTableRow>
 							<CustomTableCell label={'User'} isSortable />
 							<CustomTableCell label={'Transaction'} />
 							<CustomTableCell label={'Reference'} />
@@ -69,7 +72,7 @@ const TransactionsTable = ({ data, isLoading }: Props) => {
 							<CustomTableCell label={'Time'} />
 							<CustomTableCell label={'Status'} />
 							<CustomTableCell label={'Amount'} />
-						</TableRow>
+						</StyledTableRow>
 					</TableHead>
 					<TableBody
 						sx={{

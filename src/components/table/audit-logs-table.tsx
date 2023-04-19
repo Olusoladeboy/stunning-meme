@@ -1,12 +1,14 @@
 import React, { CSSProperties, useState } from 'react';
-import Table from '@mui/material/Table';
-import Box from '@mui/material/Box';
-import { Avatar, Typography, useTheme } from '@mui/material';
-import TableBody from '@mui/material/TableBody';
-import TableHead from '@mui/material/TableHead';
+import {
+	Table,
+	Box,
+	TableBody,
+	TableHead,
+	Avatar,
+	useTheme,
+} from '@mui/material';
 import { grey } from '@mui/material/colors';
 import { SUCCESS_COLOR, BOX_SHADOW } from '../../utilities';
-import FilterIcon from '../icons/filter';
 import {
 	StyledTableCell as TableCell,
 	StyledTableRow as TableRow,
@@ -15,6 +17,7 @@ import TableHeader from '../header/table-header';
 import Empty from '../empty';
 import Pagination from '../pagination';
 import Button from '../button';
+import CustomTableCell from './components/custom-table-cell';
 
 const AuditLogsTable = () => {
 	const [data] = useState<{ [key: string]: any }[] | null>(null);
@@ -41,26 +44,10 @@ const AuditLogsTable = () => {
 						}}
 					>
 						<TableRow>
-							<TableCell />
-							<TableCell>
-								<Box style={styles.filterWrapper}>
-									<Typography variant={'body1'}>Name</Typography>
-									<FilterIcon />
-								</Box>
-							</TableCell>
-							<TableCell>
-								<Box style={styles.filterWrapper}>
-									<Typography variant={'body1'}>Date</Typography>
-									<FilterIcon />
-								</Box>
-							</TableCell>
-							<TableCell>
-								<Box style={styles.filterWrapper}>
-									<Typography variant={'body1'}>Time</Typography>
-									<FilterIcon />
-								</Box>
-							</TableCell>
-							<TableCell>Action</TableCell>
+							<CustomTableCell label={'Email'} />
+							<CustomTableCell label={'Name'} />
+							<CustomTableCell label={'Date'} />
+							<CustomTableCell label={'Time'} />
 						</TableRow>
 					</TableHead>
 					<TableBody
@@ -74,9 +61,21 @@ const AuditLogsTable = () => {
 							data.map((row, key) => (
 								<TableRow key={key}>
 									<TableCell sx={{ maxWidth: '30px' }}>
-										<Avatar src={row.avatar} />
 									</TableCell>
-									<TableCell>{row.name}</TableCell>
+									<TableCell>
+										<Box sx={{
+											display: 'flex',
+											alignItems: 'center',
+											gap: '10px'
+										}}>
+										<Avatar src={row.avatar} />
+										<span>
+										{row.name}
+
+										</span>
+
+										</Box>
+										</TableCell>
 									<TableCell>{row.email}</TableCell>
 									<TableCell>{row.number_of_referees}</TableCell>
 									<TableCell>
@@ -91,7 +90,7 @@ const AuditLogsTable = () => {
 							))
 						) : (
 							<TableRow>
-								<TableCell colSpan={6}>
+								<TableCell colSpan={5}>
 									<Empty text={'No suspension records'} />
 								</TableCell>
 							</TableRow>

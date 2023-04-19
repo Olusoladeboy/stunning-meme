@@ -127,7 +127,7 @@ const DataNetworkTable = () => {
 							data.payload.map((data: any) => (
 								<TableRow key={data.id}>
 									<TableCell>{data.name}</TableCell>
-									<TableCell>{data.name}</TableCell>
+									<TableCell>{0}</TableCell>
 									<TableCell sx={{ maxWidth: '200px' }}>
 										<Box
 											sx={{

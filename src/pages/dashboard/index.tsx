@@ -13,50 +13,101 @@ import {
 	RecentTransactionsTable,
 } from '../../components';
 
-const Dashboard = () => {
+const LargeView = () => {
 	const theme = useTheme();
 	const styles = useStyles(theme);
 	return (
-		<Layout>
-			<Box
-				sx={{
-					display: 'grid',
-					gridTemplateColumns: '5.5fr 4.5fr',
-					gap: theme.spacing(4),
-				}}
-			>
-				<Box>
+		<Box
+			sx={{
+				// display: 'grid',
+				gridTemplateColumns: '5.5fr 4.5fr',
+				gap: theme.spacing(4),
+				display: {
+					xs: 'none',
+					lg: 'grid',
+				},
+			}}
+		>
+			<Box>
+				<Box
+					sx={{
+						display: 'grid',
+						gridTemplateColumns: '1fr',
+						gap: theme.spacing(4),
+					}}
+				>
+					<WalletBalance />
 					<Box
 						sx={{
-							display: 'grid',
-							gridTemplateColumns: '1fr',
-							gap: theme.spacing(4),
+							gridTemplateColumns: 'repeat(3, 1fr)',
 						}}
+						style={styles.transactionGrid}
 					>
-						<WalletBalance />
-						<Box style={styles.transactionGrid}>
-							<TotalTransactions />
-							<TotalUsers />
-							<TotalConversions />
-						</Box>
-						<RecentConversionsTable />
-						<RecentTransactionsTable />
+						<TotalTransactions />
+						<TotalUsers />
+						<TotalConversions />
 					</Box>
-				</Box>
-				<Box>
-					<Box
-						sx={{
-							display: 'flex',
-							flexDirection: 'column',
-							gap: theme.spacing(4),
-						}}
-					>
-						<WalletOverview />
-						<UserRecord />
-						<TaskList />
-					</Box>
+					<RecentConversionsTable />
+					<RecentTransactionsTable />
 				</Box>
 			</Box>
+			<Box>
+				<Box
+					sx={{
+						display: 'flex',
+						flexDirection: 'column',
+						gap: theme.spacing(4),
+					}}
+				>
+					<WalletOverview />
+					<UserRecord />
+					<TaskList />
+				</Box>
+			</Box>
+		</Box>
+	);
+};
+
+const MobileView = () => {
+	const theme = useTheme();
+	const styles = useStyles(theme);
+
+	return (
+		<Box
+			sx={{
+				display: { xs: 'grid', lg: 'none' },
+				gridTemplateColumns: '1fr',
+				gap: theme.spacing(4),
+			}}
+		>
+			<WalletBalance />
+			<WalletOverview />
+			<Box
+				sx={{
+					gridTemplateColumns: {
+						xs: '1fr',
+						sm: 'repeat(3,  1fr)',
+					},
+				}}
+				style={styles.transactionGrid}
+			>
+				<TotalTransactions />
+				<TotalUsers />
+				<TotalConversions />
+			</Box>
+			<UserRecord />
+			<RecentConversionsTable />
+			<RecentTransactionsTable />
+			<TaskList />
+		</Box>
+	);
+};
+
+const Dashboard = () => {
+	return (
+		<Layout>
+			<LargeView />
+			<MobileView />
 		</Layout>
 	);
 };
@@ -64,7 +115,7 @@ const Dashboard = () => {
 const useStyles = (theme: any) => ({
 	transactionGrid: {
 		display: 'grid',
-		gridTemplateColumns: 'repeat(3, 1fr)',
+
 		gap: theme.spacing(3),
 	},
 });

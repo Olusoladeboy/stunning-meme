@@ -15,20 +15,32 @@ export const StyledTableCell = styled(TableCell)(({ theme }) => ({
 	},
 
 	[`&.MuiTableCell-head:nth-of-type(1)`]: {
-		paddingLeft: '30px !important',
+		paddingLeft: '15px !important',
+		[theme.breakpoints.up('md')]: {
+			paddingLeft: '30px !important',
+		},
 	},
 	[`&.MuiTableCell-head:last-child`]: {
-		paddingRight: '30px',
+		paddingRight: '15px',
+		[theme.breakpoints.up('md')]: {
+			paddingRight: '30px',
+		},
 	},
 	[`&.${tableCellClasses.body}`]: {
 		fontSize: '14px',
 		padding: '15px 10px',
 	},
 	[`&.MuiTableCell-body:last-child`]: {
-		paddingRight: '30px',
+		paddingRight: '15px',
+		[theme.breakpoints.up('md')]: {
+			paddingRight: '30px',
+		},
 	},
 	[`&.MuiTableCell-body:nth-of-type(1)`]: {
-		paddingLeft: '30px',
+		paddingLeft: '15px !important',
+		[theme.breakpoints.up('md')]: {
+			paddingLeft: '30px !important',
+		},
 	},
 }));
 

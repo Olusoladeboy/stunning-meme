@@ -172,7 +172,6 @@ const ManagersTable = ({
 						}}
 					>
 						<TableRow>
-							<TableCell />
 							<CustomTableCell label={'Name'} isSortable />
 							<CustomTableCell label={'Email'} isSortable />
 							<CustomTableCell label={'Phone No.'} isSortable />
@@ -188,7 +187,7 @@ const ManagersTable = ({
 						}}
 					>
 						{isLoading ? (
-							<TableLoader colSpan={6} />
+							<TableLoader colSpan={5} />
 						) : (
 							managers && (
 								<>
@@ -198,12 +197,18 @@ const ManagersTable = ({
 												onClick={() => handleViewManager(data)}
 												key={key}
 											>
-												<TableCell sx={{ maxWidth: '60px' }}>
-													<Avatar src={data.avatar} />
+												<TableCell style={styles.tableText}>
+													<Box
+														sx={{
+															display: 'flex',
+															gap: '15px',
+															alignItems: 'center',
+														}}
+													>
+														<Avatar src={data.avatar} />
+														<span>{`${data.firstname} ${data.lastname}`}</span>
+													</Box>
 												</TableCell>
-												<TableCell
-													style={styles.tableText}
-												>{`${data.firstname} ${data.lastname}`}</TableCell>
 												<TableCell style={styles.tableText}>
 													{data.email}
 												</TableCell>
@@ -219,7 +224,7 @@ const ManagersTable = ({
 										))
 									) : (
 										<TableRow>
-											<TableCell colSpan={6}>
+											<TableCell colSpan={5}>
 												<Empty text={'No Manager(s)'} />
 											</TableCell>
 										</TableRow>

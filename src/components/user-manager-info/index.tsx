@@ -89,7 +89,7 @@ const ManagerInfo = ({ manager, changeManager }: Props) => {
 					</Typography>
 					<InfoList text={manager.email} />
 				</Box>
-				<Box>
+				{manager.phone && <Box>
 					<Typography
 						style={styles.label}
 						component={'label'}
@@ -97,8 +97,8 @@ const ManagerInfo = ({ manager, changeManager }: Props) => {
 					>
 						Phone number
 					</Typography>
-					<InfoList text={manager.phone} />
-				</Box>
+					<InfoList text={manager.phone as string} />
+				</Box>}
 			</Box>
 		</Box>
 	);

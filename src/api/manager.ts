@@ -8,6 +8,20 @@ export const createManager = async (data: ManagerDetailsData): Promise<any> =>
 
 		data,
 	});
+
+export const uploadManagerProfile = async ({
+	data,
+	manager,
+}: {
+	data: { [key: string]: any };
+	manager: string;
+}): Promise<any> =>
+	apiRequest({
+		method: 'POST',
+		url: `${ENDPOINTS.Manager}/upload-display-picture/${manager}`,
+		data,
+	});
+
 export const updateManager = async ({
 	data,
 	id,
@@ -21,6 +35,12 @@ export const updateManager = async ({
 
 		data,
 	});
+export const deleteManager = async (id: string): Promise<any> =>
+	apiRequest({
+		method: 'DELETE',
+		url: `${ENDPOINTS.Manager}/${id}`,
+	});
+
 export const managers = async ({
 	params,
 }: {

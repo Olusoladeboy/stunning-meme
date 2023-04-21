@@ -4,13 +4,18 @@ import queryString from 'query-string';
 import { styled, Box } from '@mui/material';
 import { grey } from '@mui/material/colors';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Layout, Pagination, ReferralTableWithAvatar } from '../../components';
+import {
+	Layout,
+	Pagination,
+	RefereesTable,
+	TableHeader,
+} from '../../components';
 import { referrals } from '../../api';
 import { useHandleError, useAlert } from '../../hooks';
 import { QueryKeys, MAX_RECORDS, LINKS, BOX_SHADOW } from '../../utilities';
 import { useAppSelector } from '../../store/hooks';
 
-const Referrals = () => {
+const Referees = () => {
 	const handleError = useHandleError();
 	const alert = useAlert();
 	const { token } = useAppSelector((store) => store.authState);
@@ -28,14 +33,15 @@ const Referrals = () => {
 	}, [query, query.page]);
 
 	const { isLoading, data } = useQuery(
-		[QueryKeys.Referrals],
+		[QueryKeys.Referees, query.page, query.id],
 		() =>
 			referrals({
 				params: {
 					sort: '-createdAt',
 					limit: MAX_RECORDS,
 					skip: (page - 1) * MAX_RECORDS,
-					populate: 'referredBy',
+					populate: 'user',
+					referredBy: query.id,
 				},
 			}),
 		{
@@ -69,10 +75,18 @@ const Referrals = () => {
 	return (
 		<Layout>
 			<Container>
-				<ReferralTableWithAvatar
-					isLoading={isLoading}
-					data={data && data.payload}
+				<TableHeader
+					isDisplayBackButton
+					title={'Referees'}
+					sx={{
+						marginBottom: '1rem',
+						padding: {
+							xs: '0px 15px',
+							md: '0px 30px',
+						},
+					}}
 				/>
+				<RefereesTable isLoading={isLoading} data={data && data.payload} />
 				{total > MAX_RECORDS && (
 					<Pagination
 						page={page}
@@ -105,4 +119,4 @@ const Container = styled(Box)(({ theme }) => ({
 	boxShadow: BOX_SHADOW,
 }));
 
-export default Referrals;
+export default Referees;

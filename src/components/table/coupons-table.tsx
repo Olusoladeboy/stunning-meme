@@ -153,7 +153,7 @@ const CouponsTable = ({
 			<Box style={styles.container}>
 				<Box
 					style={styles.tableHeader as CSSProperties}
-					sx={{ padding: '0px 1rem' }}
+					sx={{ padding: { xs: '0px 15px', md: '0px 30px' } }}
 				>
 					<TableHeader
 						title={'Coupons'}
@@ -412,7 +412,7 @@ const useStyles = (theme: any) => ({
 	tableHeader: {
 		display: 'flex',
 		flexDirection: 'column',
-		gap: theme.spacing(3),
+		gap: theme.spacing(4),
 	},
 	tableHeaderText: {
 		fontWeight: '600',

@@ -19,7 +19,7 @@ import {
 	TRANSACTIONS_TAB,
 } from '../../utilities';
 import { useAppSelector } from '../../store/hooks';
-import { transactions } from '../../api';
+import { allTransactions } from '../../api';
 import { useHandleError, useAlert, useSearchTransaction } from '../../hooks';
 
 const AllTransactions = () => {
@@ -51,7 +51,7 @@ const AllTransactions = () => {
 	const { isLoading, data } = useQuery(
 		[QueryKeys.AllTransactions, query.page],
 		() =>
-			transactions({
+			allTransactions({
 				params: {
 					sort: '-createdAt',
 					limit: MAX_RECORDS,

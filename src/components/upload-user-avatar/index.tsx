@@ -4,12 +4,7 @@ import { CameraAlt, Delete } from '@mui/icons-material';
 import { useSnackbar } from 'notistack';
 import axios from 'axios';
 import { useQueryClient } from 'react-query';
-import {
-	LIGHT_GRAY,
-	DANGER_COLOR,
-	QueryKeys,
-	API_ENDPOINTS,
-} from '../../utilities';
+import { LIGHT_GRAY, DANGER_COLOR, API_ENDPOINTS } from '../../utilities';
 import Button from '../button';
 import UploadImageButton from '../button/upload-image-button';
 import { useAppSelector } from '../../store/hooks';
@@ -18,7 +13,11 @@ import { useHandleError, useAlert } from '../../hooks';
 
 const baseUrl = process.env.REACT_APP_API_URI as string;
 
-const UploadUserAvatar = () => {
+interface IUploadUserAvatar {
+	managerId: string;
+}
+
+const UploadUserAvatar: React.FC<IUploadUserAvatar> = ({ managerId }) => {
 	const theme = useTheme();
 	const handleError = useHandleError();
 	const alert = useAlert();
@@ -27,6 +26,7 @@ const UploadUserAvatar = () => {
 	const [previewImage, setPreviewImage] = useState<string>('');
 	const { enqueueSnackbar } = useSnackbar();
 	const queryClient = useQueryClient();
+	const [photoUrl, setPhotoUrl] = useState<string>('');
 
 	const { user, token } = useAppSelector((store) => store.authState);
 
@@ -43,7 +43,7 @@ const UploadUserAvatar = () => {
 
 		try {
 			const res = await axios.post(
-				`${baseUrl}/${API_ENDPOINTS.User}/upload-display-picture`,
+				`${baseUrl}/${API_ENDPOINTS.Manager}/upload-display-picture/${managerId}`,
 				formData,
 				{
 					headers: {
@@ -54,9 +54,8 @@ const UploadUserAvatar = () => {
 			const data = res.data;
 			if (data && data.success) {
 				setLoading(false);
-				queryClient.invalidateQueries(QueryKeys.AllManagers);
-				queryClient.invalidateQueries(QueryKeys.AllStaff);
-				enqueueSnackbar(data.message, { variant: 'success' });
+				setPhotoUrl(data.payload.photoUrl);
+				alert({ message: data.message, type: 'success' });
 				setFile(null);
 				setPreviewImage('');
 			}
@@ -81,7 +80,7 @@ const UploadUserAvatar = () => {
 			)}
 			<Box style={styles.container}>
 				<Avatar
-					src={user?.avatar || ''}
+					src={photoUrl}
 					sx={{
 						// backgroundImage: `url(${require('../../assets/images/stripBg.png')})`,
 						backgroundSize: '400%',

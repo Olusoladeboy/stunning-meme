@@ -25,7 +25,7 @@ import {
 import Empty from '../empty';
 import Pagination from '../pagination';
 import Button from '../button';
-import AddManagerForm from '../forms/manager-admin-form';
+import ManagerForm from '../forms/manager-admin-form';
 import ManagerDetails from '../manager-details';
 import TableLoader from '../loader/table-loader';
 import ManagerTableHeader from '../header/manager-table-header';
@@ -91,7 +91,7 @@ const ManagersTable = ({
 		type ? setManagerType(type) : setManagerType(null);
 	};
 
-	const onSuccess = () => {
+	const closeModal = () => {
 		setFormActionType('');
 		setSelectedManager(null);
 		setEditManager(false);
@@ -102,15 +102,15 @@ const ManagersTable = ({
 			{formActionType && (
 				<ModalWrapper
 					hasCloseButton
-					closeModal={() => setFormActionType('')}
+					closeModal={closeModal}
 					title={
 						<Typography variant={'h5'} sx={{ textTransform: 'uppercase' }}>
 							{formActionType} {managerType}
 						</Typography>
 					}
 				>
-					<AddManagerForm
-						callback={() => onSuccess()}
+					<ManagerForm
+						callback={closeModal}
 						isEdit={isEditManager}
 						type={ManagerTypes.Manager}
 						managerDetails={selectedManager}
@@ -120,12 +120,15 @@ const ManagersTable = ({
 			{selectedManager && isViewManager && (
 				<ModalWrapper
 					hasCloseButton
-					closeModal={() => setSelectedManager(null)}
+					closeModal={closeModal}
 					title={'View manager'}
 				>
 					<ManagerDetails
-						handleEdit={() => handleAddEditManager({ isEdit: true })}
+						handleEdit={() =>
+							handleAddEditManager({ isEdit: true, type: ManagerTypes.Manager })
+						}
 						managerDetail={selectedManager}
+						callback={closeModal}
 					/>
 				</ModalWrapper>
 			)}
@@ -174,7 +177,6 @@ const ManagersTable = ({
 						<TableRow>
 							<CustomTableCell label={'Name'} isSortable />
 							<CustomTableCell label={'Email'} isSortable />
-							<CustomTableCell label={'Phone No.'} isSortable />
 							<CustomTableCell label={'Date'} isSortable />
 							<CustomTableCell label={'User'} />
 						</TableRow>
@@ -187,7 +189,7 @@ const ManagersTable = ({
 						}}
 					>
 						{isLoading ? (
-							<TableLoader colSpan={5} />
+							<TableLoader colSpan={4} />
 						) : (
 							managers && (
 								<>
@@ -212,9 +214,7 @@ const ManagersTable = ({
 												<TableCell style={styles.tableText}>
 													{data.email}
 												</TableCell>
-												<TableCell style={styles.tableText}>
-													{data.phone}
-												</TableCell>
+
 												<TableCell style={styles.tableText}>
 													{moment.utc(data.createdAt).format('l')}
 												</TableCell>
@@ -224,7 +224,7 @@ const ManagersTable = ({
 										))
 									) : (
 										<TableRow>
-											<TableCell colSpan={5}>
+											<TableCell colSpan={4}>
 												<Empty text={'No Manager(s)'} />
 											</TableCell>
 										</TableRow>

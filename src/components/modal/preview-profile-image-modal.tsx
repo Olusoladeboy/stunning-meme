@@ -23,18 +23,7 @@ const PreviewProfileImageModal = ({
 	const theme = useTheme();
 
 	return (
-		<ModalWrapper>
-			<IconButton
-				onClick={() => typeof close !== 'undefined' && close()}
-				sx={{
-					position: 'absolute',
-					right: '8px',
-					top: '8px',
-					color: DANGER_COLOR,
-				}}
-			>
-				<Close />
-			</IconButton>
+		<ModalWrapper closeModal={close}>
 			<Box sx={{}}>
 				<Typography sx={{ marginBottom: '10px' }} variant={'h6'}>
 					{'Save Profile Image'}

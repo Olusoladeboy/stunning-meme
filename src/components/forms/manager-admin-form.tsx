@@ -12,7 +12,7 @@ import {
 	validationSchema,
 	AMIN_ROLE,
 } from '../../utilities';
-import Select from '../form-components/Select';
+import Select from '../form-components/select';
 import { useAlert, useHandleError } from '../../hooks';
 import {
 	createStaff,
@@ -46,7 +46,6 @@ const ManagerAdminForm = ({
 	const initialValues: ManagerDetailsData = {
 		firstname: '',
 		lastname: '',
-		phone: '',
 		email: '',
 		role: SELECT_ADMIN_PRIVILEDGE,
 	};
@@ -148,7 +147,6 @@ const ManagerAdminForm = ({
 				? {
 						firstname: managerDetails.firstname,
 						lastname: managerDetails.lastname,
-						phone: managerDetails.phone,
 						email: managerDetails.email,
 						role:
 							type === ManagerTypes.Admin
@@ -179,7 +177,7 @@ const ManagerAdminForm = ({
 			},
 		});
 
-	const { firstname, lastname, email, phone, role } = values;
+	const { firstname, lastname, email, role } = values;
 
 	return (
 		<Box style={styles.form as CSSProperties} component={'form'}>
@@ -190,7 +188,7 @@ const ManagerAdminForm = ({
 					gap: theme.spacing(4),
 				}}
 			>
-				<UploadUserAvatar />
+				<UploadUserAvatar managerId={managerDetails?.id as string} />
 				<Box
 					sx={{
 						display: 'grid',
@@ -234,6 +232,7 @@ const ManagerAdminForm = ({
 						</Typography>
 						<TextInput
 							fullWidth
+							disabled={isEdit}
 							error={errors && touched.email && errors.email ? true : false}
 							helperText={errors && touched.email && errors.email}
 							placeholder={'Email'}

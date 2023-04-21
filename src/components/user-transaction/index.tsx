@@ -12,7 +12,7 @@ import {
 	LINKS,
 	UserNavList,
 } from '../../utilities';
-import { transactions } from '../../api';
+import { allTransactions } from '../../api';
 import { useHandleError, useAlert, useSearchTransaction } from '../../hooks';
 import { useAppSelector } from '../../store/hooks';
 import Pagination from '../pagination';
@@ -46,7 +46,7 @@ const UserTransaction = ({ user }: Props) => {
 	const { isLoading, data } = useQuery(
 		[QueryKeys.UserTransactions, user?.id, page],
 		() =>
-			transactions({
+			allTransactions({
 				params: {
 					user: user?.id,
 					sort: '-createdAt',

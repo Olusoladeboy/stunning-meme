@@ -242,7 +242,7 @@ export interface ManagerDetailsData extends UserDetails {
 	firstname: string;
 	lastname: string;
 	email: string;
-	phone: string;
+	phone?: string;
 }
 
 export type NetworkData = {

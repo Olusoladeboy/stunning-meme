@@ -18,6 +18,7 @@ export const QueryKeys = {
 	LoginUserDetails: '@Query:Login_user_details',
 	AllManagers: '@Query:All_manager',
 	Referrals: '@Query:Referrals',
+	Referees: '@Query:Referees',
 	RecentConvertAirtime: '@Query:RecentConvertAirtime',
 	AllUsers: '@Query:All_Users',
 	GetSingleUser: '@Query:Get_single_user',
@@ -82,7 +83,8 @@ export const LINKS = {
 	Coupons: '/coupons',
 	Dispute: '/dispute',
 	Referrals: '/referrals',
-	AllReferrals: '/referrals/all',
+	ReferralsBonus: '/referrals/bonus',
+	Referees: (id: string) => `/referrals/${id}/referees`,
 	Referee: '/referee',
 	Notifications: '/notifications',
 	PushNotification: '/push-notification',
@@ -159,4 +161,11 @@ export const CONVERSIONS_TAB = {
 export const STATUS = {
 	APPROVED: 'APPROVED',
 	DECLINED: 'DECLINED',
+};
+
+export const STATISTIC_TAB = {
+	TODAY: 'TODAY',
+	LAST_7_DAY: 'LAST 7 DAYS',
+	LAST_30_DAYS: 'LAST 30 DAYS',
+	ALL_TIME: 'ALL TIME',
 };

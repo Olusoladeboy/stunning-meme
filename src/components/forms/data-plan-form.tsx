@@ -8,7 +8,7 @@ import { useFormik } from 'formik';
 import TextInput from '../form-components/TextInput';
 import Button from '../button/custom-button';
 import { DataPlan, DataPlanType, QueryKeys } from '../../utilities';
-import Select from '../form-components/Select';
+import Select from '../form-components/select';
 import TextPlaceholder from '../partials/text-placeholder';
 import { useAlert, useHandleError } from '../../hooks';
 import { createDataPlan, updateDataPlan } from '../../api';

@@ -1,23 +1,53 @@
 import React, { CSSProperties } from 'react';
 import { Box, Typography, useTheme } from '@mui/material';
+import { useMutation, useQueryClient } from 'react-query';
 import { grey, red } from '@mui/material/colors';
 import UserAvatarWithDetails from '../avatar-with-details/manager';
 import Button from '../button';
-import { ManagerDetailsData, ManagerTypes } from '../../utilities';
+import { ManagerDetailsData, ManagerTypes, QueryKeys } from '../../utilities';
+import { deleteManager } from '../../api';
+import { useHandleError, useAlert } from '../../hooks';
 
 type Props = {
 	managerDetail: ManagerDetailsData;
 	handleEdit?: () => void;
 	type?: ManagerTypes.Manager | ManagerTypes.Admin;
+	callback?: () => void;
 };
 
 const ManagerDetails = ({
 	managerDetail,
 	handleEdit,
 	type = ManagerTypes.Manager,
+	callback,
 }: Props) => {
+	const alert = useAlert();
+	const queryClient = useQueryClient();
+	const handleError = useHandleError();
 	const theme = useTheme();
 	const styles = useStyles(theme);
+
+	const { isLoading: isDeletingManager, mutate: mutateDeleteManager } =
+		useMutation(deleteManager, {
+			onSettled: (data, error) => {
+				if (error) {
+					const response = handleError({ error });
+					if (response?.message)
+						return alert({ message: response.message, type: 'error' });
+				}
+
+				alert({ message: 'Manager deleted successfully', type: 'success' });
+				queryClient.invalidateQueries(QueryKeys.AllManagers);
+				typeof callback !== 'undefined' && callback();
+			},
+		});
+
+	const handleDelete = () => {
+		if (type === ManagerTypes.Manager) {
+			mutateDeleteManager(managerDetail.id as string);
+		}
+	};
+
 	return (
 		<Box>
 			<UserAvatarWithDetails user={managerDetail} />
@@ -51,12 +81,16 @@ const ManagerDetails = ({
 						}}
 					>
 						<Button
-							onClick={() => typeof handleEdit !== 'undefined' && handleEdit()}
+							onClick={handleEdit}
 							style={styles.editBtn as CSSProperties}
 						>
 							Edit profile
 						</Button>
-						<Button style={styles.deleteBtn as CSSProperties}>
+						<Button
+							onClick={handleDelete}
+							loading={isDeletingManager}
+							style={styles.deleteBtn as CSSProperties}
+						>
 							{type === ManagerTypes.Manager
 								? 'Delete Manager'
 								: 'Delete Admin'}

@@ -16,10 +16,7 @@ const ValidationSchema = {
 		firstname: yup.string().required('Specify manager first name'),
 		lastname: yup.string().required('Specify manager last name'),
 		email: yup.string().email().required('Specify manager email'),
-		phone: yup
-			.string()
-			.required('Specify phone number')
-			.matches(PHONE_REX, 'Invalid phone number'),
+		phone: yup.string().matches(PHONE_REX, 'Invalid phone number'),
 	}),
 	EPin: yup.object().shape({
 		epinType: yup

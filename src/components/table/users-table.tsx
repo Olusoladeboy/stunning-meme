@@ -93,7 +93,7 @@ const UsersTable = ({
 					) : users && users.length > 0 ? (
 						users.map((user: User, key: number) => (
 							<TableRow
-								onClick={() => navigate(`${LINKS.User}/${user.id}`)}
+								onClick={() => navigate(`${LINKS.Users}/${user.id}`)}
 								key={key}
 							>
 								<TableCell style={styles.tableText}>

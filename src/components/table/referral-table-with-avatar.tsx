@@ -12,7 +12,7 @@ import {
 
 import { grey } from '@mui/material/colors';
 import { AddCircle } from '@mui/icons-material';
-import { SUCCESS_COLOR, LINKS } from '../../utilities';
+import { SUCCESS_COLOR, LINKS, IReferral } from '../../utilities';
 import FilterIcon from '../icons/filter';
 import {
 	StyledTableCell as TableCell,
@@ -21,8 +21,8 @@ import {
 import TableHeader from '../header/table-header';
 import Empty from '../empty';
 import Button from '../button';
-import { IReferral } from '../../utilities';
 import TableLoader from '../loader/table-loader';
+import CustomTableCell from './components/custom-table-cell';
 
 interface Props {
 	data: IReferral[] | null;
@@ -39,9 +39,9 @@ const ReferralTableWithAvatar: React.FC<Props> = ({ data, isLoading }) => {
 			<Box style={styles.container} sx={{ overflow: 'auto' }}>
 				<Box
 					style={styles.tableHeader as CSSProperties}
-					sx={{ padding: '0px 1rem' }}
+					sx={{ padding: { xs: '0px 15px', md: '0px 30px' } }}
 				>
-					<TableHeader title={'Referrals'} />
+					<TableHeader sx={{ marginBottom: '1rem' }} title={'Referrals'} />
 					<Box
 						sx={{
 							alignSelf: 'flex-end',
@@ -51,7 +51,7 @@ const ReferralTableWithAvatar: React.FC<Props> = ({ data, isLoading }) => {
 						}}
 					>
 						<Button
-							onClick={() => navigate(LINKS.AllReferrals)}
+							onClick={() => navigate(LINKS.ReferralsBonus)}
 							startIcon={<AddCircle />}
 							style={styles.btnViewReferrals as CSSProperties}
 						>
@@ -70,25 +70,10 @@ const ReferralTableWithAvatar: React.FC<Props> = ({ data, isLoading }) => {
 						}}
 					>
 						<TableRow>
-							<TableCell>
-								<Box style={styles.filterWrapper}>
-									<Typography variant={'body1'}>Referral Name</Typography>
-									<FilterIcon />
-								</Box>
-							</TableCell>
-							<TableCell>
-								<Box style={styles.filterWrapper}>
-									<Typography variant={'body1'}>Email</Typography>
-									<FilterIcon />
-								</Box>
-							</TableCell>
-							<TableCell>
-								<Box style={styles.filterWrapper}>
-									<Typography variant={'body1'}>No. of Referres</Typography>
-									<FilterIcon />
-								</Box>
-							</TableCell>
-							<TableCell>Action</TableCell>
+							<CustomTableCell label={'Referral Name'} />
+							<CustomTableCell label={'Email'} />
+							<CustomTableCell label={'No. of Referees'} />
+							<CustomTableCell label={'Action'} />
 						</TableRow>
 					</TableHead>
 					<TableBody
@@ -104,7 +89,7 @@ const ReferralTableWithAvatar: React.FC<Props> = ({ data, isLoading }) => {
 							data && (
 								<>
 									{data.length > 0 ? (
-										data.map((row: IReferral, key) => (
+										data.map((row: IReferral) => (
 											<TableRow key={row.id}>
 												<TableCell style={styles.tableText}>
 													<Box
@@ -116,7 +101,7 @@ const ReferralTableWithAvatar: React.FC<Props> = ({ data, isLoading }) => {
 													>
 														<Avatar src={row.referredBy.photoUrl as string} />
 														<span>
-															{row.referredBy.firstname}
+															{row.referredBy.firstname}{' '}
 															{row.referredBy.lastname}
 														</span>
 													</Box>
@@ -128,7 +113,7 @@ const ReferralTableWithAvatar: React.FC<Props> = ({ data, isLoading }) => {
 													{/* {row.number_of_referees} */}
 												</TableCell>
 												<TableCell
-													onClick={() => navigate(`${LINKS.Referee}/${row.id}`)}
+													onClick={() => navigate(LINKS.Referees(row.id))}
 													style={styles.viewReferess}
 												>
 													view referees

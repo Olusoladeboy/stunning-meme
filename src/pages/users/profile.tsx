@@ -17,12 +17,17 @@ import {
 	AssignManagerForm,
 	Button,
 } from '../../components';
-import { BOX_SHADOW } from '../../utilities/constant';
-import LINKS from '../../utilities/links';
-import { UserNavList, QueryKey, UserDetails } from '../../utilities/types';
-import Api from '../../utilities/api';
+import {
+	BOX_SHADOW,
+	LINKS,
+	UserNavList,
+	QueryKeys,
+	UserDetails,
+} from '../../utilities';
 import { useAppSelector } from '../../store/hooks';
 import ErrorBoundary from '../../utilities/helpers/error-boundary';
+import { useHandleError, useAlert } from '../../hooks';
+import { users } from '../../api';
 
 interface User extends UserDetails {
 	manager: any;
@@ -30,6 +35,8 @@ interface User extends UserDetails {
 
 const Profile = () => {
 	const theme = useTheme();
+	const alert = useAlert();
+	const handleError = useHandleError();
 	const styles = useStyles(theme);
 	const { id } = useParams();
 	const { token } = useAppSelector((store) => store.authState);
@@ -45,17 +52,19 @@ const Profile = () => {
 	const handleChangeTab = (value: string) => {
 		switch (value) {
 			case UserNavList.Status:
-				return navigate(`${LINKS.User}/${id}?tab=${UserNavList.Status}`);
+				return navigate(`${LINKS.Users}/${id}?tab=${UserNavList.Status}`);
 
 			case UserNavList.Transaction:
-				return navigate(`${LINKS.User}/${id}?tab=${UserNavList.Transaction}`);
+				return navigate(`${LINKS.Users}/${id}?tab=${UserNavList.Transaction}`);
 			case UserNavList.WalletSummary:
-				return navigate(`${LINKS.User}/${id}?tab=${UserNavList.WalletSummary}`);
+				return navigate(
+					`${LINKS.Users}/${id}?tab=${UserNavList.WalletSummary}`
+				);
 			case UserNavList.Manager:
-				return navigate(`${LINKS.User}/${id}?tab=${UserNavList.Manager}`);
+				return navigate(`${LINKS.Users}/${id}?tab=${UserNavList.Manager}`);
 
 			default:
-				navigate(`${LINKS.User}/${id}`);
+				navigate(`${LINKS.Users}/${id}`);
 		}
 		setCurrentTab(value);
 	};
@@ -80,15 +89,22 @@ const Profile = () => {
 	}, [tab]);
 
 	const { isLoading, data } = useQuery(
-		QueryKey.GetSingleUser,
+		QueryKeys.GetSingleUser,
 		() =>
-			Api.User.GetUserById({
-				token: token || '',
-				id: id || '',
+			users({
+				params: {
+					_id: id,
+					populate: 'manager',
+				},
 			}),
 		{
 			enabled: !!(token && id),
 			onSettled: (data, error) => {
+				if (error) {
+					const response = handleError({ error });
+					if (response?.message)
+						alert({ message: response.message, type: 'error' });
+				}
 				if (data && data.success) {
 					setUserDetails(data.payload[0]);
 				}

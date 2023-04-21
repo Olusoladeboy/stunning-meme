@@ -38,23 +38,21 @@ const TableHeader = ({
 				gap: '20px',
 				justifyContent:
 					title || isDisplayBackButton ? 'space-between' : 'flex-end',
-				padding: '10px 0px',
+				// padding: '10px 0px',
 				...sx,
 			}}
 		>
-			{title ? (
-				<>
-					{typeof title === 'string' ? (
-						<Typography sx={{ fontWeight: '600' }} variant={'h5'}>
-							{title}
-						</Typography>
-					) : (
-						title
-					)}
-				</>
-			) : (
-				isDisplayBackButton && <BackButton text={backButtonText} />
-			)}
+			<Box sx={{ display: 'flex', alignItems: 'center', gap: '30px' }}>
+				{isDisplayBackButton && <BackButton text={backButtonText} />}
+				{title && typeof title === 'string' ? (
+					<Typography sx={{ fontWeight: '600' }} variant={'h5'}>
+						{title}
+					</Typography>
+				) : (
+					title
+				)}
+			</Box>
+
 			<SearchInput
 				fullWidth
 				sx={{ maxWidth: { xs: '100%', sm: '320px' } }}

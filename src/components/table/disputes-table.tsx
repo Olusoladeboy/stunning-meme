@@ -68,8 +68,9 @@ const DisputeTable = ({
 						}}
 					>
 						<TableRow>
+							<CustomTableCell label={'User'} />
 							<CustomTableCell label={'Code'} />
-							<CustomTableCell label={'Subject'} />
+							<CustomTableCell label={'Transaction'} />
 							<CustomTableCell label={'Status'} />
 							<CustomTableCell label={'Created At'} />
 							<CustomTableCell label={'Action'} />
@@ -88,19 +89,22 @@ const DisputeTable = ({
 							data && (
 								<>
 									{data.length > 0 ? (
-										data.map((row) => (
+										data.map((row: Ticket) => (
 											<TableRow key={row.id}>
-												<TableCell
-													sx={{ paddingLeft: '30px !important' }}
-													style={styles.tableText}
-												>
-													{row.code}
+												<TableCell>
+													{row.user &&
+														typeof row.user === 'object' &&
+														`${row.user.firstname} ${row.user.lastname}`}
 												</TableCell>
+												<TableCell>{row.code}</TableCell>
 
-												<TableCell style={styles.tableText}>
-													{row.subject}
+												<TableCell>
+													{row.related_transaction &&
+													typeof row.related_transaction === 'object'
+														? row.related_transaction.type
+														: 'No Specified transaction'}
 												</TableCell>
-												<TableCell style={styles.tableText}>
+												<TableCell>
 													<Box
 														sx={{
 															backgroundColor:
@@ -127,14 +131,14 @@ const DisputeTable = ({
 													</Box>
 												</TableCell>
 
-												<TableCell style={styles.tableText}>
+												<TableCell>
 													{moment.utc(row.createdAt).format('l')}
 												</TableCell>
 
 												<TableCell>
 													<Button
 														onClick={() =>
-															navigate(`${LINKS.Message}/${row.id}`)
+															navigate(`${LINKS.Dispute}/${row.id}`)
 														}
 														style={styles.viewDisputeBtn}
 													>

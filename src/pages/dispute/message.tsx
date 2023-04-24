@@ -1,44 +1,43 @@
 import React from 'react';
+import { styled } from '@mui/material/styles';
 import { Typography, Box } from '@mui/material';
 import { Adjust, CheckCircleOutlined } from '@mui/icons-material';
-import { useParams } from 'react-router-dom';
-import { useNavigate } from 'react-router-dom';
-import { red, green } from '@mui/material/colors';
+import { useParams, useNavigate } from 'react-router-dom';
+import { red, green, grey } from '@mui/material/colors';
 import moment from 'moment';
 import { useQuery } from 'react-query';
 import { ChevronLeft } from '@mui/icons-material';
-import { styled } from '@mui/material/styles';
-import Layout from '../../components/layout';
-import Button from '../../components/button';
-import { grey } from '@mui/material/colors';
-import { useAppSelector } from '../../store/hooks';
-import Api from '../../utilities/api';
 import {
-	QueryKey,
-	Ticket,
-	TicketReply,
-	TicketStatus,
-} from '../../utilities/types';
-import { useAlert } from '../../utilities/hooks';
-import {
+	Layout,
+	Button,
+	DisputeTransactionDetails,
 	CircularProgress,
 	MessageItem,
 	CloseDisputeButton,
 	ReplyTicketForm,
 } from '../../components';
-import ErrorBoundary from '../../utilities/helpers/error-boundary';
+import {
+	QueryKey,
+	Ticket,
+	TicketReply,
+	ErrorBoundary,
+	TicketStatus,
+} from '../../utilities';
+import { useAlert, useHandleError } from '../../hooks';
+import { tickets } from '../../api';
+import { useAppSelector } from '../../store/hooks';
 
 const Message = () => {
 	const alert = useAlert();
-	const { token } = useAppSelector((store) => store.authState);
 	const params = useParams();
 	const navigate = useNavigate();
+	const handleError = useHandleError();
+	const { token } = useAppSelector((store) => store.authState);
 
 	const { data, isLoading } = useQuery(
 		[QueryKey.Ticket, params.id],
 		() =>
-			Api.Ticket.Records({
-				token: token as string,
+			tickets({
 				params: {
 					populate: 'related_transaction',
 					_id: params.id,
@@ -47,7 +46,9 @@ const Message = () => {
 		{
 			enabled: !!(token && params && params.id),
 			onError: (error) => {
-				alert({ data: error, type: 'error' });
+				const response = handleError({ error });
+				if (response?.message)
+					alert({ message: response.message, type: 'error' });
 			},
 		}
 	);
@@ -84,9 +85,11 @@ const Message = () => {
 									}}
 								>
 									<Title variant={'h6'}>{data.payload[0].subject}</Title>
-									{data.payload[0].status === TicketStatus.OPENED && (
-										<CloseDisputeButton ticket={data.payload[0]} />
-									)}
+									<Box>
+										{data.payload[0].status === TicketStatus.OPENED && (
+											<CloseDisputeButton ticket={data.payload[0]} />
+										)}
+									</Box>
 								</Box>
 								<Box
 									sx={{ display: 'flex', alignItems: 'center', gap: '10px' }}
@@ -122,6 +125,11 @@ const Message = () => {
 									</Typography>
 								</Box>
 							</Box>
+							<DisputeTransactionDetails
+								transaction={
+									data.payload[0] && data.payload[0].related_transaction
+								}
+							/>
 							<Box
 								sx={{
 									display: 'grid',

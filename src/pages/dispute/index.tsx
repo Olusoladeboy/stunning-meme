@@ -3,7 +3,7 @@ import { Box } from '@mui/material';
 import { useNavigate, useLocation } from 'react-router-dom';
 import queryString from 'query-string';
 import { Layout, Pagination, DisputesTable } from '../../components';
-import { QueryKeys, MAX_RECORDS, LINKS } from '../../utilities';
+import { QueryKeys, MAX_RECORDS, LINKS, TicketType } from '../../utilities';
 import { useQueryHook, useSearchTicket } from '../../hooks';
 import { tickets } from '../../api';
 
@@ -30,7 +30,8 @@ const Disputes = () => {
 					sort: '-createdAt',
 					limit: MAX_RECORDS,
 					skip: (page - 1) * MAX_RECORDS,
-					populate: 'createdBy',
+					populate: 'user',
+					type: TicketType.DISPUTE,
 				},
 			}),
 		onSuccessFn: (data: any) => {

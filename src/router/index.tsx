@@ -76,8 +76,10 @@ const Router = () => {
 			<Route path={'statistics'} element={<Statistics />} />
 
 			<Route path={'coupons'} element={<Coupons />} />
-			<Route path={'support-ticket/message/:id'} element={<Message />} />
-			<Route path={'dispute'} element={<Dispute />} />
+			<Route path={'dispute'}>
+				<Route path={''} element={<Dispute />} />
+				<Route path={':id'} element={<Message />} />
+			</Route>
 			<Route path={'referrals'}>
 				<Route path={''} element={<Referrals />} />
 				<Route path={':id/referees'} element={<Referees />} />

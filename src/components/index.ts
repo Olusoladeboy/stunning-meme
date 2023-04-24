@@ -88,3 +88,4 @@ export { default as ConversionsTab } from './tabs/conversions-tab';
 export { default as SearchStatistics } from './search-statistic';
 export { default as StatisticTab } from './tabs/statistics-tab';
 export { default as StatisticsTotal } from './summary-item/statistics-total';
+export { default as DisputeTransactionDetails } from './dispute-transaction-details';

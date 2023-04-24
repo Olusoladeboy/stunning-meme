@@ -18,7 +18,6 @@ import {
 	LINKS,
 	TRANSACTIONS_TAB,
 } from '../../utilities';
-import { useAppSelector } from '../../store/hooks';
 import { allTransactions } from '../../api';
 import { useHandleError, useAlert, useSearchTransaction } from '../../hooks';
 
@@ -27,7 +26,6 @@ const AllTransactions = () => {
 	const handleError = useHandleError();
 	const styles = useStyles(theme);
 	const alert = useAlert();
-	const { token } = useAppSelector((store) => store.authState);
 	const navigate = useNavigate();
 	const [count, setCount] = useState<number>(1);
 	const [page, setPage] = useState<number>(1);

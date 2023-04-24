@@ -10,3 +10,4 @@ export { default as useSearchConversion } from './search-hooks/useSearchConversi
 export { default as useSearchCoupon } from './search-hooks/useSearchCoupon';
 export { default as useSearchTicket } from './search-hooks/useSearchTicket';
 export { default as useSearchUser } from './search-hooks/useSearchUser';
+export { default as useSearchReferral } from './search-hooks/useSearchReferral';

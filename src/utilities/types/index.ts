@@ -414,10 +414,10 @@ export interface Ticket {
 	priority: Priority;
 	related_transaction_type?: RelatedTransactionTypes;
 	subject: String;
-	related_transaction?: RelatedTransaction | null;
+	related_transaction?: RelatedTransaction | string | null;
 	message: string;
 	code: string;
-	user: string;
+	user: string | User;
 	replies: TicketReply[];
 	createdAt: string;
 	updatedAt: string;

@@ -1,15 +1,16 @@
-import React, { CSSProperties, useState, MouseEvent } from 'react';
-import Table from '@mui/material/Table';
-import Box from '@mui/material/Box';
+import React, { useState, MouseEvent } from 'react';
 import {
+	Table,
+	Box,
 	useTheme,
 	List,
 	ListItemButton,
 	IconButton,
 	Popper,
+	TableHead,
+	TableBody,
 } from '@mui/material';
-import TableBody from '@mui/material/TableBody';
-import TableHead from '@mui/material/TableHead';
+import { useNavigate } from 'react-router-dom';
 import { grey } from '@mui/material/colors';
 import { MoreHoriz } from '@mui/icons-material';
 import {
@@ -17,6 +18,8 @@ import {
 	BOX_SHADOW,
 	DANGER_COLOR,
 	IReferral,
+	User,
+	LINKS,
 } from '../../utilities';
 import CustomTableCell from './components/custom-table-cell';
 import {
@@ -35,14 +38,24 @@ interface Props {
 const RefereesTable: React.FC<Props> = ({ data, isLoading }) => {
 	const theme = useTheme();
 	const styles = useStyles(theme);
+	const navigate = useNavigate();
 
 	const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+	const [selectedUser, setSelectedUser] = useState<User | null>(null);
 
-	const handleClickAction = (event: MouseEvent<HTMLElement>) => {
+	const handleClickAction = (event: MouseEvent<HTMLElement>, user: User) => {
 		setAnchorEl(
 			anchorEl && anchorEl === event.currentTarget ? null : event.currentTarget
 		);
+		setSelectedUser(user);
 	};
+
+	const closePopper = () => {
+		setAnchorEl(null);
+		setSelectedUser(null);
+	};
+
+	const viewUser = () => navigate(`${LINKS.Users}/${selectedUser?.id}`);
 
 	return (
 		<>
@@ -93,7 +106,9 @@ const RefereesTable: React.FC<Props> = ({ data, isLoading }) => {
 												<TableCell>
 													<Box>
 														<IconButton
-															onClick={(event) => handleClickAction(event)}
+															onClick={(event) =>
+																handleClickAction(event, row.user)
+															}
 															size={'small'}
 														>
 															<MoreHoriz />
@@ -105,29 +120,26 @@ const RefereesTable: React.FC<Props> = ({ data, isLoading }) => {
 															<List style={styles.editDeleteWrapper}>
 																{!row.user.verified && (
 																	<ListItemButton
-																		onClick={() => {
-																			setAnchorEl(null);
-																		}}
+																		onClick={closePopper}
 																		style={styles.verifyBtn}
 																	>
 																		Verify
 																	</ListItemButton>
 																)}
 																<ListItemButton
-																	onClick={() => {
-																		setAnchorEl(null);
-																	}}
+																	onClick={closePopper}
 																	style={styles.deleteBtn}
 																>
 																	Delete
 																</ListItemButton>
 																<ListItemButton
 																	onClick={() => {
-																		setAnchorEl(null);
+																		closePopper();
+																		viewUser();
 																	}}
 																	style={styles.pustNotifyBtn}
 																>
-																	Push notification
+																	View User
 																</ListItemButton>
 															</List>
 														</Popper>

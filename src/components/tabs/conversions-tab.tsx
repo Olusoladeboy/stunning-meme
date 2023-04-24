@@ -1,6 +1,6 @@
 import React from 'react';
 import { Box, Typography } from '@mui/material';
-import { grey, green } from '@mui/material/colors';
+import { grey } from '@mui/material/colors';
 import AllTransactionIcon from '../icons/transaction';
 import PendingIcon from '../icons/time';
 import CompletedIcon from '../icons/check-two';

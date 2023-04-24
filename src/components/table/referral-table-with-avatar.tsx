@@ -2,7 +2,6 @@ import React, { CSSProperties } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
 	Avatar,
-	Typography,
 	useTheme,
 	Table,
 	Box,
@@ -13,12 +12,10 @@ import {
 import { grey } from '@mui/material/colors';
 import { AddCircle } from '@mui/icons-material';
 import { SUCCESS_COLOR, LINKS, IReferral } from '../../utilities';
-import FilterIcon from '../icons/filter';
 import {
 	StyledTableCell as TableCell,
 	StyledTableRow as TableRow,
 } from './components';
-import TableHeader from '../header/table-header';
 import Empty from '../empty';
 import Button from '../button';
 import TableLoader from '../loader/table-loader';
@@ -38,26 +35,18 @@ const ReferralTableWithAvatar: React.FC<Props> = ({ data, isLoading }) => {
 		<>
 			<Box style={styles.container} sx={{ overflow: 'auto' }}>
 				<Box
-					style={styles.tableHeader as CSSProperties}
-					sx={{ padding: { xs: '0px 15px', md: '0px 30px' } }}
+					sx={{
+						justifySelf: 'flex-end',
+						padding: { xs: '0px 15px', md: '0px 30px' },
+					}}
 				>
-					<TableHeader sx={{ marginBottom: '1rem' }} title={'Referrals'} />
-					<Box
-						sx={{
-							alignSelf: 'flex-end',
-							display: 'flex',
-							alignItems: 'center',
-							gap: theme.spacing(3),
-						}}
+					<Button
+						onClick={() => navigate(LINKS.ReferralsBonus)}
+						startIcon={<AddCircle />}
+						style={styles.btnViewReferrals as CSSProperties}
 					>
-						<Button
-							onClick={() => navigate(LINKS.ReferralsBonus)}
-							startIcon={<AddCircle />}
-							style={styles.btnViewReferrals as CSSProperties}
-						>
-							View Referrals Bonus
-						</Button>
-					</Box>
+						View Referrals Bonus
+					</Button>
 				</Box>
 
 				<Table sx={{ overflow: 'auto' }}>

@@ -19,7 +19,6 @@ import {
 	ErrorBoundary,
 	CONVERSIONS_TAB,
 } from '../../utilities';
-import { useAppSelector } from '../../store/hooks';
 import { useAlert, useHandleError, useSearchConversion } from '../../hooks';
 import { convertAirtimes } from '../../api';
 

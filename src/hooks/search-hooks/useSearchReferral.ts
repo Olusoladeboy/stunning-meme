@@ -1,12 +1,6 @@
 import { useState } from 'react';
 import { useAlert, useHandleError } from '..';
-import {
-	UserDetails,
-	EMAIL_REX,
-	PHONE_REX,
-	User,
-	IReferral,
-} from '../../utilities';
+import { EMAIL_REX, PHONE_REX, User, IReferral } from '../../utilities';
 import { users, referrals } from '../../api';
 
 interface SearchPayload {

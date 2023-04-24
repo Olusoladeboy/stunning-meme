@@ -2,7 +2,6 @@ import React from 'react';
 import {
 	Table,
 	Box,
-	Typography,
 	useTheme,
 	TableBody,
 	TableHead,

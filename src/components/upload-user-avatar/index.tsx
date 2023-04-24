@@ -1,9 +1,7 @@
 import React, { useState } from 'react';
 import { Box, Avatar, useTheme } from '@mui/material';
 import { CameraAlt, Delete } from '@mui/icons-material';
-import { useSnackbar } from 'notistack';
 import axios from 'axios';
-import { useQueryClient } from 'react-query';
 import { LIGHT_GRAY, DANGER_COLOR, API_ENDPOINTS } from '../../utilities';
 import Button from '../button';
 import UploadImageButton from '../button/upload-image-button';
@@ -24,8 +22,6 @@ const UploadUserAvatar: React.FC<IUploadUserAvatar> = ({ managerId }) => {
 	const styles = useStyles(theme);
 	const [file, setFile] = useState<any>(null);
 	const [previewImage, setPreviewImage] = useState<string>('');
-	const { enqueueSnackbar } = useSnackbar();
-	const queryClient = useQueryClient();
 	const [photoUrl, setPhotoUrl] = useState<string>('');
 
 	const { user, token } = useAppSelector((store) => store.authState);

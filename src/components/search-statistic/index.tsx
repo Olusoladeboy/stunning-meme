@@ -15,7 +15,7 @@ const SearchStatistics = () => {
 		type: SELECT_TYPE,
 		data: SELECT_DATA_NETWORK,
 	};
-	const { values, handleChange, handleSubmit } = useFormik({
+	const { values } = useFormik({
 		initialValues,
 		onSubmit: (values) => {},
 	});

@@ -1,10 +1,8 @@
 import React from 'react';
-import { Box, Typography, IconButton, useTheme } from '@mui/material';
-import { Close } from '@mui/icons-material';
+import { Box, Typography, useTheme } from '@mui/material';
 import { grey } from '@mui/material/colors';
 import Button from '../button/custom-button';
 import ModalWrapper from './Wrapper';
-import { DANGER_COLOR } from '../../utilities';
 import Image from '../image';
 
 interface Props {

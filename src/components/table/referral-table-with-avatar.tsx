@@ -2,7 +2,6 @@ import React, { CSSProperties } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
 	Avatar,
-	Typography,
 	useTheme,
 	Table,
 	Box,
@@ -13,12 +12,10 @@ import {
 import { grey } from '@mui/material/colors';
 import { AddCircle } from '@mui/icons-material';
 import { SUCCESS_COLOR, LINKS, IReferral } from '../../utilities';
-import FilterIcon from '../icons/filter';
 import {
 	StyledTableCell as TableCell,
 	StyledTableRow as TableRow,
 } from './components';
-import TableHeader from '../header/table-header';
 import Empty from '../empty';
 import Button from '../button';
 import TableLoader from '../loader/table-loader';

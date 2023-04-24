@@ -150,10 +150,10 @@ const CouponsTable = ({
 				</ModalWrapper>
 			)}
 
-			<Box style={styles.container} sx={{ overflow: 'auto' }}>
+			<Box style={styles.container}>
 				<Box
 					style={styles.tableHeader as CSSProperties}
-					sx={{ padding: '0px 1rem' }}
+					sx={{ padding: { xs: '0px 15px', md: '0px 30px' } }}
 				>
 					<TableHeader
 						title={'Coupons'}
@@ -177,187 +177,217 @@ const CouponsTable = ({
 						</Button>
 					</Box>
 				</Box>
+				<Box
+					sx={{
+						overflow: 'auto',
+					}}
+				>
+					<Table>
+						<TableHead
+							sx={{
+								'& tr': {
+									backgroundColor: `${grey[50]} !important`,
+									color: theme.palette.primary.main,
+								},
+							}}
+						>
+							<TableRow>
+								<TableCell sx={{ paddingLeft: '30px' }}>
+									<Box style={styles.filterWrapper}>
+										<Typography
+											style={styles.tableHeaderText}
+											variant={'body1'}
+										>
+											Coupon Name
+										</Typography>
+										<FilterIcon />
+									</Box>
+								</TableCell>
+								<TableCell>
+									<Box style={styles.filterWrapper}>
+										<Typography
+											style={styles.tableHeaderText}
+											variant={'body1'}
+										>
+											Type
+										</Typography>
+										<FilterIcon />
+									</Box>
+								</TableCell>
+								<TableCell>
+									<Box style={styles.filterWrapper}>
+										<Typography
+											style={styles.tableHeaderText}
+											variant={'body1'}
+										>
+											Gift
+										</Typography>
+										<FilterIcon />
+									</Box>
+								</TableCell>
+								<TableCell>
+									<Box style={styles.filterWrapper}>
+										<Typography
+											style={styles.tableHeaderText}
+											variant={'body1'}
+										>
+											Created by
+										</Typography>
+										<FilterIcon />
+									</Box>
+								</TableCell>
+								<TableCell>
+									<Box style={styles.filterWrapper}>
+										<Typography
+											style={styles.tableHeaderText}
+											variant={'body1'}
+										>
+											Date
+										</Typography>
+										<FilterIcon />
+									</Box>
+								</TableCell>
+								<TableCell>
+									<Box style={styles.filterWrapper}>
+										<Typography
+											style={styles.tableHeaderText}
+											variant={'body1'}
+										>
+											Expiration
+										</Typography>
+										<FilterIcon />
+									</Box>
+								</TableCell>
+								<TableCell>
+									<Box style={styles.filterWrapper}>
+										<Typography
+											style={styles.tableHeaderText}
+											variant={'body1'}
+										>
+											Status
+										</Typography>
+										<FilterIcon />
+									</Box>
+								</TableCell>
+								<TableCell>Action</TableCell>
+							</TableRow>
+						</TableHead>
+						<TableBody
+							sx={{
+								'& tr': {
+									color: theme.palette.primary.main,
+								},
+							}}
+						>
+							{isLoading ? (
+								<TableLoader colSpan={8} />
+							) : (
+								data && (
+									<>
+										{data.length > 0 ? (
+											data.map((row, key) => (
+												<TableRow key={row.id}>
+													<TableCell
+														sx={{ paddingLeft: '30px !important' }}
+														style={styles.tableText}
+													>
+														{row.code || row?.name}
+													</TableCell>
+													<TableCell style={styles.tableText}>
+														{row.type}
+													</TableCell>
+													<TableCell style={styles.tableText}>
+														{typeof row.gift === 'string'
+															? row.gift
+															: row.gift?.$numberDecimal}
+													</TableCell>
+													<TableCell style={styles.tableText}>
+														{row.createdBy
+															? `${row.createdBy.firstname} ${row.createdBy.lastname}`
+															: 'No Specified user'}
+													</TableCell>
 
-				<Table sx={{ overflow: 'auto' }}>
-					<TableHead
-						sx={{
-							'& tr': {
-								backgroundColor: `${grey[50]} !important`,
-								color: theme.palette.primary.main,
-							},
-						}}
-					>
-						<TableRow>
-							<TableCell sx={{ paddingLeft: '30px' }}>
-								<Box style={styles.filterWrapper}>
-									<Typography style={styles.tableHeaderText} variant={'body1'}>
-										Coupon Name
-									</Typography>
-									<FilterIcon />
-								</Box>
-							</TableCell>
-							<TableCell>
-								<Box style={styles.filterWrapper}>
-									<Typography style={styles.tableHeaderText} variant={'body1'}>
-										Type
-									</Typography>
-									<FilterIcon />
-								</Box>
-							</TableCell>
-							<TableCell>
-								<Box style={styles.filterWrapper}>
-									<Typography style={styles.tableHeaderText} variant={'body1'}>
-										Gift
-									</Typography>
-									<FilterIcon />
-								</Box>
-							</TableCell>
-							<TableCell>
-								<Box style={styles.filterWrapper}>
-									<Typography style={styles.tableHeaderText} variant={'body1'}>
-										Created by
-									</Typography>
-									<FilterIcon />
-								</Box>
-							</TableCell>
-							<TableCell>
-								<Box style={styles.filterWrapper}>
-									<Typography style={styles.tableHeaderText} variant={'body1'}>
-										Date
-									</Typography>
-									<FilterIcon />
-								</Box>
-							</TableCell>
-							<TableCell>
-								<Box style={styles.filterWrapper}>
-									<Typography style={styles.tableHeaderText} variant={'body1'}>
-										Expiration
-									</Typography>
-									<FilterIcon />
-								</Box>
-							</TableCell>
-							<TableCell>
-								<Box style={styles.filterWrapper}>
-									<Typography style={styles.tableHeaderText} variant={'body1'}>
-										Status
-									</Typography>
-									<FilterIcon />
-								</Box>
-							</TableCell>
-							<TableCell>Action</TableCell>
-						</TableRow>
-					</TableHead>
-					<TableBody
-						sx={{
-							'& tr': {
-								color: theme.palette.primary.main,
-							},
-						}}
-					>
-						{isLoading ? (
-							<TableLoader colSpan={8} />
-						) : (
-							data && (
-								<>
-									{data.length > 0 ? (
-										data.map((row, key) => (
-											<TableRow key={row.id}>
-												<TableCell
-													sx={{ paddingLeft: '30px !important' }}
-													style={styles.tableText}
-												>
-													{row.code || row?.name}
-												</TableCell>
-												<TableCell style={styles.tableText}>
-													{row.type}
-												</TableCell>
-												<TableCell style={styles.tableText}>
-													{typeof row.gift === 'string'
-														? row.gift
-														: row.gift?.$numberDecimal}
-												</TableCell>
-												<TableCell style={styles.tableText}>
-													{row.createdBy
-														? `${row.createdBy.firstname} ${row.createdBy.lastname}`
-														: 'No Specified user'}
-												</TableCell>
-
-												<TableCell style={styles.tableText}>
-													{moment.utc(row.createdAt).format('l')}
-												</TableCell>
-												<TableCell style={styles.tableText}>
-													{moment.utc(row.expiresIn).format('l')}
-												</TableCell>
-												<TableCell style={styles.tableText}>
-													{row.status}
-												</TableCell>
-												<TableCell>
-													<Box>
-														<IconButton
-															onClick={(event) => handleClickAction(event, row)}
-															size={'small'}
-														>
-															<MoreHoriz />
-														</IconButton>
-														<Popper
-															open={Boolean(anchorEl)}
-															anchorEl={anchorEl}
-														>
-															<List style={styles.editDeleteWrapper}>
-																<ListItemButton
-																	onClick={() => {
-																		setAnchorEl(null);
-																		setEdit(true);
-																	}}
-																	style={styles.editBtn}
-																>
-																	Edit
-																</ListItemButton>
-																<ListItemButton
-																	onClick={() => {
-																		setAnchorEl(null);
-																		handleVerifyCoupon(CouponStatus.VERIFIED);
-																	}}
-																	style={styles.verifyBtn}
-																>
-																	Verify
-																</ListItemButton>
-																<ListItemButton
-																	onClick={() => {
-																		setAnchorEl(null);
-																		handleVerifyCoupon(CouponStatus.UNVERIFIED);
-																	}}
-																	style={styles.unverifyBtn}
-																>
-																	Unverify
-																</ListItemButton>
-																<ListItemButton
-																	onClick={() => {
-																		setAnchorEl(null);
-																		handleDelete(row);
-																	}}
-																	style={styles.deleteBtn}
-																>
-																	Delete
-																</ListItemButton>
-															</List>
-														</Popper>
-													</Box>
+													<TableCell style={styles.tableText}>
+														{moment.utc(row.createdAt).format('l')}
+													</TableCell>
+													<TableCell style={styles.tableText}>
+														{moment.utc(row.expiresIn).format('l')}
+													</TableCell>
+													<TableCell style={styles.tableText}>
+														{row.status}
+													</TableCell>
+													<TableCell>
+														<Box>
+															<IconButton
+																onClick={(event) =>
+																	handleClickAction(event, row)
+																}
+																size={'small'}
+															>
+																<MoreHoriz />
+															</IconButton>
+															<Popper
+																open={Boolean(anchorEl)}
+																anchorEl={anchorEl}
+															>
+																<List style={styles.editDeleteWrapper}>
+																	<ListItemButton
+																		onClick={() => {
+																			setAnchorEl(null);
+																			setEdit(true);
+																		}}
+																		style={styles.editBtn}
+																	>
+																		Edit
+																	</ListItemButton>
+																	<ListItemButton
+																		onClick={() => {
+																			setAnchorEl(null);
+																			handleVerifyCoupon(CouponStatus.VERIFIED);
+																		}}
+																		style={styles.verifyBtn}
+																	>
+																		Verify
+																	</ListItemButton>
+																	<ListItemButton
+																		onClick={() => {
+																			setAnchorEl(null);
+																			handleVerifyCoupon(
+																				CouponStatus.UNVERIFIED
+																			);
+																		}}
+																		style={styles.unverifyBtn}
+																	>
+																		Unverify
+																	</ListItemButton>
+																	<ListItemButton
+																		onClick={() => {
+																			setAnchorEl(null);
+																			handleDelete(row);
+																		}}
+																		style={styles.deleteBtn}
+																	>
+																		Delete
+																	</ListItemButton>
+																</List>
+															</Popper>
+														</Box>
+													</TableCell>
+												</TableRow>
+											))
+										) : (
+											<TableRow>
+												<TableCell colSpan={8}>
+													<Empty text={'No users'} />
 												</TableCell>
 											</TableRow>
-										))
-									) : (
-										<TableRow>
-											<TableCell colSpan={8}>
-												<Empty text={'No users'} />
-											</TableCell>
-										</TableRow>
-									)}
-								</>
-							)
-						)}
-					</TableBody>
-				</Table>
+										)}
+									</>
+								)
+							)}
+						</TableBody>
+					</Table>
+				</Box>
 			</Box>
 		</>
 	);
@@ -382,7 +412,7 @@ const useStyles = (theme: any) => ({
 	tableHeader: {
 		display: 'flex',
 		flexDirection: 'column',
-		gap: theme.spacing(3),
+		gap: theme.spacing(4),
 	},
 	tableHeaderText: {
 		fontWeight: '600',

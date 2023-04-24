@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useAlert, useHandleError } from '..';
 import { Transaction } from '../../utilities';
-import { transactions } from '../../api';
+import { allTransactions } from '../../api';
 
 interface SearchPayload {
 	reference?: string;
@@ -38,7 +38,7 @@ const useSearchTransaction = () => {
 		setSearching(true);
 
 		try {
-			const data = await transactions({ params });
+			const data = await allTransactions({ params });
 			setSearching(false);
 			if (data && Array.isArray(data.payload)) {
 				if (data.payload.length === 0) {

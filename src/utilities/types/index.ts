@@ -104,6 +104,8 @@ export enum TransactionStatus {
 	PENDING = 'PENDING',
 	FAILED = 'FAILED',
 	SUCCESSFUL = 'SUCCESSFUL',
+	APPROVED = 'APPROVED',
+	DECLINED = 'DECLINED',
 }
 
 export enum UserStatus {
@@ -209,6 +211,8 @@ export interface AirtimeConversion {
 	createdAt: Date;
 	updatedAt: Date;
 	id: string;
+	declinedBy: string | UserDetails;
+	declinedDate: Date;
 }
 
 export enum NetworkStatus {
@@ -238,7 +242,7 @@ export interface ManagerDetailsData extends UserDetails {
 	firstname: string;
 	lastname: string;
 	email: string;
-	phone: string;
+	phone?: string;
 }
 
 export type NetworkData = {
@@ -524,4 +528,13 @@ export interface Transaction {
 		updatedAt: string;
 	};
 	electricity_token?: ElectricityToken;
+}
+
+export interface IReferral {
+	bonus: string;
+	user: User;
+	referredBy: User;
+	createdAt: string;
+	updatedAt: string;
+	id: string;
 }

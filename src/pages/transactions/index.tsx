@@ -13,7 +13,7 @@ import {
 } from '../../components';
 import { BOX_SHADOW, QueryKeys, MAX_RECORDS, LINKS } from '../../utilities';
 import { useAppSelector } from '../../store/hooks';
-import { transactions } from '../../api';
+import { allTransactions } from '../../api';
 import { useHandleError, useAlert, useSearchTransaction } from '../../hooks';
 
 const Transactions = () => {
@@ -40,7 +40,7 @@ const Transactions = () => {
 	const { isLoading, data } = useQuery(
 		[QueryKeys.AllTransactions],
 		() =>
-			transactions({
+			allTransactions({
 				params: {
 					sort: '-createdAt',
 					limit: MAX_RECORDS,
@@ -79,7 +79,13 @@ const Transactions = () => {
 	return (
 		<Layout>
 			<Box style={styles.container}>
-				<Box sx={{ padding: '0px 2rem', display: 'grid', gap: '10px' }}>
+				<Box
+					sx={{
+						padding: { xs: '0px 15px', md: '0px 2rem' },
+						display: 'grid',
+						gap: { xs: '2rem', sm: '10px' },
+					}}
+				>
 					<TableHeader
 						searchPlaceholder={'Search transaction by reference'}
 						title={'Transactions'}

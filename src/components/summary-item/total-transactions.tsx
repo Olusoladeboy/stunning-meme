@@ -14,13 +14,13 @@ const TotalTransactions = () => {
 	return (
 		<SummaryWrapper
 			bgColor={SECOUNDARY_COLOR}
-			amount={statistics ? statistics.total_transactions : '---'}
+			amount={statistics ? statistics.total_transactions : '0'}
 			icon={<TransactionIcon color={grey[50]} />}
 		>
 			<Typography style={styles.text} variant={'h6'}>
 				Total transactions
 			</Typography>
-			<Link to={LINKS.Transactions}>
+			<Link to={LINKS.AllTransactions}>
 				<Typography style={styles.linkText} variant={'body1'}>
 					View all
 				</Typography>

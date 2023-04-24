@@ -6,7 +6,7 @@ import { grey } from '@mui/material/colors';
 import { useMutation, useQueryClient } from 'react-query';
 import TextInput from '../form-components/TextInput';
 import Button from '../button/custom-button';
-import Select from '../form-components/Select';
+import Select from '../form-components/select';
 import {
 	Coupon,
 	CouponType,

@@ -13,11 +13,7 @@ import TableBody from '@mui/material/TableBody';
 import TableHead from '@mui/material/TableHead';
 import { grey } from '@mui/material/colors';
 import { AddCircle, MoreHoriz } from '@mui/icons-material';
-import {
-	SUCCESS_COLOR,
-	BOX_SHADOW,
-	DANGER_COLOR,
-} from '../../utilities';
+import { SUCCESS_COLOR, BOX_SHADOW, DANGER_COLOR } from '../../utilities';
 import ModalWrapper from '../modal/Wrapper';
 import FilterIcon from '../icons/filter';
 import {
@@ -32,7 +28,7 @@ import Button from '../button';
 import RegularAlert from '../modal/regular-modal';
 import ReferralForm from '../forms/referral-form';
 
-const AllReferralTable = () => {
+const ReferralBonusTable = () => {
 	const [data] = useState<{ [key: string]: any }[] | null>(COUPONS);
 
 	const [isCreateReferral, setCreateReferral] = useState<boolean>(false);
@@ -97,7 +93,7 @@ const AllReferralTable = () => {
 					style={styles.tableHeader as CSSProperties}
 					sx={{ padding: '0px 1rem' }}
 				>
-					<TableHeader backButtonText={'View Referees'} isDisplayBackButton />
+					<TableHeader backButtonText={'Referral Bonus'} isDisplayBackButton />
 					<Box
 						sx={{
 							alignSelf: 'flex-end',
@@ -290,4 +286,4 @@ const useStyles = (theme: any) => ({
 	},
 });
 
-export default AllReferralTable;
+export default ReferralBonusTable;

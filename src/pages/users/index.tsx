@@ -92,6 +92,8 @@ const Users = () => {
 				break;
 			case USERS_TAB.Deleted:
 				setUsersStatus({ deleted: true });
+				setCurrentTab(USERS_TAB.Deleted);
+
 				break;
 
 			default:

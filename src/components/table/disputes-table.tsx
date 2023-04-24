@@ -24,6 +24,7 @@ import { Ticket, TicketStatus } from '../../utilities/types';
 import TableLoader from '../loader/table-loader';
 import ErrorBoundary from '../../utilities/helpers/error-boundary';
 import LINKS from '../../utilities/links';
+import CustomTableCell from './components/custom-table-cell';
 
 interface Props {
 	data: Ticket[] | null;
@@ -67,33 +68,11 @@ const DisputeTable = ({
 						}}
 					>
 						<TableRow>
-							<TableCell sx={{ paddingLeft: '30px' }}>Code</TableCell>
-
-							<TableCell>
-								<Box style={styles.filterWrapper}>
-									<Typography style={styles.tableHeaderText} variant={'body1'}>
-										Subject
-									</Typography>
-									<FilterIcon />
-								</Box>
-							</TableCell>
-							<TableCell>
-								<Box style={styles.filterWrapper}>
-									<Typography style={styles.tableHeaderText} variant={'body1'}>
-										Status
-									</Typography>
-									<FilterIcon />
-								</Box>
-							</TableCell>
-							<TableCell>
-								<Box style={styles.filterWrapper}>
-									<Typography style={styles.tableHeaderText} variant={'body1'}>
-										Created at
-									</Typography>
-									<FilterIcon />
-								</Box>
-							</TableCell>
-							<TableCell>Action</TableCell>
+							<CustomTableCell label={'Code'} />
+							<CustomTableCell label={'Subject'} />
+							<CustomTableCell label={'Status'} />
+							<CustomTableCell label={'Created At'} />
+							<CustomTableCell label={'Action'} />
 						</TableRow>
 					</TableHead>
 					<TableBody

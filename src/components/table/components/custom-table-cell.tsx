@@ -15,12 +15,16 @@ const CustomTableCell = ({ label, isSortable = false, ...rest }: Props) => {
 				sx={{
 					display: 'flex',
 					alignItems: 'center',
+					flexWrap: 'nowrap',
 					gap: (theme) => theme.spacing(1),
+					span: {
+						whiteSpace: 'nowrap',
+					},
 					...rest.sx,
 				}}
 				{...rest}
 			>
-				{label}
+				<span>{label}</span>
 				{isSortable && <FilterIcon />}
 			</Box>
 		</StyledTableCell>

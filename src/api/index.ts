@@ -11,3 +11,4 @@ export * from './statistics';
 export * from './ticket';
 export * from './transactions';
 export * from './wallet';
+export * from './referral';

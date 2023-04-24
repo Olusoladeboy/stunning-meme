@@ -19,7 +19,7 @@ import { grey } from '@mui/material/colors';
 import Link from '../link';
 import Empty from '../empty/table-empty';
 import Loader from '../loader/table-loader';
-import { transactions } from '../../api';
+import { allTransactions } from '../../api';
 import TransactionModal from '../modal/transaction-details-modal';
 import { useQueryHook } from '../../hooks';
 
@@ -62,7 +62,7 @@ const RecentTransactionsTable = () => {
 	const { isLoading, data } = useQueryHook({
 		queryKey: QueryKeys.RecentTransactions,
 		queryFn: () =>
-			transactions({
+			allTransactions({
 				params: { sort: '-createdAt', limit: 4, populate: 'user' },
 			}),
 	});

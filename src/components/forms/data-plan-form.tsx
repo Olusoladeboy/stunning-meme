@@ -8,7 +8,7 @@ import { useFormik } from 'formik';
 import TextInput from '../form-components/TextInput';
 import Button from '../button/custom-button';
 import { DataPlan, DataPlanType, QueryKeys } from '../../utilities';
-import Select from '../form-components/Select';
+import Select from '../form-components/select';
 import TextPlaceholder from '../partials/text-placeholder';
 import { useAlert, useHandleError } from '../../hooks';
 import { createDataPlan, updateDataPlan } from '../../api';
@@ -220,19 +220,7 @@ const DataPlanForm = ({ dataPayload, callback }: Props) => {
 						onChange={handleChange('amount')}
 					/>
 				</Box>
-				<Box>
-					<Typography variant={'body1'} style={styles.label}>
-						Merchant Amount
-					</Typography>
-					<TextInput
-						fullWidth
-						placeholder={'Merchant Amount'}
-						error={errors && touched.code && errors.code ? true : false}
-						helperText={errors && touched.code && errors.code}
-						value={code}
-						onChange={handleChange('code')}
-					/>
-				</Box>
+
 				<Box>
 					<Typography variant={'body1'} style={styles.label}>
 						Data Unit
@@ -252,7 +240,7 @@ const DataPlanForm = ({ dataPayload, callback }: Props) => {
 					</Typography>
 					<TextInput
 						fullWidth
-						placeholder={'Plan Code'}
+						placeholder={'Data Code'}
 						error={errors && touched.code && errors.code ? true : false}
 						helperText={errors && touched.code && errors.code}
 						value={code}

@@ -1,7 +1,7 @@
 import apiRequest from './apiRequest';
 import { ENDPOINTS } from '../utilities';
 
-export const transactions = async ({
+export const allTransactions = async ({
 	params,
 }: {
 	params?: { [key: string]: any };
@@ -9,7 +9,17 @@ export const transactions = async ({
 	apiRequest({
 		method: 'GET',
 		url: `${ENDPOINTS.Transaction}/all`,
+		params,
+	});
 
+export const transactions = async ({
+	params,
+}: {
+	params?: { [key: string]: any };
+}): Promise<any> =>
+	apiRequest({
+		method: 'GET',
+		url: `${ENDPOINTS.Transaction}`,
 		params,
 	});
 
@@ -23,6 +33,5 @@ export const transactUser = async ({
 	apiRequest({
 		method: 'POST',
 		url: `${ENDPOINTS.Transaction}/${id}`,
-
 		data,
 	});

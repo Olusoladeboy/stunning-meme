@@ -3,7 +3,7 @@ import { Box, useTheme, Typography, MenuItem } from '@mui/material';
 import TextInput from '../form-components/TextInput';
 import Button from '../button';
 import { grey } from '@mui/material/colors';
-import Select from '../form-components/Select';
+import Select from '../form-components/select';
 
 type Props = {
 	isEdit?: boolean;

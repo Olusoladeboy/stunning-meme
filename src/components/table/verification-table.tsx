@@ -2,10 +2,7 @@ import React, { CSSProperties, useState } from 'react';
 import Table from '@mui/material/Table';
 import { useQuery, useQueryClient } from 'react-query';
 import { useNavigate } from 'react-router-dom';
-import Box from '@mui/material/Box';
-import { Avatar, Typography, useTheme } from '@mui/material';
-import TableBody from '@mui/material/TableBody';
-import TableHead from '@mui/material/TableHead';
+import { Avatar, useTheme, TableBody, TableHead, Box } from '@mui/material';
 import { grey } from '@mui/material/colors';
 import {
 	SUCCESS_COLOR,
@@ -15,7 +12,6 @@ import {
 	UserDetails,
 	QueryKeys,
 } from '../../utilities';
-import FilterIcon from '../icons/filter';
 import {
 	StyledTableCell as TableCell,
 	StyledTableRow as TableRow,
@@ -28,6 +24,7 @@ import Loader from '../loader/table-loader';
 import { useAlert, useHandleError } from '../../hooks';
 import { useAppSelector } from '../../store/hooks';
 import { verifyUser } from '../../api';
+import CustomTableCell from './components/custom-table-cell';
 
 type Props = {
 	users: UserDetails[] | null;
@@ -116,32 +113,11 @@ const VerificationTable = ({
 						}}
 					>
 						<TableRow>
-							<TableCell />
-							<TableCell>
-								<Box style={styles.filterWrapper}>
-									<Typography variant={'body1'}> Name</Typography>
-									<FilterIcon />
-								</Box>
-							</TableCell>
-							<TableCell>
-								<Box style={styles.filterWrapper}>
-									<Typography variant={'body1'}>Email</Typography>
-									<FilterIcon />
-								</Box>
-							</TableCell>
-							<TableCell>
-								<Box style={styles.filterWrapper}>
-									<Typography variant={'body1'}>Tier level</Typography>
-									<FilterIcon />
-								</Box>
-							</TableCell>
-							<TableCell>
-								<Box style={styles.filterWrapper}>
-									<Typography variant={'body1'}>Status</Typography>
-									<FilterIcon />
-								</Box>
-							</TableCell>
-							<TableCell>Action</TableCell>
+							<CustomTableCell label={'Name'} />
+							<CustomTableCell label={'Email'} />
+							<CustomTableCell label={'Tier Level'} />
+							<CustomTableCell label={'Status'} />
+							<CustomTableCell label={'Action'} />
 						</TableRow>
 					</TableHead>
 					<TableBody
@@ -152,18 +128,26 @@ const VerificationTable = ({
 						}}
 					>
 						{isLoading ? (
-							<Loader colSpan={6} />
+							<Loader colSpan={5} />
 						) : (
 							users && (
 								<>
 									{users.length > 0 ? (
 										users.map((row, key) => (
 											<TableRow key={key}>
-												<TableCell sx={{ maxWidth: '60px' }}>
-													<Avatar src={row.avatar} />
-												</TableCell>
 												<TableCell style={styles.tableText}>
-													{row.firstname} {row.lastname}
+													<Box
+														sx={{
+															display: 'flex',
+															alignItems: 'center',
+															gap: '10px',
+														}}
+													>
+														<Avatar src={row.avatar} />
+														<span>
+															{row.firstname} {row.lastname}
+														</span>
+													</Box>
 												</TableCell>
 												<TableCell style={styles.tableText}>
 													{row.email}
@@ -210,7 +194,7 @@ const VerificationTable = ({
 										))
 									) : (
 										<TableRow>
-											<TableCell colSpan={6}>
+											<TableCell colSpan={5}>
 												<Empty text={'No users'} />
 											</TableCell>
 										</TableRow>

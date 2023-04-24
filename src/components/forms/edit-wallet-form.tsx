@@ -7,7 +7,7 @@ import TextInput from '../form-components/TextInput';
 import Button from '../button';
 import CustomButton from '../button/custom-button';
 import { grey } from '@mui/material/colors';
-import Select from '../form-components/Select';
+import Select from '../form-components/select';
 import { UserDetails, QueryKeys, FUND_WALLET_SERVICE } from '../../utilities';
 import { useAlert, useHandleError } from '../../hooks';
 import { transactUser } from '../../api';

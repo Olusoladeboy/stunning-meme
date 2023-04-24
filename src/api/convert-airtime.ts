@@ -15,3 +15,16 @@ export const convertAirtimes = async ({
 			...params,
 		},
 	});
+
+export const updateConvertAirtimeStatus = async ({
+	id,
+	data,
+}: {
+	id: string;
+	data: { status: string };
+}): Promise<any> =>
+	apiRequest({
+		method: 'PUT',
+		url: `${ENDPOINTS.ConvertAirtime}/operation/${id}`,
+		data,
+	});

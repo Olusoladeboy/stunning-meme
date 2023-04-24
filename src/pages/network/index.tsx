@@ -25,7 +25,7 @@ const Network = ({ pageType }: Props) => {
 	return (
 		<Layout>
 			<Box style={styles.container}>
-				<Box sx={{ padding: '0px 2rem' }}>
+				<Box sx={{ padding: { xs: '0px 15px', md: '0px 2rem' } }}>
 					<Typography
 						style={styles.title}
 						sx={{ marginBottom: theme.spacing(2) }}

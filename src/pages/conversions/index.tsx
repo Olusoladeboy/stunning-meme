@@ -107,7 +107,12 @@ const Conversions = () => {
 	return (
 		<Layout>
 			<Box style={styles.container}>
-				<Box sx={{ padding: '0px 2rem' }}>
+				<Box
+					sx={{
+						padding: { xs: '0px 15px', md: '0px 2rem' },
+						marginBottom: '2rem',
+					}}
+				>
 					<Typography
 						sx={{ marginBottom: theme.spacing(4), fontWeight: 'bold' }}
 						variant={'h5'}
@@ -119,9 +124,12 @@ const Conversions = () => {
 							display: 'grid',
 							gridTemplateColumns: {
 								xs: '1fr',
-								md: 'repeat(2, 1fr)',
+								lg: 'repeat(2, 1fr)',
 							},
-							gap: theme.spacing(5),
+							gap: {
+								xs: theme.spacing(3),
+								lg: theme.spacing(5),
+							},
 						}}
 					>
 						<ConversionTotal
@@ -136,6 +144,7 @@ const Conversions = () => {
 				</Box>
 				<ErrorBoundary>
 					<ConversionsTable
+						isDisplaySearchField
 						isLoading={isLoading || isReloading || isSearching}
 						conversions={search ? search : data && data.payload}
 						handleSort={handleSort}
@@ -162,9 +171,6 @@ const Conversions = () => {
 
 const useStyles = (theme: any) => ({
 	container: {
-		display: 'grid',
-		gridTemplateColumn: '1fr',
-		gap: theme.spacing(4),
 		border: `1px solid ${theme.palette.secondary.main}`,
 		padding: '1.5rem 0px',
 		backgroundColor: grey[50],

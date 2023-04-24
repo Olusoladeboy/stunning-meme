@@ -4,12 +4,14 @@ import { Statistics } from '../../utilities/types';
 // Define the initial state using that type
 const initialState: {
 	isToggleDrawer: boolean;
+	isToggleMobileDrawer: boolean;
 	statistics: Statistics | null;
 	isLoadingStatistics: boolean;
 } = {
 	isToggleDrawer: true,
 	statistics: null,
 	isLoadingStatistics: true,
+	isToggleMobileDrawer: false,
 };
 
 export const appSlice = createSlice({
@@ -18,6 +20,9 @@ export const appSlice = createSlice({
 	reducers: {
 		setToggleDrawer: (state, action: PayloadAction<boolean>) => {
 			state.isToggleDrawer = action.payload;
+		},
+		setToggleMobileDrawer: (state, action: PayloadAction<boolean>) => {
+			state.isToggleMobileDrawer = action.payload;
 		},
 		setLoadingStatistics: (state, action: PayloadAction<boolean>) => {
 			state.isLoadingStatistics = action.payload;
@@ -29,7 +34,11 @@ export const appSlice = createSlice({
 	},
 });
 
-export const { setToggleDrawer, setStatistics, setLoadingStatistics } =
-	appSlice.actions;
+export const {
+	setToggleDrawer,
+	setStatistics,
+	setLoadingStatistics,
+	setToggleMobileDrawer,
+} = appSlice.actions;
 
 export default appSlice.reducer;

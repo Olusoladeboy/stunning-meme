@@ -150,6 +150,7 @@ const AutoConversions = () => {
 						handleSort={handleSort}
 						handleSearch={searchConversion}
 						clearSearch={clearSearch}
+						conversionType={'auto'}
 					/>
 
 					{!search && total > MAX_RECORDS && !isReloading && (

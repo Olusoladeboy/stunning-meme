@@ -12,7 +12,6 @@ import {
 	BOX_SHADOW,
 	DANGER_COLOR,
 } from '../../utilities/constant';
-import FilterIcon from '../icons/filter';
 import {
 	StyledTableCell as TableCell,
 	StyledTableRow as TableRow,

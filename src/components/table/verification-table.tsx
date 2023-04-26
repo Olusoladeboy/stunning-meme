@@ -65,8 +65,8 @@ const VerificationTable = ({
 
 				if (data && data.success) {
 					setAlert({ message: data.message, type: 'success' });
-					queryClient.invalidateQueries(QueryKeys.AllUsers);
-					queryClient.invalidateQueries(QueryKeys.GetSingleUser);
+					queryClient.invalidateQueries(QueryKeys.Users);
+					queryClient.invalidateQueries(QueryKeys.User);
 					queryClient.invalidateQueries(QueryKeys.Statistics);
 				}
 			},

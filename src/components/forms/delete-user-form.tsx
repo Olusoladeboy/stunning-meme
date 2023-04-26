@@ -34,8 +34,8 @@ const DeleteUserForm = ({ user }: Props) => {
 			if (data && data.success) {
 				setAlert({ message: data.message, type: 'success' });
 
-				queryClient.invalidateQueries(QueryKeys.GetSingleUser);
-				queryClient.invalidateQueries(QueryKeys.AllUsers);
+				queryClient.invalidateQueries(QueryKeys.User);
+				queryClient.invalidateQueries(QueryKeys.Users);
 			}
 		},
 	});

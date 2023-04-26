@@ -89,7 +89,7 @@ const Profile = () => {
 	}, [tab]);
 
 	const { isLoading, data } = useQuery(
-		QueryKeys.GetSingleUser,
+		QueryKeys.User,
 		() =>
 			users({
 				params: {

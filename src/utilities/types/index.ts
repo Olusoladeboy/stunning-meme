@@ -247,11 +247,14 @@ export interface ManagerDetailsData extends UserDetails {
 
 export type NetworkData = {
 	name?: string;
+	id?: string;
 	rate?: string;
 	number?: string;
 	ussd?: string;
 	isActive?: boolean;
 	createdAt?: Date;
+	no_of_dataTypes?: string;
+	no_of_plans?: string;
 };
 
 export type KycData = {
@@ -264,14 +267,15 @@ export type KycData = {
 
 export type DataPlan = {
 	name?: string;
-	network?: string;
-	amount: string | { $numberDecimal: string };
-	type: string;
-	code: string;
-	shortcode?: string;
-	shortcode_sms?: string;
+	amount?: string | Amount;
+	code?: string;
 	isActive?: boolean;
 	id?: string;
+	network?: NetworkData | string;
+	merchant_amount?: Amount | string;
+	data_unit?: string;
+	data_source?: string;
+	dataType?: DataType | string;
 };
 
 export enum DataPlanType {
@@ -287,7 +291,7 @@ export interface DataType {
 	name?: string;
 	createdAt?: string;
 	no_of_plans?: number;
-	network?: string;
+	network?: NetworkData | string;
 }
 
 export type SuspendUser = {
@@ -443,30 +447,32 @@ export enum TicketReplyType {
 }
 
 export type User = {
-	id: string;
-	suspensionDuration: { [key: string]: any };
-	userType: string;
-	biometricLogin: boolean;
-	verified: boolean;
-	bvnVerified: boolean;
-	suspended: boolean;
-	deleted: boolean;
-	restricted: boolean;
-	twoFactorAuth: boolean;
-	isLoggedIn: boolean;
-	suspendWalletTransactions: boolean;
-	firstname: string;
-	lastname: string;
-	email: string;
-	kycLevel: number;
-	createdAt: Date;
-	username: string;
-	phone: string;
-	hasPin: boolean;
-	manager: string | { [key: string]: any };
-	defaultBank: string;
-	photoUrl: string | null;
-	code: string;
+	id?: string;
+	suspensionDuration?: { [key: string]: any };
+	userType?: string;
+	biometricLogin?: boolean;
+	verified?: boolean;
+	bvnVerified?: boolean;
+	suspended?: boolean;
+	deleted?: boolean;
+	restricted?: boolean;
+	twoFactorAuth?: boolean;
+	isLoggedIn?: boolean;
+	suspendWalletTransactions?: boolean;
+	firstname?: string;
+	lastname?: string;
+	email?: string;
+	kycLevel?: number;
+	createdAt?: Date;
+	username?: string;
+	phone?: string;
+	hasPin?: boolean;
+	manager?: User;
+	defaultBank?: string;
+	photoUrl?: string | null;
+	code?: string;
+	avatar?: string;
+	role?: string;
 };
 
 export interface PinData {
@@ -528,6 +534,9 @@ export interface Transaction {
 		updatedAt: string;
 	};
 	electricity_token?: ElectricityToken;
+	withdrawalChannel?: string;
+	accountNumber?: string;
+	paymentGateway?: string
 }
 
 export interface IReferral {
@@ -537,4 +546,20 @@ export interface IReferral {
 	createdAt: string;
 	updatedAt: string;
 	id: string;
+}
+
+export interface Metadata {
+	total: number;
+	limit: number;
+	count: number;
+	skip: number;
+	page: number;
+	sort: string;
+}
+
+export interface DataResponse<T> {
+	success: boolean;
+	message: string;
+	metadata?: Metadata;
+	payload: T;
 }

@@ -78,3 +78,11 @@ export const getCoupon = (coupon: Coupon) => {
 			: '';
 	return `${coupon.code}-${gift}`;
 };
+
+export const cleanString = (value: string) => {
+	if (value) {
+		return value.replace(/_-*/gi, ' ');
+	}
+
+	return value;
+};

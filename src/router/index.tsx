@@ -24,7 +24,6 @@ import {
 	Conversions,
 	Referrals,
 	DataTypes,
-	Messages,
 	AutoConversions,
 	Statistics,
 	AllTransactions,
@@ -52,12 +51,14 @@ const Router = () => {
 				<Route path={''} element={<Transactions />} />
 				<Route path={'all'} element={<AllTransactions />} />
 			</Route>
-			<Route path={'messages'}>
-				<Route path={''} element={<Messages />} />
-			</Route>
+
 			<Route path={'conversions'}>
 				<Route path={''} element={<Conversions />} />
 				<Route path={'all'} element={<AllConversions />} />
+				<Route
+					path={'network'}
+					element={<Network pageType={NetworkPage.CONVERSION_NETWORK} />}
+				/>
 			</Route>
 			<Route path={'auto-conversions'} element={<AutoConversions />} />
 			<Route path={'data-network'}>
@@ -65,8 +66,11 @@ const Router = () => {
 					path={''}
 					element={<Network pageType={NetworkPage.DATA_NETWORK} />}
 				/>
-				<Route path={'types/:plan/:id'} element={<DataTypes />} />
-				<Route path={'plans/:plan/:id'} element={<ViewDataPlan />} />
+				<Route path={'types/:dataTypeName/:network'} element={<DataTypes />} />
+				<Route
+					path={'plans/:dataType/:planName/:network'}
+					element={<ViewDataPlan />}
+				/>
 			</Route>
 
 			<Route

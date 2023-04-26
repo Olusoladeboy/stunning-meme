@@ -1,16 +1,27 @@
 import React, { CSSProperties, SyntheticEvent, useState } from 'react';
-import { Box, useTheme, Typography, MenuItem } from '@mui/material';
+import {
+	Box,
+	useTheme,
+	Typography,
+	MenuItem,
+	SelectChangeEvent,
+	InputAdornment,
+	IconButton,
+	CircularProgress,
+} from '@mui/material';
 import { useMutation, useQueryClient } from 'react-query';
 import * as yup from 'yup';
 import { useFormik } from 'formik';
 import TextInput from '../form-components/TextInput';
 import Button from '../button';
 import CustomButton from '../button/custom-button';
-import { grey } from '@mui/material/colors';
+import { grey, red } from '@mui/material/colors';
 import Select from '../form-components/select';
 import { UserDetails, QueryKeys, FUND_WALLET_SERVICE } from '../../utilities';
 import { useAlert, useHandleError } from '../../hooks';
 import { transactUser } from '../../api';
+import { Close, Search } from '@mui/icons-material';
+import { useSearchTransaction } from '../../hooks';
 
 type Props = {
 	user: UserDetails | null;
@@ -20,6 +31,11 @@ type Props = {
 const SELECT_CONDITION = 'Select condition';
 const SELECT_SERVICE = 'Select Service';
 
+const VALIDATION_SCHEMA = {
+	Refund: 'Refund',
+	Other: 'Other',
+};
+
 const EditWalletForm = ({ user, close }: Props) => {
 	const theme = useTheme();
 	const handleError = useHandleError();
@@ -27,8 +43,23 @@ const EditWalletForm = ({ user, close }: Props) => {
 	const queryClient = useQueryClient();
 	const setAlert = useAlert();
 	const [isDone, setDone] = useState<boolean>(false);
+	const [validationSchema, setValidationSchema] = useState<string>('');
 
-	const validationSchema = yup.object().shape({
+	//Search Transaction Hooks
+	const { search, searchTransaction, isSearching, clearSearch } =
+		useSearchTransaction(() =>
+			setAlert({ message: 'Tansaction reference confirm', type: 'info' })
+		);
+
+	const refundValidationSchema = yup.object().shape({
+		service: yup
+			.string()
+			.notOneOf([SELECT_SERVICE], SELECT_SERVICE)
+			.required('Select service'),
+		reference: yup.string().required('Enter related transaction reference'),
+	});
+
+	const otherValidationSchema = yup.object().shape({
 		type: yup
 			.string()
 			.notOneOf([SELECT_CONDITION], 'Select Conditon')
@@ -40,7 +71,7 @@ const EditWalletForm = ({ user, close }: Props) => {
 			.required('Select service'),
 	});
 
-	const { mutate, isLoading } = useMutation(transactUser, {
+	const { isLoading } = useMutation(transactUser, {
 		onSettled: (data, error) => {
 			if (error) {
 				const response = handleError({ error });
@@ -52,7 +83,7 @@ const EditWalletForm = ({ user, close }: Props) => {
 			if (data && data.success) {
 				setDone(true);
 				setAlert({ message: data.message, type: 'success' });
-				queryClient.invalidateQueries(QueryKeys.GetSingleUser);
+				queryClient.invalidateQueries(QueryKeys.User);
 				queryClient.invalidateQueries(QueryKeys.UserWallet);
 				queryClient.invalidateQueries(QueryKeys.UserWalletTransaction);
 			}
@@ -66,17 +97,38 @@ const EditWalletForm = ({ user, close }: Props) => {
 		reference: '',
 	};
 
-	const { values, handleChange, handleSubmit, errors, touched, resetForm } =
-		useFormik({
-			initialValues,
-			validationSchema,
-			onSubmit: (values) => {
-				mutate({
-					data: values,
-					id: user?.id as string,
+	const {
+		values,
+		handleChange,
+		handleSubmit,
+		errors,
+		touched,
+		resetForm,
+		setFieldValue,
+	} = useFormik({
+		initialValues,
+		validationSchema:
+			validationSchema === VALIDATION_SCHEMA.Refund
+				? refundValidationSchema
+				: otherValidationSchema,
+		onSubmit: (values) => {
+			if (!search)
+				return setAlert({
+					message: 'Confirm related transaction reference',
+					type: 'info',
 				});
-			},
-		});
+
+			if (search && values.reference !== search[0].reference)
+				return setAlert({
+					message: 'Transaction reference do not match',
+					type: 'info',
+				});
+			/* mutate({
+				data: values,
+				id: user?.id as string,
+			}); */
+		},
+	});
 
 	const { amount, service, reference } = values;
 
@@ -88,6 +140,21 @@ const EditWalletForm = ({ user, close }: Props) => {
 		} else {
 			typeof close !== 'undefined' && close();
 		}
+	};
+
+	/*
+	 *Clear Reference
+	 */
+	const clearReference = () => {
+		setFieldValue('reference', '');
+		clearSearch();
+	};
+
+	/*
+	 * Search Transaction by Reference
+	 */
+	const handleSearchTransaction = () => {
+		searchTransaction(reference);
 	};
 
 	return (
@@ -111,7 +178,15 @@ const EditWalletForm = ({ user, close }: Props) => {
 						error={errors && touched.service && errors.service ? true : false}
 						helpertext={errors && touched.service && errors.service}
 						value={service}
-						onChange={handleChange('service') as any}
+						onChange={(e: SelectChangeEvent<unknown>) => {
+							const value = e.target.value;
+							setFieldValue('service', value);
+							const schema =
+								value === FUND_WALLET_SERVICE.REFUND
+									? VALIDATION_SCHEMA.Refund
+									: VALIDATION_SCHEMA.Other;
+							setValidationSchema(schema);
+						}}
 					>
 						<MenuItem disabled value={SELECT_SERVICE}>
 							{SELECT_SERVICE}
@@ -143,9 +218,44 @@ const EditWalletForm = ({ user, close }: Props) => {
 											: false
 									}
 									helperText={errors && touched.reference && errors.reference}
-									type={'number'}
 									value={reference}
 									onChange={handleChange('reference')}
+									InputProps={{
+										endAdornment: (
+											<InputAdornment position='end'>
+												{isSearching ? (
+													<CircularProgress size={16} />
+												) : (
+													reference && (
+														<Box
+															sx={{
+																display: 'flex',
+																alignItems: 'center',
+																gap: '3px',
+															}}
+														>
+															<IconButton
+																sx={{
+																	color: red['600'],
+																}}
+																onClick={clearReference}
+																size={'small'}
+															>
+																<Close />
+															</IconButton>
+
+															<IconButton
+																onClick={handleSearchTransaction}
+																size={'small'}
+															>
+																<Search />
+															</IconButton>
+														</Box>
+													)
+												)}
+											</InputAdornment>
+										),
+									}}
 								/>
 							</Box>
 						) : (

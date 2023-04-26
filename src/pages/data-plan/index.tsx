@@ -1,5 +1,7 @@
 import React, { CSSProperties, useState } from 'react';
-import { Box, useTheme } from '@mui/material';
+import { Box, Typography, useTheme } from '@mui/material';
+import { useParams } from 'react-router-dom';
+import { useQuery } from 'react-query';
 import { grey } from '@mui/material/colors';
 import { AddCircle } from '@mui/icons-material';
 import {
@@ -10,12 +12,27 @@ import {
 	DataPlanForm,
 	DataPlansTable,
 } from '../../components';
-import { BOX_SHADOW } from '../../utilities';
+import { BOX_SHADOW, QueryKeys } from '../../utilities';
+import { dataPlans } from '../../api';
 
 const ViewDataPlan = () => {
+	const { planName, network, dataType } = useParams();
 	const theme = useTheme();
 	const styles = useStyles(theme);
 	const [isDisplayModal, setDisplayModal] = useState<boolean>(false);
+
+	const { isLoading, data } = useQuery(
+		[QueryKeys.DataPlans, dataType, network],
+		() =>
+			dataPlans({
+				sort: '-cratedAt',
+				dataType,
+			}),
+		{
+			enabled: !!dataType,
+		}
+	);
+
 	return (
 		<Layout>
 			{isDisplayModal && (
@@ -28,7 +45,21 @@ const ViewDataPlan = () => {
 			)}
 			<Box style={styles.container as CSSProperties}>
 				<Box style={styles.header}>
-					<BackButton />
+					<Box
+						sx={{
+							display: 'flex',
+							alignItems: 'center',
+							gap: ['15px', '30px'],
+						}}
+					>
+						<BackButton />
+						<Typography
+							sx={{ fontWeight: 'bold', textTransform: 'capitalize' }}
+							variant={'h5'}
+						>
+							{planName} Data Plan
+						</Typography>
+					</Box>
 					<Button
 						onClick={() => setDisplayModal(true)}
 						startIcon={<AddCircle />}
@@ -37,7 +68,7 @@ const ViewDataPlan = () => {
 						Add new plan
 					</Button>
 				</Box>
-				<DataPlansTable />
+				<DataPlansTable isLoading={isLoading} data={data && data.payload} />
 			</Box>
 		</Layout>
 	);

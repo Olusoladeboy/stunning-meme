@@ -1,11 +1,10 @@
 import apiRequest from './apiRequest';
-import { ENDPOINTS, ManagerDetailsData } from '../utilities';
+import { DataResponse, ENDPOINTS, User } from '../utilities';
 
-export const createManager = async (data: ManagerDetailsData): Promise<any> =>
+export const createManager = async (data: User): Promise<DataResponse<User>> =>
 	apiRequest({
 		method: 'POST',
 		url: ENDPOINTS.Manager,
-
 		data,
 	});
 
@@ -26,9 +25,9 @@ export const updateManager = async ({
 	data,
 	id,
 }: {
-	data: ManagerDetailsData;
+	data: User;
 	id: string;
-}): Promise<any> =>
+}): Promise<DataResponse<User>> =>
 	apiRequest({
 		method: 'PUT',
 		url: `${ENDPOINTS.Manager}/${id}`,

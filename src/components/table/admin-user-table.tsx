@@ -7,12 +7,7 @@ import TableHead from '@mui/material/TableHead';
 import { grey } from '@mui/material/colors';
 import { AddCircle } from '@mui/icons-material';
 import moment from 'moment';
-import {
-	SUCCESS_COLOR,
-	BOX_SHADOW,
-	ManagerTypes,
-	ManagerDetailsData,
-} from '../../utilities';
+import { SUCCESS_COLOR, BOX_SHADOW, ManagerTypes, User } from '../../utilities';
 import ModalWrapper from '../modal/Wrapper';
 import FilterIcon from '../icons/filter';
 import {
@@ -27,29 +22,21 @@ import ManagerDetails from '../manager-details';
 import TableLoader from '../loader/table-loader';
 import ManagerTableHeader from '../header/manager-table-header';
 
-interface AdminUserDetails extends ManagerDetailsData {
-	avatar: string;
-	createdAt: string;
-	role: string;
-}
-
 type Props = {
-	managers: AdminUserDetails[];
+	managers: User[] | null | undefined;
 	isLoading: boolean;
 };
 
 const AdminUserTable = ({ managers, isLoading }: Props) => {
 	const [managerType, setManagerType] = useState<ManagerTypes | null>(null);
 	const [formActionType, setFormActionType] = useState<'edit' | 'add' | ''>('');
-	const [selectedAdminUser, setSelectedAdminUser] =
-		useState<AdminUserDetails | null>(null);
+	const [selectedAdminUser, setSelectedAdminUser] = useState<User | null>(null);
 	const [isViewManager, setViewManager] = useState<boolean>(false);
-	const [isEditManager, setEditManager] = useState<boolean>(false);
 
 	const theme = useTheme();
 	const styles = useStyles(theme);
 
-	const handleViewAdminUser = (data: AdminUserDetails) => {
+	const handleViewAdminUser = (data: User) => {
 		setSelectedAdminUser(data);
 		setViewManager(true);
 	};
@@ -65,11 +52,7 @@ const AdminUserTable = ({ managers, isLoading }: Props) => {
 	}) => {
 		if (isEdit) {
 			setViewManager(false);
-			setEditManager(true);
 			setFormActionType('edit');
-		} else {
-			setEditManager(false);
-			// setFormActionType('');
 		}
 		if (isAdd) {
 			setViewManager(false);
@@ -84,7 +67,6 @@ const AdminUserTable = ({ managers, isLoading }: Props) => {
 	const onSuccess = () => {
 		setFormActionType('');
 		setSelectedAdminUser(null);
-		setEditManager(false);
 	};
 
 	return (
@@ -95,7 +77,6 @@ const AdminUserTable = ({ managers, isLoading }: Props) => {
 					closeModal={() => {
 						setFormActionType('');
 						setSelectedAdminUser(null);
-						setEditManager(false);
 					}}
 					title={
 						<Typography variant={'h5'} sx={{ textTransform: 'uppercase' }}>
@@ -105,7 +86,6 @@ const AdminUserTable = ({ managers, isLoading }: Props) => {
 				>
 					<ManagerAdminForm
 						callback={() => onSuccess()}
-						isEdit={isEditManager}
 						type={ManagerTypes.Admin}
 						managerDetails={selectedAdminUser}
 					/>
@@ -214,8 +194,11 @@ const AdminUserTable = ({ managers, isLoading }: Props) => {
 						{isLoading ? (
 							<TableLoader colSpan={6} />
 						) : managers && managers.length > 0 ? (
-							managers.map((data, key) => (
-								<TableRow onClick={() => handleViewAdminUser(data)} key={key}>
+							managers.map((data: User) => (
+								<TableRow
+									onClick={() => handleViewAdminUser(data)}
+									key={data.id}
+								>
 									<TableCell sx={{ maxWidth: '60px' }}>
 										<Avatar src={data.avatar} />
 									</TableCell>

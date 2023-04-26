@@ -67,7 +67,11 @@ const Message = () => {
 				data && (
 					<ErrorBoundary>
 						<Box
-							sx={{ display: 'grid', gap: '15px', gridTemplateColumns: '1fr' }}
+							sx={{
+								display: 'grid',
+								gap: ['15px', '30px'],
+								gridTemplateColumns: '1fr',
+							}}
 						>
 							<BackButton
 								onClick={() => navigate(-1)}

@@ -1,11 +1,7 @@
 import apiRequest from './apiRequest';
-import { ENDPOINTS, ManagerDetailsData } from '../utilities';
+import { DataResponse, ENDPOINTS, User } from '../utilities';
 
-interface StaffDetails extends ManagerDetailsData {
-	role: string;
-}
-
-export const createStaff = async (data: StaffDetails): Promise<any> =>
+export const createStaff = async (data: User): Promise<DataResponse<User>> =>
 	apiRequest({
 		method: 'POST',
 		url: ENDPOINTS.Staff,
@@ -16,16 +12,18 @@ export const updateStaff = async ({
 	data,
 	id,
 }: {
-	data: StaffDetails;
+	data: User;
 	id: string;
-}): Promise<any> =>
+}): Promise<DataResponse<User>> =>
 	apiRequest({
 		method: 'PUT',
 		url: `${ENDPOINTS.Staff}/${id}`,
 		data,
 	});
 
-export const staffs = async ({ params }: { params: any }): Promise<any> =>
+export const staffs = async (params: {
+	[key: string]: any;
+}): Promise<DataResponse<User[]>> =>
 	apiRequest({
 		method: 'GET',
 		url: `${ENDPOINTS.Staff}`,

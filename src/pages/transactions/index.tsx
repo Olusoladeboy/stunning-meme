@@ -20,6 +20,7 @@ const Transactions = () => {
 	const theme = useTheme();
 	const handleError = useHandleError();
 	const styles = useStyles(theme);
+	const [isEnableQuery, setEnableQuery] = useState<boolean>(false);
 	const alert = useAlert();
 	const { token } = useAppSelector((store) => store.authState);
 	const navigate = useNavigate();
@@ -32,13 +33,14 @@ const Transactions = () => {
 		useSearchTransaction();
 
 	useEffect(() => {
+		setEnableQuery(true);
 		if (query && query.page) {
 			setPage(parseInt(query.page as string));
 		}
 	}, [query, query.page]);
 
 	const { isLoading, data } = useQuery(
-		[QueryKeys.AllTransactions],
+		[QueryKeys.Transactions],
 		() =>
 			allTransactions({
 				params: {
@@ -48,8 +50,9 @@ const Transactions = () => {
 				},
 			}),
 		{
-			enabled: !!token,
+			enabled: isEnableQuery,
 			onSettled: (data: any, error) => {
+				setEnableQuery(false);
 				if (error) {
 					const response = handleError({ error });
 					if (response?.message) {
@@ -74,6 +77,7 @@ const Transactions = () => {
 			navigate(LINKS.Transactions);
 			setPage(page);
 		}
+		setEnableQuery(true);
 	};
 
 	return (

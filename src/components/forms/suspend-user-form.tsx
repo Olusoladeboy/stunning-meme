@@ -50,8 +50,8 @@ const SuspendUserForm = ({ user }: Props) => {
 			if (data && data.success) {
 				setAlert({ message: data.message, type: 'success' });
 				resetForm();
-				queryClient.invalidateQueries(QueryKeys.AllUsers);
-				queryClient.invalidateQueries(QueryKeys.GetSingleUser);
+				queryClient.invalidateQueries(QueryKeys.Users);
+				queryClient.invalidateQueries(QueryKeys.User);
 				queryClient.invalidateQueries(QueryKeys.Statistics);
 			}
 		},
@@ -100,8 +100,8 @@ const SuspendUserForm = ({ user }: Props) => {
 				id: user?.id as string,
 			});
 			if (data && data.success) {
-				queryClient.invalidateQueries(QueryKeys.AllUsers);
-				queryClient.invalidateQueries(QueryKeys.GetSingleUser);
+				queryClient.invalidateQueries(QueryKeys.Users);
+				queryClient.invalidateQueries(QueryKeys.User);
 				queryClient.invalidateQueries(QueryKeys.Statistics);
 			}
 			setUnsuspending(false);

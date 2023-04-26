@@ -8,9 +8,14 @@ interface Props {
 
 const DisputeTransactionItem: React.FC<Props> = ({ label, value }) => {
 	return (
-		<Box>
-			<Typography sx={{ marginBottom: '8px' }} variant={'body1'}>
-				{label}
+		<Box
+			sx={{
+				display: 'grid',
+				gap: '6px',
+			}}
+		>
+			<Typography sx={{ fontWeight: 'bold' }} variant={'body1'}>
+				{label}:
 			</Typography>
 			<Typography variant={'h6'}>{value}</Typography>
 		</Box>

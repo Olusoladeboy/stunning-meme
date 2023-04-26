@@ -11,12 +11,7 @@ import {
 import { grey } from '@mui/material/colors';
 import { AddCircle } from '@mui/icons-material';
 import moment from 'moment';
-import {
-	SUCCESS_COLOR,
-	BOX_SHADOW,
-	ManagerTypes,
-	ManagerDetailsData,
-} from '../../utilities';
+import { SUCCESS_COLOR, BOX_SHADOW, ManagerTypes, User } from '../../utilities';
 import ModalWrapper from '../modal/Wrapper';
 import {
 	StyledTableCell as TableCell,
@@ -31,13 +26,8 @@ import TableLoader from '../loader/table-loader';
 import ManagerTableHeader from '../header/manager-table-header';
 import CustomTableCell from './components/custom-table-cell';
 
-interface ManagerDetailsType extends ManagerDetailsData {
-	avatar: string;
-	createdAt: string;
-}
-
 type Props = {
-	managers: ManagerDetailsType[];
+	managers: User[] | null | undefined;
 	isLoading: boolean;
 	searchManager?: (value: string) => void;
 	clearSearch?: () => void;
@@ -51,15 +41,13 @@ const ManagersTable = ({
 }: Props) => {
 	const [managerType, setManagerType] = useState<ManagerTypes | null>(null);
 	const [formActionType, setFormActionType] = useState<'edit' | 'add' | ''>('');
-	const [selectedManager, setSelectedManager] =
-		useState<ManagerDetailsType | null>(null);
+	const [selectedManager, setSelectedManager] = useState<User | null>(null);
 	const [isViewManager, setViewManager] = useState<boolean>(false);
-	const [isEditManager, setEditManager] = useState<boolean>(false);
 
 	const theme = useTheme();
 	const styles = useStyles(theme);
 
-	const handleViewManager = (data: ManagerDetailsType) => {
+	const handleViewManager = (data: User) => {
 		setSelectedManager(data);
 		setViewManager(true);
 	};
@@ -75,11 +63,7 @@ const ManagersTable = ({
 	}) => {
 		if (isEdit) {
 			setViewManager(false);
-			setEditManager(true);
 			setFormActionType('edit');
-		} else {
-			setEditManager(false);
-			// setFormActionType('');
 		}
 		if (isAdd) {
 			setViewManager(false);
@@ -94,7 +78,6 @@ const ManagersTable = ({
 	const closeModal = () => {
 		setFormActionType('');
 		setSelectedManager(null);
-		setEditManager(false);
 	};
 
 	return (
@@ -111,7 +94,6 @@ const ManagersTable = ({
 				>
 					<ManagerForm
 						callback={closeModal}
-						isEdit={isEditManager}
 						type={ManagerTypes.Manager}
 						managerDetails={selectedManager}
 					/>
@@ -194,10 +176,10 @@ const ManagersTable = ({
 							managers && (
 								<>
 									{managers.length > 0 ? (
-										managers.map((data, key) => (
+										managers.map((data: User) => (
 											<TableRow
 												onClick={() => handleViewManager(data)}
-												key={key}
+												key={data.id}
 											>
 												<TableCell style={styles.tableText}>
 													<Box

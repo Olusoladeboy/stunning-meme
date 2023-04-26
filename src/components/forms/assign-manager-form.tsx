@@ -25,7 +25,7 @@ const AssignManagerForm = ({ userDetails, close }: Props) => {
 
 	const queryClient = useQueryClient();
 	const { isLoading: isLoadingManager, data: managersData } = useQueryHook({
-		queryKey: QueryKeys.AllManagers,
+		queryKey: QueryKeys.Managers,
 		queryFn: () =>
 			managers({
 				params: {
@@ -58,8 +58,8 @@ const AssignManagerForm = ({ userDetails, close }: Props) => {
 					message: data.message,
 					type: 'success',
 				});
-				queryClient.invalidateQueries(QueryKeys.AllUsers);
-				queryClient.invalidateQueries(QueryKeys.GetSingleUser);
+				queryClient.invalidateQueries(QueryKeys.Users);
+				queryClient.invalidateQueries(QueryKeys.User);
 				resetForm();
 				typeof close !== 'undefined' && close();
 			}

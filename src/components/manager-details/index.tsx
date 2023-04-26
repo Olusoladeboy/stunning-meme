@@ -4,12 +4,12 @@ import { useMutation, useQueryClient } from 'react-query';
 import { grey, red } from '@mui/material/colors';
 import UserAvatarWithDetails from '../avatar-with-details/manager';
 import Button from '../button';
-import { ManagerDetailsData, ManagerTypes, QueryKeys } from '../../utilities';
+import { ManagerTypes, QueryKeys, User } from '../../utilities';
 import { deleteManager } from '../../api';
 import { useHandleError, useAlert } from '../../hooks';
 
 type Props = {
-	managerDetail: ManagerDetailsData;
+	managerDetail: User;
 	handleEdit?: () => void;
 	type?: ManagerTypes.Manager | ManagerTypes.Admin;
 	callback?: () => void;
@@ -37,7 +37,7 @@ const ManagerDetails = ({
 				}
 
 				alert({ message: 'Manager deleted successfully', type: 'success' });
-				queryClient.invalidateQueries(QueryKeys.AllManagers);
+				queryClient.invalidateQueries(QueryKeys.Managers);
 				typeof callback !== 'undefined' && callback();
 			},
 		});

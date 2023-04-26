@@ -102,7 +102,11 @@ const TransactionsTable = ({ data, isLoading }: Props) => {
 													>
 														<Avatar
 															style={styles.avatar}
-															src={data.user.photoUrl as string}
+															src={
+																data && data.user && data.user.photoUrl
+																	? data.user.photoUrl
+																	: ''
+															}
 														/>
 														<Typography>
 															{data.user?.firstname} {data.user?.lastname}

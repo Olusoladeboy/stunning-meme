@@ -1,7 +1,7 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import Table from '@mui/material/Table';
-import { useQuery, useQueryClient, useMutation } from 'react-query';
+import { useQueryClient, useMutation } from 'react-query';
 import Box from '@mui/material/Box';
 import { useTheme } from '@mui/material';
 import TableBody from '@mui/material/TableBody';
@@ -14,53 +14,35 @@ import {
 } from './components';
 import Button from '../button';
 import {
-	QueryKey,
-	API_ENDPOINTS,
 	LINKS,
 	LIGHT_GRAY,
 	BOX_SHADOW,
 	SUCCESS_COLOR,
 	DANGER_COLOR,
+	DataType,
+	QueryKeys,
 } from '../../utilities';
-import { useAppSelector } from '../../store/hooks';
 import TableLoader from '../loader/table-loader';
 import Loader from '../loader';
-import { networks, updateNetwork } from '../../api';
+import { updateDataType } from '../../api';
 import { useAlert, useHandleError } from '../../hooks';
 
-const DataTypesTable = () => {
+interface Props {
+	data: DataType[] | null | undefined;
+	isLoading?: boolean;
+}
+
+const DataTypesTable: React.FC<Props> = ({ isLoading, data }) => {
 	const theme = useTheme();
+	const { network } = useParams();
 	const setAlert = useAlert();
 	const handleError = useHandleError();
 	const styles = useStyles(theme);
 	const queryClient = useQueryClient();
 	const navigate = useNavigate();
-	const { isAuthenticated } = useAppSelector((store) => store.authState);
 
-	const { isLoading, data } = useQuery(
-		QueryKey.DataNetwork,
-		() =>
-			networks({
-				url: API_ENDPOINTS.DataNetwork,
-				params: {
-					sort: '-createdAt',
-				},
-			}),
-		{
-			enabled: isAuthenticated,
-			onSettled: (data, error) => {
-				if (error) {
-					const response = handleError({ error });
-					if (response?.message) {
-						setAlert({ message: response.message, type: 'error' });
-					}
-				}
-			},
-		}
-	);
-
-	const { isLoading: isUpdating, mutate: mutateUpdateNetwork } = useMutation(
-		updateNetwork,
+	const { isLoading: isUpdating, mutate: mutateUpdateDataType } = useMutation(
+		updateDataType,
 		{
 			onSettled: (data, error) => {
 				if (error) {
@@ -75,24 +57,23 @@ const DataTypesTable = () => {
 						message: data.message,
 						type: 'success',
 					});
-					queryClient.invalidateQueries(QueryKey.DataNetwork);
+					queryClient.invalidateQueries(QueryKeys.DataTypes);
 				}
 			},
 		}
 	);
 
-	const handleEnableDisableNetwork = ({
+	const handleEnableDisableDataType = ({
 		status,
 		id,
 	}: {
 		status: boolean;
 		id: string;
 	}) => {
-		mutateUpdateNetwork({
+		mutateUpdateDataType({
 			data: {
 				isActive: status,
 			},
-			url: API_ENDPOINTS.DataNetwork,
 			id,
 		});
 	};
@@ -126,95 +107,103 @@ const DataTypesTable = () => {
 					>
 						{isLoading ? (
 							<TableLoader colSpan={4} />
-						) : data && data.payload.length > 0 ? (
-							data.payload.map((data: any) => (
-								<TableRow key={data.id}>
-									<TableCell>{data.name}</TableCell>
-									<TableCell>{data.name}</TableCell>
-									<TableCell sx={{ maxWidth: '200px' }}>
-										<Box
-											sx={{
-												button: {
-													minWidth: '120px',
-													color: grey[50],
-													backgroundColor: grey[400],
-													textTransform: 'uppercase',
-												},
-											}}
-											style={styles.statusBtnWrapper}
-										>
-											<Button
-												disabled={data.isActive}
-												onClick={() =>
-													handleEnableDisableNetwork({
-														status: true,
-														id: data.id,
-													})
-												}
-												style={{
-													backgroundColor: data.isActive
-														? SUCCESS_COLOR
-														: grey[400],
-													color: grey[50],
-												}}
-											>
-												Enable
-											</Button>
-											<Button
-												disabled={!data.isActive}
-												onClick={() =>
-													handleEnableDisableNetwork({
-														status: false,
-														id: data.id,
-													})
-												}
-												style={{
-													backgroundColor: !data.isActive
-														? DANGER_COLOR
-														: grey[400],
-													color: grey[50],
-												}}
-											>
-												Disable
-											</Button>
-										</Box>
-									</TableCell>
-									<TableCell
-										onClick={() =>
-											navigate(
-												`${LINKS.DataPlan}/${data.name
-													.toString()
-													.toLowerCase()}/${data.id}`
-											)
-										}
-										sx={{
-											':hover': {
-												textDecoration: 'underline',
-											},
-										}}
-										style={styles.viewPlan}
-									>
-										View plans
-									</TableCell>
-									<TableCell
-										onClick={() => console.log('Delete')}
-										sx={{
-											':hover': {
-												textDecoration: 'underline',
-											},
-										}}
-										style={styles.deletePlan}
-									>
-										Delete
-									</TableCell>
-								</TableRow>
-							))
 						) : (
-							<TableRow>
-								<TableCell colSpan={4}>
-									<Empty />
-								</TableCell>
-							</TableRow>
+							data && (
+								<>
+									{data.length > 0 ? (
+										data.map((data: DataType) => (
+											<TableRow key={data.id}>
+												<TableCell>{data.name}</TableCell>
+												<TableCell>{data.no_of_plans}</TableCell>
+												<TableCell sx={{ maxWidth: '200px' }}>
+													<Box
+														sx={{
+															button: {
+																minWidth: '120px',
+																color: grey[50],
+																backgroundColor: grey[400],
+																textTransform: 'uppercase',
+															},
+														}}
+														style={styles.statusBtnWrapper}
+													>
+														<Button
+															disabled={data.isActive}
+															onClick={() =>
+																handleEnableDisableDataType({
+																	status: true,
+																	id: data.id as string,
+																})
+															}
+															style={{
+																backgroundColor: data.isActive
+																	? SUCCESS_COLOR
+																	: grey[400],
+																color: grey[50],
+															}}
+														>
+															Enable
+														</Button>
+														<Button
+															disabled={!data.isActive}
+															onClick={() =>
+																handleEnableDisableDataType({
+																	status: false,
+																	id: data.id as string,
+																})
+															}
+															style={{
+																backgroundColor: !data.isActive
+																	? DANGER_COLOR
+																	: grey[400],
+																color: grey[50],
+															}}
+														>
+															Disable
+														</Button>
+													</Box>
+												</TableCell>
+												<TableCell
+													onClick={() =>
+														navigate(
+															`${LINKS.DataPlan}/${data.id}/${(
+																data.name as string
+															)
+																.toString()
+																.toLowerCase()}/${network}`
+														)
+													}
+													sx={{
+														':hover': {
+															textDecoration: 'underline',
+														},
+													}}
+													style={styles.viewPlan}
+												>
+													View plans
+												</TableCell>
+												{/* <TableCell
+													onClick={() => console.log('Delete')}
+													sx={{
+														':hover': {
+															textDecoration: 'underline',
+														},
+													}}
+													style={styles.deletePlan}
+												>
+													Delete
+												</TableCell> */}
+											</TableRow>
+										))
+									) : (
+										<TableRow>
+											<TableCell colSpan={4}>
+												<Empty text={'No data type'} />
+											</TableCell>
+										</TableRow>
+									)}
+								</>
+							)
 						)}
 					</TableBody>
 				</Table>

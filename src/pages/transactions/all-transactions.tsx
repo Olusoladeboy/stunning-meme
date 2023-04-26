@@ -47,7 +47,7 @@ const AllTransactions = () => {
 	}, [query, query.page]);
 
 	const { isLoading, data } = useQuery(
-		[QueryKeys.AllTransactions, query.page],
+		[QueryKeys.Transactions, query.page],
 		() =>
 			allTransactions({
 				params: {

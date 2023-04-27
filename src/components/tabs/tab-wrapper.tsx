@@ -6,7 +6,7 @@ import { DARK_BACKGROUND_COLOR, ThemeModeType } from '../../utilities';
 
 type Props = {
 	currentTab: string | number;
-	handleChange: (e: any, value: number) => void;
+	handleChange: (e: any, value: any) => void;
 	children: ReactNode;
 };
 

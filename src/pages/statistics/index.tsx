@@ -7,21 +7,29 @@ import {
 	StatisticTab,
 	StatisticsTotal,
 } from '../../components';
-import { BOX_SHADOW } from '../../utilities';
+import { BOX_SHADOW, RouteGuard, ADMIN_ROLE } from '../../utilities';
 
 const Statistics = () => {
 	return (
 		<Layout>
-			<Container>
-				<Title variant={'h5'}>Statistics</Title>
-				<SearchStatistics />
-				<StatisticTab />
-				<StatisticsContainer>
-					<StatisticsTotal name={'Total  Revenue'} figure={123000} />
-					<StatisticsTotal name={'Total  Transactions'} figure={123000} />
-					<StatisticsTotal name={'Total  Data Revenue'} figure={123000} />
-				</StatisticsContainer>
-			</Container>
+			<RouteGuard
+				roles={[
+					ADMIN_ROLE.SUPER_ADMIN,
+					ADMIN_ROLE.ADMIN,
+					ADMIN_ROLE.OPERATIONS,
+				]}
+			>
+				<Container>
+					<Title variant={'h5'}>Statistics</Title>
+					<SearchStatistics />
+					<StatisticTab />
+					<StatisticsContainer>
+						<StatisticsTotal name={'Total  Revenue'} figure={123000} />
+						<StatisticsTotal name={'Total  Transactions'} figure={123000} />
+						<StatisticsTotal name={'Total  Data Revenue'} figure={123000} />
+					</StatisticsContainer>
+				</Container>
+			</RouteGuard>
 		</Layout>
 	);
 };

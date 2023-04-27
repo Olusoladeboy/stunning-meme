@@ -1,5 +1,4 @@
 import { Coupon, CouponType } from '../types';
-export { default as PrivateRoute } from './PrivateRoute';
 export { default as ErrorBoundary } from './error-boundary';
 export { default as ScrollToTop } from './scroll-to-top';
 export * from './reg-expression';

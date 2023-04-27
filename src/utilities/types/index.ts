@@ -106,6 +106,7 @@ export type AuthState = {
 	isAuthenticated: boolean;
 	user: User | null;
 	token: string | null;
+	canViewStatistics: boolean;
 };
 
 export enum SettingsTab {

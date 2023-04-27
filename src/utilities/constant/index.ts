@@ -108,9 +108,11 @@ export const DRAWER_LINKS = {
 	},
 };
 
-export const AMIN_ROLE = {
+export const ADMIN_ROLE = {
 	OPERATIONS: 'OPERATIONS',
 	CUSTOMER_SUPPORT: 'CUSTOMER_SUPPORT',
+	SUPER_ADMIN: 'SUPER_ADMIN',
+	ADMIN: 'ADMIN',
 };
 
 export const ENDPOINTS = {

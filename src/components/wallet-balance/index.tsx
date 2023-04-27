@@ -7,24 +7,31 @@ import { useAppSelector } from '../../store/hooks';
 const WalletBalance = () => {
 	const theme = useTheme();
 	const styles = useStyles(theme);
-	const { statistics } = useAppSelector((store) => store.appState);
-	return (
-		<Box style={styles.container}>
-			<Box>
-				<Typography style={styles.text} variant={'h6'}>
-					Total
-				</Typography>
-				<Typography style={styles.text} variant={'h6'}>
-					Wallet Balance
+	const {
+		appState: { statistics },
+		authState: { canViewStatistics },
+	} = useAppSelector((store) => store);
+	if (canViewStatistics) {
+		return (
+			<Box style={styles.container}>
+				<Box>
+					<Typography style={styles.text} variant={'h6'}>
+						Total
+					</Typography>
+					<Typography style={styles.text} variant={'h6'}>
+						Wallet Balance
+					</Typography>
+				</Box>
+				<Typography style={styles.text} variant={'h5'}>
+					{formatNumberToCurrency(
+						statistics ? statistics.total_wallet_balance : '---'
+					)}
 				</Typography>
 			</Box>
-			<Typography style={styles.text} variant={'h5'}>
-				{formatNumberToCurrency(
-					statistics ? statistics.total_wallet_balance : '---'
-				)}
-			</Typography>
-		</Box>
-	);
+		);
+	}
+
+	return null;
 };
 
 const useStyles = (theme: any) => ({

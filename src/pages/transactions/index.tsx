@@ -22,7 +22,7 @@ const Transactions = () => {
 	const styles = useStyles(theme);
 	const [isEnableQuery, setEnableQuery] = useState<boolean>(false);
 	const alert = useAlert();
-	const { token } = useAppSelector((store) => store.authState);
+	const { canViewStatistics } = useAppSelector((store) => store.authState);
 	const navigate = useNavigate();
 	const [count, setCount] = useState<number>(1);
 	const [page, setPage] = useState<number>(1);
@@ -96,7 +96,7 @@ const Transactions = () => {
 						handleSearch={searchTransaction}
 						clearSearch={clearSearch}
 					/>
-					<TransactionMainBalance />
+					{canViewStatistics && <TransactionMainBalance />}
 				</Box>
 				<TransactionsTable
 					isLoading={isLoading || isSearching}

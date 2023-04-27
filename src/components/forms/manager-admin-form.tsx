@@ -9,7 +9,7 @@ import {
 	ManagerTypes,
 	QueryKeys,
 	validationSchema,
-	AMIN_ROLE,
+	ADMIN_ROLE,
 	User,
 } from '../../utilities';
 import Select from '../form-components/select';
@@ -267,11 +267,11 @@ const ManagerAdminForm = ({ type, callback, managerDetails }: Props) => {
 							<MenuItem value={SELECT_ADMIN_PRIVILEDGE}>
 								{SELECT_ADMIN_PRIVILEDGE}
 							</MenuItem>
-							<MenuItem value={AMIN_ROLE.OPERATIONS}>
-								{AMIN_ROLE.OPERATIONS}
+							<MenuItem value={ADMIN_ROLE.OPERATIONS}>
+								{ADMIN_ROLE.OPERATIONS}
 							</MenuItem>
-							<MenuItem value={AMIN_ROLE.CUSTOMER_SUPPORT}>
-								{AMIN_ROLE.CUSTOMER_SUPPORT}
+							<MenuItem value={ADMIN_ROLE.CUSTOMER_SUPPORT}>
+								{ADMIN_ROLE.CUSTOMER_SUPPORT}
 							</MenuItem>
 						</Select>
 					</Box>

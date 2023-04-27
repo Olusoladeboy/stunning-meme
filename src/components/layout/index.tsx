@@ -5,7 +5,7 @@ import {
 	DRAWER_WIDTH,
 	MIN_DRAWER_WIDTH,
 	TRANSITION,
-	PrivateRoute,
+	AuthGuard,
 } from '../../utilities';
 import Header from '../header';
 import { useAppSelector } from '../../store/hooks';
@@ -18,7 +18,7 @@ const Layout = ({ children }: Props) => {
 	const theme = useTheme();
 	const { isToggleDrawer } = useAppSelector((store) => store.appState);
 	return (
-		<PrivateRoute>
+		<AuthGuard>
 			<Box
 				sx={{ display: 'flex', justifyContent: 'flex-end', minHeight: '100vh' }}
 			>
@@ -45,7 +45,7 @@ const Layout = ({ children }: Props) => {
 					</Box>
 				</Box>
 			</Box>
-		</PrivateRoute>
+		</AuthGuard>
 	);
 };
 

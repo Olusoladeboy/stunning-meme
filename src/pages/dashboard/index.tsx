@@ -12,10 +12,12 @@ import {
 	RecentConversionsTable,
 	RecentTransactionsTable,
 } from '../../components';
+import { useAppSelector } from '../../store/hooks';
 
 const LargeView = () => {
 	const theme = useTheme();
 	const styles = useStyles(theme);
+	const { canViewStatistics } = useAppSelector((store) => store.authState);
 	return (
 		<Box
 			sx={{
@@ -37,16 +39,18 @@ const LargeView = () => {
 					}}
 				>
 					<WalletBalance />
-					<Box
-						sx={{
-							gridTemplateColumns: 'repeat(3, 1fr)',
-						}}
-						style={styles.transactionGrid}
-					>
-						<TotalTransactions />
-						<TotalUsers />
-						<TotalConversions />
-					</Box>
+					{canViewStatistics && (
+						<Box
+							sx={{
+								gridTemplateColumns: 'repeat(3, 1fr)',
+							}}
+							style={styles.transactionGrid}
+						>
+							<TotalTransactions />
+							<TotalUsers />
+							<TotalConversions />
+						</Box>
+					)}
 					<RecentConversionsTable />
 					<RecentTransactionsTable />
 				</Box>
@@ -60,7 +64,7 @@ const LargeView = () => {
 					}}
 				>
 					<WalletOverview />
-					<UserRecord />
+					{canViewStatistics && <UserRecord />}
 					<TaskList />
 				</Box>
 			</Box>

@@ -65,7 +65,7 @@ const TransactionsTable = ({ data, isLoading }: Props) => {
 						}}
 					>
 						<StyledTableRow>
-							<CustomTableCell label={'User'} isSortable />
+							<CustomTableCell label={'User'} />
 							<CustomTableCell label={'Transaction'} />
 							<CustomTableCell label={'Reference'} />
 							<CustomTableCell label={'Date'} />

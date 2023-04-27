@@ -79,11 +79,11 @@ const UserWalletSummary = ({ user }: Props) => {
 		if (page !== 1) {
 			setPage(page);
 			navigate(
-				`${LINKS.User}/${user?.id}?tab=${UserNavList.WalletSummary}&page=${page}`
+				`${LINKS.Users}/${user?.id}?tab=${UserNavList.WalletSummary}&page=${page}`
 			);
 		} else {
-			navigate(`${LINKS.User}/${user?.id}?tab=${UserNavList.WalletSummary}`);
-			setPage(page);
+			navigate(`${LINKS.Users}/${user?.id}?tab=${UserNavList.WalletSummary}`);
+			setPage(1);
 		}
 	};
 

@@ -87,7 +87,7 @@ const Transactions = () => {
 					sx={{
 						padding: { xs: '0px 15px', md: '0px 2rem' },
 						display: 'grid',
-						gap: { xs: '2rem', sm: '10px' },
+						gap: '2rem',
 					}}
 				>
 					<TableHeader

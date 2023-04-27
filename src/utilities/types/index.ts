@@ -509,6 +509,7 @@ export interface Transaction {
 	number: string;
 	createdBy: string;
 	reference: string;
+	summary?: string;
 	user: User;
 	amount: string | Amount;
 	balanceBefore?: string | Amount;
@@ -536,7 +537,7 @@ export interface Transaction {
 	electricity_token?: ElectricityToken;
 	withdrawalChannel?: string;
 	accountNumber?: string;
-	paymentGateway?: string
+	paymentGateway?: string;
 }
 
 export interface IReferral {

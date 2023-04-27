@@ -28,6 +28,13 @@ type Props = {
 	close?: () => void;
 };
 
+interface InitialValues {
+	type?: string;
+	amount?: string;
+	reference?: string;
+	summary?: string;
+}
+
 const SELECT_CONDITION = 'Select condition';
 const SELECT_SERVICE = 'Select Service';
 
@@ -42,7 +49,7 @@ const EditWalletForm = ({ user, close }: Props) => {
 	const styles = useStyles(theme);
 	const queryClient = useQueryClient();
 	const setAlert = useAlert();
-	const [isDone, setDone] = useState<boolean>(false);
+	const [isTransact, setTransact] = useState<boolean>(false);
 	const [validationSchema, setValidationSchema] = useState<string>('');
 
 	//Search Transaction Hooks
@@ -52,10 +59,10 @@ const EditWalletForm = ({ user, close }: Props) => {
 		);
 
 	const refundValidationSchema = yup.object().shape({
-		service: yup
+		type: yup
 			.string()
-			.notOneOf([SELECT_SERVICE], SELECT_SERVICE)
-			.required('Select service'),
+			.notOneOf([SELECT_CONDITION], 'Select Conditon')
+			.required('Select Condition'),
 		reference: yup.string().required('Enter related transaction reference'),
 	});
 
@@ -65,13 +72,10 @@ const EditWalletForm = ({ user, close }: Props) => {
 			.notOneOf([SELECT_CONDITION], 'Select Conditon')
 			.required('Select Condition'),
 		amount: yup.number().required('Specify amount'),
-		service: yup
-			.string()
-			.notOneOf([SELECT_SERVICE], 'Select service')
-			.required('Select service'),
+		summary: yup.string().required('Specify reason for this transact'),
 	});
 
-	const { isLoading } = useMutation(transactUser, {
+	const { isLoading, mutate: mutateTransactUser } = useMutation(transactUser, {
 		onSettled: (data, error) => {
 			if (error) {
 				const response = handleError({ error });
@@ -81,8 +85,9 @@ const EditWalletForm = ({ user, close }: Props) => {
 			}
 
 			if (data && data.success) {
-				setDone(true);
-				setAlert({ message: data.message, type: 'success' });
+				setTransact(true);
+				resetForm();
+				setAlert({ message: 'Transact is successful!', type: 'success' });
 				queryClient.invalidateQueries(QueryKeys.User);
 				queryClient.invalidateQueries(QueryKeys.UserWallet);
 				queryClient.invalidateQueries(QueryKeys.UserWalletTransaction);
@@ -90,11 +95,11 @@ const EditWalletForm = ({ user, close }: Props) => {
 		},
 	});
 
-	const initialValues = {
+	const initialValues: InitialValues = {
 		type: SELECT_CONDITION,
 		amount: '',
-		service: SELECT_SERVICE,
 		reference: '',
+		summary: '',
 	};
 
 	const {
@@ -112,17 +117,35 @@ const EditWalletForm = ({ user, close }: Props) => {
 				? refundValidationSchema
 				: otherValidationSchema,
 		onSubmit: (values) => {
-			if (!search)
-				return setAlert({
-					message: 'Confirm related transaction reference',
-					type: 'info',
-				});
+			let data = { type: values.type } as { [key: string]: any };
+			if (values.type === FUND_WALLET_SERVICE.REFUND) {
+				if (!search)
+					return setAlert({
+						message: 'Confirm related transaction reference',
+						type: 'info',
+					});
 
-			if (search && values.reference !== search[0].reference)
-				return setAlert({
-					message: 'Transaction reference do not match',
-					type: 'info',
+				if (search && values.reference !== search[0].reference)
+					return setAlert({
+						message: 'Transaction reference do not match',
+						type: 'info',
+					});
+
+				data.relatedTransactionReference = values.reference;
+				return mutateTransactUser({
+					id: user?.id as string,
+					data,
 				});
+			}
+
+			data.amount = values.amount;
+			data.summary = values.summary;
+
+			mutateTransactUser({
+				id: user?.id as string,
+				data,
+			});
+
 			/* mutate({
 				data: values,
 				id: user?.id as string,
@@ -130,16 +153,12 @@ const EditWalletForm = ({ user, close }: Props) => {
 		},
 	});
 
-	const { amount, service, reference } = values;
+	const { amount, type, reference, summary } = values;
 
-	const handleDone = () => {
-		if (isDone) {
-			resetForm();
-			setDone(false);
-			typeof close !== 'undefined' && close();
-		} else {
-			typeof close !== 'undefined' && close();
-		}
+	const closeModal = () => {
+		setTransact(false);
+		clearSearch();
+		typeof close !== 'undefined' && close();
 	};
 
 	/*
@@ -154,7 +173,7 @@ const EditWalletForm = ({ user, close }: Props) => {
 	 * Search Transaction by Reference
 	 */
 	const handleSearchTransaction = () => {
-		searchTransaction(reference);
+		searchTransaction(reference as string);
 	};
 
 	return (
@@ -164,7 +183,7 @@ const EditWalletForm = ({ user, close }: Props) => {
 					display: 'grid',
 					gridTemplateColumns: {
 						xs: '1fr',
-						md: service === SELECT_SERVICE ? '1fr' : '3fr 7fr',
+						md: type === SELECT_CONDITION ? '1fr' : '3fr 7fr',
 					},
 					gap: theme.spacing(4),
 				}}
@@ -175,12 +194,12 @@ const EditWalletForm = ({ user, close }: Props) => {
 					</Typography>
 					<Select
 						fullWidth
-						error={errors && touched.service && errors.service ? true : false}
-						helpertext={errors && touched.service && errors.service}
-						value={service}
+						error={errors && touched.type && errors.type ? true : false}
+						helpertext={errors && touched.type && errors.type}
+						value={type}
 						onChange={(e: SelectChangeEvent<unknown>) => {
 							const value = e.target.value;
-							setFieldValue('service', value);
+							setFieldValue('type', value);
 							const schema =
 								value === FUND_WALLET_SERVICE.REFUND
 									? VALIDATION_SCHEMA.Refund
@@ -188,23 +207,19 @@ const EditWalletForm = ({ user, close }: Props) => {
 							setValidationSchema(schema);
 						}}
 					>
-						<MenuItem disabled value={SELECT_SERVICE}>
-							{SELECT_SERVICE}
+						<MenuItem disabled value={SELECT_CONDITION}>
+							{SELECT_CONDITION}
 						</MenuItem>
-						<MenuItem value={FUND_WALLET_SERVICE.CREDIT}>
-							{FUND_WALLET_SERVICE.CREDIT}
-						</MenuItem>
-						<MenuItem value={FUND_WALLET_SERVICE.DEBIT}>
-							{FUND_WALLET_SERVICE.DEBIT}
-						</MenuItem>{' '}
-						<MenuItem value={FUND_WALLET_SERVICE.REFUND}>
-							{FUND_WALLET_SERVICE.REFUND}
-						</MenuItem>
+						{Object.values(FUND_WALLET_SERVICE).map((value) => (
+							<MenuItem key={value} value={value}>
+								{value}
+							</MenuItem>
+						))}
 					</Select>
 				</Box>
-				{service !== SELECT_SERVICE && (
+				{type !== SELECT_CONDITION && (
 					<>
-						{service === FUND_WALLET_SERVICE.REFUND ? (
+						{type === FUND_WALLET_SERVICE.REFUND ? (
 							<Box>
 								<Typography variant={'body1'} style={styles.label}>
 									Reference
@@ -279,7 +294,7 @@ const EditWalletForm = ({ user, close }: Props) => {
 					</>
 				)}
 			</Box>
-			{service !== SELECT_SERVICE && service !== FUND_WALLET_SERVICE.REFUND && (
+			{type !== SELECT_CONDITION && type !== FUND_WALLET_SERVICE.REFUND && (
 				<Box>
 					<Typography variant={'body1'} style={styles.label}>
 						Reason
@@ -289,31 +304,37 @@ const EditWalletForm = ({ user, close }: Props) => {
 						fullWidth
 						multiline
 						rows={3}
+						value={summary}
+						onChange={handleChange('summary')}
+						error={errors && touched.summary && errors.summary ? true : false}
+						helperText={errors && touched.summary && errors.summary}
 					/>
 				</Box>
 			)}
 			<Box style={styles.btnWrapper}>
-				<CustomButton
-					loading={isLoading}
-					onClick={(e: React.FormEvent<HTMLButtonElement>) => {
-						e.preventDefault();
-						handleSubmit();
-					}}
-					variant={'outlined'}
-					size={'large'}
-					style={styles.btnOutline}
-				>
-					Update
-				</CustomButton>
+				{!isTransact && (
+					<CustomButton
+						loading={isLoading}
+						onClick={(e: React.FormEvent<HTMLButtonElement>) => {
+							e.preventDefault();
+							handleSubmit();
+						}}
+						variant={'outlined'}
+						size={'large'}
+						style={styles.btnOutline}
+					>
+						Update
+					</CustomButton>
+				)}
 				<Button
 					onClick={(e: SyntheticEvent) => {
 						e.preventDefault();
-						handleDone();
+						closeModal();
 					}}
 					size={'large'}
 					style={styles.btn}
 				>
-					{isDone ? 'Done' : 'Close'}
+					Close
 				</Button>
 			</Box>
 		</Box>

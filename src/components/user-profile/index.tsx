@@ -7,11 +7,11 @@ import Button from '../button';
 import ModalWrapper from '../modal/Wrapper';
 import EditProfileForm from '../forms/profile-form';
 import UserAvatarWithDetails from '../avatar-with-details';
-import { UserDetails, SUCCESS_COLOR } from '../../utilities';
+import { User, SUCCESS_COLOR } from '../../utilities';
 import VerifyUser from '../verify-user';
 
 type Props = {
-	user: UserDetails | null;
+	user: User | null;
 };
 
 const UserProfile = ({ user }: Props) => {

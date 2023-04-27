@@ -6,12 +6,12 @@ import UserAvatarWithDetails from '../avatar-with-details';
 import CustomButton from '../button/custom-button';
 import SuspendUserForm from '../forms/suspend-user-form';
 import DeleteUserForm from '../forms/delete-user-form';
-import { UserDetails, QueryKey } from '../../utilities';
+import { User, QueryKey } from '../../utilities';
 import { useAlert, useHandleError } from '../../hooks';
 import { suspendWithdraw } from '../../api';
 
 type Props = {
-	user: UserDetails | null;
+	user: User | null;
 };
 
 const UserStatus = ({ user }: Props) => {

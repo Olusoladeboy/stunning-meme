@@ -19,7 +19,7 @@ export { default as DeleteUserForm } from './forms/delete-user-form';
 export { default as ProfileForm } from './forms/profile-form';
 export { default as LoginForm } from './forms/login-form';
 export { default as ForgetPasswordForm } from './forms/forget-password-form';
-export { default as PushNotificationForm } from './forms/push-notification-form';
+export { default as PushNotificationForm } from './forms/notification-form';
 export { default as KycForm } from './forms/kyc-form';
 export { default as ManagerAdminForm } from './forms/manager-admin-form';
 export { default as ReferralForm } from './forms/referral-form';

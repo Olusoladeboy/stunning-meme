@@ -19,6 +19,7 @@ export const QueryKeys = {
 	Managers: '@Query:All_manager',
 	Referrals: '@Query:Referrals',
 	Referees: '@Query:Referees',
+	Notifications: '@Query:Notifications',
 	RecentConvertAirtime: '@Query:RecentConvertAirtime',
 	Users: '@Query:All_Users',
 	User: '@Query:Get_single_user',
@@ -89,6 +90,7 @@ export const LINKS = {
 	Referees: (id: string) => `/referrals/${id}/referees`,
 	Referee: '/referee',
 	Notifications: '/notifications',
+	CreateNotification: '/notifications/create',
 	PushNotification: '/push-notification',
 	Verification: '/verification',
 	KycVerification: '/verification/kyc',
@@ -129,6 +131,7 @@ export const ENDPOINTS = {
 	Wallet: '/wallet',
 	Coupon: '/coupon',
 	Ticket: '/ticket',
+	Notification: '/notification',
 };
 
 export const FUND_WALLET_SERVICE = {
@@ -177,4 +180,23 @@ export const DATA_SOURCE = {
 	SIMSERVER: 'SIMSERVER',
 	AIRTIMEFLIP_DATASERVER: 'AIRTIMEFLIP_DATASERVER',
 	GLO_SERVER: 'GLO_SERVER',
+};
+
+export const NOTIFICATION_TYPE = {
+	TOAST: 'TOAST',
+	PUSH_NOTIFICATION: 'PUSH_NOTIFICATION',
+	IN_APP: 'IN_APP',
+	EMAIL_NOTIFICATION: 'EMAIL_NOTIFICATION',
+};
+
+export const DISPATCH_USER = {
+	ALL: 'ALL',
+	SELECTED: 'SELECTED',
+};
+
+export const DEVICE = {
+	IOS: 'IOS',
+	ANDROID: 'ANDROID',
+	WINDOW: 'WINDOW',
+	ALL: 'ALL',
 };

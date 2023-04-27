@@ -11,13 +11,13 @@ import { useAlert, useHandleError, useQueryHook } from '../../hooks';
 import { managers, assignManagerToUser } from '../../api';
 
 type Props = {
-	userDetails: any;
+	User: any;
 	close?: () => void;
 };
 
 const SELECT_MANAGER = 'Select manager';
 
-const AssignManagerForm = ({ userDetails, close }: Props) => {
+const AssignManagerForm = ({ User, close }: Props) => {
 	const theme = useTheme();
 	const handleError = useHandleError();
 	const alert = useAlert();
@@ -73,7 +73,7 @@ const AssignManagerForm = ({ userDetails, close }: Props) => {
 			onSubmit: (values) => {
 				mutate({
 					data: values,
-					id: userDetails ? userDetails.id : '',
+					id: User ? User.id : '',
 				});
 			},
 		});

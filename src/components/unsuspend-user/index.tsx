@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useMutation, useQueryClient } from 'react-query';
 import { Switch, ButtonProps } from '@mui/material';
 import Button from '../button/custom-button';
-import { QueryKeys, UserDetails } from '../../utilities';
+import { QueryKeys, User } from '../../utilities';
 import { useAlert, useHandleError } from '../../hooks';
 import { suspendUser } from '../../api';
 
@@ -10,7 +10,7 @@ type Props = {
 	text?: string;
 	isSwitch?: boolean;
 	buttonProps?: ButtonProps;
-	user: UserDetails | null;
+	user: User | null;
 };
 
 const UnsuspendUserButton = ({

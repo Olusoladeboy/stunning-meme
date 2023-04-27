@@ -3,13 +3,11 @@ import { Box, Avatar, Typography, useTheme } from '@mui/material';
 import { grey } from '@mui/material/colors';
 import { LIGHT_GRAY } from '../../utilities/constant';
 import InfoList from './info-list';
-import { ManagerDetailsData } from '../../utilities/types';
+import { User } from '../../utilities/types';
 import Button from '../button';
 
-interface ManagerDetails extends ManagerDetailsData {}
-
 type Props = {
-	manager: ManagerDetails;
+	manager: User;
 	changeManager?: () => void;
 };
 
@@ -66,7 +64,7 @@ const ManagerInfo = ({ manager, changeManager }: Props) => {
 						>
 							First name
 						</Typography>
-						<InfoList text={manager.firstname} />
+						<InfoList text={manager.firstname as string} />
 					</Box>
 					<Box>
 						<Typography
@@ -76,7 +74,7 @@ const ManagerInfo = ({ manager, changeManager }: Props) => {
 						>
 							Last name
 						</Typography>
-						<InfoList text={manager.lastname} />
+						<InfoList text={manager.lastname as string} />
 					</Box>
 				</Box>
 				<Box>
@@ -87,18 +85,20 @@ const ManagerInfo = ({ manager, changeManager }: Props) => {
 					>
 						Email address
 					</Typography>
-					<InfoList text={manager.email} />
+					<InfoList text={manager.email as string} />
 				</Box>
-				{manager.phone && <Box>
-					<Typography
-						style={styles.label}
-						component={'label'}
-						variant={'body1'}
-					>
-						Phone number
-					</Typography>
-					<InfoList text={manager.phone as string} />
-				</Box>}
+				{manager.phone && (
+					<Box>
+						<Typography
+							style={styles.label}
+							component={'label'}
+							variant={'body1'}
+						>
+							Phone number
+						</Typography>
+						<InfoList text={manager.phone as string} />
+					</Box>
+				)}
 			</Box>
 		</Box>
 	);

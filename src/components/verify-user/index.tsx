@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useQuery, useQueryClient } from 'react-query';
 import { ButtonProps } from '@mui/material';
 import Button from '../button/custom-button';
-import { QueryKey, UserDetails } from '../../utilities';
+import { QueryKey, User } from '../../utilities';
 import { useAppSelector } from '../../store/hooks';
 import { useAlert, useHandleError } from '../../hooks';
 import { verifyUser } from '../../api';
@@ -10,7 +10,7 @@ import { verifyUser } from '../../api';
 type Props = {
 	text?: string;
 	buttonProps?: ButtonProps;
-	user: UserDetails | null;
+	user: User | null;
 	id?: string;
 };
 

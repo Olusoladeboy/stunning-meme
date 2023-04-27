@@ -17,14 +17,14 @@ import Button from '../button';
 import CustomButton from '../button/custom-button';
 import { grey, red } from '@mui/material/colors';
 import Select from '../form-components/select';
-import { UserDetails, QueryKeys, FUND_WALLET_SERVICE } from '../../utilities';
+import { User, QueryKeys, FUND_WALLET_SERVICE } from '../../utilities';
 import { useAlert, useHandleError } from '../../hooks';
 import { transactUser } from '../../api';
 import { Close, Search } from '@mui/icons-material';
 import { useSearchTransaction } from '../../hooks';
 
 type Props = {
-	user: UserDetails | null;
+	user: User | null;
 	close?: () => void;
 };
 
@@ -36,7 +36,6 @@ interface InitialValues {
 }
 
 const SELECT_CONDITION = 'Select condition';
-const SELECT_SERVICE = 'Select Service';
 
 const VALIDATION_SCHEMA = {
 	Refund: 'Refund',

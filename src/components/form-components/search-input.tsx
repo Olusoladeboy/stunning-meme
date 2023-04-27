@@ -5,6 +5,7 @@ import {
 	IconButton,
 	BoxProps,
 	Box,
+	CircularProgress,
 } from '@mui/material';
 import { Search, Close } from '@mui/icons-material';
 import { useAppSelector } from '../../store/hooks';
@@ -56,29 +57,33 @@ const SearchInput = ({
 				InputProps={{
 					endAdornment: (
 						<InputAdornment position='start'>
-							<Box sx={{ display: 'flex', alignItems: 'center', gap: '3px' }}>
-								{value && (
+							{isLoading ? (
+								<CircularProgress size={16} />
+							) : (
+								<Box sx={{ display: 'flex', alignItems: 'center', gap: '3px' }}>
+									{value && (
+										<IconButton
+											sx={{
+												color: red['600'],
+											}}
+											onClick={handleClose}
+											size={'small'}
+										>
+											<Close />
+										</IconButton>
+									)}
 									<IconButton
-										sx={{
-											color: red['600'],
-										}}
-										onClick={handleClose}
+										onClick={() =>
+											typeof handleSearch !== 'undefined' &&
+											value.length > 0 &&
+											handleSearch(value)
+										}
 										size={'small'}
 									>
-										<Close />
+										<Search />
 									</IconButton>
-								)}
-								<IconButton
-									onClick={() =>
-										typeof handleSearch !== 'undefined' &&
-										value.length > 0 &&
-										handleSearch(value)
-									}
-									size={'small'}
-								>
-									<Search />
-								</IconButton>
-							</Box>
+								</Box>
+							)}
 						</InputAdornment>
 					),
 				}}

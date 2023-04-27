@@ -9,7 +9,7 @@ import {
 	BOX_SHADOW,
 	DANGER_COLOR,
 	LINKS,
-	UserDetails,
+	User,
 	QueryKeys,
 } from '../../utilities';
 import {
@@ -27,7 +27,7 @@ import { verifyUser } from '../../api';
 import CustomTableCell from './components/custom-table-cell';
 
 type Props = {
-	users: UserDetails[] | null;
+	users: User[] | null;
 	isLoading?: boolean;
 	clearSearch?(): void;
 	searchUser?(value: string): void;
@@ -47,7 +47,7 @@ const VerificationTable = ({
 	const queryClient = useQueryClient();
 	const setAlert = useAlert();
 	const { token } = useAppSelector((store) => store.authState);
-	const [selectedUser, setSelectUser] = useState<null | UserDetails>(null);
+	const [selectedUser, setSelectUser] = useState<null | User>(null);
 
 	const { isLoading: isVerifyingUser } = useQuery(
 		'',

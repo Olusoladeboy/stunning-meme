@@ -10,7 +10,7 @@ import {
 	LINKS,
 	MAX_RECORDS,
 	QueryKeys,
-	UserDetails,
+	User,
 	UserNavList,
 } from '../../utilities';
 import { allTransactions } from '../../api';
@@ -20,7 +20,7 @@ import Pagination from '../pagination';
 import TableHeader from '../header/table-header';
 
 type Props = {
-	user: UserDetails | null;
+	user: User | null;
 };
 
 const UserWalletSummary = ({ user }: Props) => {

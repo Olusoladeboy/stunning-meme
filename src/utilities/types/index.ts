@@ -6,7 +6,7 @@ export enum ThemeModeType {
 }
 
 export enum QueryKey {
-	LoginUserDetails = '@Query:Login_user_details',
+	LoginUser = '@Query:Login_user_details',
 	AllManagers = '@Query:All_manager',
 	AllUsers = '@Query:All_Users',
 	GetSingleUser = '@Query:Get_single_user',
@@ -48,34 +48,6 @@ export type LoginData = {
 	email?: string;
 	phone?: string;
 	password: string;
-};
-
-export type UserDetails = {
-	suspensionDuration?: { [key: string]: any };
-	suspendWithdrawal?: boolean;
-	userType?: string;
-	hasPin?: boolean;
-	isActive?: boolean;
-	biometricLogin?: boolean;
-	verified?: boolean;
-	bvnVerified?: boolean;
-	suspended?: boolean;
-	suspensionReason?: string;
-	deleted?: boolean;
-	restricted?: boolean;
-	twoFactorAuth?: boolean;
-	isLoggedIn?: boolean;
-	role?: string;
-	suspendWalletTransactions?: boolean;
-	firstname?: string;
-	lastname?: string;
-	email?: string;
-	username?: string;
-	phone?: string;
-	createdAt?: string;
-	id?: string;
-	avatar?: string;
-	kycLevel?: string;
 };
 
 export type LoginDetails = {
@@ -132,7 +104,7 @@ export enum EPins {
 
 export type AuthState = {
 	isAuthenticated: boolean;
-	user: UserDetails | null;
+	user: User | null;
 	token: string | null;
 };
 
@@ -205,13 +177,13 @@ export interface AirtimeConversion {
 	return_amount: Amount | string;
 	phone_number: string;
 	network: NetworkData;
-	user: UserDetails;
+	user: User;
 	reference: string;
 	sentTo: string;
 	createdAt: Date;
 	updatedAt: Date;
 	id: string;
-	declinedBy: string | UserDetails;
+	declinedBy: string | User;
 	declinedDate: Date;
 }
 
@@ -233,12 +205,13 @@ export enum API_ENDPOINTS {
 	ConvertAirtime = '/convert-airtime',
 	Kyc = '/kyc',
 	Transaction = '/transaction',
+	Notification = '/notification',
 	Wallet = '/wallet',
 	Coupon = '/coupon',
 	Ticket = '/ticket',
 }
 
-export interface ManagerDetailsData extends UserDetails {
+export interface ManagerDetailsData extends User {
 	firstname: string;
 	lastname: string;
 	email: string;
@@ -329,7 +302,7 @@ export interface Coupon {
 	type?: string;
 	expiresIn?: string;
 	gift?: Amount | string;
-	createdBy?: UserDetails;
+	createdBy?: User;
 	createdAt?: string;
 	id?: string;
 	status?: string;
@@ -447,32 +420,34 @@ export enum TicketReplyType {
 }
 
 export type User = {
-	id?: string;
 	suspensionDuration?: { [key: string]: any };
+	suspendWithdrawal?: boolean;
 	userType?: string;
+	hasPin?: boolean;
+	isActive?: boolean;
 	biometricLogin?: boolean;
 	verified?: boolean;
 	bvnVerified?: boolean;
 	suspended?: boolean;
+	suspensionReason?: string;
 	deleted?: boolean;
 	restricted?: boolean;
 	twoFactorAuth?: boolean;
 	isLoggedIn?: boolean;
+	role?: string;
 	suspendWalletTransactions?: boolean;
 	firstname?: string;
 	lastname?: string;
 	email?: string;
-	kycLevel?: number;
-	createdAt?: Date;
 	username?: string;
 	phone?: string;
-	hasPin?: boolean;
+	createdAt?: string;
+	id?: string;
+	avatar?: string;
+	kycLevel?: string;
 	manager?: User;
 	defaultBank?: string;
 	photoUrl?: string | null;
-	code?: string;
-	avatar?: string;
-	role?: string;
 };
 
 export interface PinData {
@@ -563,4 +538,19 @@ export interface DataResponse<T> {
 	message: string;
 	metadata?: Metadata;
 	payload: T;
+}
+
+export interface Notification {
+	subject?: string;
+	message?: string;
+	imageUrl?: string;
+	type?: string;
+	device?: string;
+	click_action?: string;
+	dispatchUserType?: string;
+	users?: string[];
+	code?: string;
+	createdAt?: string;
+	updatedAt?: string;
+	id?: string;
 }

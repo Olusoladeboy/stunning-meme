@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { StorageKeys, AuthState, UserDetails, Storage } from '../../utilities';
+import { StorageKeys, AuthState, User, Storage } from '../../utilities';
 
 // Define the initial state using that type
 const initialState: AuthState = {
@@ -12,7 +12,7 @@ export const userSlice = createSlice({
 	name: 'authState',
 	initialState,
 	reducers: {
-		setUser: (state, action: PayloadAction<UserDetails | null>) => {
+		setUser: (state, action: PayloadAction<User | null>) => {
 			action.payload
 				? (state.isAuthenticated = true)
 				: (state.isAuthenticated = false);

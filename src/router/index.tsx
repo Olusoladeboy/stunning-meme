@@ -29,6 +29,7 @@ import {
 	AllTransactions,
 	AllConversions,
 	ReferralsBonus,
+	CreateNotification,
 } from '../pages';
 
 const Router = () => {
@@ -92,8 +93,8 @@ const Router = () => {
 
 			<Route path={'notifications'}>
 				<Route path={''} element={<Notifications />} />
+				<Route path={'create'} element={<CreateNotification />} />
 			</Route>
-			<Route path={'push-notification'} element={<PushNotification />} />
 			<Route path={'verification'}>
 				<Route path='' element={<Verification />} />
 				<Route path='kyc' element={<Kyc />} />

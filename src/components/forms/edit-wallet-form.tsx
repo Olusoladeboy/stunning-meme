@@ -144,11 +144,6 @@ const EditWalletForm = ({ user, close }: Props) => {
 				id: user?.id as string,
 				data,
 			});
-
-			/* mutate({
-				data: values,
-				id: user?.id as string,
-			}); */
 		},
 	});
 
@@ -198,6 +193,7 @@ const EditWalletForm = ({ user, close }: Props) => {
 						value={type}
 						onChange={(e: SelectChangeEvent<unknown>) => {
 							const value = e.target.value;
+							setTransact(false);
 							setFieldValue('type', value);
 							const schema =
 								value === FUND_WALLET_SERVICE.REFUND

@@ -465,7 +465,11 @@ const ImagePreview = styled(Box)(({ theme }) => ({
 	maxWidth: '280px',
 	height: '100%',
 	maxHeight: '160px',
+	overflow: 'hidden',
 	width: '100%',
+	'& img': {
+		width: '100%',
+	},
 }));
 
 const ModalTitle = styled(Typography)(({ theme }) => ({

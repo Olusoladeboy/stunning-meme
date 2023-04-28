@@ -1,15 +1,18 @@
 import React, { CSSProperties, useState } from 'react';
-import Table from '@mui/material/Table';
-import Box from '@mui/material/Box';
-import { Avatar, Typography, useTheme } from '@mui/material';
-import TableBody from '@mui/material/TableBody';
-import TableHead from '@mui/material/TableHead';
+import {
+	Avatar,
+	Typography,
+	useTheme,
+	Box,
+	Table,
+	TableHead,
+	TableBody,
+} from '@mui/material';
 import { grey } from '@mui/material/colors';
 import { AddCircle } from '@mui/icons-material';
 import moment from 'moment';
 import { SUCCESS_COLOR, BOX_SHADOW, ManagerTypes, User } from '../../utilities';
 import ModalWrapper from '../modal/Wrapper';
-import FilterIcon from '../icons/filter';
 import {
 	StyledTableCell as TableCell,
 	StyledTableRow as TableRow,
@@ -21,6 +24,7 @@ import ManagerAdminForm from '../forms/manager-admin-form';
 import ManagerDetails from '../manager-details';
 import TableLoader from '../loader/table-loader';
 import ManagerTableHeader from '../header/manager-table-header';
+import CustomTableCell from './components/custom-table-cell';
 
 type Props = {
 	managers: User[] | null | undefined;
@@ -140,48 +144,10 @@ const AdminUserTable = ({ managers, isLoading }: Props) => {
 						}}
 					>
 						<TableRow>
-							<TableCell />
-							<TableCell>
-								<Box style={styles.filterWrapper}>
-									<Typography style={styles.tableHeaderText} variant={'body1'}>
-										Name
-									</Typography>
-									<FilterIcon />
-								</Box>
-							</TableCell>
-							<TableCell>
-								<Box style={styles.filterWrapper}>
-									<Typography style={styles.tableHeaderText} variant={'body1'}>
-										Role
-									</Typography>
-									<FilterIcon />
-								</Box>
-							</TableCell>
-							<TableCell>
-								<Box style={styles.filterWrapper}>
-									<Typography style={styles.tableHeaderText} variant={'body1'}>
-										Email
-									</Typography>
-									<FilterIcon />
-								</Box>
-							</TableCell>
-
-							<TableCell>
-								<Box style={styles.filterWrapper}>
-									<Typography style={styles.tableHeaderText} variant={'body1'}>
-										Phone no.
-									</Typography>
-									<FilterIcon />
-								</Box>
-							</TableCell>
-							<TableCell>
-								<Box style={styles.filterWrapper}>
-									<Typography style={styles.tableHeaderText} variant={'body1'}>
-										Date
-									</Typography>
-									<FilterIcon />
-								</Box>
-							</TableCell>
+							<CustomTableCell label={'Name'} />
+							<CustomTableCell label={'Role'} />
+							<CustomTableCell label={'Email'} />
+							<CustomTableCell label={'Created At'} />
 						</TableRow>
 					</TableHead>
 					<TableBody
@@ -192,33 +158,48 @@ const AdminUserTable = ({ managers, isLoading }: Props) => {
 						}}
 					>
 						{isLoading ? (
-							<TableLoader colSpan={6} />
-						) : managers && managers.length > 0 ? (
-							managers.map((data: User) => (
-								<TableRow
-									onClick={() => handleViewAdminUser(data)}
-									key={data.id}
-								>
-									<TableCell sx={{ maxWidth: '60px' }}>
-										<Avatar src={data.avatar} />
-									</TableCell>
-									<TableCell
-										style={styles.tableText}
-									>{`${data.firstname} ${data.lastname}`}</TableCell>
-									<TableCell style={styles.tableText}>{data.role}</TableCell>
-									<TableCell style={styles.tableText}>{data.email}</TableCell>
-									<TableCell style={styles.tableText}>{data.phone}</TableCell>
-									<TableCell style={styles.tableText}>
-										{moment.utc(data.createdAt).format('l')}
-									</TableCell>
-								</TableRow>
-							))
+							<TableLoader colSpan={5} />
 						) : (
-							<TableRow>
-								<TableCell colSpan={6}>
-									<Empty text={'No users'} />
-								</TableCell>
-							</TableRow>
+							managers && (
+								<>
+									{managers.length > 0 ? (
+										managers.map((data: User) => (
+											<TableRow
+												onClick={() => handleViewAdminUser(data)}
+												key={data.id}
+											>
+												<TableCell style={styles.tableText}>
+													<Box
+														sx={{
+															display: 'flex',
+															alignItems: 'center',
+															gap: '10px',
+														}}
+													>
+														<Avatar src={data.avatar} />
+														<span>{`${data.firstname} ${data.lastname}`}</span>
+													</Box>
+												</TableCell>
+												<TableCell style={styles.tableText}>
+													{data.role}
+												</TableCell>
+												<TableCell style={styles.tableText}>
+													{data.email}
+												</TableCell>
+												<TableCell style={styles.tableText}>
+													{moment.utc(data.createdAt).format('l')}
+												</TableCell>
+											</TableRow>
+										))
+									) : (
+										<TableRow>
+											<TableCell colSpan={5}>
+												<Empty text={'No users'} />
+											</TableCell>
+										</TableRow>
+									)}
+								</>
+							)
 						)}
 					</TableBody>
 				</Table>

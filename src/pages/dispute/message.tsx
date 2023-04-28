@@ -90,9 +90,10 @@ const Message = () => {
 								>
 									<Title variant={'h6'}>{data.payload[0].subject}</Title>
 									<Box>
-										{data.payload[0].status === TicketStatus.OPENED && (
+										{/* {data.payload[0].status === TicketStatus.OPENED && (
 											<CloseDisputeButton ticket={data.payload[0]} />
-										)}
+										)} */}
+										<CloseDisputeButton ticket={data.payload[0]} />
 									</Box>
 								</Box>
 								<Box

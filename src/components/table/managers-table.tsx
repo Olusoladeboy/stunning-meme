@@ -189,7 +189,7 @@ const ManagersTable = ({
 															alignItems: 'center',
 														}}
 													>
-														<Avatar src={data.avatar} />
+														<Avatar src={data.photoUrl as string} />
 														<span>{`${data.firstname} ${data.lastname}`}</span>
 													</Box>
 												</TableCell>

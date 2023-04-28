@@ -11,7 +11,7 @@ import { LINKS, LoginData, validationSchema } from '../../utilities';
 import { useAppDispatch } from '../../store/hooks';
 import { setToken, setUser } from '../../store/auth';
 import CustomButton from '../button/custom-button';
-import { useAlert, useHandleError } from '../../hooks';
+import { useAlert, useHandleError, useModalAlert } from '../../hooks';
 import { login } from '../../api';
 
 const LoginForm = () => {
@@ -22,6 +22,7 @@ const LoginForm = () => {
 	const [isDisplayPassword, setDisplayPassword] = useState<boolean>(false);
 	const dispatch = useAppDispatch();
 	const navigate = useNavigate();
+	const modal = useModalAlert();
 
 	const initialValues: LoginData = {
 		email: '',
@@ -37,10 +38,30 @@ const LoginForm = () => {
 				}
 			}
 			if (data && data.success) {
-				setAlert({ message: data.message, type: 'success' });
-				dispatch(setToken(data.payload.token));
-				dispatch(setUser(data.payload.user));
+				const user = data.payload.user;
+				const token = data.payload.token;
+				const userName = `${user.firstname} ${user.lastname}`;
+				dispatch(setToken(token));
+				dispatch(setUser(user));
+				if (
+					user.defaultPasswordChanged &&
+					Boolean(user.defaultPasswordChanged)
+				) {
+					modal({
+						title: 'Change Password',
+						message: 'Kindly change your password',
+						type: 'error',
+						primaryButtonText: 'Change Password',
+						onClickPrimaryButton: () => {
+							modal(null);
+							navigate(LINKS.ChangePassword);
+						},
+					});
+
+					return;
+				}
 				navigate(LINKS.Dashboard);
+				setAlert({ message: `Welcome back ${userName}!`, type: 'success' });
 			}
 		},
 	});

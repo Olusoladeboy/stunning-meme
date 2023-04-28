@@ -7,7 +7,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import {
 	Layout,
 	Pagination,
-	ReferralTableWithAvatar,
+	ReferralTable,
 	TableHeader,
 } from '../../components';
 import { referrals } from '../../api';
@@ -90,7 +90,7 @@ const Referrals = () => {
 					clearSearch={clearSearch}
 					handleSearch={searchReferral}
 				/>
-				<ReferralTableWithAvatar
+				<ReferralTable
 					isLoading={isLoading || isSearching}
 					data={search ? search : data && data.payload}
 				/>

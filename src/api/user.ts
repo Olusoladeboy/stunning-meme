@@ -1,5 +1,26 @@
 import apiRequest from './apiRequest';
-import { ENDPOINTS, ManagerDetailsData, SuspendUser } from '../utilities';
+import {
+	DataResponse,
+	ENDPOINTS,
+	LoginData,
+	ManagerDetailsData,
+	SuspendUser,
+	User,
+} from '../utilities';
+
+export const login = async (
+	data: LoginData
+): Promise<DataResponse<{ user: User; token: string }>> =>
+	apiRequest({
+		method: 'POST',
+		url: `${ENDPOINTS.Staff}/login`,
+		data,
+	});
+export const me = async (): Promise<DataResponse<User>> =>
+	apiRequest({
+		method: 'GET',
+		url: `${ENDPOINTS.Staff}/me`,
+	});
 
 export const createUser = async ({
 	data,
@@ -10,6 +31,15 @@ export const createUser = async ({
 		method: 'POST',
 		url: ENDPOINTS.User,
 
+		data,
+	});
+
+export const resetPassword = async (data: {
+	[key: string]: any;
+}): Promise<any> =>
+	apiRequest({
+		method: 'PUT',
+		url: `${ENDPOINTS.Staff}/reset-password`,
 		data,
 	});
 

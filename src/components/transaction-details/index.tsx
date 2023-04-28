@@ -14,7 +14,7 @@ interface Props {
 }
 
 const TransactionDetails: React.FC<Props> = ({ transaction }) => {
-	const { searchCoupon, search } = useSearchCoupon();
+	const { searchCoupon } = useSearchCoupon();
 
 	useEffect(() => {
 		if (
@@ -89,6 +89,16 @@ const TransactionDetails: React.FC<Props> = ({ transaction }) => {
 					{transaction.pin && (
 						<DisputeTransactionItem label={'Pin'} value={transaction.pin} />
 					)}
+					{transaction.amount && (
+						<DisputeTransactionItem
+							label={'Amount'}
+							value={formatNumberToCurrency(
+								typeof transaction.amount === 'object'
+									? transaction.amount.$numberDecimal
+									: transaction.amount
+							)}
+						/>
+					)}
 					{transaction.createdAt && (
 						<DisputeTransactionItem
 							label={'Date'}
@@ -111,16 +121,6 @@ const TransactionDetails: React.FC<Props> = ({ transaction }) => {
 						<DisputeTransactionItem
 							label={'Status'}
 							value={transaction.status}
-						/>
-					)}
-					{transaction.amount && (
-						<DisputeTransactionItem
-							label={'Amount'}
-							value={formatNumberToCurrency(
-								typeof transaction.amount === 'object'
-									? transaction.amount.$numberDecimal
-									: transaction.amount
-							)}
 						/>
 					)}
 				</Container>

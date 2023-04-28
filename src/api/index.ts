@@ -1,4 +1,3 @@
-export * from './account';
 export * from './user';
 export * from './convert-airtime';
 export * from './coupon';

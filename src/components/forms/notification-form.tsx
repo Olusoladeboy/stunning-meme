@@ -340,16 +340,29 @@ const NotificationForm: React.FC<Props> = ({ notification }) => {
 					)}
 				</Grid>
 				{selectedUser.length > 0 && (
-					<Box sx={{ maxWidth: '420px' }}>
+					<Box>
 						<FormLabel>Selected User</FormLabel>
-						<List disablePadding>
-							{selectedUser.map((user: User) => (
-								<SelectedUserItem
-									removeUser={() => removeUser(user)}
-									user={user}
-								/>
-							))}
-						</List>
+						<Box
+							sx={{
+								display: 'grid',
+								gap: '8px',
+								gridTemplateColumns: [
+									'1fr',
+									'repeat(2, 1fr)',
+									'repeat(4, 1fr)',
+								],
+							}}
+						>
+							<List disablePadding>
+								{selectedUser.map((user: User) => (
+									<SelectedUserItem
+										key={user.id}
+										removeUser={() => removeUser(user)}
+										user={user}
+									/>
+								))}
+							</List>
+						</Box>
 					</Box>
 				)}
 				<Grid sx={{ marginTop: '15px' }}>

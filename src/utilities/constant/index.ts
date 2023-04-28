@@ -69,6 +69,7 @@ export const LINKS = {
 	Login: '/auth/login',
 	ForgetPassword: '/auth/forget-password',
 	CreateNewPassword: '/auth/password/new',
+	ChangePassword: '/auth/password/change',
 	Users: '/users',
 	User: `/user`,
 	Managers: '/managers',

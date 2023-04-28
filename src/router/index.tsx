@@ -8,7 +8,6 @@ import {
 	Managers,
 	Network,
 	Notifications,
-	PushNotification,
 	Admin,
 	Dispute,
 	Coupons,
@@ -30,6 +29,7 @@ import {
 	AllConversions,
 	ReferralsBonus,
 	CreateNotification,
+	ChangePassword,
 } from '../pages';
 
 const Router = () => {
@@ -43,6 +43,7 @@ const Router = () => {
 			</Route>
 			<Route path={'auth'}>
 				<Route path={'login'} element={<Login />} />
+				<Route path={'password/change'} element={<ChangePassword />} />
 			</Route>
 			<Route path={'managers'}>
 				<Route path={''} element={<Managers />} />

@@ -12,6 +12,7 @@ import { Menu } from '@mui/icons-material';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { setToggleDrawer, setToggleMobileDrawer } from '../../store/app';
 import { grey } from '@mui/material/colors';
+import Timer from '../timer';
 
 const Header = () => {
 	const theme = useTheme();
@@ -49,16 +50,32 @@ const Header = () => {
 				>
 					<Menu />
 				</IconButton>
-				<Box style={styles.avatarUserNameWrapper}>
-					<Box>
-						<Typography style={styles.userName} variant={'body1'}>
-							{user && `${user.firstname} ${user.lastname}`}
-						</Typography>
-						<Typography style={styles.roleText} variant={'body2'}>
-							{user && user.role && `${user.role.replace(/_/gi, ' ')}`}
-						</Typography>
+				<Box
+					sx={{
+						display: 'flex',
+						alignItems: 'center',
+						gap: '3rem',
+					}}
+				>
+					<Timer
+						sx={{
+							display: {
+								xs: 'none',
+								md: 'block',
+							},
+						}}
+					/>
+					<Box style={styles.avatarUserNameWrapper}>
+						<Box>
+							<Typography style={styles.userName} variant={'body1'}>
+								{user && `${user.firstname} ${user.lastname}`}
+							</Typography>
+							<Typography style={styles.roleText} variant={'body2'}>
+								{user && user.role && `${user.role.replace(/_/gi, ' ')}`}
+							</Typography>
+						</Box>
+						<Avatar />
 					</Box>
-					<Avatar />
 				</Box>
 			</Toolbar>
 		</AppBar>

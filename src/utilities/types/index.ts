@@ -135,6 +135,19 @@ export interface ModalDetails {
 	contentWidth?: string;
 }
 
+export interface IModalAlert {
+	type?: 'success' | 'error' | 'info';
+	title?: string;
+	message?: string;
+	primaryButtonText?: string;
+	secondaryButtonText?: string;
+	onClickPrimaryButton?: () => void;
+	onClickSecondaryButton?: () => void;
+	children?: ReactNode;
+	isLoading?: boolean;
+	closeModal?: () => void;
+}
+
 export interface IModal {
 	type?: 'success' | 'error' | 'info' | 'pending' | 'verify';
 	description?: string;
@@ -449,6 +462,8 @@ export type User = {
 	manager?: User;
 	defaultBank?: string;
 	photoUrl?: string | null;
+	no_of_referees?: number;
+	defaultPasswordChanged?: boolean;
 };
 
 export interface PinData {

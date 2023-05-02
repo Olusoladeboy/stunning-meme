@@ -1,226 +1,148 @@
-import React, { CSSProperties, useState, MouseEvent } from 'react';
-import Table from '@mui/material/Table';
-import Box from '@mui/material/Box';
+import React, { useState, MouseEvent } from 'react';
 import {
-	Typography,
 	useTheme,
 	List,
 	ListItemButton,
 	IconButton,
 	Popper,
+	Table,
+	Box,
+	TableHead,
+	TableBody,
 } from '@mui/material';
-import TableBody from '@mui/material/TableBody';
-import TableHead from '@mui/material/TableHead';
 import { grey } from '@mui/material/colors';
-import { AddCircle, MoreHoriz } from '@mui/icons-material';
-import { SUCCESS_COLOR, BOX_SHADOW, DANGER_COLOR } from '../../utilities';
+import { MoreHoriz } from '@mui/icons-material';
+import {
+	SUCCESS_COLOR,
+	BOX_SHADOW,
+	DANGER_COLOR,
+	Settings,
+	formatNumberToCurrency,
+} from '../../utilities';
 import ModalWrapper from '../modal/Wrapper';
-import FilterIcon from '../icons/filter';
 import {
 	StyledTableCell as TableCell,
 	StyledTableRow as TableRow,
 } from './components';
-import TableHeader from '../header/table-header';
-import COUPONS from '../../utilities/data/coupons';
 import Empty from '../empty';
-import Pagination from '../pagination';
-import Button from '../button';
-import RegularAlert from '../modal/regular-modal';
-import ReferralForm from '../forms/referral-form';
+import ReferralForm from '../forms/referral-bonus-form';
+import CustomTableCell from './components/custom-table-cell';
+import Loader from '../loader/table-loader';
 
-const ReferralBonusTable = () => {
-	const [data] = useState<{ [key: string]: any }[] | null>(COUPONS);
+interface Props {
+	data: Settings[] | undefined | null;
+	isLoading?: boolean;
+}
 
-	const [isCreateReferral, setCreateReferral] = useState<boolean>(false);
+const ReferralBonusTable: React.FC<Props> = ({ data, isLoading }) => {
+	const [isDisplayForm, setDisplayForm] = useState<boolean>(false);
 
 	const theme = useTheme();
 	const styles = useStyles(theme);
 
 	const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-	const [currentRow, setCurrentRow] = useState<null | { [key: string]: any }>(
-		null
-	);
-	const [alert, setAlert] = useState<{ [key: string]: any } | null>(null);
+	const [currentRow, setCurrentRow] = useState<null | Settings>(null);
 
 	const handleClickAction = (event: MouseEvent<HTMLElement>) => {
 		setAnchorEl(
 			anchorEl && anchorEl === event.currentTarget ? null : event.currentTarget
 		);
 	};
-
-	const handleDelete = (data: { [key: string]: any }) => {
-		setAlert({
-			title: `Delete ${data.coupon_name}`,
-			btnText: 'Decline',
-			message: `Are you sure you want to delete ${data.coupon_name}`,
-			alertType: 'failed',
-		});
+	const callback = () => {
+		setCurrentRow(null);
+		setDisplayForm(false);
 	};
 
 	return (
 		<>
-			{isCreateReferral && (
-				<ModalWrapper
-					hasCloseButton
-					closeModal={() => setCreateReferral(false)}
-					title={'CREATE REFERRAL'}
-				>
-					<ReferralForm />
-				</ModalWrapper>
-			)}
-			{alert && (
-				<RegularAlert
-					close={() => setAlert(null)}
-					width={'480px'}
-					title={alert.title}
-					btnText={alert.btnText}
-					message={alert.message}
-					alertType={alert.alertType}
-				/>
-			)}
 			{currentRow && (
 				<ModalWrapper
 					hasCloseButton
-					closeModal={() => setCurrentRow(null)}
-					title={'EDIT COUPON'}
+					closeModal={callback}
+					title={'Edit Referral'}
 				>
-					<ReferralForm isEdit data={currentRow} />
+					<ReferralForm data={currentRow} callback={callback} />
 				</ModalWrapper>
 			)}
 
-			<Box style={styles.container} sx={{ overflow: 'auto' }}>
-				<Box
-					style={styles.tableHeader as CSSProperties}
-					sx={{ padding: '0px 1rem' }}
-				>
-					<TableHeader backButtonText={'Referral Bonus'} isDisplayBackButton />
-					<Box
-						sx={{
-							alignSelf: 'flex-end',
-							display: 'flex',
-							alignItems: 'center',
-							gap: theme.spacing(3),
-						}}
-					>
-						<Button
-							onClick={() => setCreateReferral(true)}
-							startIcon={<AddCircle />}
-							style={styles.btnOutline as CSSProperties}
-						>
-							create referral
-						</Button>
-					</Box>
-				</Box>
-
-				<Table sx={{ overflow: 'auto' }}>
-					<TableHead
-						sx={{
-							'& tr': {
-								backgroundColor: `${grey[50]} !important`,
-								color: theme.palette.primary.main,
-							},
-						}}
-					>
-						<TableRow>
-							<TableCell sx={{ paddingLeft: '30px' }}>
-								<Box style={styles.filterWrapper}>
-									<Typography style={styles.tableHeaderText} variant={'body1'}>
-										Referral Bonus
-									</Typography>
-									<FilterIcon />
-								</Box>
-							</TableCell>
-							<TableCell>
-								<Box style={styles.filterWrapper}>
-									<Typography style={styles.tableHeaderText} variant={'body1'}>
-										Transaction limit
-									</Typography>
-									<FilterIcon />
-								</Box>
-							</TableCell>
-							<TableCell>Action</TableCell>
-						</TableRow>
-					</TableHead>
-					<TableBody
-						sx={{
-							'& tr': {
-								color: theme.palette.primary.main,
-							},
-						}}
-					>
-						{data && data.length > 0 ? (
-							data.map((row, key) => (
-								<TableRow key={key}>
-									<TableCell
-										sx={{ paddingLeft: '30px !important' }}
-										style={styles.tableText}
-									>
-										{row.coupon_name}
-									</TableCell>
-									<TableCell style={styles.tableText}>{row.status}</TableCell>
-									<TableCell>
-										<Box>
-											<IconButton
-												onClick={(event) => handleClickAction(event)}
-												size={'small'}
-											>
-												<MoreHoriz />
-											</IconButton>
-											<Popper open={Boolean(anchorEl)} anchorEl={anchorEl}>
-												<List style={styles.editDeleteWrapper}>
-													<ListItemButton
-														onClick={() => {
-															setAnchorEl(null);
-															setCurrentRow(row);
-														}}
-														style={styles.editBtn}
-													>
-														Edit
-													</ListItemButton>
-													<ListItemButton
-														onClick={() => {
-															setAnchorEl(null);
-														}}
-														style={styles.approveBtn}
-													>
-														Approve
-													</ListItemButton>
-													<ListItemButton
-														onClick={() => {
-															setAnchorEl(null);
-															handleDelete(row);
-														}}
-														style={styles.declineBtn}
-													>
-														Decline
-													</ListItemButton>
-												</List>
-											</Popper>
-										</Box>
-									</TableCell>
-								</TableRow>
-							))
-						) : (
-							<TableRow>
-								<TableCell colSpan={6}>
-									<Empty text={'No users'} />
-								</TableCell>
-							</TableRow>
-						)}
-					</TableBody>
-				</Table>
-				<Pagination
+			<Table sx={{ overflow: 'auto' }}>
+				<TableHead
 					sx={{
-						display: 'flex',
-						justifyContent: 'flex-end',
-						marginTop: theme.spacing(4),
-						marginRight: '1rem',
+						'& tr': {
+							backgroundColor: `${grey[50]} !important`,
+							color: theme.palette.primary.main,
+						},
 					}}
-					size={'large'}
-					shape={'rounded'}
-					variant={'outlined'}
-				/>
-			</Box>
+				>
+					<TableRow>
+						<CustomTableCell label={'Referral Bonus'} />
+						<CustomTableCell label={'Transaction Limit'} />
+						<CustomTableCell label={'Action'} />
+					</TableRow>
+				</TableHead>
+				<TableBody
+					sx={{
+						'& tr': {
+							color: theme.palette.primary.main,
+						},
+					}}
+				>
+					{isLoading ? (
+						<Loader />
+					) : (
+						data && (
+							<>
+								{data.length > 0 ? (
+									data.map((row: Settings, key: number) => (
+										<TableRow key={key}>
+											<TableCell
+												sx={{ paddingLeft: '30px !important' }}
+												style={styles.tableText}
+											>
+												{formatNumberToCurrency(row.value as string)}
+											</TableCell>
+											<TableCell style={styles.tableText}>{row.name}</TableCell>
+											<TableCell>
+												<Box>
+													<IconButton
+														onClick={(event) => handleClickAction(event)}
+														size={'small'}
+													>
+														<MoreHoriz />
+													</IconButton>
+													<Popper open={Boolean(anchorEl)} anchorEl={anchorEl}>
+														<List style={styles.editDeleteWrapper}>
+															<ListItemButton
+																onClick={() => {
+																	setAnchorEl(null);
+																	setCurrentRow(row);
+																}}
+																style={styles.editBtn}
+															>
+																Edit
+															</ListItemButton>
+
+															<ListItemButton style={styles.declineBtn}>
+																Delete
+															</ListItemButton>
+														</List>
+													</Popper>
+												</Box>
+											</TableCell>
+										</TableRow>
+									))
+								) : (
+									<TableRow>
+										<TableCell colSpan={6}>
+											<Empty text={'No Referral Bonus'} />
+										</TableCell>
+									</TableRow>
+								)}
+							</>
+						)
+					)}
+				</TableBody>
+			</Table>
 		</>
 	);
 };

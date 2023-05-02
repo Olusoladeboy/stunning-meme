@@ -6,12 +6,12 @@ import { useQuery } from 'react-query';
 import { Layout, Pagination, VerificationTable } from '../../components';
 import { MAX_RECORDS, QueryKeys, LINKS } from '../../utilities';
 import { useAppSelector } from '../../store/hooks';
-import { useAlert } from '../../utilities/hooks';
 import { users } from '../../api';
-import { useSearchUser } from '../../hooks';
+import { useSearchUser, useAlert, useHandleError } from '../../hooks';
 
 const Verification = () => {
 	const { token } = useAppSelector((store) => store.authState);
+	const handleError = useHandleError();
 	const setAlert = useAlert();
 	const theme = useTheme();
 	const navigate = useNavigate();
@@ -44,7 +44,9 @@ const Verification = () => {
 			enabled: !!token,
 			onSettled: (data, error) => {
 				if (error) {
-					setAlert({ data: error, type: 'error' });
+					const response = handleError({ error });
+					if (response?.message)
+						setAlert({ message: response.message, type: 'error' });
 				}
 				if (data && data.success) {
 					const total = data.metadata.total;

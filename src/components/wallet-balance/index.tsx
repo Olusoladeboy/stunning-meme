@@ -40,7 +40,7 @@ const useStyles = (theme: any) => ({
 		alignItems: 'center',
 		justifyContent: 'space-between',
 		gap: theme.spacing(4),
-		border: `1px solid ${theme.palette.secondary.main}`,
+		border: `0.5px solid ${theme.palette.secondary.main}`,
 		padding: theme.spacing(3),
 		borderRadius: theme.spacing(2),
 		boxShadow: `0px 0px 8px rgba(0, 0, 0, 0.1)`,

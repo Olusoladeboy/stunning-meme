@@ -556,6 +556,14 @@ export interface DataResponse<T> {
 	payload: T;
 }
 
+export interface Settings {
+	name?: string;
+	value?: string;
+	createdAt?: string;
+	updatedAt?: string;
+	id?: string;
+}
+
 export interface Notification {
 	subject?: string;
 	message?: string;

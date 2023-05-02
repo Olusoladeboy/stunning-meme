@@ -14,11 +14,14 @@ export const DARK_BACKGROUND_COLOR = '#09171f';
 export const BOX_SHADOW = `0px 0px 8px rgba(0, 0, 0, 0.1)`;
 export const MAX_RECORDS = 20;
 
+export const REFERRAL_BONUS = 'MININUM_BONUS_RATE';
+
 export const QueryKeys = {
 	LoginUserDetails: '@Query:Login_user_details',
 	Managers: '@Query:All_manager',
 	Referrals: '@Query:Referrals',
 	Referees: '@Query:Referees',
+	Settings: '@Query:Settings',
 	Notifications: '@Query:Notifications',
 	RecentConvertAirtime: '@Query:RecentConvertAirtime',
 	Users: '@Query:All_Users',
@@ -121,6 +124,7 @@ export const ENDPOINTS = {
 	Referrals: '/referrals',
 	GetUser: '/staff/me',
 	Staff: '/staff',
+	Settings: '/setting',
 	Manager: '/manager',
 	User: '/user',
 	DataNetwork: '/data-networks',

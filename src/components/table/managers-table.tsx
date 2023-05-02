@@ -18,7 +18,6 @@ import {
 	StyledTableRow as TableRow,
 } from './components';
 import Empty from '../empty';
-import Pagination from '../pagination';
 import Button from '../button';
 import ManagerForm from '../forms/manager-admin-form';
 import ManagerDetails from '../manager-details';
@@ -39,56 +38,32 @@ const ManagersTable = ({
 	clearSearch,
 	searchManager,
 }: Props) => {
-	const [managerType, setManagerType] = useState<ManagerTypes | null>(null);
-	const [formActionType, setFormActionType] = useState<'edit' | 'add' | ''>('');
-	const [selectedManager, setSelectedManager] = useState<User | null>(null);
-	const [isViewManager, setViewManager] = useState<boolean>(false);
-
 	const theme = useTheme();
 	const styles = useStyles(theme);
+
+	const [selectedManager, setSelectedManager] = useState<User | null>(null);
+	const [isViewManager, setViewManager] = useState<boolean>(false);
+	const [isDisplayForm, setDisplayForm] = useState<boolean>(false);
 
 	const handleViewManager = (data: User) => {
 		setSelectedManager(data);
 		setViewManager(true);
 	};
 
-	const handleAddEditManager = ({
-		isEdit,
-		isAdd,
-		type,
-	}: {
-		isEdit?: boolean;
-		type?: ManagerTypes;
-		isAdd?: boolean;
-	}) => {
-		if (isEdit) {
-			setViewManager(false);
-			setFormActionType('edit');
-		}
-		if (isAdd) {
-			setViewManager(false);
-			setFormActionType('add');
-		} else {
-			// setFormActionType('');
-		}
-
-		type ? setManagerType(type) : setManagerType(null);
-	};
-
 	const closeModal = () => {
-		setFormActionType('');
 		setSelectedManager(null);
+		setDisplayForm(false);
 	};
 
 	return (
 		<>
-			{formActionType && (
+			{isDisplayForm && (
 				<ModalWrapper
 					hasCloseButton
 					closeModal={closeModal}
 					title={
 						<Typography variant={'h5'} sx={{ textTransform: 'uppercase' }}>
-							{formActionType} {managerType}
+							{selectedManager ? 'Edit' : 'Create'} Manager
 						</Typography>
 					}
 				>
@@ -106,9 +81,10 @@ const ManagersTable = ({
 					title={'View manager'}
 				>
 					<ManagerDetails
-						handleEdit={() =>
-							handleAddEditManager({ isEdit: true, type: ManagerTypes.Manager })
-						}
+						handleEdit={() => {
+							setViewManager(false);
+							setDisplayForm(true);
+						}}
 						managerDetail={selectedManager}
 						callback={closeModal}
 					/>
@@ -133,12 +109,7 @@ const ManagersTable = ({
 						}}
 					>
 						<Button
-							onClick={() =>
-								handleAddEditManager({
-									type: ManagerTypes.Manager,
-									isAdd: true,
-								})
-							}
+							onClick={() => setDisplayForm(true)}
 							startIcon={<AddCircle />}
 							style={styles.btnOutline as CSSProperties}
 						>
@@ -216,7 +187,7 @@ const ManagersTable = ({
 						)}
 					</TableBody>
 				</Table>
-				<Pagination
+				{/* 	<Pagination
 					sx={{
 						display: 'flex',
 						justifyContent: 'flex-end',
@@ -226,7 +197,7 @@ const ManagersTable = ({
 					size={'large'}
 					shape={'rounded'}
 					variant={'outlined'}
-				/>
+				/> */}
 			</Box>
 		</>
 	);
@@ -237,7 +208,7 @@ const useStyles = (theme: any) => ({
 		display: 'grid',
 		gridTemplateColumn: '1fr',
 		gap: theme.spacing(4),
-		border: `1px solid ${theme.palette.secondary.main}`,
+		border: `0.5px solid ${theme.palette.secondary.main}`,
 		padding: '1.5rem 0px',
 		backgroundColor: grey[50],
 		borderRadius: theme.spacing(2),

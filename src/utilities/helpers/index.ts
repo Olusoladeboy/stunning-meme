@@ -1,4 +1,4 @@
-import { Coupon, CouponType } from '../types';
+import { Amount, Coupon, CouponType } from '../types';
 export { default as ErrorBoundary } from './error-boundary';
 export { default as ScrollToTop } from './scroll-to-top';
 export * from './reg-expression';
@@ -84,4 +84,12 @@ export const cleanString = (value: string) => {
 	}
 
 	return value;
+};
+
+export const checkAmount = (amount: number | string | Amount) => {
+	if (typeof amount === 'object') {
+		return amount.$numberDecimal;
+	}
+
+	return amount;
 };

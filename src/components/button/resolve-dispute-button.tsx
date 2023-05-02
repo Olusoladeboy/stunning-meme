@@ -3,21 +3,21 @@ import { Button as MuiButton } from '@mui/material';
 import { grey } from '@mui/material/colors';
 import { useMutation, useQueryClient } from 'react-query';
 import { styled } from '@mui/material/styles';
-import { DANGER_COLOR, Ticket, QueryKeys } from '../../utilities';
-import Spinner from '../loader';
+import { Ticket, QueryKeys } from '../../utilities';
 import { useHandleError, useAlert } from '../../hooks';
-import { closeTicket } from '../../api';
+import { resolveTicket } from '../../api';
+import AppButton from '.';
 
 interface Props {
 	ticket: Ticket;
 }
 
-const CloseDispute = ({ ticket }: Props) => {
+const ResolveDisputeButton = ({ ticket }: Props) => {
 	const queryClient = useQueryClient();
 	const handleError = useHandleError();
 	const alert = useAlert();
 
-	const { isLoading, mutate } = useMutation(closeTicket, {
+	const { isLoading, mutate } = useMutation(resolveTicket, {
 		onSettled: (data, error) => {
 			if (error) {
 				const response = handleError({ error });
@@ -35,13 +35,14 @@ const CloseDispute = ({ ticket }: Props) => {
 	});
 
 	const data = {
-		status: 'CLOSED',
+		code: ticket.code,
+		strictCheck: true,
 	};
 
 	return (
 		<>
-			{isLoading && <Spinner />}
 			<Button
+				loading={isLoading}
 				onClick={() =>
 					mutate({
 						id: ticket.id,
@@ -55,12 +56,12 @@ const CloseDispute = ({ ticket }: Props) => {
 	);
 };
 
-const Button = styled(MuiButton)(({ theme }) => ({
-	backgroundColor: `${DANGER_COLOR} !important`,
+const Button = styled(AppButton)(({ theme }) => ({
+	backgroundColor: `${theme.palette.secondary.main} !important`,
 	color: grey['50'],
 	paddingLeft: '20px',
 	paddingRight: '20px',
 	borderRadius: '30px',
 }));
 
-export default CloseDispute;
+export default ResolveDisputeButton;

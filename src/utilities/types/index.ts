@@ -428,6 +428,11 @@ export interface CloseTicket {
 	status: string;
 }
 
+export interface ResolveTicket {
+	code: string;
+	strictCheck: boolean;
+}
+
 export enum TicketReplyType {
 	Staff = 'Staff',
 	User = 'User',

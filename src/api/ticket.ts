@@ -3,6 +3,7 @@ import {
 	CreateTicket,
 	TicketReply,
 	CloseTicket,
+	ResolveTicket,
 } from '../utilities';
 import apiRequest from './apiRequest';
 
@@ -28,7 +29,19 @@ export const closeTicket = async ({
 	apiRequest({
 		url: `${ENDPOINTS.Ticket}/${id}`,
 		method: 'PUT',
+		data,
+	});
 
+export const resolveTicket = async ({
+	data,
+	id,
+}: {
+	data: ResolveTicket;
+	id: string;
+}): Promise<any> =>
+	apiRequest({
+		url: `${ENDPOINTS.Ticket}/resolve`,
+		method: 'PUT',
 		data,
 	});
 

@@ -20,8 +20,9 @@ const Transactions = () => {
 	const theme = useTheme();
 	const handleError = useHandleError();
 	const styles = useStyles(theme);
+	const [isEnableQuery, setEnableQuery] = useState<boolean>(false);
 	const alert = useAlert();
-	const { token } = useAppSelector((store) => store.authState);
+	const { canViewStatistics } = useAppSelector((store) => store.authState);
 	const navigate = useNavigate();
 	const [count, setCount] = useState<number>(1);
 	const [page, setPage] = useState<number>(1);
@@ -32,13 +33,14 @@ const Transactions = () => {
 		useSearchTransaction();
 
 	useEffect(() => {
+		setEnableQuery(true);
 		if (query && query.page) {
 			setPage(parseInt(query.page as string));
 		}
 	}, [query, query.page]);
 
 	const { isLoading, data } = useQuery(
-		[QueryKeys.AllTransactions],
+		[QueryKeys.Transactions],
 		() =>
 			allTransactions({
 				params: {
@@ -48,8 +50,9 @@ const Transactions = () => {
 				},
 			}),
 		{
-			enabled: !!token,
+			enabled: isEnableQuery,
 			onSettled: (data: any, error) => {
+				setEnableQuery(false);
 				if (error) {
 					const response = handleError({ error });
 					if (response?.message) {
@@ -74,6 +77,7 @@ const Transactions = () => {
 			navigate(LINKS.Transactions);
 			setPage(page);
 		}
+		setEnableQuery(true);
 	};
 
 	return (
@@ -83,7 +87,7 @@ const Transactions = () => {
 					sx={{
 						padding: { xs: '0px 15px', md: '0px 2rem' },
 						display: 'grid',
-						gap: { xs: '2rem', sm: '10px' },
+						gap: '2rem',
 					}}
 				>
 					<TableHeader
@@ -92,7 +96,7 @@ const Transactions = () => {
 						handleSearch={searchTransaction}
 						clearSearch={clearSearch}
 					/>
-					<TransactionMainBalance />
+					{canViewStatistics && <TransactionMainBalance />}
 				</Box>
 				<TransactionsTable
 					isLoading={isLoading || isSearching}

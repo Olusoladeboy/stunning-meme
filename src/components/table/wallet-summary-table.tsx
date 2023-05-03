@@ -66,7 +66,7 @@ const WalletSummaryTable = ({ transactions, isLoading }: Props) => {
 									transactions.map((row: Transaction) => (
 										<StyledTableRow key={row.id}>
 											<StyledTableCell style={styles.text}>
-												{row.reference}
+												{row.reference || 'No transaction reference'}
 											</StyledTableCell>
 											<StyledTableCell style={styles.text}>
 												{formatNumberToCurrency(
@@ -80,19 +80,19 @@ const WalletSummaryTable = ({ transactions, isLoading }: Props) => {
 											</StyledTableCell>
 											<StyledTableCell style={styles.text}>
 												{formatNumberToCurrency(
-													row.balanceBefore
-														? typeof row.balanceBefore !== 'string'
-															? row.balanceBefore.$numberDecimal
-															: row.balanceBefore
+													row.transaction
+														? typeof row.transaction.balanceBefore === 'object'
+															? row.transaction.balanceBefore.$numberDecimal
+															: row.transaction.balanceBefore
 														: 0
 												)}
 											</StyledTableCell>
 											<StyledTableCell style={styles.text}>
 												{formatNumberToCurrency(
-													row.balanceAfter
-														? typeof row.balanceAfter !== 'string'
-															? row.balanceAfter.$numberDecimal
-															: row.balanceAfter
+													row.transaction
+														? typeof row.transaction.balanceAfter === 'object'
+															? row.transaction.balanceAfter.$numberDecimal
+															: row.transaction.balanceAfter
 														: 0
 												)}
 											</StyledTableCell>

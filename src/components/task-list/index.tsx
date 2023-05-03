@@ -42,7 +42,7 @@ const TaskList = () => {
 
 const useStyles = (theme: any) => ({
 	container: {
-		border: `1px solid ${theme.palette.secondary.main}`,
+		border: `0.5px solid ${theme.palette.secondary.main}`,
 		// padding: '1.5rem 1rem',
 		backgroundColor: grey[50],
 		borderRadius: theme.spacing(2),

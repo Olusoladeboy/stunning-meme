@@ -11,13 +11,13 @@ import { useAlert, useHandleError, useQueryHook } from '../../hooks';
 import { managers, assignManagerToUser } from '../../api';
 
 type Props = {
-	userDetails: any;
+	User: any;
 	close?: () => void;
 };
 
 const SELECT_MANAGER = 'Select manager';
 
-const AssignManagerForm = ({ userDetails, close }: Props) => {
+const AssignManagerForm = ({ User, close }: Props) => {
 	const theme = useTheme();
 	const handleError = useHandleError();
 	const alert = useAlert();
@@ -25,7 +25,7 @@ const AssignManagerForm = ({ userDetails, close }: Props) => {
 
 	const queryClient = useQueryClient();
 	const { isLoading: isLoadingManager, data: managersData } = useQueryHook({
-		queryKey: QueryKeys.AllManagers,
+		queryKey: QueryKeys.Managers,
 		queryFn: () =>
 			managers({
 				params: {
@@ -58,8 +58,8 @@ const AssignManagerForm = ({ userDetails, close }: Props) => {
 					message: data.message,
 					type: 'success',
 				});
-				queryClient.invalidateQueries(QueryKeys.AllUsers);
-				queryClient.invalidateQueries(QueryKeys.GetSingleUser);
+				queryClient.invalidateQueries(QueryKeys.Users);
+				queryClient.invalidateQueries(QueryKeys.User);
 				resetForm();
 				typeof close !== 'undefined' && close();
 			}
@@ -73,7 +73,7 @@ const AssignManagerForm = ({ userDetails, close }: Props) => {
 			onSubmit: (values) => {
 				mutate({
 					data: values,
-					id: userDetails ? userDetails.id : '',
+					id: User ? User.id : '',
 				});
 			},
 		});

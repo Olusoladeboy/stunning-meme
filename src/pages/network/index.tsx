@@ -38,11 +38,9 @@ const Network = ({ pageType }: Props) => {
 						message={`Edit ${pageType} plan`}
 					/>
 				</Box>
-				{pageType === NetworkPage.DATA_NETWORK ? (
-					<DataNetworkTable />
-				) : pageType === NetworkPage.AIRTIME_NETWORK ? (
-					<AirtimeNetworkTable />
-				) : (
+				{pageType === NetworkPage.DATA_NETWORK && <DataNetworkTable />}
+				{pageType === NetworkPage.AIRTIME_NETWORK && <AirtimeNetworkTable />}
+				{pageType === NetworkPage.CONVERSION_NETWORK && (
 					<ConversionNetworkTable />
 				)}
 			</Box>

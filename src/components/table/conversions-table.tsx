@@ -33,6 +33,7 @@ type Props = {
 	handleSearch?: (search: string) => void;
 	clearSearch?: () => void;
 	isDisplaySearchField?: boolean;
+	conversionType?: 'auto' | 'default';
 };
 
 const ConversionsTable = ({
@@ -42,6 +43,7 @@ const ConversionsTable = ({
 	handleSearch,
 	clearSearch,
 	isDisplaySearchField = false,
+	conversionType,
 }: Props) => {
 	const theme = useTheme();
 	const styles = useStyles(theme);
@@ -199,6 +201,8 @@ const ConversionsTable = ({
 															) : conversion.status ===
 															  TransactionStatus.DECLINED ? (
 																TransactionStatus.DECLINED
+															) : conversionType === 'auto' ? (
+																conversion.status
 															) : (
 																<Box
 																	sx={{

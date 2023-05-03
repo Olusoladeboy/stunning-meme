@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useAlert, useHandleError } from '..';
-import { UserDetails, EMAIL_REX, PHONE_REX } from '../../utilities';
+import { User, EMAIL_REX, PHONE_REX } from '../../utilities';
 import { users } from '../../api';
 
 interface SearchPayload {
@@ -16,7 +16,7 @@ const useSearchUser = () => {
     @Hook state
     @User state and boolean is searching state
   */
-	const [search, setSearch] = useState<UserDetails[] | null>(null);
+	const [search, setSearch] = useState<User[] | null>(null);
 	const [isSearching, setSearching] = useState<boolean>(false);
 
 	/*

@@ -65,7 +65,7 @@ const TransactionsTable = ({ data, isLoading }: Props) => {
 						}}
 					>
 						<StyledTableRow>
-							<CustomTableCell label={'User'} isSortable />
+							<CustomTableCell label={'User'} />
 							<CustomTableCell label={'Transaction'} />
 							<CustomTableCell label={'Reference'} />
 							<CustomTableCell label={'Date'} />
@@ -102,7 +102,11 @@ const TransactionsTable = ({ data, isLoading }: Props) => {
 													>
 														<Avatar
 															style={styles.avatar}
-															src={data.user.photoUrl as string}
+															src={
+																data && data.user && data.user.photoUrl
+																	? data.user.photoUrl
+																	: ''
+															}
 														/>
 														<Typography>
 															{data.user?.firstname} {data.user?.lastname}

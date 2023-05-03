@@ -2,7 +2,7 @@ import React, { CSSProperties, useState } from 'react';
 import { Box, Typography, useTheme } from '@mui/material';
 import { grey } from '@mui/material/colors';
 import { useQuery } from 'react-query';
-import { formatNumberToCurrency, QueryKey, UserDetails } from '../../utilities';
+import { formatNumberToCurrency, QueryKey, User } from '../../utilities';
 import Button from '../button';
 import ModalWrapper from '../modal/Wrapper';
 import EditWalletForm from '../forms/edit-wallet-form';
@@ -11,7 +11,7 @@ import { useAlert, useHandleError } from '../../hooks';
 import { walletAccount } from '../../api';
 
 type Props = {
-	user: UserDetails | null;
+	user: User | null;
 };
 
 const UserWallet = ({ user }: Props) => {

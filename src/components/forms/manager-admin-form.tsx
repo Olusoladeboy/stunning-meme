@@ -1,4 +1,4 @@
-import React, { CSSProperties } from 'react';
+import React, { CSSProperties, useEffect, useState } from 'react';
 import { Box, useTheme, Typography, MenuItem } from '@mui/material';
 import { useFormik } from 'formik';
 import { useMutation, useQueryClient } from 'react-query';
@@ -7,10 +7,10 @@ import Button from '../button/custom-button';
 import { grey } from '@mui/material/colors';
 import {
 	ManagerTypes,
-	ManagerDetailsData,
 	QueryKeys,
 	validationSchema,
-	AMIN_ROLE,
+	ADMIN_ROLE,
+	User,
 } from '../../utilities';
 import Select from '../form-components/select';
 import { useAlert, useHandleError } from '../../hooks';
@@ -27,23 +27,25 @@ const SELECT_ADMIN_PRIVILEDGE = 'Select Admin Priviledge';
 type Props = {
 	type: ManagerTypes.Admin | ManagerTypes.Manager | null;
 	callback?: () => void;
-	managerDetails?: ManagerDetailsData | null;
-	isEdit?: boolean;
+	managerDetails?: User | null | undefined;
 };
 
-const ManagerAdminForm = ({
-	type,
-	callback,
-	managerDetails,
-	isEdit,
-}: Props) => {
+const ManagerAdminForm = ({ type, callback, managerDetails }: Props) => {
 	const theme = useTheme();
 	const setAlert = useAlert();
 	const handleError = useHandleError();
 	const styles = useStyles(theme);
 	const queryClient = useQueryClient();
 
-	const initialValues: ManagerDetailsData = {
+	const [isEdit, setEdit] = useState<boolean>(false);
+
+	useEffect(() => {
+		if (managerDetails && Object.values(managerDetails).length > 0) {
+			setEdit(true);
+		}
+	}, [managerDetails]);
+
+	const initialValues: User = {
 		firstname: '',
 		lastname: '',
 		email: '',
@@ -55,7 +57,7 @@ const ManagerAdminForm = ({
 			onSettled: (data, error) => {
 				if (data && data.success) {
 					resetForm();
-					queryClient.invalidateQueries(QueryKeys.AllManagers);
+					queryClient.invalidateQueries(QueryKeys.Managers);
 					setAlert({
 						message: data.message,
 						type: 'success',
@@ -82,7 +84,7 @@ const ManagerAdminForm = ({
 						type: 'success',
 					});
 
-					queryClient.invalidateQueries(QueryKeys.AllStaff);
+					queryClient.invalidateQueries(QueryKeys.Staffs);
 
 					typeof callback !== 'undefined' && callback();
 				}
@@ -101,7 +103,7 @@ const ManagerAdminForm = ({
 			onSettled: (data, error) => {
 				if (data && data.success) {
 					resetForm();
-					queryClient.invalidateQueries(QueryKeys.AllManagers);
+					queryClient.invalidateQueries(QueryKeys.Managers);
 					setAlert({
 						message: data.message,
 						type: 'success',
@@ -124,7 +126,7 @@ const ManagerAdminForm = ({
 			onSettled: (data, error) => {
 				if (data && data.success) {
 					resetForm();
-					queryClient.invalidateQueries(QueryKeys.AllStaff);
+					queryClient.invalidateQueries(QueryKeys.Staffs);
 					setAlert({
 						message: data.message,
 						type: 'success',
@@ -265,11 +267,11 @@ const ManagerAdminForm = ({
 							<MenuItem value={SELECT_ADMIN_PRIVILEDGE}>
 								{SELECT_ADMIN_PRIVILEDGE}
 							</MenuItem>
-							<MenuItem value={AMIN_ROLE.OPERATIONS}>
-								{AMIN_ROLE.OPERATIONS}
+							<MenuItem value={ADMIN_ROLE.OPERATIONS}>
+								{ADMIN_ROLE.OPERATIONS}
 							</MenuItem>
-							<MenuItem value={AMIN_ROLE.CUSTOMER_SUPPORT}>
-								{AMIN_ROLE.CUSTOMER_SUPPORT}
+							<MenuItem value={ADMIN_ROLE.CUSTOMER_SUPPORT}>
+								{ADMIN_ROLE.CUSTOMER_SUPPORT}
 							</MenuItem>
 						</Select>
 					</Box>

@@ -8,7 +8,6 @@ import {
 	Managers,
 	Network,
 	Notifications,
-	PushNotification,
 	Admin,
 	Dispute,
 	Coupons,
@@ -24,12 +23,13 @@ import {
 	Conversions,
 	Referrals,
 	DataTypes,
-	Messages,
 	AutoConversions,
 	Statistics,
 	AllTransactions,
 	AllConversions,
 	ReferralsBonus,
+	CreateNotification,
+	ChangePassword,
 } from '../pages';
 
 const Router = () => {
@@ -43,6 +43,7 @@ const Router = () => {
 			</Route>
 			<Route path={'auth'}>
 				<Route path={'login'} element={<Login />} />
+				<Route path={'password/change'} element={<ChangePassword />} />
 			</Route>
 			<Route path={'managers'}>
 				<Route path={''} element={<Managers />} />
@@ -52,12 +53,14 @@ const Router = () => {
 				<Route path={''} element={<Transactions />} />
 				<Route path={'all'} element={<AllTransactions />} />
 			</Route>
-			<Route path={'messages'}>
-				<Route path={''} element={<Messages />} />
-			</Route>
+
 			<Route path={'conversions'}>
 				<Route path={''} element={<Conversions />} />
 				<Route path={'all'} element={<AllConversions />} />
+				<Route
+					path={'network'}
+					element={<Network pageType={NetworkPage.CONVERSION_NETWORK} />}
+				/>
 			</Route>
 			<Route path={'auto-conversions'} element={<AutoConversions />} />
 			<Route path={'data-network'}>
@@ -65,8 +68,11 @@ const Router = () => {
 					path={''}
 					element={<Network pageType={NetworkPage.DATA_NETWORK} />}
 				/>
-				<Route path={'types/:plan/:id'} element={<DataTypes />} />
-				<Route path={'plans/:plan/:id'} element={<ViewDataPlan />} />
+				<Route path={'types/:dataTypeName/:network'} element={<DataTypes />} />
+				<Route
+					path={'plans/:dataType/:planName/:network'}
+					element={<ViewDataPlan />}
+				/>
 			</Route>
 
 			<Route
@@ -88,8 +94,8 @@ const Router = () => {
 
 			<Route path={'notifications'}>
 				<Route path={''} element={<Notifications />} />
+				<Route path={'create'} element={<CreateNotification />} />
 			</Route>
-			<Route path={'push-notification'} element={<PushNotification />} />
 			<Route path={'verification'}>
 				<Route path='' element={<Verification />} />
 				<Route path='kyc' element={<Kyc />} />

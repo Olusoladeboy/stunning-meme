@@ -16,6 +16,7 @@ import {
 	QueryKeys,
 	API_ENDPOINTS,
 	LINKS,
+	NetworkData,
 } from '../../utilities';
 import {
 	StyledTableCell as TableCell,
@@ -124,10 +125,10 @@ const DataNetworkTable = () => {
 						{isLoading ? (
 							<TableLoader colSpan={4} />
 						) : data && data.payload.length > 0 ? (
-							data.payload.map((data: any) => (
+							data.payload.map((data: NetworkData) => (
 								<TableRow key={data.id}>
 									<TableCell>{data.name}</TableCell>
-									<TableCell>{0}</TableCell>
+									<TableCell>{data.no_of_dataTypes}</TableCell>
 									<TableCell sx={{ maxWidth: '200px' }}>
 										<Box
 											sx={{
@@ -145,7 +146,7 @@ const DataNetworkTable = () => {
 												onClick={() =>
 													handleEnableDisableNetwork({
 														status: true,
-														id: data.id,
+														id: data.id as string,
 													})
 												}
 												style={{
@@ -162,7 +163,7 @@ const DataNetworkTable = () => {
 												onClick={() =>
 													handleEnableDisableNetwork({
 														status: false,
-														id: data.id,
+														id: data.id as string,
 													})
 												}
 												style={{
@@ -179,7 +180,7 @@ const DataNetworkTable = () => {
 									<TableCell
 										onClick={() =>
 											navigate(
-												`${LINKS.DataTypes}/${data.name
+												`${LINKS.DataTypes}/${(data.name as string)
 													.toString()
 													.toLowerCase()}/${data.id}`
 											)

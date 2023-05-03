@@ -37,7 +37,9 @@ const AutoConversions = () => {
 
 	const location = useLocation();
 	const query = queryString.parse(location.search);
-	const { token } = useAppSelector((store) => store.authState);
+	const { token, canViewStatistics } = useAppSelector(
+		(store) => store.authState
+	);
 
 	const { isSearching, search, clearSearch, searchConversion } =
 		useSearchConversion();
@@ -119,28 +121,30 @@ const AutoConversions = () => {
 					>
 						Auto Conversions
 					</Typography>
-					<Box
-						sx={{
-							display: 'grid',
-							gridTemplateColumns: {
-								xs: '1fr',
-								lg: 'repeat(2, 1fr)',
-							},
-							gap: {
-								xs: theme.spacing(3),
-								lg: theme.spacing(5),
-							},
-						}}
-					>
-						<ConversionTotal
-							handleRefresh={() => {
-								setReload(true);
-								setReloading(true);
+					{canViewStatistics && (
+						<Box
+							sx={{
+								display: 'grid',
+								gridTemplateColumns: {
+									xs: '1fr',
+									lg: 'repeat(2, 1fr)',
+								},
+								gap: {
+									xs: theme.spacing(3),
+									lg: theme.spacing(5),
+								},
 							}}
-							total={data && data.metadata.total}
-						/>
-						<AvailableNetwork />
-					</Box>
+						>
+							<ConversionTotal
+								handleRefresh={() => {
+									setReload(true);
+									setReloading(true);
+								}}
+								total={data && data.metadata.total}
+							/>
+							<AvailableNetwork />
+						</Box>
+					)}
 				</Box>
 				<ErrorBoundary>
 					<ConversionsTable
@@ -150,6 +154,7 @@ const AutoConversions = () => {
 						handleSort={handleSort}
 						handleSearch={searchConversion}
 						clearSearch={clearSearch}
+						conversionType={'auto'}
 					/>
 
 					{!search && total > MAX_RECORDS && !isReloading && (

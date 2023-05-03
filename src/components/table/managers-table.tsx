@@ -11,19 +11,13 @@ import {
 import { grey } from '@mui/material/colors';
 import { AddCircle } from '@mui/icons-material';
 import moment from 'moment';
-import {
-	SUCCESS_COLOR,
-	BOX_SHADOW,
-	ManagerTypes,
-	ManagerDetailsData,
-} from '../../utilities';
+import { SUCCESS_COLOR, BOX_SHADOW, ManagerTypes, User } from '../../utilities';
 import ModalWrapper from '../modal/Wrapper';
 import {
 	StyledTableCell as TableCell,
 	StyledTableRow as TableRow,
 } from './components';
 import Empty from '../empty';
-import Pagination from '../pagination';
 import Button from '../button';
 import ManagerForm from '../forms/manager-admin-form';
 import ManagerDetails from '../manager-details';
@@ -31,13 +25,8 @@ import TableLoader from '../loader/table-loader';
 import ManagerTableHeader from '../header/manager-table-header';
 import CustomTableCell from './components/custom-table-cell';
 
-interface ManagerDetailsType extends ManagerDetailsData {
-	avatar: string;
-	createdAt: string;
-}
-
 type Props = {
-	managers: ManagerDetailsType[];
+	managers: User[] | null | undefined;
 	isLoading: boolean;
 	searchManager?: (value: string) => void;
 	clearSearch?: () => void;
@@ -49,69 +38,37 @@ const ManagersTable = ({
 	clearSearch,
 	searchManager,
 }: Props) => {
-	const [managerType, setManagerType] = useState<ManagerTypes | null>(null);
-	const [formActionType, setFormActionType] = useState<'edit' | 'add' | ''>('');
-	const [selectedManager, setSelectedManager] =
-		useState<ManagerDetailsType | null>(null);
-	const [isViewManager, setViewManager] = useState<boolean>(false);
-	const [isEditManager, setEditManager] = useState<boolean>(false);
-
 	const theme = useTheme();
 	const styles = useStyles(theme);
 
-	const handleViewManager = (data: ManagerDetailsType) => {
+	const [selectedManager, setSelectedManager] = useState<User | null>(null);
+	const [isViewManager, setViewManager] = useState<boolean>(false);
+	const [isDisplayForm, setDisplayForm] = useState<boolean>(false);
+
+	const handleViewManager = (data: User) => {
 		setSelectedManager(data);
 		setViewManager(true);
 	};
 
-	const handleAddEditManager = ({
-		isEdit,
-		isAdd,
-		type,
-	}: {
-		isEdit?: boolean;
-		type?: ManagerTypes;
-		isAdd?: boolean;
-	}) => {
-		if (isEdit) {
-			setViewManager(false);
-			setEditManager(true);
-			setFormActionType('edit');
-		} else {
-			setEditManager(false);
-			// setFormActionType('');
-		}
-		if (isAdd) {
-			setViewManager(false);
-			setFormActionType('add');
-		} else {
-			// setFormActionType('');
-		}
-
-		type ? setManagerType(type) : setManagerType(null);
-	};
-
 	const closeModal = () => {
-		setFormActionType('');
 		setSelectedManager(null);
-		setEditManager(false);
+		setDisplayForm(false);
 	};
 
 	return (
 		<>
-			{formActionType && (
+			{isDisplayForm && (
 				<ModalWrapper
 					hasCloseButton
 					closeModal={closeModal}
 					title={
 						<Typography variant={'h5'} sx={{ textTransform: 'uppercase' }}>
-							{formActionType} {managerType}
+							{selectedManager ? 'Edit' : 'Create'} Manager
 						</Typography>
 					}
 				>
 					<ManagerForm
 						callback={closeModal}
-						isEdit={isEditManager}
 						type={ManagerTypes.Manager}
 						managerDetails={selectedManager}
 					/>
@@ -124,9 +81,10 @@ const ManagersTable = ({
 					title={'View manager'}
 				>
 					<ManagerDetails
-						handleEdit={() =>
-							handleAddEditManager({ isEdit: true, type: ManagerTypes.Manager })
-						}
+						handleEdit={() => {
+							setViewManager(false);
+							setDisplayForm(true);
+						}}
 						managerDetail={selectedManager}
 						callback={closeModal}
 					/>
@@ -151,12 +109,7 @@ const ManagersTable = ({
 						}}
 					>
 						<Button
-							onClick={() =>
-								handleAddEditManager({
-									type: ManagerTypes.Manager,
-									isAdd: true,
-								})
-							}
+							onClick={() => setDisplayForm(true)}
 							startIcon={<AddCircle />}
 							style={styles.btnOutline as CSSProperties}
 						>
@@ -194,10 +147,10 @@ const ManagersTable = ({
 							managers && (
 								<>
 									{managers.length > 0 ? (
-										managers.map((data, key) => (
+										managers.map((data: User) => (
 											<TableRow
 												onClick={() => handleViewManager(data)}
-												key={key}
+												key={data.id}
 											>
 												<TableCell style={styles.tableText}>
 													<Box
@@ -207,7 +160,7 @@ const ManagersTable = ({
 															alignItems: 'center',
 														}}
 													>
-														<Avatar src={data.avatar} />
+														<Avatar src={data.photoUrl as string} />
 														<span>{`${data.firstname} ${data.lastname}`}</span>
 													</Box>
 												</TableCell>
@@ -234,7 +187,7 @@ const ManagersTable = ({
 						)}
 					</TableBody>
 				</Table>
-				<Pagination
+				{/* 	<Pagination
 					sx={{
 						display: 'flex',
 						justifyContent: 'flex-end',
@@ -244,7 +197,7 @@ const ManagersTable = ({
 					size={'large'}
 					shape={'rounded'}
 					variant={'outlined'}
-				/>
+				/> */}
 			</Box>
 		</>
 	);
@@ -255,7 +208,7 @@ const useStyles = (theme: any) => ({
 		display: 'grid',
 		gridTemplateColumn: '1fr',
 		gap: theme.spacing(4),
-		border: `1px solid ${theme.palette.secondary.main}`,
+		border: `0.5px solid ${theme.palette.secondary.main}`,
 		padding: '1.5rem 0px',
 		backgroundColor: grey[50],
 		borderRadius: theme.spacing(2),

@@ -1,28 +1,26 @@
 import React from 'react';
+import { grey } from '@mui/material/colors';
 import { Box, Typography, useTheme } from '@mui/material';
 import { useMutation, useQueryClient } from 'react-query';
 import UserAvatarWithDetails from '../avatar-with-details';
 import CustomButton from '../button/custom-button';
-import { grey } from '@mui/material/colors';
 import SuspendUserForm from '../forms/suspend-user-form';
 import DeleteUserForm from '../forms/delete-user-form';
-import { UserDetails, QueryKey } from '../../utilities';
-import Api from '../../utilities/api';
-import { useAppSelector } from '../../store/hooks';
+import { User, QueryKey } from '../../utilities';
 import { useAlert, useHandleError } from '../../hooks';
+import { suspendWithdraw } from '../../api';
 
 type Props = {
-	user: UserDetails | null;
+	user: User | null;
 };
 
 const UserStatus = ({ user }: Props) => {
 	const theme = useTheme();
 	const setAlert = useAlert();
 	const handleError = useHandleError();
-	const { token } = useAppSelector((store) => store.authState);
 	const queryClient = useQueryClient();
 
-	const { mutate, isLoading } = useMutation(Api.Wallet.SuspendWithdraw, {
+	const { mutate, isLoading } = useMutation(suspendWithdraw, {
 		onSettled: (data, error) => {
 			if (error) {
 				const response = handleError({ error });
@@ -42,7 +40,6 @@ const UserStatus = ({ user }: Props) => {
 
 	const handleSuspendWithdraw = () =>
 		mutate({
-			token: token as string,
 			data: {
 				suspended: user?.suspended as boolean,
 				suspendWithdrawal: !user?.suspendWithdrawal,

@@ -1,14 +1,9 @@
 import React, { CSSProperties } from 'react';
 import { Box, Avatar, Typography, useTheme } from '@mui/material';
-import { ManagerDetailsData } from '../../utilities';
-
-interface ManagerDetails extends ManagerDetailsData {
-	role?: string;
-	verifiedStatus?: boolean;
-}
+import { User } from '../../utilities';
 
 type Props = {
-	user: ManagerDetails | null;
+	user: User | null;
 };
 
 const ManagerAvatarWithDetails = ({ user }: Props) => {

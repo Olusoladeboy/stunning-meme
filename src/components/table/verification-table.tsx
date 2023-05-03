@@ -9,8 +9,9 @@ import {
 	BOX_SHADOW,
 	DANGER_COLOR,
 	LINKS,
-	UserDetails,
+	User,
 	QueryKeys,
+	ErrorBoundaryGuard,
 } from '../../utilities';
 import {
 	StyledTableCell as TableCell,
@@ -27,7 +28,7 @@ import { verifyUser } from '../../api';
 import CustomTableCell from './components/custom-table-cell';
 
 type Props = {
-	users: UserDetails[] | null;
+	users: User[] | null;
 	isLoading?: boolean;
 	clearSearch?(): void;
 	searchUser?(value: string): void;
@@ -47,7 +48,7 @@ const VerificationTable = ({
 	const queryClient = useQueryClient();
 	const setAlert = useAlert();
 	const { token } = useAppSelector((store) => store.authState);
-	const [selectedUser, setSelectUser] = useState<null | UserDetails>(null);
+	const [selectedUser, setSelectUser] = useState<null | User>(null);
 
 	const { isLoading: isVerifyingUser } = useQuery(
 		'',
@@ -65,8 +66,8 @@ const VerificationTable = ({
 
 				if (data && data.success) {
 					setAlert({ message: data.message, type: 'success' });
-					queryClient.invalidateQueries(QueryKeys.AllUsers);
-					queryClient.invalidateQueries(QueryKeys.GetSingleUser);
+					queryClient.invalidateQueries(QueryKeys.Users);
+					queryClient.invalidateQueries(QueryKeys.User);
 					queryClient.invalidateQueries(QueryKeys.Statistics);
 				}
 			},
@@ -120,89 +121,93 @@ const VerificationTable = ({
 							<CustomTableCell label={'Action'} />
 						</TableRow>
 					</TableHead>
-					<TableBody
-						sx={{
-							'& tr': {
-								color: theme.palette.primary.main,
-							},
-						}}
-					>
-						{isLoading ? (
-							<Loader colSpan={5} />
-						) : (
-							users && (
-								<>
-									{users.length > 0 ? (
-										users.map((row, key) => (
-											<TableRow key={key}>
-												<TableCell style={styles.tableText}>
-													<Box
-														sx={{
-															display: 'flex',
-															alignItems: 'center',
-															gap: '10px',
+					<ErrorBoundaryGuard>
+						<TableBody
+							sx={{
+								'& tr': {
+									color: theme.palette.primary.main,
+								},
+							}}
+						>
+							{isLoading ? (
+								<Loader colSpan={5} />
+							) : (
+								users && (
+									<>
+										{users.length > 0 ? (
+											users.map((row, key) => (
+												<TableRow key={key}>
+													<TableCell style={styles.tableText}>
+														<Box
+															sx={{
+																display: 'flex',
+																alignItems: 'center',
+																gap: '10px',
+															}}
+														>
+															<Avatar src={row.avatar} />
+															<span>
+																{row.firstname} {row.lastname}
+															</span>
+														</Box>
+													</TableCell>
+													<TableCell style={styles.tableText}>
+														{row.email}
+													</TableCell>
+													<TableCell style={styles.tableText}>
+														{row.kycLevel}
+													</TableCell>
+													<TableCell
+														style={{
+															...styles.tableText,
+															color: row.verified
+																? SUCCESS_COLOR
+																: DANGER_COLOR,
 														}}
 													>
-														<Avatar src={row.avatar} />
-														<span>
-															{row.firstname} {row.lastname}
-														</span>
-													</Box>
-												</TableCell>
-												<TableCell style={styles.tableText}>
-													{row.email}
-												</TableCell>
-												<TableCell style={styles.tableText}>
-													{row.kycLevel}
-												</TableCell>
-												<TableCell
-													style={{
-														...styles.tableText,
-														color: row.verified ? SUCCESS_COLOR : DANGER_COLOR,
-													}}
-												>
-													{row.verified ? 'Verified' : 'Not Verified'}
-												</TableCell>
-												<TableCell sx={{ maxWidth: '180px' }}>
-													<Box style={styles.verifyPushWrapper}>
-														{!row.verified && (
-															<CustomButton
-																loading={
-																	selectedUser &&
-																	selectedUser.id === row.id &&
-																	isVerifyingUser
-																		? true
-																		: false
-																}
-																onClick={() => setSelectUser(row)}
-																style={styles.verifyBtn as CSSProperties}
+														{row.verified ? 'Verified' : 'Not Verified'}
+													</TableCell>
+													<TableCell sx={{ maxWidth: '180px' }}>
+														<Box style={styles.verifyPushWrapper}>
+															{!row.verified && (
+																<CustomButton
+																	loading={
+																		selectedUser &&
+																		selectedUser.id === row.id &&
+																		isVerifyingUser
+																			? true
+																			: false
+																	}
+																	onClick={() => setSelectUser(row)}
+																	style={styles.verifyBtn as CSSProperties}
+																	size={'small'}
+																>
+																	Verify user
+																</CustomButton>
+															)}
+															<Button
+																onClick={() => navigate(LINKS.PushNotification)}
 																size={'small'}
+																style={styles.pushBtn as CSSProperties}
 															>
-																Verify user
-															</CustomButton>
-														)}
-														<Button
-															onClick={() => navigate(LINKS.PushNotification)}
-															size={'small'}
-															style={styles.pushBtn as CSSProperties}
-														>
-															Push notify
-														</Button>
-													</Box>
+																Push notify
+															</Button>
+														</Box>
+													</TableCell>
+												</TableRow>
+											))
+										) : (
+											<TableRow>
+												<TableCell colSpan={5}>
+													<Empty text={'No users'} />
 												</TableCell>
 											</TableRow>
-										))
-									) : (
-										<TableRow>
-											<TableCell colSpan={5}>
-												<Empty text={'No users'} />
-											</TableCell>
-										</TableRow>
-									)}
-								</>
-							)
-						)}
-					</TableBody>
+										)}
+									</>
+								)
+							)}
+						</TableBody>
+					</ErrorBoundaryGuard>
 				</Table>
 			</Box>
 		</>

@@ -1,8 +1,7 @@
-export * from './account';
 export * from './user';
 export * from './convert-airtime';
 export * from './coupon';
-export * from './data-plan';
+export * from './data';
 export * from './kyc';
 export * from './manager';
 export * from './network';
@@ -12,3 +11,5 @@ export * from './ticket';
 export * from './transactions';
 export * from './wallet';
 export * from './referral';
+export * from './settings';
+export * from './notification';

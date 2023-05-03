@@ -6,7 +6,7 @@ import { Box, useTheme, Typography, Switch } from '@mui/material';
 import TextInput from '../form-components/TextInput';
 import Button from '../button/custom-button';
 import { grey } from '@mui/material/colors';
-import { UserDetails, QueryKeys } from '../../utilities';
+import { User, QueryKeys } from '../../utilities';
 import TextArea from '../form-components/text-area';
 import { useAlert, useHandleError } from '../../hooks';
 import { suspendUser } from '../../api';
@@ -19,7 +19,7 @@ interface InitialValues {
 }
 
 type Props = {
-	user: UserDetails | null;
+	user: User | null;
 };
 
 const SuspendUserForm = ({ user }: Props) => {
@@ -50,8 +50,8 @@ const SuspendUserForm = ({ user }: Props) => {
 			if (data && data.success) {
 				setAlert({ message: data.message, type: 'success' });
 				resetForm();
-				queryClient.invalidateQueries(QueryKeys.AllUsers);
-				queryClient.invalidateQueries(QueryKeys.GetSingleUser);
+				queryClient.invalidateQueries(QueryKeys.Users);
+				queryClient.invalidateQueries(QueryKeys.User);
 				queryClient.invalidateQueries(QueryKeys.Statistics);
 			}
 		},
@@ -100,8 +100,8 @@ const SuspendUserForm = ({ user }: Props) => {
 				id: user?.id as string,
 			});
 			if (data && data.success) {
-				queryClient.invalidateQueries(QueryKeys.AllUsers);
-				queryClient.invalidateQueries(QueryKeys.GetSingleUser);
+				queryClient.invalidateQueries(QueryKeys.Users);
+				queryClient.invalidateQueries(QueryKeys.User);
 				queryClient.invalidateQueries(QueryKeys.Statistics);
 			}
 			setUnsuspending(false);

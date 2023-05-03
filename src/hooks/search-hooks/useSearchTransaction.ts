@@ -7,7 +7,7 @@ interface SearchPayload {
 	reference?: string;
 }
 
-const useSearchTransaction = () => {
+const useSearchTransaction = (callback?: () => void) => {
 	const alert = useAlert();
 	const handleError = useHandleError();
 
@@ -46,6 +46,7 @@ const useSearchTransaction = () => {
 				}
 
 				setSearch(data.payload);
+				typeof callback !== 'undefined' && callback();
 				// console.log(data.payload);
 			}
 		} catch (error) {

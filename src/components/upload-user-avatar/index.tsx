@@ -49,8 +49,9 @@ const UploadUserAvatar: React.FC<IUploadUserAvatar> = ({ managerId }) => {
 			);
 			const data = res.data;
 			if (data && data.success) {
+				const url = data.payload.photoUrl;
 				setLoading(false);
-				setPhotoUrl(data.payload.photoUrl);
+				setPhotoUrl(url);
 				alert({ message: data.message, type: 'success' });
 				setFile(null);
 				setPreviewImage('');

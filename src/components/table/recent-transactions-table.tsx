@@ -1,12 +1,18 @@
 import React, { useState } from 'react';
-import Table from '@mui/material/Table';
-import Box from '@mui/material/Box';
-import { Typography, useTheme } from '@mui/material';
-import TableBody from '@mui/material/TableBody';
-import TableCell, { tableCellClasses } from '@mui/material/TableCell';
-import { styled } from '@mui/material';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
+import {
+	Typography,
+	useTheme,
+	Box,
+	TableBody,
+	Table,
+	TableCell,
+	TableHead,
+	styled,
+	TableRow,
+} from '@mui/material';
+import { tableCellClasses } from '@mui/material/TableCell';
+
+import { grey } from '@mui/material/colors';
 import {
 	LIGHT_GRAY,
 	BOX_SHADOW,
@@ -15,7 +21,6 @@ import {
 	formatNumberToCurrency,
 	Transaction,
 } from '../../utilities';
-import { grey } from '@mui/material/colors';
 import Link from '../link';
 import Empty from '../empty/table-empty';
 import Loader from '../loader/table-loader';
@@ -63,7 +68,7 @@ const RecentTransactionsTable = () => {
 		queryKey: QueryKeys.RecentTransactions,
 		queryFn: () =>
 			allTransactions({
-				params: { sort: '-createdAt', limit: 4, populate: 'user' },
+				params: { sort: '-createdAt', limit: 4 },
 			}),
 	});
 
@@ -147,7 +152,7 @@ const RecentTransactionsTable = () => {
 
 const useStyles = (theme: any) => ({
 	container: {
-		border: `1px solid ${theme.palette.secondary.main}`,
+		border: `0.5px solid ${theme.palette.secondary.main}`,
 		padding: '1rem 0px',
 		backgroundColor: grey[50],
 		borderRadius: theme.spacing(2),

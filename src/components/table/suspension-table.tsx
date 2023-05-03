@@ -14,14 +14,14 @@ import {
 	StyledTableRow as TableRow,
 } from './components';
 import TableHeader from '../header/table-header';
-import { UserDetails } from '../../utilities/types';
+import { User } from '../../utilities/types';
 import Loader from '../loader/table-loader';
 import Empty from '../empty/table-empty';
 import UnsuspendUser from '../unsuspend-user';
 import CustomTableCell from './components/custom-table-cell';
 
 type Props = {
-	users: UserDetails[] | null;
+	users: User[] | null;
 	isLoading: boolean;
 };
 

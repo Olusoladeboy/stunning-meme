@@ -8,7 +8,7 @@ const Managers = () => {
 	const { isSearching, search, searchManager, clearSearch } =
 		useSearchManager();
 	const { data, isLoading } = useQueryHook({
-		queryKey: QueryKeys.AllManagers,
+		queryKey: QueryKeys.Managers,
 		queryFn: () =>
 			managers({
 				params: {

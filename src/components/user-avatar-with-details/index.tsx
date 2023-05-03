@@ -1,6 +1,6 @@
 import React, { CSSProperties } from 'react';
 import { Box, Avatar, Typography, useTheme } from '@mui/material';
-import { ManagerDetailsData, UserDetails } from '../../utilities/types';
+import { ManagerDetailsData, User } from '../../utilities/types';
 
 interface ManagerDetails extends ManagerDetailsData {
 	// role?: string;
@@ -8,7 +8,7 @@ interface ManagerDetails extends ManagerDetailsData {
 }
 
 type Props = {
-	user: UserDetails | null;
+	user: User | null;
 	userType?: 'user' | 'manager';
 };
 

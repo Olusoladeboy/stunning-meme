@@ -6,7 +6,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import UserAvatarWithDetails from '../avatar-with-details';
 import TransactionHistoryTable from '../table/user-transaction-table';
 import {
-	UserDetails,
+	User,
 	QueryKeys,
 	MAX_RECORDS,
 	LINKS,
@@ -18,7 +18,7 @@ import { useAppSelector } from '../../store/hooks';
 import Pagination from '../pagination';
 
 type Props = {
-	user: UserDetails | null;
+	user: User | null;
 };
 
 const UserTransaction = ({ user }: Props) => {

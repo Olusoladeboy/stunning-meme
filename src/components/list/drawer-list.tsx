@@ -101,7 +101,10 @@ const DrawerList = () => {
 	};
 
 	const styles = useStyles(theme);
-	const { isToggleDrawer } = useAppSelector((store) => store.appState);
+	const {
+		appState: { isToggleDrawer },
+		authState: { canViewStatistics },
+	} = useAppSelector((store) => store);
 	return (
 		<>
 			<Box style={styles.appLogoWrapper}>
@@ -211,24 +214,26 @@ const DrawerList = () => {
 						/>
 					}
 				/>
-				<ListItemButton
-					name={'Statistics'}
-					link={LINKS.Statistics}
-					isActive={
-						getActiveLink({ name: 'statistics', currentPath: pathname })
-							.isActive
-					}
-					icon={
-						<StatisticsIcon
-							color={
-								getActiveLink({ name: 'statistics', currentPath: pathname })
-									.isActive
-									? activeColor
-									: initialColor
-							}
-						/>
-					}
-				/>
+				{canViewStatistics && (
+					<ListItemButton
+						name={'Statistics'}
+						link={LINKS.Statistics}
+						isActive={
+							getActiveLink({ name: 'statistics', currentPath: pathname })
+								.isActive
+						}
+						icon={
+							<StatisticsIcon
+								color={
+									getActiveLink({ name: 'statistics', currentPath: pathname })
+										.isActive
+										? activeColor
+										: initialColor
+								}
+							/>
+						}
+					/>
+				)}
 				<ListItemButton
 					name={'Transactions'}
 					link={LINKS.Transactions}

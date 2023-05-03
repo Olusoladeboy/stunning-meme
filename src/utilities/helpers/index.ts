@@ -1,5 +1,4 @@
-import { Coupon, CouponType } from '../types';
-export { default as PrivateRoute } from './PrivateRoute';
+import { Amount, Coupon, CouponType } from '../types';
 export { default as ErrorBoundary } from './error-boundary';
 export { default as ScrollToTop } from './scroll-to-top';
 export * from './reg-expression';
@@ -77,4 +76,20 @@ export const getCoupon = (coupon: Coupon) => {
 			? formatNumberToCurrency(coupon.gift as string)
 			: '';
 	return `${coupon.code}-${gift}`;
+};
+
+export const cleanString = (value: string) => {
+	if (value) {
+		return value.replace(/_-*/gi, ' ');
+	}
+
+	return value;
+};
+
+export const checkAmount = (amount: number | string | Amount) => {
+	if (typeof amount === 'object') {
+		return amount.$numberDecimal;
+	}
+
+	return amount;
 };

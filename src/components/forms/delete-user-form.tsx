@@ -3,13 +3,13 @@ import { Box, useTheme, Typography, Switch } from '@mui/material';
 import { useMutation, useQueryClient } from 'react-query';
 // import Button from '../button';
 import { grey } from '@mui/material/colors';
-import { UserDetails, QueryKeys } from '../../utilities';
+import { QueryKeys, User } from '../../utilities';
 import Loader from '../loader';
 import { useAlert, useHandleError } from '../../hooks';
 import { activateOrDeativateUser } from '../../api';
 
 type Props = {
-	user: UserDetails | null;
+	user: User | null;
 };
 
 const DeleteUserForm = ({ user }: Props) => {
@@ -34,8 +34,8 @@ const DeleteUserForm = ({ user }: Props) => {
 			if (data && data.success) {
 				setAlert({ message: data.message, type: 'success' });
 
-				queryClient.invalidateQueries(QueryKeys.GetSingleUser);
-				queryClient.invalidateQueries(QueryKeys.AllUsers);
+				queryClient.invalidateQueries(QueryKeys.User);
+				queryClient.invalidateQueries(QueryKeys.Users);
 			}
 		},
 	});

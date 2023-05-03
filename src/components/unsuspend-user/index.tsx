@@ -2,16 +2,15 @@ import React, { useEffect, useState } from 'react';
 import { useMutation, useQueryClient } from 'react-query';
 import { Switch, ButtonProps } from '@mui/material';
 import Button from '../button/custom-button';
-import { QueryKey, UserDetails } from '../../utilities/types';
-import { useAlert } from '../../utilities/hooks';
-import Api from '../../utilities/api';
-import { useAppSelector } from '../../store/hooks';
+import { QueryKeys, User } from '../../utilities';
+import { useAlert, useHandleError } from '../../hooks';
+import { suspendUser } from '../../api';
 
 type Props = {
 	text?: string;
 	isSwitch?: boolean;
 	buttonProps?: ButtonProps;
-	user: UserDetails | null;
+	user: User | null;
 };
 
 const UnsuspendUserButton = ({
@@ -21,8 +20,8 @@ const UnsuspendUserButton = ({
 	user,
 }: Props) => {
 	const queryClient = useQueryClient();
+	const handleError = useHandleError();
 	const setAlert = useAlert();
-	const { token } = useAppSelector((store) => store.authState);
 	const [isSuspended, setSuspended] = useState(false);
 	useEffect(() => {
 		if (user) {
@@ -30,17 +29,19 @@ const UnsuspendUserButton = ({
 		}
 	}, [user, user?.suspended]);
 
-	const { isLoading, mutate } = useMutation(Api.User.SuspendUser, {
+	const { isLoading, mutate } = useMutation(suspendUser, {
 		onSettled: (data, error) => {
 			if (error) {
-				setAlert({ data: error, isError: true });
+				const response = handleError({ error });
+				if (response?.message)
+					setAlert({ message: response.message, type: 'error' });
 			}
 
 			if (data && data.success) {
-				setAlert({ data: data.message, type: 'success' });
-				queryClient.invalidateQueries(QueryKey.AllUsers);
-				queryClient.invalidateQueries(QueryKey.GetSingleUser);
-				queryClient.invalidateQueries(QueryKey.Statistics);
+				setAlert({ message: data.message, type: 'success' });
+				queryClient.invalidateQueries(QueryKeys.Users);
+				queryClient.invalidateQueries(QueryKeys.User);
+				queryClient.invalidateQueries(QueryKeys.Statistics);
 			}
 		},
 	});
@@ -48,7 +49,6 @@ const UnsuspendUserButton = ({
 	const handleUnSuspendUser = () => {
 		setSuspended(false);
 		mutate({
-			token: token as string,
 			data: { suspended: false },
 			id: user?.id as string,
 		});

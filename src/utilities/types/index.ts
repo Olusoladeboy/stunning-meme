@@ -6,7 +6,7 @@ export enum ThemeModeType {
 }
 
 export enum QueryKey {
-	LoginUserDetails = '@Query:Login_user_details',
+	LoginUser = '@Query:Login_user_details',
 	AllManagers = '@Query:All_manager',
 	AllUsers = '@Query:All_Users',
 	GetSingleUser = '@Query:Get_single_user',
@@ -48,34 +48,6 @@ export type LoginData = {
 	email?: string;
 	phone?: string;
 	password: string;
-};
-
-export type UserDetails = {
-	suspensionDuration?: { [key: string]: any };
-	suspendWithdrawal?: boolean;
-	userType?: string;
-	hasPin?: boolean;
-	isActive?: boolean;
-	biometricLogin?: boolean;
-	verified?: boolean;
-	bvnVerified?: boolean;
-	suspended?: boolean;
-	suspensionReason?: string;
-	deleted?: boolean;
-	restricted?: boolean;
-	twoFactorAuth?: boolean;
-	isLoggedIn?: boolean;
-	role?: string;
-	suspendWalletTransactions?: boolean;
-	firstname?: string;
-	lastname?: string;
-	email?: string;
-	username?: string;
-	phone?: string;
-	createdAt?: string;
-	id?: string;
-	avatar?: string;
-	kycLevel?: string;
 };
 
 export type LoginDetails = {
@@ -132,8 +104,9 @@ export enum EPins {
 
 export type AuthState = {
 	isAuthenticated: boolean;
-	user: UserDetails | null;
+	user: User | null;
 	token: string | null;
+	canViewStatistics: boolean;
 };
 
 export enum SettingsTab {
@@ -160,6 +133,19 @@ export interface ModalDetails {
 	isLoading?: boolean;
 	children?: React.ReactNode;
 	contentWidth?: string;
+}
+
+export interface IModalAlert {
+	type?: 'success' | 'error' | 'info';
+	title?: string;
+	message?: string;
+	primaryButtonText?: string;
+	secondaryButtonText?: string;
+	onClickPrimaryButton?: () => void;
+	onClickSecondaryButton?: () => void;
+	children?: ReactNode;
+	isLoading?: boolean;
+	closeModal?: () => void;
 }
 
 export interface IModal {
@@ -205,13 +191,13 @@ export interface AirtimeConversion {
 	return_amount: Amount | string;
 	phone_number: string;
 	network: NetworkData;
-	user: UserDetails;
+	user: User;
 	reference: string;
 	sentTo: string;
 	createdAt: Date;
 	updatedAt: Date;
 	id: string;
-	declinedBy: string | UserDetails;
+	declinedBy: string | User;
 	declinedDate: Date;
 }
 
@@ -233,12 +219,13 @@ export enum API_ENDPOINTS {
 	ConvertAirtime = '/convert-airtime',
 	Kyc = '/kyc',
 	Transaction = '/transaction',
+	Notification = '/notification',
 	Wallet = '/wallet',
 	Coupon = '/coupon',
 	Ticket = '/ticket',
 }
 
-export interface ManagerDetailsData extends UserDetails {
+export interface ManagerDetailsData extends User {
 	firstname: string;
 	lastname: string;
 	email: string;
@@ -247,11 +234,14 @@ export interface ManagerDetailsData extends UserDetails {
 
 export type NetworkData = {
 	name?: string;
+	id?: string;
 	rate?: string;
 	number?: string;
 	ussd?: string;
 	isActive?: boolean;
 	createdAt?: Date;
+	no_of_dataTypes?: string;
+	no_of_plans?: string;
 };
 
 export type KycData = {
@@ -264,14 +254,15 @@ export type KycData = {
 
 export type DataPlan = {
 	name?: string;
-	network?: string;
-	amount: string | { $numberDecimal: string };
-	type: string;
-	code: string;
-	shortcode?: string;
-	shortcode_sms?: string;
+	amount?: string | Amount;
+	code?: string;
 	isActive?: boolean;
 	id?: string;
+	network?: NetworkData | string;
+	merchant_amount?: Amount | string;
+	data_unit?: string;
+	data_source?: string;
+	dataType?: DataType | string;
 };
 
 export enum DataPlanType {
@@ -287,7 +278,7 @@ export interface DataType {
 	name?: string;
 	createdAt?: string;
 	no_of_plans?: number;
-	network?: string;
+	network?: NetworkData | string;
 }
 
 export type SuspendUser = {
@@ -325,7 +316,7 @@ export interface Coupon {
 	type?: string;
 	expiresIn?: string;
 	gift?: Amount | string;
-	createdBy?: UserDetails;
+	createdBy?: User;
 	createdAt?: string;
 	id?: string;
 	status?: string;
@@ -437,36 +428,47 @@ export interface CloseTicket {
 	status: string;
 }
 
+export interface ResolveTicket {
+	code: string;
+	strictCheck: boolean;
+}
+
 export enum TicketReplyType {
 	Staff = 'Staff',
 	User = 'User',
 }
 
 export type User = {
-	id: string;
-	suspensionDuration: { [key: string]: any };
-	userType: string;
-	biometricLogin: boolean;
-	verified: boolean;
-	bvnVerified: boolean;
-	suspended: boolean;
-	deleted: boolean;
-	restricted: boolean;
-	twoFactorAuth: boolean;
-	isLoggedIn: boolean;
-	suspendWalletTransactions: boolean;
-	firstname: string;
-	lastname: string;
-	email: string;
-	kycLevel: number;
-	createdAt: Date;
-	username: string;
-	phone: string;
-	hasPin: boolean;
-	manager: string | { [key: string]: any };
-	defaultBank: string;
-	photoUrl: string | null;
-	code: string;
+	suspensionDuration?: { [key: string]: any };
+	suspendWithdrawal?: boolean;
+	userType?: string;
+	hasPin?: boolean;
+	isActive?: boolean;
+	biometricLogin?: boolean;
+	verified?: boolean;
+	bvnVerified?: boolean;
+	suspended?: boolean;
+	suspensionReason?: string;
+	deleted?: boolean;
+	restricted?: boolean;
+	twoFactorAuth?: boolean;
+	isLoggedIn?: boolean;
+	role?: string;
+	suspendWalletTransactions?: boolean;
+	firstname?: string;
+	lastname?: string;
+	email?: string;
+	username?: string;
+	phone?: string;
+	createdAt?: string;
+	id?: string;
+	avatar?: string;
+	kycLevel?: string;
+	manager?: User;
+	defaultBank?: string;
+	photoUrl?: string | null;
+	no_of_referees?: number;
+	defaultPasswordChanged?: boolean;
 };
 
 export interface PinData {
@@ -503,6 +505,7 @@ export interface Transaction {
 	number: string;
 	createdBy: string;
 	reference: string;
+	summary?: string;
 	user: User;
 	amount: string | Amount;
 	balanceBefore?: string | Amount;
@@ -528,6 +531,9 @@ export interface Transaction {
 		updatedAt: string;
 	};
 	electricity_token?: ElectricityToken;
+	withdrawalChannel?: string;
+	accountNumber?: string;
+	paymentGateway?: string;
 }
 
 export interface IReferral {
@@ -537,4 +543,43 @@ export interface IReferral {
 	createdAt: string;
 	updatedAt: string;
 	id: string;
+}
+
+export interface Metadata {
+	total: number;
+	limit: number;
+	count: number;
+	skip: number;
+	page: number;
+	sort: string;
+}
+
+export interface DataResponse<T> {
+	success: boolean;
+	message: string;
+	metadata?: Metadata;
+	payload: T;
+}
+
+export interface Settings {
+	name?: string;
+	value?: string;
+	createdAt?: string;
+	updatedAt?: string;
+	id?: string;
+}
+
+export interface Notification {
+	subject?: string;
+	message?: string;
+	imageUrl?: string;
+	type?: string;
+	device?: string;
+	click_action?: string;
+	dispatchUserType?: string;
+	users?: string[];
+	code?: string;
+	createdAt?: string;
+	updatedAt?: string;
+	id?: string;
 }

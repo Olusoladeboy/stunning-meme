@@ -1,7 +1,9 @@
 import React, { CSSProperties, useState } from 'react';
-import { Box, useTheme } from '@mui/material';
+import { Box, Typography, useTheme } from '@mui/material';
 import { grey } from '@mui/material/colors';
 import { AddCircle } from '@mui/icons-material';
+import { useQuery } from 'react-query';
+import { useParams } from 'react-router-dom';
 import {
 	Layout,
 	BackButton,
@@ -10,25 +12,54 @@ import {
 	DataTypesTable,
 	DataTypeForm,
 } from '../../components';
-import { BOX_SHADOW } from '../../utilities';
+import { BOX_SHADOW, QueryKeys } from '../../utilities';
+import { dataTypes } from '../../api';
 
 const DataTypes = () => {
 	const theme = useTheme();
+	const { network, dataTypeName } = useParams();
 	const styles = useStyles(theme);
 	const [isDisplayModal, setDisplayModal] = useState<boolean>(false);
+
+	const { isLoading, data } = useQuery(
+		[QueryKeys.DataTypes, network],
+		() =>
+			dataTypes({
+				sort: '-createdAt',
+				network,
+			}),
+		{
+			enabled: !!network,
+		}
+	);
+
 	return (
 		<Layout>
 			{isDisplayModal && (
 				<ModalLayout
 					closeModal={() => setDisplayModal(false)}
-					title={'Add new plan'}
+					title={'Add new type'}
 				>
 					<DataTypeForm callback={() => setDisplayModal(false)} />
 				</ModalLayout>
 			)}
 			<Box style={styles.container as CSSProperties}>
 				<Box style={styles.header}>
-					<BackButton />
+					<Box
+						sx={{
+							display: 'flex',
+							alignItems: 'center',
+							gap: ['15px', '30px'],
+						}}
+					>
+						<BackButton />
+						<Typography
+							sx={{ fontWeight: 'bold', textTransform: 'capitalize' }}
+							variant={'h5'}
+						>
+							{dataTypeName} Data Type
+						</Typography>
+					</Box>
 					<Button
 						onClick={() => setDisplayModal(true)}
 						startIcon={<AddCircle />}
@@ -37,7 +68,7 @@ const DataTypes = () => {
 						Add new type
 					</Button>
 				</Box>
-				<DataTypesTable />
+				<DataTypesTable isLoading={isLoading} data={data && data.payload} />
 			</Box>
 		</Layout>
 	);

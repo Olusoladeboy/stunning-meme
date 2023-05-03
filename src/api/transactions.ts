@@ -1,5 +1,5 @@
 import apiRequest from './apiRequest';
-import { ENDPOINTS } from '../utilities';
+import { DataResponse, ENDPOINTS, Transaction } from '../utilities';
 
 export const allTransactions = async ({
 	params,
@@ -29,7 +29,7 @@ export const transactUser = async ({
 }: {
 	data: any;
 	id: string;
-}): Promise<any> =>
+}): Promise<DataResponse<Transaction>> =>
 	apiRequest({
 		method: 'POST',
 		url: `${ENDPOINTS.Transaction}/${id}`,

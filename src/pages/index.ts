@@ -1,6 +1,6 @@
 export { default as Login } from './auth/login';
 export { default as Dashboard } from './dashboard';
-export { default as ForgetPassword } from './auth/forget-password';
+export { default as ForgetPassword } from './auth/change-password';
 export { default as CreateNewPassword } from './auth/create-new-password';
 export { default as Users } from './users';
 export { default as UserProfile } from './users/profile';
@@ -24,7 +24,8 @@ export { default as Dispute } from './dispute';
 export { default as Admin } from './admin';
 export { default as Message } from './dispute/message';
 export { default as DataTypes } from './data-type';
-export { default as Messages } from './messages';
 export { default as AutoConversions } from './conversions/auto-conversions';
 export { default as Statistics } from './statistics';
 export { default as AllConversions } from './conversions/all-conversions';
+export { default as CreateNotification } from './notifications/create-notification';
+export { default as ChangePassword } from './auth/change-password';

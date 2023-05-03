@@ -1,17 +1,11 @@
 import React from 'react';
 import { Typography, styled, Box } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import moment from 'moment';
 import ModalWrapper from './Wrapper';
 import { grey } from '@mui/material/colors';
-import {
-	IModal,
-	Transaction,
-	formatNumberToCurrency,
-	LINKS,
-	getCoupon,
-} from '../../utilities';
+import { IModal, Transaction, LINKS } from '../../utilities';
 import Button from '../button';
+import TransactionDetails from '../transaction-details';
 
 interface Props extends IModal {
 	transaction: Transaction;
@@ -23,13 +17,6 @@ const TransactionDetailsModal: React.FC<Props> = ({
 }) => {
 	const navigate = useNavigate();
 
-	let $coupon = '';
-	const discount_code =
-		transaction.transaction && transaction.transaction.discount_code;
-	if (discount_code && typeof discount_code !== 'string') {
-		$coupon = getCoupon(discount_code);
-	}
-
 	return (
 		<ModalWrapper
 			sx={{ maxWidth: '760px' }}
@@ -39,79 +26,11 @@ const TransactionDetailsModal: React.FC<Props> = ({
 			<Typography sx={{ marginBottom: '2rem' }} variant={'h4'}>
 				Transaction Details
 			</Typography>
-			<Grid>
-				<GridItem>
-					<BoldText variant={'body1'}>Type</BoldText>
-					<Typography variant={'body1'}>
-						{transaction.transaction
-							? transaction.transaction.service
-							: transaction?.service}
-					</Typography>
-				</GridItem>
-				<GridItem>
-					<BoldText variant={'body1'}>Reference</BoldText>
-					<Typography variant={'body1'}>{transaction.reference}</Typography>
-				</GridItem>
-				{/* {transaction.dataType && (
-					<GridItem>
-						<BoldText variant={'body1'}>Data Type</BoldText>
-						<Typography variant={'body1'}>
-							{transaction?.dataType.name}
-						</Typography>
-					</GridItem>
-				)} */}
-				{/* {transaction.plan && (
-					<GridItem>
-						<BoldText variant={'body1'}>Data Plan</BoldText>
-						<Typography variant={'body1'}>{transaction?.plan.name}</Typography>
-					</GridItem>
-				)} */}
-				<GridItem>
-					<BoldText variant={'body1'}>Time</BoldText>
-					<Typography variant={'body1'}>
-						{moment.utc(transaction?.createdAt).format('LT')}
-					</Typography>
-				</GridItem>
-				<GridItem>
-					<BoldText variant={'body1'}>Phone</BoldText>
-					<Typography variant={'body1'}>
-						{transaction?.number || transaction?.user.phone}
-					</Typography>
-				</GridItem>
-				<GridItem>
-					<BoldText variant={'body1'}>Amount</BoldText>
-					<Typography variant={'body1'}>
-						{formatNumberToCurrency(
-							typeof transaction.amount !== 'string'
-								? transaction.amount.$numberDecimal
-								: transaction.amount
-						)}
-					</Typography>
-				</GridItem>
-				{$coupon && (
-					<GridItem>
-						<BoldText variant={'body1'}>Coupon</BoldText>
-						<Typography variant={'body1'}>{$coupon}</Typography>
-					</GridItem>
-				)}
-				<GridItem>
-					<BoldText variant={'body1'}>Email</BoldText>
-					<Typography variant={'body1'}>{transaction?.user.email}</Typography>
-				</GridItem>
-				<GridItem>
-					<BoldText variant={'body1'}>Date</BoldText>
-					<Typography variant={'body1'}>
-						{moment.utc(transaction?.createdAt).format('l')}
-					</Typography>
-				</GridItem>
-				<GridItem>
-					<BoldText variant={'body1'}>Status</BoldText>
-					<Typography variant={'body1'}>{transaction.status}</Typography>
-				</GridItem>
-			</Grid>
+			<TransactionDetails transaction={transaction} />
+
 			<ButtonWrapper>
 				<ButtonOutlined
-					onClick={() => navigate(`${LINKS.User}/${transaction.user.id}`)}
+					onClick={() => navigate(`${LINKS.Users}/${transaction.user.id}`)}
 				>
 					View user profile
 				</ButtonOutlined>
@@ -120,24 +39,6 @@ const TransactionDetailsModal: React.FC<Props> = ({
 		</ModalWrapper>
 	);
 };
-
-const Grid = styled(Box)(({ theme }) => ({
-	display: 'grid',
-	gridTemplateColumns: '1fr',
-	gap: '20px',
-	[theme.breakpoints.up('md')]: {
-		gridTemplateColumns: 'repeat(2, 1fr)',
-	},
-}));
-
-const BoldText = styled(Typography)(({ theme }) => ({
-	fontWeight: 'bold',
-}));
-
-const GridItem = styled(Box)(({ theme }) => ({
-	display: 'grid',
-	gridTemplateColumns: '3fr 7fr',
-}));
 
 const ButtonWrapper = styled(Box)(({ theme }) => ({
 	display: 'flex',

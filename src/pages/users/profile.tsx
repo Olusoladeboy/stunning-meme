@@ -22,16 +22,12 @@ import {
 	LINKS,
 	UserNavList,
 	QueryKeys,
-	UserDetails,
+	User,
 } from '../../utilities';
 import { useAppSelector } from '../../store/hooks';
 import ErrorBoundary from '../../utilities/helpers/error-boundary';
 import { useHandleError, useAlert } from '../../hooks';
 import { users } from '../../api';
-
-interface User extends UserDetails {
-	manager: any;
-}
 
 const Profile = () => {
 	const theme = useTheme();
@@ -40,7 +36,7 @@ const Profile = () => {
 	const styles = useStyles(theme);
 	const { id } = useParams();
 	const { token } = useAppSelector((store) => store.authState);
-	const [userDetails, setUserDetails] = useState<null | User>(null);
+	const [user, setUser] = useState<null | User>(null);
 	const [isDisplayModal, setDisplayModal] = useState<boolean>(false);
 
 	const location = useLocation();
@@ -89,7 +85,7 @@ const Profile = () => {
 	}, [tab]);
 
 	const { isLoading, data } = useQuery(
-		QueryKeys.GetSingleUser,
+		QueryKeys.User,
 		() =>
 			users({
 				params: {
@@ -106,7 +102,7 @@ const Profile = () => {
 						alert({ message: response.message, type: 'error' });
 				}
 				if (data && data.success) {
-					setUserDetails(data.payload[0]);
+					setUser(data.payload[0]);
 				}
 			},
 		}
@@ -120,10 +116,7 @@ const Profile = () => {
 					hasCloseButton
 					closeModal={() => setDisplayModal(false)}
 				>
-					<AssignManagerForm
-						close={() => setDisplayModal(false)}
-						userDetails={userDetails}
-					/>
+					<AssignManagerForm close={() => setDisplayModal(false)} User={user} />
 				</ModalLayout>
 			)}
 			<Layout>
@@ -197,10 +190,10 @@ const Profile = () => {
 									sx={{ padding: { xs: '0px 1rem', md: '0px 2rem' } }}
 									hidden={currentTab !== UserNavList.Manager}
 								>
-									{userDetails && userDetails.manager ? (
+									{user && user.manager ? (
 										<UserManagerInfo
 											changeManager={() => setDisplayModal(true)}
-											manager={userDetails.manager}
+											manager={user.manager}
 										/>
 									) : (
 										<Box>

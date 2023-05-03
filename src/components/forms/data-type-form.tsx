@@ -1,19 +1,15 @@
 import React, { CSSProperties } from 'react';
 import { Box, useTheme, Typography } from '@mui/material';
+import { useParams } from 'react-router-dom';
 import { useFormik } from 'formik';
+import * as yup from 'yup';
 import { useMutation, useQueryClient } from 'react-query';
 import TextInput from '../form-components/TextInput';
 import { grey } from '@mui/material/colors';
-import {
-	NetworkData as INetworkData,
-	QueryKey,
-	DataType,
-} from '../../utilities';
-import ValidationSchema from '../../utilities/validationSchema';
-import Button from '../button/custom-button';
-import Api from '../../utilities/api';
-import { useAppSelector } from '../../store/hooks';
-import { useAlert } from '../../utilities/hooks';
+import { DataType, QueryKeys } from '../../utilities';
+import Button from '../button';
+import { useAlert, useHandleError } from '../../hooks';
+import { createDataTypes } from '../../api';
 
 type Props = {
 	isEdit?: boolean;
@@ -23,83 +19,57 @@ type Props = {
 
 const DataTypeForm: React.FC<Props> = ({ isEdit = false, callback, type }) => {
 	const theme = useTheme();
+	const { network } = useParams();
+	const handleError = useHandleError();
 	const setAlert = useAlert();
 	const styles = useStyles(theme);
 	const queryClient = useQueryClient();
-	const { token } = useAppSelector((store) => store.authState);
 
 	const initialValues: DataType = {
 		name: '',
 	};
 
-	const { isLoading, mutate: createNetwork } = useMutation(
-		Api.Network.CreateNetwork,
+	const validationSchema = yup.object().shape({
+		name: yup.string().required('Enter data type name'),
+	});
+
+	const { isLoading, mutate: mutateCreateDataType } = useMutation(
+		createDataTypes,
 		{
 			onSettled: (data, error) => {
 				if (error) {
-					setAlert({ data: error, type: 'error' });
+					const response = handleError({ error });
+					if (response?.message)
+						setAlert({ message: response.message, type: 'error' });
 				}
 
 				if (data && data.success) {
 					setAlert({
-						data: data.message,
+						message: data.message,
 						type: 'success',
 					});
-					queryClient.invalidateQueries(QueryKey.DataNetwork);
-					queryClient.invalidateQueries(QueryKey.AirtimeNetwork);
-					queryClient.invalidateQueries(QueryKey.ConvertNetwork);
+					queryClient.invalidateQueries(QueryKeys.DataTypes);
+					queryClient.invalidateQueries(QueryKeys.DataNetwork);
 					typeof callback !== 'undefined' && callback();
 				}
 			},
 		}
 	);
 
-	const handleMutateNetwork = (values: DataType) => {
-		const { name } = values;
-
-		// if (isEdit && network) {
-		// 	return updateNetwork({
-		// 		url,
-		// 		data: updateDataPayload,
-		// 		token: token as string,
-		// 		id: network.id as string,
-		// 	});
-		// }
-
-		// createNetwork({
-		// 	url,
-		// 	data: createDataPayload,
-		// 	token: token as string,
-		// });
-	};
-
-	const { isLoading: isUpdating, mutate: updateNetwork } = useMutation(
-		Api.Network.UpdateNetwork,
-		{
-			onSettled: (data, error) => {
-				if (error) {
-					setAlert({ data: error, type: 'error' });
-				}
-
-				if (data && data.success) {
-					setAlert({
-						data: data.message,
-						type: 'success',
-					});
-					queryClient.invalidateQueries(QueryKey.AirtimeNetwork);
-					queryClient.invalidateQueries(QueryKey.ConvertNetwork);
-					queryClient.invalidateQueries(QueryKey.DataNetwork);
-					typeof callback !== 'undefined' && callback();
-				}
-			},
-		}
-	);
-
+	/*
+	 *Create DataType
+	 */
 	const { errors, touched, values, handleChange, handleSubmit } = useFormik({
 		initialValues: type ? type : initialValues,
-		// validationSchema,
+		validationSchema,
 		onSubmit: (values) => {
-			// handleMutateNetwork(values);
+			if (isEdit) {
+				return;
+			}
+
+			const payload = { ...values, network };
+
+			mutateCreateDataType(payload);
 		},
 	});
 
@@ -134,7 +104,7 @@ const DataTypeForm: React.FC<Props> = ({ isEdit = false, callback, type }) => {
 					e.preventDefault();
 					handleSubmit();
 				}}
-				loading={isLoading || isUpdating}
+				loading={isLoading}
 				size={'large'}
 				style={styles.btn}
 			>

@@ -185,17 +185,15 @@ export enum NetworkPage {
 	CONVERSION_NETWORK = 'Conversion network',
 }
 
-export interface AirtimeConversion {
+export interface AirtimeConversion extends Transaction {
 	amount: Amount | string;
-	status: TransactionStatus;
 	return_amount: Amount | string;
 	phone_number: string;
 	network: NetworkData;
 	user: User;
 	reference: string;
 	sentTo: string;
-	createdAt: Date;
-	updatedAt: Date;
+
 	id: string;
 	declinedBy: string | User;
 	declinedDate: Date;
@@ -504,7 +502,9 @@ export interface Transaction {
 	service: string;
 	number: string;
 	createdBy: string;
+	phone_number?: string;
 	reference: string;
+	network?: string | NetworkData;
 	summary?: string;
 	user: User;
 	amount: string | Amount;
@@ -512,7 +512,8 @@ export interface Transaction {
 	balanceAfter?: string | Amount;
 	name: string;
 	type: string;
-	createdAt: string;
+	createdAt: Date;
+	updatedAt: Date;
 	pin_data?: PinData;
 	pin?: string;
 	pins?: EducationPin[];
@@ -534,6 +535,10 @@ export interface Transaction {
 	withdrawalChannel?: string;
 	accountNumber?: string;
 	paymentGateway?: string;
+	return_amount: Amount | string;
+	sentTo: string | User;
+	declinedBy: string | User;
+	declinedDate: Date;
 }
 
 export interface IReferral {
@@ -582,4 +587,13 @@ export interface Notification {
 	createdAt?: string;
 	updatedAt?: string;
 	id?: string;
+}
+
+export interface AuditLog {
+	user: string | User;
+	action: string;
+	details: string;
+	createdAt: Date;
+	updatedAt: Date;
+	id: string;
 }

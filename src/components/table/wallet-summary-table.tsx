@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
 	Table,
 	Box,
@@ -13,11 +13,14 @@ import {
 	Transaction,
 	formatNumberToCurrency,
 	LIGHT_GRAY,
+	checkTransactionAmount,
+	checkAmount,
 } from '../../utilities';
 import Loader from '../loader/table-loader';
 import Empty from '../empty/table-empty';
 
 import CustomTableCell from './components/custom-table-cell';
+import TransactionDetailsModal from '../modal/transaction-details-modal';
 
 type Props = {
 	transactions: Transaction[] | null;
@@ -27,9 +30,17 @@ type Props = {
 const WalletSummaryTable = ({ transactions, isLoading }: Props) => {
 	const theme = useTheme();
 	const styles = useStyles(theme);
+	const [selectedTransaction, setSelectedTransaction] =
+		useState<Transaction | null>(null);
 
 	return (
 		<Box sx={{ overflow: 'auto' }}>
+			{selectedTransaction && (
+				<TransactionDetailsModal
+					closeModal={() => setSelectedTransaction(null)}
+					transaction={selectedTransaction}
+				/>
+			)}
 			<Table sx={{ overflow: 'auto' }} stickyHeader>
 				<TableHead
 					sx={{
@@ -64,36 +75,37 @@ const WalletSummaryTable = ({ transactions, isLoading }: Props) => {
 							<>
 								{transactions.length > 0 ? (
 									transactions.map((row: Transaction) => (
-										<StyledTableRow key={row.id}>
+										<StyledTableRow
+											onClick={() => setSelectedTransaction(row)}
+											key={row.id}
+										>
 											<StyledTableCell style={styles.text}>
 												{row.reference || 'No transaction reference'}
 											</StyledTableCell>
 											<StyledTableCell style={styles.text}>
+												{formatNumberToCurrency(checkAmount(row.amount))}
+											</StyledTableCell>
+											<StyledTableCell style={styles.text}>
+												{row.transaction
+													? row.transaction.service
+													: row.service
+													? row.service
+													: 'No Available Service'}
+											</StyledTableCell>
+											<StyledTableCell style={styles.text}>
 												{formatNumberToCurrency(
-													typeof row.amount !== 'string'
-														? row.amount.$numberDecimal
-														: row.amount
+													checkTransactionAmount({
+														transaction: row,
+														field: 'balanceBefore',
+													})
 												)}
 											</StyledTableCell>
 											<StyledTableCell style={styles.text}>
-												{row.service || 'No Available Service'}
-											</StyledTableCell>
-											<StyledTableCell style={styles.text}>
 												{formatNumberToCurrency(
-													row.transaction
-														? typeof row.transaction.balanceBefore === 'object'
-															? row.transaction.balanceBefore.$numberDecimal
-															: row.transaction.balanceBefore
-														: 0
-												)}
-											</StyledTableCell>
-											<StyledTableCell style={styles.text}>
-												{formatNumberToCurrency(
-													row.transaction
-														? typeof row.transaction.balanceAfter === 'object'
-															? row.transaction.balanceAfter.$numberDecimal
-															: row.transaction.balanceAfter
-														: 0
+													checkTransactionAmount({
+														transaction: row,
+														field: 'balanceAfter',
+													})
 												)}
 											</StyledTableCell>
 

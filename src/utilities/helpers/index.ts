@@ -93,3 +93,19 @@ export const checkAmount = (amount: number | string | Amount) => {
 
 	return amount;
 };
+
+export const checkTransactionAmount = ({
+	transaction,
+	field,
+}: {
+	transaction: any;
+	field: string;
+}) => {
+	if (transaction && transaction.transaction) {
+		return checkAmount(transaction.transaction[field]);
+	}
+
+	if (transaction[field]) return checkAmount(transaction[field]);
+
+	return 0;
+};

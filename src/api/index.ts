@@ -13,3 +13,4 @@ export * from './wallet';
 export * from './referral';
 export * from './settings';
 export * from './notification';
+export * from './audit-log';

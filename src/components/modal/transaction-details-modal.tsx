@@ -9,11 +9,13 @@ import TransactionDetails from '../transaction-details';
 
 interface Props extends IModal {
 	transaction: Transaction;
+	isDisplayButtons?: boolean;
 }
 
 const TransactionDetailsModal: React.FC<Props> = ({
 	closeModal,
 	transaction,
+	isDisplayButtons = false,
 }) => {
 	const navigate = useNavigate();
 
@@ -28,14 +30,16 @@ const TransactionDetailsModal: React.FC<Props> = ({
 			</Typography>
 			<TransactionDetails transaction={transaction} />
 
-			<ButtonWrapper>
-				<ButtonOutlined
-					onClick={() => navigate(`${LINKS.Users}/${transaction.user.id}`)}
-				>
-					View user profile
-				</ButtonOutlined>
-				<DoneButton onClick={closeModal}>Done</DoneButton>
-			</ButtonWrapper>
+			{isDisplayButtons && (
+				<ButtonWrapper>
+					<ButtonOutlined
+						onClick={() => navigate(`${LINKS.Users}/${transaction.user.id}`)}
+					>
+						View user profile
+					</ButtonOutlined>
+					<DoneButton onClick={closeModal}>Done</DoneButton>
+				</ButtonWrapper>
+			)}
 		</ModalWrapper>
 	);
 };

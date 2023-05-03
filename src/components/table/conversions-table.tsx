@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
 	TableBody,
 	TableHead,
@@ -11,15 +11,21 @@ import {
 import { green, grey, red } from '@mui/material/colors';
 import { useMutation, useQueryClient } from 'react-query';
 import { StyledTableCell, StyledTableRow } from './components';
-import { TransactionStatus, formatNumberToCurrency } from '../../utilities';
+import {
+	Transaction,
+	TransactionStatus,
+	formatNumberToCurrency,
+	STATUS,
+	QueryKeys,
+} from '../../utilities';
 import TableLoader from '../loader/table-loader';
 import Empty from '../empty/table-empty';
 import SearchInput from '../form-components/search-input';
 import CustomTableCell from './components/custom-table-cell';
 import { updateConvertAirtimeStatus } from '../../api';
-import { useHandleError, useAlert } from '../../hooks';
-import { STATUS, AirtimeConversion, QueryKeys } from '../../utilities';
 import Loader from '../loader';
+import TransactionDetailsModal from '../modal/transaction-details-modal';
+import { useAlert, useHandleError } from '../../hooks';
 
 interface UpdateStatusPayload {
 	id: string;
@@ -27,7 +33,7 @@ interface UpdateStatusPayload {
 }
 
 type Props = {
-	conversions: AirtimeConversion[] | null;
+	conversions: Transaction[] | null;
 	isLoading?: boolean;
 	handleSort?: (filter: string) => void;
 	handleSearch?: (search: string) => void;
@@ -50,6 +56,9 @@ const ConversionsTable = ({
 	const handleError = useHandleError();
 	const alert = useAlert();
 	const queryClient = useQueryClient();
+
+	const [selectedTransaction, setSelectedTransaction] =
+		useState<Transaction | null>(null);
 
 	const handleSortRecord = (field: string) => {
 		typeof handleSort !== 'undefined' && handleSort(field);
@@ -89,6 +98,13 @@ const ConversionsTable = ({
 
 	return (
 		<Container>
+			{selectedTransaction && (
+				<TransactionDetailsModal
+					closeModal={() => setSelectedTransaction(null)}
+					transaction={selectedTransaction}
+					isDisplayButtons
+				/>
+			)}
 			{isUpdatingStatus && <Loader />}
 			{isDisplaySearchField && (
 				<SearchContainer>
@@ -162,83 +178,83 @@ const ConversionsTable = ({
 							conversions && (
 								<>
 									{conversions.length > 0 ? (
-										conversions.map(
-											(conversion: AirtimeConversion, key: number) => {
-												return (
-													<StyledTableRow key={conversion.id}>
-														<StyledTableCell style={styles.text}>
-															{conversion.user && conversion.user.firstname}{' '}
-															{conversion.user && conversion.user.lastname}
-														</StyledTableCell>
-														<StyledTableCell style={styles.text}>
-															{conversion.reference}
-														</StyledTableCell>
-														<StyledTableCell style={styles.text}>
-															{conversion.network.name}
-														</StyledTableCell>
-														<StyledTableCell style={styles.text}>
-															{conversion.phone_number}
-														</StyledTableCell>
-														<StyledTableCell style={styles.text}>
-															{formatNumberToCurrency(
-																typeof conversion.amount === 'object'
-																	? conversion.amount.$numberDecimal
-																	: conversion.amount
-															)}
-														</StyledTableCell>
-														<StyledTableCell style={styles.text}>
-															{formatNumberToCurrency(
-																typeof conversion.return_amount === 'object'
-																	? conversion.return_amount.$numberDecimal
-																	: conversion.return_amount
-															)}
-														</StyledTableCell>
-														<StyledTableCell style={styles.text}>
-															{/* {conversion.status} */}
-															{conversion.status ===
-															TransactionStatus.APPROVED ? (
-																TransactionStatus.APPROVED
-															) : conversion.status ===
-															  TransactionStatus.DECLINED ? (
-																TransactionStatus.DECLINED
-															) : conversionType === 'auto' ? (
-																conversion.status
-															) : (
-																<Box
-																	sx={{
-																		display: 'flex',
-																		gap: theme.spacing(2),
-																	}}
+										conversions.map((conversion: Transaction, key: number) => {
+											return (
+												<StyledTableRow
+													onClick={() => setSelectedTransaction(conversion)}
+													key={conversion.id}
+												>
+													<StyledTableCell style={styles.text}>
+														{conversion.user && conversion.user.firstname}{' '}
+														{conversion.user && conversion.user.lastname}
+													</StyledTableCell>
+													<StyledTableCell style={styles.text}>
+														{conversion.reference}
+													</StyledTableCell>
+													<StyledTableCell style={styles.text}>
+														{typeof conversion.network === 'object' &&
+															conversion.network.name}
+													</StyledTableCell>
+													<StyledTableCell style={styles.text}>
+														{conversion.phone_number}
+													</StyledTableCell>
+													<StyledTableCell style={styles.text}>
+														{formatNumberToCurrency(
+															typeof conversion.amount === 'object'
+																? conversion.amount.$numberDecimal
+																: conversion.amount
+														)}
+													</StyledTableCell>
+													<StyledTableCell style={styles.text}>
+														{formatNumberToCurrency(
+															typeof conversion.return_amount === 'object'
+																? conversion.return_amount.$numberDecimal
+																: conversion.return_amount
+														)}
+													</StyledTableCell>
+													<StyledTableCell style={styles.text}>
+														{/* {conversion.status} */}
+														{conversion.status === STATUS.APPROVED ? (
+															TransactionStatus.APPROVED
+														) : conversion.status === STATUS.DECLINED ? (
+															STATUS.DECLINED
+														) : conversionType === 'auto' ? (
+															conversion.status
+														) : (
+															<Box
+																sx={{
+																	display: 'flex',
+																	gap: theme.spacing(2),
+																}}
+															>
+																<ApproveButton
+																	onClick={() =>
+																		handleUpdateStatus({
+																			id: conversion.id,
+																			status: STATUS.APPROVED,
+																		})
+																	}
+																	size={'small'}
 																>
-																	<ApproveButton
-																		onClick={() =>
-																			handleUpdateStatus({
-																				id: conversion.id,
-																				status: STATUS.APPROVED,
-																			})
-																		}
-																		size={'small'}
-																	>
-																		Approve
-																	</ApproveButton>
-																	<DeclineButton
-																		onClick={() =>
-																			handleUpdateStatus({
-																				id: conversion.id,
-																				status: STATUS.DECLINED,
-																			})
-																		}
-																		size={'small'}
-																	>
-																		Decline
-																	</DeclineButton>
-																</Box>
-															)}
-														</StyledTableCell>
-													</StyledTableRow>
-												);
-											}
-										)
+																	Approve
+																</ApproveButton>
+																<DeclineButton
+																	onClick={() =>
+																		handleUpdateStatus({
+																			id: conversion.id,
+																			status: STATUS.DECLINED,
+																		})
+																	}
+																	size={'small'}
+																>
+																	Decline
+																</DeclineButton>
+															</Box>
+														)}
+													</StyledTableCell>
+												</StyledTableRow>
+											);
+										})
 									) : (
 										<Empty colSpan={7} text={'No Airtime Convert'} />
 									)}

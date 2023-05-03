@@ -51,6 +51,7 @@ const TransactionsTable = ({ data, isLoading }: Props) => {
 				<TransactionDetailsModal
 					closeModal={() => setSelectedTransaction(null)}
 					transaction={selectedTransaction}
+					isDisplayButtons
 				/>
 			)}
 			<Box sx={{ overflow: 'auto' }}>

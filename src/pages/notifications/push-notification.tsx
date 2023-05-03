@@ -6,9 +6,9 @@ import {
 	PushNotificationForm,
 	ImagePreview,
 	UploadImage,
-} from '../../components';
-import { BOX_SHADOW } from '../../utilities/constant';
-import BackButton from '../../components/back-button';
+} from 'components';
+import { BOX_SHADOW } from 'utilities/constant';
+import BackButton from 'components/back-button';
 
 const PushNotification = () => {
 	const theme = useTheme();

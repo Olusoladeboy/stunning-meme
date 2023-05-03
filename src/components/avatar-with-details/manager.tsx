@@ -1,6 +1,6 @@
 import React, { CSSProperties } from 'react';
 import { Box, Avatar, Typography, useTheme } from '@mui/material';
-import { User } from '../../utilities';
+import { User } from 'utilities';
 
 type Props = {
 	user: User | null;

@@ -3,10 +3,10 @@ import { Box } from '@mui/material';
 import { useQuery } from 'react-query';
 import { useNavigate, useLocation } from 'react-router-dom';
 import queryString from 'query-string';
-import { Layout, UsersTable, Pagination } from '../../components';
-import { MAX_RECORDS, LINKS, QueryKeys, USERS_TAB } from '../../utilities';
-import { users } from '../../api';
-import { useAlert, useHandleError, useSearchUser } from '../../hooks';
+import { Layout, UsersTable, Pagination } from 'components';
+import { MAX_RECORDS, LINKS, QueryKeys, USERS_TAB } from 'utilities';
+import { users } from 'api';
+import { useAlert, useHandleError, useSearchUser } from 'hooks';
 
 const Users = () => {
 	const navigate = useNavigate();

@@ -3,7 +3,7 @@ import { Box, styled, MenuItem } from '@mui/material';
 import { useFormik } from 'formik';
 import Button from '../button';
 import Select from '../form-components/select';
-import { SECOUNDARY_COLOR } from '../../utilities';
+import { SECOUNDARY_COLOR } from 'utilities';
 
 const SELECT_SERVICE = 'Select service';
 const SELECT_TYPE = 'Select type';

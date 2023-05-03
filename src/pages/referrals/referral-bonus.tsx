@@ -10,10 +10,10 @@ import {
 	Button,
 	ModalWrapper,
 	Pagination,
-} from '../../components';
-import { QueryKeys, REFERRAL_BONUS } from '../../utilities';
+} from 'components';
+import { QueryKeys, REFERRAL_BONUS } from 'utilities';
 import { useQuery } from 'react-query';
-import { settings } from '../../api';
+import { settings } from 'api';
 
 const ReferralBonus = () => {
 	const [isDisplayForm, setDisplayForm] = useState<boolean>(false);

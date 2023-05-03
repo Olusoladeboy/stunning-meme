@@ -1,7 +1,7 @@
 import React from 'react';
 import { Box, Typography } from '@mui/material';
 import { grey } from '@mui/material/colors';
-import { DANGER_COLOR, formatNumberToCurrency } from '../../utilities';
+import { DANGER_COLOR, formatNumberToCurrency } from 'utilities';
 
 type Props = {
 	data: { [key: string]: any }[];

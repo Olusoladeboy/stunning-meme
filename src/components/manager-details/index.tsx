@@ -4,9 +4,9 @@ import { useMutation, useQueryClient } from 'react-query';
 import { grey, red } from '@mui/material/colors';
 import UserAvatarWithDetails from '../avatar-with-details/manager';
 import Button from '../button';
-import { ManagerTypes, QueryKeys, User } from '../../utilities';
-import { deleteManager } from '../../api';
-import { useHandleError, useAlert } from '../../hooks';
+import { ManagerTypes, QueryKeys, User } from 'utilities';
+import { deleteManager } from 'api';
+import { useHandleError, useAlert } from 'hooks';
 
 type Props = {
 	managerDetail: User;

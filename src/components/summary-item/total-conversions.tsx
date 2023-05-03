@@ -3,9 +3,9 @@ import { Typography, useTheme } from '@mui/material';
 import { grey } from '@mui/material/colors';
 import SummaryWrapper from './wrapper';
 import ConversionIcon from '../icons/conversion';
-import { SEMI_GREEN_COLOR, LINKS } from '../../utilities';
+import { SEMI_GREEN_COLOR, LINKS } from 'utilities';
 import Link from '../link';
-import { useAppSelector } from '../../store/hooks';
+import { useAppSelector } from 'store/hooks';
 
 const TotalConversions = () => {
 	const theme = useTheme();

@@ -16,18 +16,12 @@ import {
 	ModalLayout,
 	AssignManagerForm,
 	Button,
-} from '../../components';
-import {
-	BOX_SHADOW,
-	LINKS,
-	UserNavList,
-	QueryKeys,
-	User,
-} from '../../utilities';
-import { useAppSelector } from '../../store/hooks';
-import ErrorBoundary from '../../utilities/helpers/error-boundary';
-import { useHandleError, useAlert } from '../../hooks';
-import { users } from '../../api';
+} from 'components';
+import { BOX_SHADOW, LINKS, UserNavList, QueryKeys, User } from 'utilities';
+import { useAppSelector } from 'store/hooks';
+import ErrorBoundary from 'utilities/helpers/error-boundary';
+import { useHandleError, useAlert } from 'hooks';
+import { users } from 'api';
 
 const Profile = () => {
 	const theme = useTheme();

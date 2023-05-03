@@ -1,6 +1,6 @@
 import React from 'react';
 import { styled, Box, BoxProps } from '@mui/material';
-import { BOX_SHADOW } from '../../utilities';
+import { BOX_SHADOW } from 'utilities';
 import { grey } from '@mui/material/colors';
 
 interface Props extends BoxProps {}

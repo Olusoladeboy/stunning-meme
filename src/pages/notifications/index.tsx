@@ -2,10 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useQuery } from 'react-query';
 import queryString from 'query-string';
-import { Layout, NotificationsTable, Pagination } from '../../components';
-import { useAlert, useHandleError } from '../../hooks';
-import { LINKS, MAX_RECORDS, QueryKeys } from '../../utilities';
-import { notifications } from '../../api';
+import { Layout, NotificationsTable, Pagination } from 'components';
+import { useAlert, useHandleError } from 'hooks';
+import { LINKS, MAX_RECORDS, QueryKeys } from 'utilities';
+import { notifications } from 'api';
 import { Box } from '@mui/material';
 
 const Notifications = () => {

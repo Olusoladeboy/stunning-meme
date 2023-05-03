@@ -1,8 +1,8 @@
 import React from 'react';
 import { Box, Typography, useTheme, CircularProgress } from '@mui/material';
 import { grey } from '@mui/material/colors';
-import { formatNumberToCurrency } from '../../utilities';
-import { useAppSelector } from '../../store/hooks';
+import { formatNumberToCurrency } from 'utilities';
+import { useAppSelector } from 'store/hooks';
 
 const TransactionMainBalance = () => {
 	const theme = useTheme();

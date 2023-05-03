@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useAlert, useHandleError } from '..';
-import { Ticket } from '../../utilities';
-import { tickets } from '../../api';
+import { Ticket } from 'utilities';
+import { tickets } from 'api';
 
 interface SearchPayload {
 	code?: string;

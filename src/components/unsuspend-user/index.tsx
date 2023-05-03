@@ -2,9 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { useMutation, useQueryClient } from 'react-query';
 import { Switch, ButtonProps } from '@mui/material';
 import Button from '../button/custom-button';
-import { QueryKeys, User } from '../../utilities';
-import { useAlert, useHandleError } from '../../hooks';
-import { suspendUser } from '../../api';
+import { QueryKeys, User } from 'utilities';
+import { useAlert, useHandleError } from 'hooks';
+import { suspendUser } from 'api';
 
 type Props = {
 	text?: string;

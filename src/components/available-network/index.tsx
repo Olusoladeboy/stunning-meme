@@ -5,10 +5,10 @@ import { Box, useTheme, CircularProgress, Typography } from '@mui/material';
 import { grey } from '@mui/material/colors';
 import Button from '../button';
 import AvaliableNetworkItem from './available-network-item';
-import { QueryKey, API_ENDPOINTS, LINKS } from '../../utilities';
-import { useAppSelector } from '../../store/hooks';
-import { useAlert, useHandleError } from '../../hooks';
-import { networks } from '../../api';
+import { QueryKey, API_ENDPOINTS, LINKS } from 'utilities';
+import { useAppSelector } from 'store/hooks';
+import { useAlert, useHandleError } from 'hooks';
+import { networks } from 'api';
 
 const AvailableNetwork = () => {
 	const theme = useTheme();

@@ -17,11 +17,11 @@ import Button from '../button';
 import CustomButton from '../button/custom-button';
 import { grey, red } from '@mui/material/colors';
 import Select from '../form-components/select';
-import { User, QueryKeys, FUND_WALLET_SERVICE } from '../../utilities';
-import { useAlert, useHandleError } from '../../hooks';
-import { transactUser } from '../../api';
+import { User, QueryKeys, FUND_WALLET_SERVICE } from 'utilities';
+import { useAlert, useHandleError } from 'hooks';
+import { transactUser } from 'api';
 import { Close, Search } from '@mui/icons-material';
-import { useSearchTransaction } from '../../hooks';
+import { useSearchTransaction } from 'hooks';
 
 type Props = {
 	user: User | null;

@@ -1,10 +1,10 @@
 import React from 'react';
 import { useQuery } from 'react-query';
-import { Layout, AdminUserTable } from '../../components';
-import { useAppSelector } from '../../store/hooks';
-import { QueryKeys } from '../../utilities';
-import { useAlert, useHandleError } from '../../hooks';
-import { staffs } from '../../api';
+import { Layout, AdminUserTable } from 'components';
+import { useAppSelector } from 'store/hooks';
+import { QueryKeys } from 'utilities';
+import { useAlert, useHandleError } from 'hooks';
+import { staffs } from 'api';
 
 const Admin = () => {
 	const setAlert = useAlert();

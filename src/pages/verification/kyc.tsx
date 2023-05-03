@@ -2,10 +2,10 @@ import React, { useState } from 'react';
 import { Box, useTheme } from '@mui/material';
 import { useQuery } from 'react-query';
 import { grey } from '@mui/material/colors';
-import { Layout, BackButton, KycForm } from '../../components';
-import { BOX_SHADOW, QueryKeys } from '../../utilities';
-import { useAlert, useHandleError } from '../../hooks';
-import { kycs } from '../../api';
+import { Layout, BackButton, KycForm } from 'components';
+import { BOX_SHADOW, QueryKeys } from 'utilities';
+import { useAlert, useHandleError } from 'hooks';
+import { kycs } from 'api';
 
 const Kyc = () => {
 	const theme = useTheme();

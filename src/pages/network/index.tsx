@@ -7,9 +7,9 @@ import {
 	AirtimeNetworkTable,
 	ConversionNetworkTable,
 	DataNetworkTable,
-} from '../../components';
-import { BOX_SHADOW } from '../../utilities/constant';
-import { NetworkPage } from '../../utilities/types';
+} from 'components';
+import { BOX_SHADOW } from 'utilities/constant';
+import { NetworkPage } from 'utilities/types';
 
 interface Props extends ComponentProps<any> {
 	pageType:

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useAlert, useHandleError } from '..';
-import { Transaction } from '../../utilities';
-import { allTransactions } from '../../api';
+import { Transaction } from 'utilities';
+import { allTransactions } from 'api';
 
 interface SearchPayload {
 	reference?: string;

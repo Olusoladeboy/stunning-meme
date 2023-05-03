@@ -7,11 +7,11 @@ import { grey } from '@mui/material/colors';
 import { useFormik } from 'formik';
 import TextInput from '../form-components/TextInput';
 import Button from '../button/custom-button';
-import { DataPlan, QueryKeys, DATA_SOURCE } from '../../utilities';
+import { DataPlan, QueryKeys, DATA_SOURCE } from 'utilities';
 import Select from '../form-components/select';
 import TextPlaceholder from '../partials/text-placeholder';
-import { useAlert, useHandleError } from '../../hooks';
-import { createDataPlan, updateDataPlan } from '../../api';
+import { useAlert, useHandleError } from 'hooks';
+import { createDataPlan, updateDataPlan } from 'api';
 
 type Props = {
 	dataPayload?: DataPlan;

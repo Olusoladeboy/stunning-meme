@@ -38,6 +38,7 @@ export const QueryKeys = {
 	UserWalletTransaction: '@Query:User_Wallet_Transaction',
 	UserTransactions: '@Query:User_Transactions',
 	Transactions: '@Query:All_Transactions',
+	AuditLogs: '@Query:Audit_logs',
 	RecentTransactions: '@Query:Recent_Transactions',
 	Staffs: '@Query:All_Staffs',
 	Statistics: '@Query:Statistics',
@@ -139,6 +140,7 @@ export const ENDPOINTS = {
 	Coupon: '/coupon',
 	Ticket: '/ticket',
 	Notification: '/notification',
+	AuditLogs: '/audit-logs',
 };
 
 export const FUND_WALLET_SERVICE = {

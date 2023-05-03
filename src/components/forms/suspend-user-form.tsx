@@ -6,10 +6,10 @@ import { Box, useTheme, Typography, Switch } from '@mui/material';
 import TextInput from '../form-components/TextInput';
 import Button from '../button/custom-button';
 import { grey } from '@mui/material/colors';
-import { User, QueryKeys } from '../../utilities';
+import { User, QueryKeys } from 'utilities';
 import TextArea from '../form-components/text-area';
-import { useAlert, useHandleError } from '../../hooks';
-import { suspendUser } from '../../api';
+import { useAlert, useHandleError } from 'hooks';
+import { suspendUser } from 'api';
 import Loader from '../loader';
 
 interface InitialValues {

@@ -2,13 +2,8 @@ import React from 'react';
 import { grey } from '@mui/material/colors';
 import { Box, useTheme } from '@mui/material';
 import RecordItem from './record-item';
-import {
-	BOX_SHADOW,
-	SUCCESS_COLOR,
-	DANGER_COLOR,
-	LINKS,
-} from '../../utilities';
-import { useAppSelector } from '../../store/hooks';
+import { BOX_SHADOW, SUCCESS_COLOR, DANGER_COLOR, LINKS } from 'utilities';
+import { useAppSelector } from 'store/hooks';
 
 const UserRecords = () => {
 	const theme = useTheme();

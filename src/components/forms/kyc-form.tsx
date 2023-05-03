@@ -5,9 +5,9 @@ import { Box, useTheme, Typography } from '@mui/material';
 import TextInput from '../form-components/TextInput';
 import Button from '../button/custom-button';
 import { grey } from '@mui/material/colors';
-import { QueryKeys, validationSchema } from '../../utilities';
-import { useAlert, useHandleError } from '../../hooks';
-import { updateKyc } from '../../api';
+import { QueryKeys, validationSchema } from 'utilities';
+import { useAlert, useHandleError } from 'hooks';
+import { updateKyc } from 'api';
 
 type Props = {
 	data?: { [key: string]: any };

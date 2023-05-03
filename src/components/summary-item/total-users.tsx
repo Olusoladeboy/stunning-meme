@@ -3,9 +3,9 @@ import { Typography, useTheme } from '@mui/material';
 import { grey } from '@mui/material/colors';
 import SummaryWrapper from './wrapper';
 import UserIcon from '../icons/user';
-import { SUCCESS_COLOR, LINKS } from '../../utilities';
+import { SUCCESS_COLOR, LINKS } from 'utilities';
 import Link from '../link';
-import { useAppSelector } from '../../store/hooks';
+import { useAppSelector } from 'store/hooks';
 
 const TotalUsers = () => {
 	const theme = useTheme();

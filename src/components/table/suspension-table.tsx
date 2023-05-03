@@ -8,13 +8,13 @@ import {
 	Table,
 } from '@mui/material';
 import { grey } from '@mui/material/colors';
-import { SUCCESS_COLOR, BOX_SHADOW } from '../../utilities/constant';
+import { SUCCESS_COLOR, BOX_SHADOW } from 'utilities/constant';
 import {
 	StyledTableCell as TableCell,
 	StyledTableRow as TableRow,
 } from './components';
 import TableHeader from '../header/table-header';
-import { User } from '../../utilities/types';
+import { User } from 'utilities/types';
 import Loader from '../loader/table-loader';
 import Empty from '../empty/table-empty';
 import UnsuspendUser from '../unsuspend-user';

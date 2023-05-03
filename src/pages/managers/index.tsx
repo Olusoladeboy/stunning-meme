@@ -1,8 +1,8 @@
 import React from 'react';
-import { Layout, ManagersTable } from '../../components';
-import { QueryKeys } from '../../utilities';
-import { useQueryHook, useSearchManager } from '../../hooks';
-import { managers } from '../../api';
+import { Layout, ManagersTable } from 'components';
+import { QueryKeys } from 'utilities';
+import { useQueryHook, useSearchManager } from 'hooks';
+import { managers } from 'api';
 
 const Managers = () => {
 	const { isSearching, search, searchManager, clearSearch } =

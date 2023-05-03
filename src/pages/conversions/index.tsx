@@ -10,17 +10,17 @@ import {
 	ConversionTotal,
 	AvailableNetwork,
 	Pagination,
-} from '../../components';
+} from 'components';
 import {
 	BOX_SHADOW,
 	QueryKeys,
 	MAX_RECORDS,
 	LINKS,
 	ErrorBoundary,
-} from '../../utilities';
-import { useAppSelector } from '../../store/hooks';
-import { useAlert, useHandleError, useSearchConversion } from '../../hooks';
-import { convertAirtimes } from '../../api';
+} from 'utilities';
+import { useAppSelector } from 'store/hooks';
+import { useAlert, useHandleError, useSearchConversion } from 'hooks';
+import { convertAirtimes } from 'api';
 
 const Conversions = () => {
 	const theme = useTheme();

@@ -6,10 +6,10 @@ import * as yup from 'yup';
 import { useMutation, useQueryClient } from 'react-query';
 import TextInput from '../form-components/TextInput';
 import { grey } from '@mui/material/colors';
-import { DataType, QueryKeys } from '../../utilities';
+import { DataType, QueryKeys } from 'utilities';
 import Button from '../button';
-import { useAlert, useHandleError } from '../../hooks';
-import { createDataTypes } from '../../api';
+import { useAlert, useHandleError } from 'hooks';
+import { createDataTypes } from 'api';
 
 type Props = {
 	isEdit?: boolean;

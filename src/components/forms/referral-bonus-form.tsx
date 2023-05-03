@@ -6,9 +6,9 @@ import * as yup from 'yup';
 import { grey } from '@mui/material/colors';
 import TextInput from '../form-components/TextInput';
 import Button from '../button';
-import { Settings, QueryKeys } from '../../utilities';
-import { createSettings, updateSettings } from '../../api';
-import { useHandleError, useAlert } from '../../hooks';
+import { Settings, QueryKeys } from 'utilities';
+import { createSettings, updateSettings } from 'api';
+import { useHandleError, useAlert } from 'hooks';
 
 type Props = {
 	data?: Settings | null;

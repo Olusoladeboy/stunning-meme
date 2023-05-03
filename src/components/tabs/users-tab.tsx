@@ -7,8 +7,8 @@ import SuspendedUserIcon from '../icons/suspended-user';
 import DeletedUserIcon from '../icons/deleted-user';
 import UnverifiedUserIcon from '../icons/unverified-user';
 import TransactionItem from '../transaction-item';
-import { USERS_TAB, SUCCESS_COLOR } from '../../utilities';
-import { useAppSelector } from '../../store/hooks';
+import { USERS_TAB, SUCCESS_COLOR } from 'utilities';
+import { useAppSelector } from 'store/hooks';
 
 interface Props {
 	currentTab?: string;

@@ -21,11 +21,11 @@ import {
 	DANGER_COLOR,
 	DataType,
 	QueryKeys,
-} from '../../utilities';
+} from 'utilities';
 import TableLoader from '../loader/table-loader';
 import Loader from '../loader';
-import { updateDataType } from '../../api';
-import { useAlert, useHandleError } from '../../hooks';
+import { updateDataType } from 'api';
+import { useAlert, useHandleError } from 'hooks';
 
 interface Props {
 	data: DataType[] | null | undefined;

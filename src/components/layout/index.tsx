@@ -6,9 +6,9 @@ import {
 	MIN_DRAWER_WIDTH,
 	TRANSITION,
 	AuthGuard,
-} from '../../utilities';
+} from 'utilities';
 import Header from '../header';
-import { useAppSelector } from '../../store/hooks';
+import { useAppSelector } from 'store/hooks';
 
 type Props = {
 	children: ReactNode;

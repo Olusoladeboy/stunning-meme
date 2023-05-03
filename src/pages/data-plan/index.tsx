@@ -11,9 +11,9 @@ import {
 	ModalLayout,
 	DataPlanForm,
 	DataPlansTable,
-} from '../../components';
-import { BOX_SHADOW, QueryKeys } from '../../utilities';
-import { dataPlans } from '../../api';
+} from 'components';
+import { BOX_SHADOW, QueryKeys } from 'utilities';
+import { dataPlans } from 'api';
 
 const ViewDataPlan = () => {
 	const { planName, network, dataType } = useParams();

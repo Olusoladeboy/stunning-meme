@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useAlert, useHandleError } from '..';
-import { ManagerDetailsData, EMAIL_REX } from '../../utilities';
-import { managers } from '../../api';
+import { ManagerDetailsData, EMAIL_REX } from 'utilities';
+import { managers } from 'api';
 
 interface SearchPayload {
 	email?: string;

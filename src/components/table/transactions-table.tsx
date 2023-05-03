@@ -18,7 +18,7 @@ import {
 	formatNumberToCurrency,
 	Transaction,
 	TransactionStatus,
-} from '../../utilities';
+} from 'utilities';
 import { StyledTableCell, StyledTableRow } from './components';
 import Empty from '../empty/table-empty';
 import Loader from '../loader/table-loader';
@@ -51,6 +51,7 @@ const TransactionsTable = ({ data, isLoading }: Props) => {
 				<TransactionDetailsModal
 					closeModal={() => setSelectedTransaction(null)}
 					transaction={selectedTransaction}
+					isDisplayButtons
 				/>
 			)}
 			<Box sx={{ overflow: 'auto' }}>

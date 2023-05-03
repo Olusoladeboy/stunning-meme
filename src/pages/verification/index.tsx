@@ -3,11 +3,11 @@ import { Box, useTheme } from '@mui/material';
 import { useNavigate, useLocation } from 'react-router-dom';
 import queryString from 'query-string';
 import { useQuery } from 'react-query';
-import { Layout, Pagination, VerificationTable } from '../../components';
-import { MAX_RECORDS, QueryKeys, LINKS } from '../../utilities';
-import { useAppSelector } from '../../store/hooks';
-import { users } from '../../api';
-import { useSearchUser, useAlert, useHandleError } from '../../hooks';
+import { Layout, Pagination, VerificationTable } from 'components';
+import { MAX_RECORDS, QueryKeys, LINKS } from 'utilities';
+import { useAppSelector } from 'store/hooks';
+import { users } from 'api';
+import { useSearchUser, useAlert, useHandleError } from 'hooks';
 
 const Verification = () => {
 	const { token } = useAppSelector((store) => store.authState);

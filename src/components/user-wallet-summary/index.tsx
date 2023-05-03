@@ -6,16 +6,10 @@ import queryString from 'query-string';
 import UserAvatarWithDetails from '../avatar-with-details';
 import UserWallet from '../user-wallet';
 import WalletSummaryTable from '../table/wallet-summary-table';
-import {
-	LINKS,
-	MAX_RECORDS,
-	QueryKeys,
-	User,
-	UserNavList,
-} from '../../utilities';
-import { allTransactions } from '../../api';
-import { useAppSelector } from '../../store/hooks';
-import { useAlert, useHandleError, useSearchTransaction } from '../../hooks';
+import { LINKS, MAX_RECORDS, QueryKeys, User, UserNavList } from 'utilities';
+import { allTransactions } from 'api';
+import { useAppSelector } from 'store/hooks';
+import { useAlert, useHandleError, useSearchTransaction } from 'hooks';
 import Pagination from '../pagination';
 import TableHeader from '../header/table-header';
 

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Box, Typography, styled } from '@mui/material';
 import { grey } from '@mui/material/colors';
-import { formatNumberToCurrency } from '../../utilities';
+import { formatNumberToCurrency } from 'utilities';
 
 interface IStatisticsTotalTransaction {
 	name: string;

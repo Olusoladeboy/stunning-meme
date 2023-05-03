@@ -10,16 +10,16 @@ import {
 	Pagination,
 	TableHeader,
 	TransactionsTab,
-} from '../../components';
+} from 'components';
 import {
 	BOX_SHADOW,
 	QueryKeys,
 	MAX_RECORDS,
 	LINKS,
 	TRANSACTIONS_TAB,
-} from '../../utilities';
-import { allTransactions } from '../../api';
-import { useHandleError, useAlert, useSearchTransaction } from '../../hooks';
+} from 'utilities';
+import { allTransactions } from 'api';
+import { useHandleError, useAlert, useSearchTransaction } from 'hooks';
 
 const AllTransactions = () => {
 	const theme = useTheme();

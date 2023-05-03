@@ -20,13 +20,13 @@ import {
 	QueryKeys,
 	formatNumberToCurrency,
 	Transaction,
-} from '../../utilities';
+} from 'utilities';
 import Link from '../link';
 import Empty from '../empty/table-empty';
 import Loader from '../loader/table-loader';
-import { allTransactions } from '../../api';
+import { allTransactions } from 'api';
 import TransactionModal from '../modal/transaction-details-modal';
-import { useQueryHook } from '../../hooks';
+import { useQueryHook } from 'hooks';
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
 	[`&.${tableCellClasses.head}`]: {

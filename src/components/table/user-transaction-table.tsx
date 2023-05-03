@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
 	useTheme,
 	Box,
@@ -15,10 +15,12 @@ import {
 	formatNumberToCurrency,
 	ErrorBoundary,
 	LIGHT_GRAY,
-} from '../../utilities';
+	checkAmount,
+} from 'utilities';
 import Loader from '../loader/table-loader';
 import Empty from '../empty/table-empty';
 import CustomTableCell from './components/custom-table-cell';
+import TransactionDetailsModal from '../modal/transaction-details-modal';
 
 type Props = {
 	data?: Transaction[] | null;
@@ -35,9 +37,17 @@ const UserTransactionsTable = ({
 }: Props) => {
 	const theme = useTheme();
 	const styles = useStyles(theme);
+	const [selectedTransaction, setSelectedTransaction] =
+		useState<Transaction | null>(null);
 
 	return (
 		<Box sx={{ overflow: 'auto' }}>
+			{selectedTransaction && (
+				<TransactionDetailsModal
+					closeModal={() => setSelectedTransaction(null)}
+					transaction={selectedTransaction}
+				/>
+			)}
 			<Box sx={{ padding: { xs: '0px 1rem', md: '0px 2rem' }, width: '100%' }}>
 				<TableHeader
 					title={'User Transaction Summary'}
@@ -79,7 +89,10 @@ const UserTransactionsTable = ({
 								<>
 									{data.length > 0 ? (
 										data.map((row: Transaction) => (
-											<StyledTableRow key={row.id}>
+											<StyledTableRow
+												onClick={() => setSelectedTransaction(row)}
+												key={row.id}
+											>
 												<StyledTableCell style={styles.text}>
 													{row.transaction
 														? row.transaction.service
@@ -95,11 +108,7 @@ const UserTransactionsTable = ({
 														: 'No Reference'}
 												</StyledTableCell>
 												<StyledTableCell style={styles.text}>
-													{formatNumberToCurrency(
-														typeof row.amount !== 'string'
-															? row.amount.$numberDecimal
-															: row.amount
-													)}
+													{formatNumberToCurrency(checkAmount(row.amount))}
 												</StyledTableCell>
 												<StyledTableCell style={styles.text}>
 													{moment.utc(row.createdAt).format('ll')}

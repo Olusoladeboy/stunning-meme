@@ -35,11 +35,11 @@ import {
 	QueryKeys,
 	CouponStatus,
 	ModalDetails,
-} from '../../utilities';
+} from 'utilities';
 import TableLoader from '../loader/table-loader';
-import { useAlert, useHandleError } from '../../hooks';
+import { useAlert, useHandleError } from 'hooks';
 import Loader from '../loader';
-import { updateCouponStatus } from '../../api';
+import { updateCouponStatus } from 'api';
 
 interface Props {
 	data: Coupon[] | null;

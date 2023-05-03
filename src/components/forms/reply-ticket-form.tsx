@@ -4,7 +4,7 @@ import * as yup from 'yup';
 import { useFormik } from 'formik';
 import { useMutation, useQueryClient } from 'react-query';
 import TextInput from '../form-components/TextInput';
-import { useAppSelector } from '../../store/hooks';
+import { useAppSelector } from 'store/hooks';
 import {
 	ThemeModeType,
 	TicketReply,
@@ -13,12 +13,12 @@ import {
 	ModalDetails,
 	TicketReplyType,
 	TicketStatus,
-} from '../../utilities';
+} from 'utilities';
 import { grey } from '@mui/material/colors';
 import Button from '../button/custom-button';
 import Modal from '../modal';
-import { useAlert, useHandleError } from '../../hooks';
-import { replyTicket } from '../../api';
+import { useAlert, useHandleError } from 'hooks';
+import { replyTicket } from 'api';
 
 interface Props {
 	ticket: Ticket | null;

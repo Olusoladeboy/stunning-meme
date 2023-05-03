@@ -18,7 +18,7 @@ import {
 	DANGER_COLOR,
 	Settings,
 	formatNumberToCurrency,
-} from '../../utilities';
+} from 'utilities';
 import ModalWrapper from '../modal/Wrapper';
 import {
 	StyledTableCell as TableCell,

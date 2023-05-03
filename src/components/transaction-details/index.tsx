@@ -1,13 +1,9 @@
 import React, { useEffect } from 'react';
 import { Box, styled, Typography } from '@mui/material';
 import moment from 'moment';
-import {
-	Transaction,
-	formatNumberToCurrency,
-	cleanString,
-} from '../../utilities';
+import { Transaction, formatNumberToCurrency, cleanString } from 'utilities';
 import DisputeTransactionItem from './transaction-item';
-import { useSearchCoupon } from '../../hooks';
+import { useSearchCoupon } from 'hooks';
 
 interface Props {
 	transaction: Transaction | null;
@@ -55,6 +51,12 @@ const TransactionDetails: React.FC<Props> = ({ transaction }) => {
 							<DisputeTransactionItem label={'Type'} value={transaction.type} />
 						)
 					)}
+					{transaction.network && typeof transaction.network === 'object' && (
+						<DisputeTransactionItem
+							label={'Network'}
+							value={transaction.network.name as string}
+						/>
+					)}
 					{transaction.reference && (
 						<DisputeTransactionItem
 							label={'Reference'}
@@ -99,6 +101,19 @@ const TransactionDetails: React.FC<Props> = ({ transaction }) => {
 							)}
 						/>
 					)}
+
+					{transaction.number && (
+						<DisputeTransactionItem
+							label={'Phone'}
+							value={transaction.number}
+						/>
+					)}
+					{transaction.phone_number && (
+						<DisputeTransactionItem
+							label={'Phone'}
+							value={transaction.phone_number}
+						/>
+					)}
 					{transaction.createdAt && (
 						<DisputeTransactionItem
 							label={'Date'}
@@ -109,12 +124,6 @@ const TransactionDetails: React.FC<Props> = ({ transaction }) => {
 						<DisputeTransactionItem
 							label={'Time'}
 							value={moment.utc(transaction.createdAt).format('LT')}
-						/>
-					)}
-					{transaction.number && (
-						<DisputeTransactionItem
-							label={'Phone'}
-							value={transaction.number}
 						/>
 					)}
 					{transaction.status && (

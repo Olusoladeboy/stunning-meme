@@ -1,7 +1,7 @@
 import React, { ReactNode, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAppSelector } from '../../store/hooks';
-import { useLogoutUser, useAlert } from '../../hooks';
+import { useAppSelector } from 'store/hooks';
+import { useLogoutUser, useAlert } from 'hooks';
 import LINKS from '../links';
 
 interface Props {

@@ -16,17 +16,17 @@ import {
 	CloseDisputeButton,
 	ReplyTicketForm,
 	ResolveDisputeButton,
-} from '../../components';
+} from 'components';
 import {
 	QueryKey,
 	Ticket,
 	TicketReply,
 	ErrorBoundary,
 	TicketStatus,
-} from '../../utilities';
-import { useAlert, useHandleError } from '../../hooks';
-import { tickets } from '../../api';
-import { useAppSelector } from '../../store/hooks';
+} from 'utilities';
+import { useAlert, useHandleError } from 'hooks';
+import { tickets } from 'api';
+import { useAppSelector } from 'store/hooks';
 
 const Message = () => {
 	const alert = useAlert();

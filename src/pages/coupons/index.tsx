@@ -2,10 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { Box } from '@mui/material';
 import { useNavigate, useLocation } from 'react-router-dom';
 import queryString from 'query-string';
-import { Layout, Pagination, CouponsTable } from '../../components';
-import { MAX_RECORDS, LINKS, QueryKeys } from '../../utilities';
-import { useSearchCoupon, useQueryHook } from '../../hooks';
-import { coupons } from '../../api';
+import { Layout, Pagination, CouponsTable } from 'components';
+import { MAX_RECORDS, LINKS, QueryKeys } from 'utilities';
+import { useSearchCoupon, useQueryHook } from 'hooks';
+import { coupons } from 'api';
 
 const Coupons = () => {
 	const navigate = useNavigate();

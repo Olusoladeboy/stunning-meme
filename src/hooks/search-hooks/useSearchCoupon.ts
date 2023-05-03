@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useAlert, useHandleError } from '..';
-import { Coupon } from '../../utilities';
-import { coupons } from '../../api';
+import { Coupon } from 'utilities';
+import { coupons } from 'api';
 
 interface SearchPayload {
 	name?: string;

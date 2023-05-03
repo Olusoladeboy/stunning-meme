@@ -8,7 +8,7 @@ import {
 	DANGER_COLOR,
 	LINKS,
 	Notification,
-} from '../../utilities';
+} from 'utilities';
 import ModalWrapper from '../modal/Wrapper';
 import {
 	StyledTableCell as TableCell,

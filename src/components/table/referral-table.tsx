@@ -11,7 +11,7 @@ import {
 
 import { grey } from '@mui/material/colors';
 import { AddCircle } from '@mui/icons-material';
-import { SUCCESS_COLOR, LINKS, IReferral } from '../../utilities';
+import { SUCCESS_COLOR, LINKS, IReferral } from 'utilities';
 import {
 	StyledTableCell as TableCell,
 	StyledTableRow as TableRow,

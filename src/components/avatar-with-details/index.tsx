@@ -1,6 +1,6 @@
 import React, { CSSProperties } from 'react';
 import { Box, Avatar, Typography, useTheme } from '@mui/material';
-import { DANGER_COLOR, SUCCESS_COLOR, User } from '../../utilities';
+import { DANGER_COLOR, SUCCESS_COLOR, User } from 'utilities';
 
 type Props = {
 	user: User | null;

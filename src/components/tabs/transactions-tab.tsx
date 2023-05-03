@@ -6,8 +6,8 @@ import PendingIcon from '../icons/time';
 import ApprovedIcon from '../icons/check-three';
 import SuspensionIcon from '../icons/suspension';
 import TransactionItem from '../transaction-item';
-import { SECOUNDARY_COLOR, TRANSACTIONS_TAB } from '../../utilities';
-import { useAppSelector } from '../../store/hooks';
+import { SECOUNDARY_COLOR, TRANSACTIONS_TAB } from 'utilities';
+import { useAppSelector } from 'store/hooks';
 
 interface Props {
 	currentTab?: string;

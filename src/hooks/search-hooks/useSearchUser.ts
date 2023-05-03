@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useAlert, useHandleError } from '..';
-import { User, EMAIL_REX, PHONE_REX } from '../../utilities';
-import { users } from '../../api';
+import { User, EMAIL_REX, PHONE_REX } from 'utilities';
+import { users } from 'api';
 
 interface SearchPayload {
 	email?: string;

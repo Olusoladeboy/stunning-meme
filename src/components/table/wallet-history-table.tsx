@@ -14,7 +14,7 @@ import {
 	PENDING_COLOR,
 	DANGER_COLOR,
 	TransactionStatus,
-} from '../../utilities';
+} from 'utilities';
 import { grey } from '@mui/material/colors';
 import FilterIcon from '../icons/filter';
 import SearchInput from '../form-components/search-input';

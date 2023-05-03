@@ -20,7 +20,7 @@ import {
 	IReferral,
 	User,
 	LINKS,
-} from '../../utilities';
+} from 'utilities';
 import CustomTableCell from './components/custom-table-cell';
 import {
 	StyledTableCell as TableCell,

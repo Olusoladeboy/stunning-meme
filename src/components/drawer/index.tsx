@@ -2,10 +2,10 @@ import React from 'react';
 import { Drawer as MuiDrawer, useTheme, IconButton } from '@mui/material';
 import { Close } from '@mui/icons-material';
 import { red } from '@mui/material/colors';
-import { DRAWER_WIDTH, MIN_DRAWER_WIDTH, TRANSITION } from '../../utilities';
+import { DRAWER_WIDTH, MIN_DRAWER_WIDTH, TRANSITION } from 'utilities';
 import DrawerList from '../list/drawer-list';
-import { useAppSelector, useAppDispatch } from '../../store/hooks';
-import { setToggleMobileDrawer } from '../../store/app';
+import { useAppSelector, useAppDispatch } from 'store/hooks';
+import { setToggleMobileDrawer } from 'store/app';
 
 const Drawer = () => {
 	const theme = useTheme();

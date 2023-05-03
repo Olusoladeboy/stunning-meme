@@ -5,16 +5,10 @@ import queryString from 'query-string';
 import { useLocation, useNavigate } from 'react-router-dom';
 import UserAvatarWithDetails from '../avatar-with-details';
 import TransactionHistoryTable from '../table/user-transaction-table';
-import {
-	User,
-	QueryKeys,
-	MAX_RECORDS,
-	LINKS,
-	UserNavList,
-} from '../../utilities';
-import { allTransactions } from '../../api';
-import { useHandleError, useAlert, useSearchTransaction } from '../../hooks';
-import { useAppSelector } from '../../store/hooks';
+import { User, QueryKeys, MAX_RECORDS, LINKS, UserNavList } from 'utilities';
+import { allTransactions } from 'api';
+import { useHandleError, useAlert, useSearchTransaction } from 'hooks';
+import { useAppSelector } from 'store/hooks';
 import Pagination from '../pagination';
 
 type Props = {

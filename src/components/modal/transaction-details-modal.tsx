@@ -3,7 +3,7 @@ import { Typography, styled, Box } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import ModalWrapper from './Wrapper';
 import { grey } from '@mui/material/colors';
-import { IModal, Transaction, LINKS } from '../../utilities';
+import { IModal, Transaction, LINKS } from 'utilities';
 import Button from '../button';
 import TransactionDetails from '../transaction-details';
 

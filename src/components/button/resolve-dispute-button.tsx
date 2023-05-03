@@ -3,9 +3,9 @@ import { Button as MuiButton } from '@mui/material';
 import { grey } from '@mui/material/colors';
 import { useMutation, useQueryClient } from 'react-query';
 import { styled } from '@mui/material/styles';
-import { Ticket, QueryKeys } from '../../utilities';
-import { useHandleError, useAlert } from '../../hooks';
-import { resolveTicket } from '../../api';
+import { Ticket, QueryKeys } from 'utilities';
+import { useHandleError, useAlert } from 'hooks';
+import { resolveTicket } from 'api';
 import AppButton from '.';
 
 interface Props {

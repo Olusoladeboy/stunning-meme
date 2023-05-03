@@ -18,7 +18,7 @@ import {
 	BOX_SHADOW,
 	LINKS,
 	USERS_TAB,
-} from '../../utilities';
+} from 'utilities';
 import {
 	StyledTableCell as TableCell,
 	StyledTableRow as TableRow,

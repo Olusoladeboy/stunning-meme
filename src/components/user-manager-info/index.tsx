@@ -1,9 +1,9 @@
 import React from 'react';
 import { Box, Avatar, Typography, useTheme } from '@mui/material';
 import { grey } from '@mui/material/colors';
-import { LIGHT_GRAY } from '../../utilities/constant';
+import { LIGHT_GRAY } from 'utilities/constant';
 import InfoList from './info-list';
-import { User } from '../../utilities/types';
+import { User } from 'utilities/types';
 import Button from '../button';
 
 type Props = {

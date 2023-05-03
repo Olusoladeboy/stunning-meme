@@ -6,8 +6,8 @@ import {
 	SearchStatistics,
 	StatisticTab,
 	StatisticsTotal,
-} from '../../components';
-import { BOX_SHADOW, RouteGuard, ADMIN_ROLE } from '../../utilities';
+} from 'components';
+import { BOX_SHADOW, RouteGuard, ADMIN_ROLE } from 'utilities';
 
 const Statistics = () => {
 	return (

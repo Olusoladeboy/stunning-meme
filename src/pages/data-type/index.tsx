@@ -11,9 +11,9 @@ import {
 	ModalLayout,
 	DataTypesTable,
 	DataTypeForm,
-} from '../../components';
-import { BOX_SHADOW, QueryKeys } from '../../utilities';
-import { dataTypes } from '../../api';
+} from 'components';
+import { BOX_SHADOW, QueryKeys } from 'utilities';
+import { dataTypes } from 'api';
 
 const DataTypes = () => {
 	const theme = useTheme();

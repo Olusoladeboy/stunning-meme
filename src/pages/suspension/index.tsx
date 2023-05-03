@@ -3,11 +3,11 @@ import { Box } from '@mui/material';
 import { useNavigate, useLocation } from 'react-router-dom';
 import queryString from 'query-string';
 import { useQuery } from 'react-query';
-import { Layout, Pagination, SuspensionTable } from '../../components';
-import { useAppSelector } from '../../store/hooks';
-import { MAX_RECORDS, QueryKeys, LINKS } from '../../utilities';
-import { useAlert, useHandleError } from '../../hooks';
-import { users } from '../../api';
+import { Layout, Pagination, SuspensionTable } from 'components';
+import { useAppSelector } from 'store/hooks';
+import { MAX_RECORDS, QueryKeys, LINKS } from 'utilities';
+import { useAlert, useHandleError } from 'hooks';
+import { users } from 'api';
 
 const Suspension = () => {
 	const handleError = useHandleError();

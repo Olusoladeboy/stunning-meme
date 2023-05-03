@@ -9,7 +9,7 @@ import {
 } from '@mui/material';
 import moment from 'moment';
 import { grey } from '@mui/material/colors';
-import { SUCCESS_COLOR, BOX_SHADOW, AuditLog } from '../../utilities';
+import { SUCCESS_COLOR, BOX_SHADOW, AuditLog } from 'utilities';
 import {
 	StyledTableCell as TableCell,
 	StyledTableRow as TableRow,

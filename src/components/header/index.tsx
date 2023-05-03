@@ -9,8 +9,8 @@ import {
 	Avatar,
 } from '@mui/material';
 import { Menu } from '@mui/icons-material';
-import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import { setToggleDrawer, setToggleMobileDrawer } from '../../store/app';
+import { useAppDispatch, useAppSelector } from 'store/hooks';
+import { setToggleDrawer, setToggleMobileDrawer } from 'store/app';
 import { grey } from '@mui/material/colors';
 import Timer from '../timer';
 

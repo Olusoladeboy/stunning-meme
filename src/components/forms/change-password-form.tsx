@@ -7,10 +7,10 @@ import * as yup from 'yup';
 import TextInput from '../form-components/TextInput';
 import Button from '../button';
 import { grey } from '@mui/material/colors';
-import { LINKS, PASSWORD_REX, QueryKeys } from '../../utilities';
+import { LINKS, PASSWORD_REX, QueryKeys } from 'utilities';
 import CustomButton from '../button/custom-button';
-import { useAlert, useHandleError, useModalAlert } from '../../hooks';
-import { resetPassword } from '../../api';
+import { useAlert, useHandleError, useModalAlert } from 'hooks';
+import { resetPassword } from 'api';
 
 interface InitialValues {
 	newPassword: string;

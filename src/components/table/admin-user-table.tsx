@@ -11,7 +11,7 @@ import {
 import { grey } from '@mui/material/colors';
 import { AddCircle } from '@mui/icons-material';
 import moment from 'moment';
-import { SUCCESS_COLOR, BOX_SHADOW, ManagerTypes, User } from '../../utilities';
+import { SUCCESS_COLOR, BOX_SHADOW, ManagerTypes, User } from 'utilities';
 import ModalWrapper from '../modal/Wrapper';
 import {
 	StyledTableCell as TableCell,

@@ -17,17 +17,17 @@ import {
 	API_ENDPOINTS,
 	LINKS,
 	NetworkData,
-} from '../../utilities';
+} from 'utilities';
 import {
 	StyledTableCell as TableCell,
 	StyledTableRow as TableRow,
 } from './components';
 import Button from '../button';
-import { useAppSelector } from '../../store/hooks';
+import { useAppSelector } from 'store/hooks';
 import TableLoader from '../loader/table-loader';
 import Loader from '../loader';
-import { useAlert, useHandleError } from '../../hooks';
-import { networks, updateNetwork } from '../../api';
+import { useAlert, useHandleError } from 'hooks';
+import { networks, updateNetwork } from 'api';
 
 const DataNetworkTable = () => {
 	const theme = useTheme();

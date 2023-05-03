@@ -10,7 +10,7 @@ import {
 	ConversionsTab,
 	Pagination,
 	TableHeader,
-} from '../../components';
+} from 'components';
 import {
 	BOX_SHADOW,
 	QueryKeys,
@@ -18,9 +18,9 @@ import {
 	LINKS,
 	ErrorBoundary,
 	CONVERSIONS_TAB,
-} from '../../utilities';
-import { useAlert, useHandleError, useSearchConversion } from '../../hooks';
-import { convertAirtimes } from '../../api';
+} from 'utilities';
+import { useAlert, useHandleError, useSearchConversion } from 'hooks';
+import { convertAirtimes } from 'api';
 
 const AllConversions = () => {
 	const theme = useTheme();

@@ -2,10 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { Box } from '@mui/material';
 import { useNavigate, useLocation } from 'react-router-dom';
 import queryString from 'query-string';
-import { Layout, Pagination, DisputesTable } from '../../components';
-import { QueryKeys, MAX_RECORDS, LINKS, TicketType } from '../../utilities';
-import { useQueryHook, useSearchTicket } from '../../hooks';
-import { tickets } from '../../api';
+import { Layout, Pagination, DisputesTable } from 'components';
+import { QueryKeys, MAX_RECORDS, LINKS, TicketType } from 'utilities';
+import { useQueryHook, useSearchTicket } from 'hooks';
+import { tickets } from 'api';
 
 const Disputes = () => {
 	const navigate = useNavigate();

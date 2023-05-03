@@ -10,11 +10,11 @@ import {
 	TransactionMainBalance,
 	Pagination,
 	TableHeader,
-} from '../../components';
-import { BOX_SHADOW, QueryKeys, MAX_RECORDS, LINKS } from '../../utilities';
-import { useAppSelector } from '../../store/hooks';
-import { allTransactions } from '../../api';
-import { useHandleError, useAlert, useSearchTransaction } from '../../hooks';
+} from 'components';
+import { BOX_SHADOW, QueryKeys, MAX_RECORDS, LINKS } from 'utilities';
+import { useAppSelector } from 'store/hooks';
+import { allTransactions } from 'api';
+import { useHandleError, useAlert, useSearchTransaction } from 'hooks';
 
 const Transactions = () => {
 	const theme = useTheme();

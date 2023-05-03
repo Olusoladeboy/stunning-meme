@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useAlert, useHandleError } from '..';
-import { PHONE_REX, AirtimeConversion, TEN_CHARACTERS } from '../../utilities';
-import { convertAirtimes } from '../../api';
+import { PHONE_REX, AirtimeConversion, TEN_CHARACTERS } from 'utilities';
+import { convertAirtimes } from 'api';
 
 interface SearchPayload {
 	phone_number?: string;

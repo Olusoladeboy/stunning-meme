@@ -3,7 +3,7 @@ import { Box, Typography, useTheme } from '@mui/material';
 import WalletIcon from '../icons/wallet';
 import { grey } from '@mui/material/colors';
 import ListItem from './list-item';
-import { useAppSelector } from '../../store/hooks';
+import { useAppSelector } from 'store/hooks';
 
 const WalletOverview = () => {
 	const theme = useTheme();

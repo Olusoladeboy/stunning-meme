@@ -3,15 +3,10 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import queryString from 'query-string';
 import { useQuery } from 'react-query';
 import { Box } from '@mui/material';
-import {
-	Layout,
-	AuditLogsTable,
-	TableHeader,
-	Pagination,
-} from '../../components';
-import { useAlert, useHandleError } from '../../hooks';
-import { LINKS, MAX_RECORDS, QueryKeys } from '../../utilities';
-import { auditLogs } from '../../api';
+import { Layout, AuditLogsTable, TableHeader, Pagination } from 'components';
+import { useAlert, useHandleError } from 'hooks';
+import { LINKS, MAX_RECORDS, QueryKeys } from 'utilities';
+import { auditLogs } from 'api';
 
 const AuditLogs = () => {
 	const handleError = useHandleError();

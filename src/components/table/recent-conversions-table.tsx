@@ -7,13 +7,13 @@ import TableCell, { tableCellClasses } from '@mui/material/TableCell';
 import { styled } from '@mui/material';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
-import { LIGHT_GRAY, BOX_SHADOW, LINKS, QueryKeys } from '../../utilities';
+import { LIGHT_GRAY, BOX_SHADOW, LINKS, QueryKeys } from 'utilities';
 import { grey } from '@mui/material/colors';
 import Link from '../link';
 import Loader from '../loader/table-loader';
 import Empty from '../empty/table-empty';
-import { useQueryHook } from '../../hooks';
-import { convertAirtimes } from '../../api';
+import { useQueryHook } from 'hooks';
+import { convertAirtimes } from 'api';
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
 	[`&.${tableCellClasses.head}`]: {

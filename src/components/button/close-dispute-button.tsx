@@ -3,10 +3,10 @@ import { Button as MuiButton } from '@mui/material';
 import { grey } from '@mui/material/colors';
 import { useMutation, useQueryClient } from 'react-query';
 import { styled } from '@mui/material/styles';
-import { DANGER_COLOR, Ticket, QueryKeys } from '../../utilities';
+import { DANGER_COLOR, Ticket, QueryKeys } from 'utilities';
 import Spinner from '../loader';
-import { useHandleError, useAlert } from '../../hooks';
-import { closeTicket } from '../../api';
+import { useHandleError, useAlert } from 'hooks';
+import { closeTicket } from 'api';
 
 interface Props {
 	ticket: Ticket;

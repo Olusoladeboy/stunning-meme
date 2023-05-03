@@ -11,15 +11,10 @@ import {
 	validationSchema,
 	ADMIN_ROLE,
 	User,
-} from '../../utilities';
+} from 'utilities';
 import Select from '../form-components/select';
-import { useAlert, useHandleError } from '../../hooks';
-import {
-	createStaff,
-	updateStaff,
-	createManager,
-	updateManager,
-} from '../../api';
+import { useAlert, useHandleError } from 'hooks';
+import { createStaff, updateStaff, createManager, updateManager } from 'api';
 import UploadUserAvatar from '../upload-user-avatar';
 
 const SELECT_ADMIN_PRIVILEDGE = 'Select Admin Priviledge';

@@ -1,5 +1,5 @@
 import React from 'react';
-import { AuthLayout, CreatePasswordForm } from '../../components';
+import { AuthLayout, CreatePasswordForm } from 'components';
 
 const CreateNewPassword = () => {
 	return (

@@ -15,7 +15,7 @@ import {
 	LIGHT_GRAY,
 	checkTransactionAmount,
 	checkAmount,
-} from '../../utilities';
+} from 'utilities';
 import Loader from '../loader/table-loader';
 import Empty from '../empty/table-empty';
 

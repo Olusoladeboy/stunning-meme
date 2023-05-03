@@ -4,11 +4,11 @@ import * as yup from 'yup';
 import { useMutation, useQueryClient } from 'react-query';
 import { useFormik } from 'formik';
 import { grey } from '@mui/material/colors';
-import { QueryKeys } from '../../utilities';
+import { QueryKeys } from 'utilities';
 import CustomButton from '../button/custom-button';
 import Select from '../form-components/select';
-import { useAlert, useHandleError, useQueryHook } from '../../hooks';
-import { managers, assignManagerToUser } from '../../api';
+import { useAlert, useHandleError, useQueryHook } from 'hooks';
+import { managers, assignManagerToUser } from 'api';
 
 type Props = {
 	User: any;

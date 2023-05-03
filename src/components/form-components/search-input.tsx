@@ -8,8 +8,8 @@ import {
 	CircularProgress,
 } from '@mui/material';
 import { Search, Close } from '@mui/icons-material';
-import { useAppSelector } from '../../store/hooks';
-import { ThemeModeType } from '../../utilities';
+import { useAppSelector } from 'store/hooks';
+import { ThemeModeType } from 'utilities';
 import { grey, red } from '@mui/material/colors';
 
 interface Props extends BoxProps {

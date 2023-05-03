@@ -22,11 +22,11 @@ import VerificationIcon from '../icons/verification';
 import StatisticsIcon from '../icons/stat';
 import CouponIcon from '../icons/coupon';
 import ShareIcon from '../icons/share';
-import { useAppSelector, useAppDispatch } from '../../store/hooks';
+import { useAppSelector, useAppDispatch } from 'store/hooks';
 import Image from '../image';
-import { getActiveLink, LINKS } from '../../utilities';
-import { useLogoutUser } from '../../hooks';
-import { setToggleMobileDrawer } from '../../store/app';
+import { getActiveLink, LINKS } from 'utilities';
+import { useLogoutUser } from 'hooks';
+import { setToggleMobileDrawer } from 'store/app';
 
 type ListItemButtonProps = {
 	icon: any;
@@ -121,7 +121,7 @@ const DrawerList = () => {
 								maxWidth: '140px',
 							},
 						}}
-						src={require('../../assets/images/app-logo-with-text.png')}
+						src={require('assets/images/app-logo-with-text.png')}
 					/>
 				</Box>
 				<Box
@@ -139,7 +139,7 @@ const DrawerList = () => {
 									maxWidth: '140px',
 								},
 							}}
-							src={require('../../assets/images/app-logo-with-text.png')}
+							src={require('assets/images/app-logo-with-text.png')}
 						/>
 					) : (
 						<Image
@@ -148,7 +148,7 @@ const DrawerList = () => {
 									maxWidth: '32px',
 								},
 							}}
-							src={require('../../assets/images/app-logo.png')}
+							src={require('assets/images/app-logo.png')}
 						/>
 					)}
 				</Box>

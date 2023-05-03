@@ -6,8 +6,8 @@ import PendingIcon from '../icons/time';
 import CompletedIcon from '../icons/check-two';
 import FailedIcon from '../icons/failed';
 import TransactionItem from '../transaction-item';
-import { SEMI_GREEN_COLOR, CONVERSIONS_TAB } from '../../utilities';
-import { useAppSelector } from '../../store/hooks';
+import { SEMI_GREEN_COLOR, CONVERSIONS_TAB } from 'utilities';
+import { useAppSelector } from 'store/hooks';
 
 interface Props {
 	currentTab?: string;

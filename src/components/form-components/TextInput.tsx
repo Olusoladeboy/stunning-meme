@@ -1,8 +1,8 @@
 import React from 'react';
 import { TextField, TextFieldProps } from '@mui/material';
 import { grey } from '@mui/material/colors';
-import { useAppSelector } from '../../store/hooks';
-import { ThemeModeType } from '../../utilities';
+import { useAppSelector } from 'store/hooks';
+import { ThemeModeType } from 'utilities';
 
 type Props = {
 	isLoading?: boolean;

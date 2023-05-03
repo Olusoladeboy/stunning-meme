@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { Statistics, IModalAlert } from '../../utilities';
+import { Statistics, IModalAlert } from 'utilities';
 
 // Define the initial state using that type
 const initialState: {

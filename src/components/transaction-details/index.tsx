@@ -1,13 +1,9 @@
 import React, { useEffect } from 'react';
 import { Box, styled, Typography } from '@mui/material';
 import moment from 'moment';
-import {
-	Transaction,
-	formatNumberToCurrency,
-	cleanString,
-} from '../../utilities';
+import { Transaction, formatNumberToCurrency, cleanString } from 'utilities';
 import DisputeTransactionItem from './transaction-item';
-import { useSearchCoupon } from '../../hooks';
+import { useSearchCoupon } from 'hooks';
 
 interface Props {
 	transaction: Transaction | null;

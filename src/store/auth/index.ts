@@ -1,11 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import {
-	StorageKeys,
-	AuthState,
-	User,
-	Storage,
-	ADMIN_ROLE,
-} from '../../utilities';
+import { StorageKeys, AuthState, User, Storage, ADMIN_ROLE } from 'utilities';
 
 // Define the initial state using that type
 const initialState: AuthState = {

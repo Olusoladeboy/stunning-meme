@@ -22,15 +22,15 @@ import {
 	SUCCESS_COLOR,
 	DataPlan,
 	QueryKeys,
-} from '../../utilities';
+} from 'utilities';
 import DataPlanForm from '../forms/data-plan-form';
 import ModalWrapper from '../modal/Wrapper';
 import RegularAlert from '../modal/regular-modal';
 import TableLoader from '../loader/table-loader';
 import TableEmpty from '../empty/table-empty';
 import Loader from '../loader';
-import { useAlert, useHandleError } from '../../hooks';
-import { updateDataPlan } from '../../api';
+import { useAlert, useHandleError } from 'hooks';
+import { updateDataPlan } from 'api';
 import { StyledTableCell, StyledTableRow } from './components';
 import CustomTableCell from './components/custom-table-cell';
 

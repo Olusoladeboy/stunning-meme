@@ -14,7 +14,7 @@ import {
 	API_ENDPOINTS,
 	NetworkData,
 	NetworkPage,
-} from '../../utilities';
+} from 'utilities';
 import {
 	StyledTableCell as TableCell,
 	StyledTableRow as TableRow,
@@ -23,13 +23,13 @@ import { grey } from '@mui/material/colors';
 import Image from '../image';
 import Button from '../button/custom-button';
 import Empty from '../empty';
-import { networks, updateNetwork } from '../../api';
-import { useAppSelector } from '../../store/hooks';
+import { networks, updateNetwork } from 'api';
+import { useAppSelector } from 'store/hooks';
 import TableLoader from '../loader/table-loader';
 import NetworkForm from '../forms/network-form';
 import Modal from '../modal/Wrapper';
 import Loader from '../loader';
-import { useAlert, useHandleError } from '../../hooks';
+import { useAlert, useHandleError } from 'hooks';
 
 interface AitimeNetworkTypes extends NetworkData {
 	isActive: boolean;
@@ -166,7 +166,7 @@ const AirtimeNetworkTable = () => {
 													display: 'flex',
 													alignItems: 'center',
 												}}
-												src={require('../../assets/icons/edit.png')}
+												src={require('assets/icons/edit.png')}
 												alt={'edit'}
 											/>
 										</Box>

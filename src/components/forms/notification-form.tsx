@@ -18,8 +18,8 @@ import * as yup from 'yup';
 import { useMutation, useQueryClient } from 'react-query';
 import { useFormik } from 'formik';
 import UploadImage from '../form-components/upload-image';
-import { createNotification } from '../../api';
-import { useHandleError, useAlert, useSearchUser } from '../../hooks';
+import { createNotification } from 'api';
+import { useHandleError, useAlert, useSearchUser } from 'hooks';
 import Select from '../form-components/select';
 import TextInput from '../form-components/TextInput';
 import {
@@ -31,13 +31,13 @@ import {
 	NOTIFICATION_TYPE,
 	SECOUNDARY_COLOR,
 	ENDPOINTS,
-} from '../../utilities';
+} from 'utilities';
 import Button from '../button';
 import Image from '../image';
 import SearchInput from '../form-components/search-input';
 import Modal from '../modal/Wrapper';
 import { grey } from '@mui/material/colors';
-import { useAppSelector } from '../../store/hooks';
+import { useAppSelector } from 'store/hooks';
 import CircularProgress from '../loader/circular-progress';
 
 const SELECT_NOTIFICATION_TYPE = 'Select notification type';

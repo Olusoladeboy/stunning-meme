@@ -1,6 +1,6 @@
 import React from 'react';
-import { AuthLayout, Image } from '../../components';
-import ChangePasswordForm from '../../components/forms/change-password-form';
+import { AuthLayout, Image } from 'components';
+import ChangePasswordForm from 'components/forms/change-password-form';
 import { Typography } from '@mui/material';
 
 const ChangePassword = () => {
@@ -14,7 +14,7 @@ const ChangePassword = () => {
 						width: '100%',
 					},
 				}}
-				src={require('../../assets/images/app-logo-with-text.png')}
+				src={require('assets/images/app-logo-with-text.png')}
 				alt={'Airtimeflip-logo'}
 			/>
 			<Typography

@@ -1,8 +1,8 @@
 import React, { ReactNode } from 'react';
 import { Tabs, useTheme } from '@mui/material';
 import { grey } from '@mui/material/colors';
-import { useAppSelector } from '../../store/hooks';
-import { DARK_BACKGROUND_COLOR, ThemeModeType } from '../../utilities';
+import { useAppSelector } from 'store/hooks';
+import { DARK_BACKGROUND_COLOR, ThemeModeType } from 'utilities';
 
 type Props = {
 	currentTab: string | number;

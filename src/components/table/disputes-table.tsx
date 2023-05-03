@@ -7,11 +7,7 @@ import TableBody from '@mui/material/TableBody';
 import TableHead from '@mui/material/TableHead';
 import moment from 'moment';
 import { grey } from '@mui/material/colors';
-import {
-	SUCCESS_COLOR,
-	BOX_SHADOW,
-	DANGER_COLOR,
-} from '../../utilities/constant';
+import { SUCCESS_COLOR, BOX_SHADOW, DANGER_COLOR } from 'utilities/constant';
 import {
 	StyledTableCell as TableCell,
 	StyledTableRow as TableRow,
@@ -19,10 +15,10 @@ import {
 import TableHeader from '../header/table-header';
 import Empty from '../empty';
 import Button from '../button';
-import { Ticket, TicketStatus } from '../../utilities/types';
+import { Ticket, TicketStatus } from 'utilities/types';
 import TableLoader from '../loader/table-loader';
-import ErrorBoundary from '../../utilities/helpers/error-boundary';
-import LINKS from '../../utilities/links';
+import ErrorBoundary from 'utilities/helpers/error-boundary';
+import LINKS from 'utilities/links';
 import CustomTableCell from './components/custom-table-cell';
 
 interface Props {

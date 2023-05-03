@@ -2,12 +2,12 @@ import React, { useState } from 'react';
 import { Box, Avatar, useTheme } from '@mui/material';
 import { CameraAlt, Delete } from '@mui/icons-material';
 import axios from 'axios';
-import { LIGHT_GRAY, DANGER_COLOR, API_ENDPOINTS } from '../../utilities';
+import { LIGHT_GRAY, DANGER_COLOR, API_ENDPOINTS } from 'utilities';
 import Button from '../button';
 import UploadImageButton from '../button/upload-image-button';
-import { useAppSelector } from '../../store/hooks';
+import { useAppSelector } from 'store/hooks';
 import PreviewProfileImageModal from '../modal/preview-profile-image-modal';
-import { useHandleError, useAlert } from '../../hooks';
+import { useHandleError, useAlert } from 'hooks';
 
 const baseUrl = process.env.REACT_APP_API_URI as string;
 
@@ -79,7 +79,7 @@ const UploadUserAvatar: React.FC<IUploadUserAvatar> = ({ managerId }) => {
 				<Avatar
 					src={photoUrl}
 					sx={{
-						// backgroundImage: `url(${require('../../assets/images/stripBg.png')})`,
+						// backgroundImage: `url(${require('assets/images/stripBg.png')})`,
 						backgroundSize: '400%',
 						backgroundPosition: 'center',
 						color: theme.palette.primary.main,

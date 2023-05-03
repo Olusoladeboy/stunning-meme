@@ -17,15 +17,15 @@ import {
 	formatNumberToCurrency,
 	STATUS,
 	QueryKeys,
-} from '../../utilities';
+} from 'utilities';
 import TableLoader from '../loader/table-loader';
 import Empty from '../empty/table-empty';
 import SearchInput from '../form-components/search-input';
 import CustomTableCell from './components/custom-table-cell';
-import { updateConvertAirtimeStatus } from '../../api';
+import { updateConvertAirtimeStatus } from 'api';
 import Loader from '../loader';
 import TransactionDetailsModal from '../modal/transaction-details-modal';
-import { useAlert, useHandleError } from '../../hooks';
+import { useAlert, useHandleError } from 'hooks';
 
 interface UpdateStatusPayload {
 	id: string;

@@ -4,16 +4,11 @@ import queryString from 'query-string';
 import { styled, Box } from '@mui/material';
 import { grey } from '@mui/material/colors';
 import { useNavigate, useLocation } from 'react-router-dom';
-import {
-	Layout,
-	Pagination,
-	ReferralTable,
-	TableHeader,
-} from '../../components';
-import { referrals } from '../../api';
-import { useHandleError, useAlert, useSearchReferral } from '../../hooks';
-import { QueryKeys, MAX_RECORDS, LINKS, BOX_SHADOW } from '../../utilities';
-import { useAppSelector } from '../../store/hooks';
+import { Layout, Pagination, ReferralTable, TableHeader } from 'components';
+import { referrals } from 'api';
+import { useHandleError, useAlert, useSearchReferral } from 'hooks';
+import { QueryKeys, MAX_RECORDS, LINKS, BOX_SHADOW } from 'utilities';
+import { useAppSelector } from 'store/hooks';
 
 const Referrals = () => {
 	const handleError = useHandleError();

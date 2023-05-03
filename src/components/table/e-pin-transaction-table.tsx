@@ -14,7 +14,7 @@ import {
 	DANGER_COLOR,
 	EPins,
 	formatNumberToCurrency,
-} from '../../utilities';
+} from 'utilities';
 import { grey } from '@mui/material/colors';
 import Pagination from '../pagination';
 
@@ -27,7 +27,7 @@ type Props = {
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
 	[`&.${tableCellClasses.head}`]: {
-		// backgroundImage: `url(${require('../../assets/images/bgImage.png')})`,
+		// backgroundImage: `url(${require('assets/images/bgImage.png')})`,
 		backgroundColor: LIGHT_GRAY,
 		backgroundSize: 'cover',
 		backgroundPosition: 'top-left',

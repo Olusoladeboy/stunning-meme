@@ -16,7 +16,7 @@ import {
 	ErrorBoundary,
 	LIGHT_GRAY,
 	checkAmount,
-} from '../../utilities';
+} from 'utilities';
 import Loader from '../loader/table-loader';
 import Empty from '../empty/table-empty';
 import CustomTableCell from './components/custom-table-cell';

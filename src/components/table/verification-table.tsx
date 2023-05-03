@@ -12,7 +12,7 @@ import {
 	User,
 	QueryKeys,
 	ErrorBoundaryGuard,
-} from '../../utilities';
+} from 'utilities';
 import {
 	StyledTableCell as TableCell,
 	StyledTableRow as TableRow,
@@ -22,9 +22,9 @@ import Empty from '../empty';
 import Button from '../button';
 import CustomButton from '../button/custom-button';
 import Loader from '../loader/table-loader';
-import { useAlert, useHandleError } from '../../hooks';
-import { useAppSelector } from '../../store/hooks';
-import { verifyUser } from '../../api';
+import { useAlert, useHandleError } from 'hooks';
+import { useAppSelector } from 'store/hooks';
+import { verifyUser } from 'api';
 import CustomTableCell from './components/custom-table-cell';
 
 type Props = {

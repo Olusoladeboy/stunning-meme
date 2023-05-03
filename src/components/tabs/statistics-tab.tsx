@@ -1,7 +1,7 @@
 import React from 'react';
 import { Box, Button, styled } from '@mui/material';
 import { grey } from '@mui/material/colors';
-import { SECOUNDARY_COLOR, STATISTIC_TAB } from '../../utilities';
+import { SECOUNDARY_COLOR, STATISTIC_TAB } from 'utilities';
 
 const StatisticsTab = () => {
 	return (

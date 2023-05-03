@@ -11,8 +11,8 @@ import {
 	TaskList,
 	RecentConversionsTable,
 	RecentTransactionsTable,
-} from '../../components';
-import { useAppSelector } from '../../store/hooks';
+} from 'components';
+import { useAppSelector } from 'store/hooks';
 
 const LargeView = () => {
 	const theme = useTheme();

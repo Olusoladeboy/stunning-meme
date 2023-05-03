@@ -7,12 +7,12 @@ import TextInput from '../form-components/TextInput';
 import Button from '../button';
 import { grey } from '@mui/material/colors';
 import Link from '../link';
-import { LINKS, LoginData, validationSchema } from '../../utilities';
-import { useAppDispatch } from '../../store/hooks';
-import { setToken, setUser } from '../../store/auth';
+import { LINKS, LoginData, validationSchema } from 'utilities';
+import { useAppDispatch } from 'store/hooks';
+import { setToken, setUser } from 'store/auth';
 import CustomButton from '../button/custom-button';
-import { useAlert, useHandleError, useModalAlert } from '../../hooks';
-import { login } from '../../api';
+import { useAlert, useHandleError, useModalAlert } from 'hooks';
+import { login } from 'api';
 
 const LoginForm = () => {
 	const theme = useTheme();

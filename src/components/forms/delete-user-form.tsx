@@ -3,10 +3,10 @@ import { Box, useTheme, Typography, Switch } from '@mui/material';
 import { useMutation, useQueryClient } from 'react-query';
 // import Button from '../button';
 import { grey } from '@mui/material/colors';
-import { QueryKeys, User } from '../../utilities';
+import { QueryKeys, User } from 'utilities';
 import Loader from '../loader';
-import { useAlert, useHandleError } from '../../hooks';
-import { activateOrDeativateUser } from '../../api';
+import { useAlert, useHandleError } from 'hooks';
+import { activateOrDeativateUser } from 'api';
 
 type Props = {
 	user: User | null;

@@ -10,10 +10,10 @@ import {
 	QueryKey,
 	API_ENDPOINTS,
 	validationSchema,
-} from '../../utilities';
+} from 'utilities';
 import Button from '../button/custom-button';
-import { useAlert, useHandleError } from '../../hooks';
-import { createNetwork, updateNetwork } from '../../api';
+import { useAlert, useHandleError } from 'hooks';
+import { createNetwork, updateNetwork } from 'api';
 
 interface NetworkData extends INetworkData {
 	id?: string;

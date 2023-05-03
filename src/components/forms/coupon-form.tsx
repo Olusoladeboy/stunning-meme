@@ -13,9 +13,9 @@ import {
 	CouponStatus,
 	QueryKey,
 	validationSchema,
-} from '../../utilities';
-import { useAlert, useHandleError } from '../../hooks';
-import { createCoupon, updateCoupon } from '../../api';
+} from 'utilities';
+import { useAlert, useHandleError } from 'hooks';
+import { createCoupon, updateCoupon } from 'api';
 
 const COUPON_TYPES = [CouponType.PERCENT, CouponType.AMOUNT];
 const COUPON_STATUS = [

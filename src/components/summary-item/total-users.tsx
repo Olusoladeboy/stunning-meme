@@ -3,22 +3,24 @@ import { Typography, useTheme } from '@mui/material';
 import { grey } from '@mui/material/colors';
 import SummaryWrapper from './wrapper';
 import UserIcon from '../icons/user';
-import { SUCCESS_COLOR } from '../../utilities/constant';
+import { SUCCESS_COLOR, LINKS } from 'utilities';
 import Link from '../link';
+import { useAppSelector } from 'store/hooks';
 
 const TotalUsers = () => {
 	const theme = useTheme();
 	const styles = useStyles(theme);
+	const { statistics } = useAppSelector((store) => store.appState);
 	return (
 		<SummaryWrapper
 			bgColor={SUCCESS_COLOR}
-			amount={'500'}
+			amount={statistics ? statistics.total_users : '---'}
 			icon={<UserIcon color={grey[50]} />}
 		>
 			<Typography style={styles.text} variant={'h6'}>
 				Total Users
 			</Typography>
-			<Link to={'/'}>
+			<Link to={LINKS.Users}>
 				<Typography style={styles.linkText} variant={'body1'}>
 					View all
 				</Typography>

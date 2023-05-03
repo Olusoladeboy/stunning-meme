@@ -1,24 +1,120 @@
-import React from 'react';
-import { Box, Typography, useTheme } from '@mui/material';
+import React, { useState, useEffect } from 'react';
+import queryString from 'query-string';
+import { Box, useTheme } from '@mui/material';
+import { useQuery } from 'react-query';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { grey } from '@mui/material/colors';
-import Layout from '../../components/layout';
-import TransactionsTable from '../../components/table/transactions-table';
-import { BOX_SHADOW } from '../../utilities/constant';
-import TransactionMainBalance from '../../components/transaction-main-balance';
+import {
+	Layout,
+	TransactionsTable,
+	TransactionMainBalance,
+	Pagination,
+	TableHeader,
+} from 'components';
+import { BOX_SHADOW, QueryKeys, MAX_RECORDS, LINKS } from 'utilities';
+import { useAppSelector } from 'store/hooks';
+import { allTransactions } from 'api';
+import { useHandleError, useAlert, useSearchTransaction } from 'hooks';
 
 const Transactions = () => {
 	const theme = useTheme();
+	const handleError = useHandleError();
 	const styles = useStyles(theme);
+	const [isEnableQuery, setEnableQuery] = useState<boolean>(false);
+	const alert = useAlert();
+	const { canViewStatistics } = useAppSelector((store) => store.authState);
+	const navigate = useNavigate();
+	const [count, setCount] = useState<number>(1);
+	const [page, setPage] = useState<number>(1);
+	const [total, setTotal] = useState<number>(0);
+	const location = useLocation();
+	const query = queryString.parse(location.search);
+	const { isSearching, searchTransaction, clearSearch, search } =
+		useSearchTransaction();
+
+	useEffect(() => {
+		setEnableQuery(true);
+		if (query && query.page) {
+			setPage(parseInt(query.page as string));
+		}
+	}, [query, query.page]);
+
+	const { isLoading, data } = useQuery(
+		[QueryKeys.Transactions],
+		() =>
+			allTransactions({
+				params: {
+					sort: '-createdAt',
+					limit: MAX_RECORDS,
+					skip: (page - 1) * MAX_RECORDS,
+				},
+			}),
+		{
+			enabled: isEnableQuery,
+			onSettled: (data: any, error) => {
+				setEnableQuery(false);
+				if (error) {
+					const response = handleError({ error });
+					if (response?.message) {
+						alert({ message: response.message, type: 'error' });
+					}
+				}
+				if (data && data.success) {
+					const total = data.metadata.total;
+					setTotal(data.metadata.total);
+					const count = Math.ceil(total / MAX_RECORDS);
+					setCount(count);
+				}
+			},
+		}
+	);
+
+	const handlePageChange = (page: number) => {
+		if (page !== 1) {
+			setPage(page);
+			navigate(`${LINKS.Transactions}?&page=${page}`);
+		} else {
+			navigate(LINKS.Transactions);
+			setPage(page);
+		}
+		setEnableQuery(true);
+	};
+
 	return (
 		<Layout>
 			<Box style={styles.container}>
-				<Box sx={{ padding: '0px 2rem' }}>
-					<Typography sx={{ marginBottom: theme.spacing(2) }} variant={'h5'}>
-						Transactions
-					</Typography>
-					<TransactionMainBalance />
+				<Box
+					sx={{
+						padding: { xs: '0px 15px', md: '0px 2rem' },
+						display: 'grid',
+						gap: '2rem',
+					}}
+				>
+					<TableHeader
+						searchPlaceholder={'Search transaction by reference'}
+						title={'Transactions'}
+						handleSearch={searchTransaction}
+						clearSearch={clearSearch}
+					/>
+					{canViewStatistics && <TransactionMainBalance />}
 				</Box>
-				<TransactionsTable data={[]} />
+				<TransactionsTable
+					isLoading={isLoading || isSearching}
+					data={search ? search : data && data.payload}
+				/>
+				{total > MAX_RECORDS && (
+					<Box style={styles.paginationWrapper}>
+						<Pagination
+							sx={{}}
+							size={'large'}
+							variant={'outlined'}
+							shape={'rounded'}
+							page={page}
+							count={count}
+							onChange={(e, number) => handlePageChange(number)}
+						/>
+					</Box>
+				)}
 			</Box>
 		</Layout>
 	);
@@ -34,6 +130,11 @@ const useStyles = (theme: any) => ({
 		backgroundColor: grey[50],
 		borderRadius: theme.spacing(2),
 		boxShadow: BOX_SHADOW,
+	},
+	paginationWrapper: {
+		display: 'flex',
+		justifyContent: 'flex-end',
+		paddingRight: '20px',
 	},
 });
 

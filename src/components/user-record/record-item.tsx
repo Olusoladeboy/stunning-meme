@@ -11,7 +11,7 @@ type Props = {
 	isBorderLeft?: boolean;
 	text: string;
 	textColor?: string;
-	value: string;
+	value: string | number;
 	link?: string;
 	isPaddingRight?: boolean;
 	isPaddingLeft?: boolean;

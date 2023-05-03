@@ -1,17 +1,21 @@
 import React, { ComponentProps } from 'react';
 import { Box, Typography, useTheme } from '@mui/material';
 import { grey } from '@mui/material/colors';
-import Layout from '../../components/layout';
-import { BOX_SHADOW } from '../../utilities/constant';
-import { NetworkPageTypes } from '../../utilities/types';
-import NetworkDescriptiveAndAddButton from '../../components/network-descriptive-message-and-add-buttton';
-import DataNetworkTable from '../../components/table/data-network-table';
-import DATA_NETWORK from '../../utilities/data/data-network';
-import AirtimeNetworkTable from '../../components/table/airtime-network-table';
-import AIRTIME_NETWORK from '../../utilities/data/airtime-network';
+import {
+	Layout,
+	NetworkDescriptiveMessageAndButton,
+	AirtimeNetworkTable,
+	ConversionNetworkTable,
+	DataNetworkTable,
+} from 'components';
+import { BOX_SHADOW } from 'utilities/constant';
+import { NetworkPage } from 'utilities/types';
 
 interface Props extends ComponentProps<any> {
-	pageType: NetworkPageTypes.AIRTIME_NETWORK | NetworkPageTypes.DATA_NETWORK;
+	pageType:
+		| NetworkPage.AIRTIME_NETWORK
+		| NetworkPage.DATA_NETWORK
+		| NetworkPage.CONVERSION_NETWORK;
 }
 
 const Network = ({ pageType }: Props) => {
@@ -21,7 +25,7 @@ const Network = ({ pageType }: Props) => {
 	return (
 		<Layout>
 			<Box style={styles.container}>
-				<Box sx={{ padding: '0px 2rem' }}>
+				<Box sx={{ padding: { xs: '0px 15px', md: '0px 2rem' } }}>
 					<Typography
 						style={styles.title}
 						sx={{ marginBottom: theme.spacing(2) }}
@@ -29,15 +33,15 @@ const Network = ({ pageType }: Props) => {
 					>
 						{pageType}
 					</Typography>
-					<NetworkDescriptiveAndAddButton
+					<NetworkDescriptiveMessageAndButton
 						type={pageType}
-						message={'Edit data network plan'}
+						message={`Edit ${pageType} plan`}
 					/>
 				</Box>
-				{pageType === NetworkPageTypes.DATA_NETWORK ? (
-					<DataNetworkTable data={DATA_NETWORK} />
-				) : (
-					<AirtimeNetworkTable data={AIRTIME_NETWORK} />
+				{pageType === NetworkPage.DATA_NETWORK && <DataNetworkTable />}
+				{pageType === NetworkPage.AIRTIME_NETWORK && <AirtimeNetworkTable />}
+				{pageType === NetworkPage.CONVERSION_NETWORK && (
+					<ConversionNetworkTable />
 				)}
 			</Box>
 		</Layout>

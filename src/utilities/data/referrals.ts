@@ -7,7 +7,7 @@ const REFERRALS = [
 		date: '30/03/22',
 		status: 'verified',
 		number_of_referees: 1,
-		avatar: require('../../assets/images/user.png'),
+		avatar: require('assets/images/user.png'),
 		role: 'Admin',
 	},
 	{

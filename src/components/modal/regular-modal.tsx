@@ -32,7 +32,7 @@ const RegularModal = ({
 }: Props) => {
 	const theme = useTheme();
 	return (
-		<ModalWrapper close={close} contentWidth={width}>
+		<ModalWrapper closeModal={close} contentWidth={width as string}>
 			<Box
 				sx={{
 					display: 'flex',
@@ -53,19 +53,19 @@ const RegularModal = ({
 						<>
 							{successType === 'green' ? (
 								<img
-									src={require('../../assets/icons/check-green.png')}
+									src={require('assets/icons/check-green.png')}
 									alt={'success-green'}
 								/>
 							) : (
 								<img
-									src={require('../../assets/icons/check-primary.png')}
+									src={require('assets/icons/check-primary.png')}
 									alt={'success-green'}
 								/>
 							)}
 						</>
 					) : (
 						<img
-							src={require('../../assets/icons/failed.png')}
+							src={require('assets/icons/failed.png')}
 							alt={'success-green'}
 						/>
 					)}

@@ -1,13 +1,52 @@
 import React from 'react';
-import { Box, Typography, useTheme } from '@mui/material';
-import UserAvatarWithDetails from '../user-avatar-with-details';
-import Button from '../button';
 import { grey } from '@mui/material/colors';
+import { Box, Typography, useTheme } from '@mui/material';
+import { useMutation, useQueryClient } from 'react-query';
+import UserAvatarWithDetails from '../avatar-with-details';
+import CustomButton from '../button/custom-button';
 import SuspendUserForm from '../forms/suspend-user-form';
 import DeleteUserForm from '../forms/delete-user-form';
+import { User, QueryKey } from 'utilities';
+import { useAlert, useHandleError } from 'hooks';
+import { suspendWithdraw } from 'api';
 
-const UserStatus = () => {
+type Props = {
+	user: User | null;
+};
+
+const UserStatus = ({ user }: Props) => {
 	const theme = useTheme();
+	const setAlert = useAlert();
+	const handleError = useHandleError();
+	const queryClient = useQueryClient();
+
+	const { mutate, isLoading } = useMutation(suspendWithdraw, {
+		onSettled: (data, error) => {
+			if (error) {
+				const response = handleError({ error });
+				if (response?.message) {
+					setAlert({ message: response.message, type: 'error' });
+				}
+			}
+
+			if (data && data.success) {
+				setAlert({ message: data.message, type: 'success' });
+				queryClient.invalidateQueries(QueryKey.AllUsers);
+				queryClient.invalidateQueries(QueryKey.GetSingleUser);
+				queryClient.invalidateQueries(QueryKey.Statistics);
+			}
+		},
+	});
+
+	const handleSuspendWithdraw = () =>
+		mutate({
+			data: {
+				suspended: user?.suspended as boolean,
+				suspendWithdrawal: !user?.suspendWithdrawal,
+			},
+			id: user?.id as string,
+		});
+
 	return (
 		<Box>
 			<Box
@@ -18,9 +57,13 @@ const UserStatus = () => {
 					marginBottom: theme.spacing(5),
 				}}
 			>
-				<UserAvatarWithDetails />
-				<Button
-					size={'large'}
+				<UserAvatarWithDetails user={user} />
+				<CustomButton
+					loading={isLoading}
+					onClick={(e: React.FormEvent<HTMLButtonElement>) => {
+						e.preventDefault();
+						handleSuspendWithdraw();
+					}}
 					sx={{
 						border: `1px solid ${theme.palette.secondary.main}`,
 						':hover': {
@@ -28,9 +71,12 @@ const UserStatus = () => {
 							color: grey[50],
 						},
 					}}
+					size={'large'}
 				>
-					Suppend Withdrawal
-				</Button>
+					{user?.suspendWithdrawal
+						? 'Unsuspend withdrawal'
+						: 'Suspend Withdrawal'}
+				</CustomButton>
 			</Box>
 			<Box>
 				<Typography sx={{ marginBottom: theme.spacing(4) }} variant={'h5'}>
@@ -49,8 +95,8 @@ const UserStatus = () => {
 						},
 					}}
 				>
-					<SuspendUserForm />
-					<DeleteUserForm />
+					<SuspendUserForm user={user} />
+					<DeleteUserForm user={user} />
 				</Box>
 			</Box>
 		</Box>

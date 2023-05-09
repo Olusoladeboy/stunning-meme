@@ -2,7 +2,6 @@ import React, { CSSProperties, useState, MouseEvent } from 'react';
 import Table from '@mui/material/Table';
 import Box from '@mui/material/Box';
 import {
-	Typography,
 	useTheme,
 	List,
 	ListItemButton,
@@ -17,7 +16,6 @@ import { grey } from '@mui/material/colors';
 import { AddCircle, MoreHoriz } from '@mui/icons-material';
 
 import ModalWrapper from '../modal/Wrapper';
-import FilterIcon from '../icons/filter';
 import {
 	StyledTableCell as TableCell,
 	StyledTableRow as TableRow,
@@ -40,6 +38,7 @@ import TableLoader from '../loader/table-loader';
 import { useAlert, useHandleError } from 'hooks';
 import Loader from '../loader';
 import { updateCouponStatus } from 'api';
+import CustomTableCell from './components/custom-table-cell';
 
 interface Props {
 	data: Coupon[] | null;
@@ -192,84 +191,14 @@ const CouponsTable = ({
 							}}
 						>
 							<TableRow>
-								<TableCell sx={{ paddingLeft: '30px' }}>
-									<Box style={styles.filterWrapper}>
-										<Typography
-											style={styles.tableHeaderText}
-											variant={'body1'}
-										>
-											Coupon Name
-										</Typography>
-										<FilterIcon />
-									</Box>
-								</TableCell>
-								<TableCell>
-									<Box style={styles.filterWrapper}>
-										<Typography
-											style={styles.tableHeaderText}
-											variant={'body1'}
-										>
-											Type
-										</Typography>
-										<FilterIcon />
-									</Box>
-								</TableCell>
-								<TableCell>
-									<Box style={styles.filterWrapper}>
-										<Typography
-											style={styles.tableHeaderText}
-											variant={'body1'}
-										>
-											Gift
-										</Typography>
-										<FilterIcon />
-									</Box>
-								</TableCell>
-								<TableCell>
-									<Box style={styles.filterWrapper}>
-										<Typography
-											style={styles.tableHeaderText}
-											variant={'body1'}
-										>
-											Created by
-										</Typography>
-										<FilterIcon />
-									</Box>
-								</TableCell>
-								<TableCell>
-									<Box style={styles.filterWrapper}>
-										<Typography
-											style={styles.tableHeaderText}
-											variant={'body1'}
-										>
-											Date
-										</Typography>
-										<FilterIcon />
-									</Box>
-								</TableCell>
-								<TableCell>
-									<Box style={styles.filterWrapper}>
-										<Typography
-											style={styles.tableHeaderText}
-											variant={'body1'}
-										>
-											Expiration
-										</Typography>
-										<FilterIcon />
-									</Box>
-								</TableCell>
-								<TableCell>
-									<Box style={styles.filterWrapper}>
-										<Typography
-											style={styles.tableHeaderText}
-											variant={'body1'}
-										>
-											Status
-										</Typography>
-										<FilterIcon />
-									</Box>
-								</TableCell>
-								<TableCell>Action</TableCell>
+								<CustomTableCell label={'Coupon Name'} />
+								<CustomTableCell label={'Type'} />
+								<CustomTableCell label={'Gift'} />
+								<CustomTableCell label={'Create By'} />
+								<CustomTableCell label={'Date'} />
+								<CustomTableCell label={'Expiration'} />
+								<CustomTableCell label={'Status'} />
+								<CustomTableCell label={'Action'} />
 							</TableRow>
 						</TableHead>
 						<TableBody
@@ -398,7 +327,7 @@ const useStyles = (theme: any) => ({
 		display: 'grid',
 		gridTemplateColumn: '1fr',
 		gap: theme.spacing(4),
-		border: `1px solid ${theme.palette.secondary.main}`,
+		border: `0.5px solid ${theme.palette.secondary.main}`,
 		padding: '1.5rem 0px',
 		backgroundColor: grey[50],
 		borderRadius: theme.spacing(2),

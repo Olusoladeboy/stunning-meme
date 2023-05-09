@@ -24,9 +24,12 @@ const Drawer = () => {
 					display: {
 						xs: 'flex',
 						md: 'none',
-						position: 'relative',
 					},
+					position: 'relative',
 					'& .MuiDrawer-paper': {
+						'&::-webkit-scrollbar': {
+							width: '0',
+						},
 						boxSizing: 'border-box',
 						// width: isToggleDrawer ? DRAWER_WIDTH : MIN_DRAWER_WIDTH,
 						width: '75%',

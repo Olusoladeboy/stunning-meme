@@ -1,4 +1,4 @@
-import React, { CSSProperties, useState, useEffect } from 'react';
+import React, { CSSProperties } from 'react';
 import { useParams } from 'react-router-dom';
 import { useMutation, useQueryClient } from 'react-query';
 import * as yup from 'yup';
@@ -7,7 +7,13 @@ import { grey } from '@mui/material/colors';
 import { useFormik } from 'formik';
 import TextInput from '../form-components/TextInput';
 import Button from '../button/custom-button';
-import { DataPlan, QueryKeys, DATA_SOURCE } from 'utilities';
+import {
+	DataPlan,
+	QueryKeys,
+	DATA_SOURCE,
+	checkAmount,
+	Amount,
+} from 'utilities';
 import Select from '../form-components/select';
 import TextPlaceholder from '../partials/text-placeholder';
 import { useAlert, useHandleError } from 'hooks';
@@ -22,18 +28,11 @@ const SELECT_DATA_SOURCE = 'Select data source';
 
 const DataPlanForm = ({ dataPayload, callback }: Props) => {
 	const theme = useTheme();
+	const queryClient = useQueryClient();
 	const handleError = useHandleError();
 	const setAlert = useAlert();
 	const styles = useStyles(theme);
 	const { dataType, network } = useParams();
-
-	const [isEdit, setEdit] = useState(false);
-
-	useEffect(() => {
-		if (dataPayload && Object.keys(dataPayload).length > 0) {
-			setEdit(true);
-		}
-	}, [dataPayload]);
 
 	const validationSchema = yup.object().shape({
 		name: yup.string().required('Enter name'),
@@ -56,7 +55,14 @@ const DataPlanForm = ({ dataPayload, callback }: Props) => {
 			.required('Enter data unit'),
 	});
 
-	const queryClient = useQueryClient();
+	const initialValues: DataPlan = {
+		name: '',
+		amount: '',
+		data_source: SELECT_DATA_SOURCE,
+		code: '',
+		merchant_amount: '',
+		data_unit: '',
+	};
 
 	const { isLoading: isCreatingPlan, mutate: mutateCreatePlan } = useMutation(
 		createDataPlan,
@@ -87,7 +93,7 @@ const DataPlanForm = ({ dataPayload, callback }: Props) => {
 	/*
 	 *Update DataPlan Mutation
 	 */
-	const { isLoading: isUpdatingPlan, mutate: updatePlan } = useMutation(
+	const { isLoading: isUpdatingPlan, mutate: mutateUpdatePlan } = useMutation(
 		updateDataPlan,
 		{
 			onSettled: (data, error) => {
@@ -112,30 +118,23 @@ const DataPlanForm = ({ dataPayload, callback }: Props) => {
 	);
 
 	const createOrUpdateDataPlan = (data: DataPlan) => {
-		const amount =
-			dataPayload?.amount && typeof dataPayload?.amount === 'object'
-				? dataPayload?.amount.$numberDecimal
-				: dataPayload?.amount;
-
-		const payload: DataPlan = {
-			code: data.code,
-			amount: amount || '',
-		};
-
 		if (dataPayload && Object.keys(dataPayload).length > 0) {
-			return;
+			let payload: DataPlan = {
+				name: data.name,
+				amount: data.amount,
+				merchant_amount: data.merchant_amount,
+				data_unit: data.data_unit,
+				code: data.code,
+				data_source: data.data_source,
+			};
+
+			return mutateUpdatePlan({
+				data: payload,
+				id: dataPayload?.id as string,
+			});
 		}
 
 		mutateCreatePlan({ ...data, network, dataType });
-	};
-
-	const initialValues: DataPlan = {
-		name: '',
-		amount: '',
-		data_source: SELECT_DATA_SOURCE,
-		code: '',
-		merchant_amount: '',
-		data_unit: '',
 	};
 
 	const { values, handleChange, errors, touched, handleSubmit, resetForm } =
@@ -143,15 +142,10 @@ const DataPlanForm = ({ dataPayload, callback }: Props) => {
 			initialValues: dataPayload
 				? {
 						...dataPayload,
-						amount:
-							dataPayload?.amount && typeof dataPayload.amount === 'object'
-								? dataPayload.amount.$numberDecimal
-								: dataPayload.amount,
-						merchant_amount:
-							dataPayload.merchant_amount &&
-							typeof dataPayload.merchant_amount === 'object'
-								? dataPayload.merchant_amount.$numberDecimal
-								: dataPayload.merchant_amount,
+						amount: checkAmount(dataPayload.amount as string | Amount),
+						merchant_amount: checkAmount(
+							dataPayload.merchant_amount as string | Amount
+						),
 				  }
 				: initialValues,
 			validationSchema,
@@ -199,7 +193,6 @@ const DataPlanForm = ({ dataPayload, callback }: Props) => {
 					</Typography>
 					<TextInput
 						fullWidth
-						disabled={isEdit}
 						placeholder={'Plan amount'}
 						error={errors && touched.amount && errors.amount ? true : false}
 						helperText={errors && touched.amount && errors.amount}

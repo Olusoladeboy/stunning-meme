@@ -45,7 +45,7 @@ const ReferralTable: React.FC<Props> = ({ data, isLoading }) => {
 						startIcon={<AddCircle />}
 						style={styles.btnViewReferrals as CSSProperties}
 					>
-						View Referrals Bonus
+						View Referral Bonus
 					</Button>
 				</Box>
 

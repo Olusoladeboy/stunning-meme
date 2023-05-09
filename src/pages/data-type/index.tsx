@@ -79,7 +79,7 @@ const useStyles = (theme: any) => ({
 		display: 'flex',
 		flexDirection: 'column',
 		gap: theme.spacing(4),
-		border: `1px solid ${theme.palette.secondary.main}`,
+		border: `0.5px solid ${theme.palette.secondary.main}`,
 		padding: '1.5rem 0px',
 		backgroundColor: grey[50],
 		borderRadius: theme.spacing(2),

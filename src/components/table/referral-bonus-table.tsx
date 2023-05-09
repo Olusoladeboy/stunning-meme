@@ -88,7 +88,7 @@ const ReferralBonusTable: React.FC<Props> = ({ data, isLoading }) => {
 					}}
 				>
 					{isLoading ? (
-						<Loader />
+						<Loader colSpan={3} />
 					) : (
 						data && (
 							<>
@@ -122,9 +122,9 @@ const ReferralBonusTable: React.FC<Props> = ({ data, isLoading }) => {
 																Edit
 															</ListItemButton>
 
-															<ListItemButton style={styles.declineBtn}>
+															{/* <ListItemButton style={styles.declineBtn}>
 																Delete
-															</ListItemButton>
+															</ListItemButton> */}
 														</List>
 													</Popper>
 												</Box>
@@ -133,7 +133,7 @@ const ReferralBonusTable: React.FC<Props> = ({ data, isLoading }) => {
 									))
 								) : (
 									<TableRow>
-										<TableCell colSpan={6}>
+										<TableCell colSpan={3}>
 											<Empty text={'No Referral Bonus'} />
 										</TableCell>
 									</TableRow>

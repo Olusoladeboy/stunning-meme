@@ -252,12 +252,12 @@ export type KycData = {
 
 export type DataPlan = {
 	name?: string;
-	amount?: string | Amount;
+	amount?: string | Amount | number;
 	code?: string;
 	isActive?: boolean;
 	id?: string;
 	network?: NetworkData | string;
-	merchant_amount?: Amount | string;
+	merchant_amount?: Amount | string | number;
 	data_unit?: string;
 	data_source?: string;
 	dataType?: DataType | string;

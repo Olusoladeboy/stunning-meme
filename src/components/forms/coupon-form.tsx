@@ -1,5 +1,11 @@
 import React, { CSSProperties } from 'react';
-import { Box, useTheme, Typography, MenuItem } from '@mui/material';
+import {
+	Box,
+	useTheme,
+	Typography,
+	MenuItem,
+	InputAdornment,
+} from '@mui/material';
 import { useFormik } from 'formik';
 import moment from 'moment';
 import { grey } from '@mui/material/colors';
@@ -18,6 +24,7 @@ import { useAlert, useHandleError } from 'hooks';
 import { createCoupon, updateCoupon } from 'api';
 
 const COUPON_TYPES = [CouponType.PERCENT, CouponType.AMOUNT];
+
 const COUPON_STATUS = [
 	CouponStatus.VERIFIED,
 	CouponStatus.UNVERIFIED,
@@ -163,9 +170,9 @@ const CouponForm = ({ data, isEdit, onSuccess }: Props) => {
 						<MenuItem value={SELECT_COUPON_TYPE} disabled>
 							{SELECT_COUPON_TYPE}
 						</MenuItem>
-						{COUPON_TYPES.map((coupon, key) => (
-							<MenuItem key={key} value={coupon}>
-								{coupon}
+						{Object.values(CouponType).map((value) => (
+							<MenuItem key={value} value={value}>
+								{value}
 							</MenuItem>
 						))}
 					</Select>
@@ -182,6 +189,11 @@ const CouponForm = ({ data, isEdit, onSuccess }: Props) => {
 						placeholder={'Gift'}
 						value={values.gift}
 						onChange={handleChange('gift')}
+						InputProps={{
+							endAdornment: CouponType.PERCENT === values.type && (
+								<InputAdornment position='start'>%</InputAdornment>
+							),
+						}}
 					/>
 				</Box>
 			</Box>

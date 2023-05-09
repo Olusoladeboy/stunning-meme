@@ -57,9 +57,6 @@ const ConversionsTable = ({
 	const alert = useAlert();
 	const queryClient = useQueryClient();
 
-	const [selectedTransaction, setSelectedTransaction] =
-		useState<Transaction | null>(null);
-
 	const handleSortRecord = (field: string) => {
 		typeof handleSort !== 'undefined' && handleSort(field);
 	};
@@ -98,13 +95,6 @@ const ConversionsTable = ({
 
 	return (
 		<Container>
-			{selectedTransaction && (
-				<TransactionDetailsModal
-					closeModal={() => setSelectedTransaction(null)}
-					transaction={selectedTransaction}
-					isDisplayButtons
-				/>
-			)}
 			{isUpdatingStatus && <Loader />}
 			{isDisplaySearchField && (
 				<SearchContainer>
@@ -180,10 +170,7 @@ const ConversionsTable = ({
 									{conversions.length > 0 ? (
 										conversions.map((conversion: Transaction, key: number) => {
 											return (
-												<StyledTableRow
-													onClick={() => setSelectedTransaction(conversion)}
-													key={conversion.id}
-												>
+												<StyledTableRow key={conversion.id}>
 													<StyledTableCell style={styles.text}>
 														{conversion.user && conversion.user.firstname}{' '}
 														{conversion.user && conversion.user.lastname}

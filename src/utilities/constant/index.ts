@@ -16,6 +16,9 @@ export const MAX_RECORDS = 20;
 
 export const REFERRAL_BONUS = 'MININUM_BONUS_RATE';
 
+export const PRIVILEGE_MESSAGE =
+	'Unable to perform this operation, you do not have such privilege';
+
 export const QueryKeys = {
 	LoginUserDetails: '@Query:Login_user_details',
 	Managers: '@Query:All_manager',

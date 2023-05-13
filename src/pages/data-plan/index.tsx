@@ -14,12 +14,16 @@ import {
 } from 'components';
 import { BOX_SHADOW, QueryKeys } from 'utilities';
 import { dataPlans } from 'api';
+import { useAppSelector } from 'store/hooks';
 
 const ViewDataPlan = () => {
 	const { planName, network, dataType } = useParams();
 	const theme = useTheme();
 	const styles = useStyles(theme);
 	const [isDisplayModal, setDisplayModal] = useState<boolean>(false);
+	const { canCreateOrUpdateRecord } = useAppSelector(
+		(store) => store.authState
+	);
 
 	const { isLoading, data } = useQuery(
 		[QueryKeys.DataPlans, dataType, network],
@@ -60,13 +64,15 @@ const ViewDataPlan = () => {
 							{planName} Data Plan
 						</Typography>
 					</Box>
-					<Button
-						onClick={() => setDisplayModal(true)}
-						startIcon={<AddCircle />}
-						style={styles.addPlanBtn as CSSProperties}
-					>
-						Add new plan
-					</Button>
+					{canCreateOrUpdateRecord && (
+						<Button
+							onClick={() => setDisplayModal(true)}
+							startIcon={<AddCircle />}
+							style={styles.addPlanBtn as CSSProperties}
+						>
+							Add new plan
+						</Button>
+					)}
 				</Box>
 				<DataPlansTable isLoading={isLoading} data={data && data.payload} />
 			</Box>

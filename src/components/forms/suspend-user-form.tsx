@@ -11,6 +11,7 @@ import TextArea from '../form-components/text-area';
 import { useAlert, useHandleError } from 'hooks';
 import { suspendUser } from 'api';
 import Loader from '../loader';
+import { useAppSelector } from 'store/hooks';
 
 interface InitialValues {
 	suspended: boolean;
@@ -27,6 +28,11 @@ const SuspendUserForm = ({ user }: Props) => {
 	const handleError = useHandleError();
 	const styles = useStyles(theme);
 	const setAlert = useAlert();
+
+	const { canCreateOrUpdateRecord } = useAppSelector(
+		(store) => store.authState
+	);
+
 	const [isUnsuspending, setUnsuspending] = useState<boolean>(false);
 
 	const validationSchema = yup.object().shape({
@@ -91,6 +97,11 @@ const SuspendUserForm = ({ user }: Props) => {
 	const { suspended, suspensionDurationInDays, suspensionReason } = values;
 
 	const handleUnsuspendUser = async () => {
+		if (!canCreateOrUpdateRecord)
+			return setAlert({
+				message: `You can't perform this operation`,
+				type: 'info',
+			});
 		setUnsuspending(true);
 		setFieldValue('suspended', !suspended);
 
@@ -137,6 +148,7 @@ const SuspendUserForm = ({ user }: Props) => {
 						<Box style={styles.formWrapper as CSSProperties}>
 							<Box>
 								<TextInput
+									disabled={!canCreateOrUpdateRecord}
 									fullWidth
 									type={'number'}
 									placeholder={'Enter duration (in days)'}
@@ -159,6 +171,7 @@ const SuspendUserForm = ({ user }: Props) => {
 
 							<Box>
 								<TextArea
+									disabled={!canCreateOrUpdateRecord}
 									rows={4}
 									fullWidth
 									placeholder={'Enter suspension note'}
@@ -180,6 +193,7 @@ const SuspendUserForm = ({ user }: Props) => {
 							</Box>
 
 							<Button
+								disabled={!canCreateOrUpdateRecord}
 								loading={isLoading}
 								onClick={(e: React.FormEvent<HTMLButtonElement>) => {
 									e.preventDefault();

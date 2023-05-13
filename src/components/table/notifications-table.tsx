@@ -1,3 +1,4 @@
+import moment from 'moment';
 import React, { CSSProperties, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTheme, Table, TableBody, TableHead, Box } from '@mui/material';
@@ -20,7 +21,7 @@ import RegularAlert from '../modal/regular-modal';
 import PushNotificationForm from '../forms/notification-form';
 import CustomTableCell from './components/custom-table-cell';
 import TableLoader from '../loader/table-loader';
-import moment from 'moment';
+import { useAppSelector } from 'store/hooks';
 
 interface Props {
 	notifications: Notification[] | null;
@@ -30,6 +31,9 @@ interface Props {
 const NotificationsTable: React.FC<Props> = ({ notifications, isLoading }) => {
 	const navigate = useNavigate();
 	const [isCreateReferral, setCreateReferral] = useState<boolean>(false);
+	const { canCreateOrUpdateRecord } = useAppSelector(
+		(store) => store.authState
+	);
 
 	const theme = useTheme();
 	const styles = useStyles(theme);
@@ -69,21 +73,23 @@ const NotificationsTable: React.FC<Props> = ({ notifications, isLoading }) => {
 			)}
 
 			<Box style={styles.container} sx={{ overflow: 'auto' }}>
-				<Box
-					sx={{
-						justifyContent: 'flex-end',
-						display: 'flex',
-						width: '100%',
-						paddingRight: ['15px', '30px'],
-					}}
-				>
-					<Button
-						onClick={() => navigate(LINKS.CreateNotification)}
-						style={styles.btnOutline as CSSProperties}
+				{canCreateOrUpdateRecord && (
+					<Box
+						sx={{
+							justifyContent: 'flex-end',
+							display: 'flex',
+							width: '100%',
+							paddingRight: ['15px', '30px'],
+						}}
 					>
-						Create notification
-					</Button>
-				</Box>
+						<Button
+							onClick={() => navigate(LINKS.CreateNotification)}
+							style={styles.btnOutline as CSSProperties}
+						>
+							Create notification
+						</Button>
+					</Box>
+				)}
 
 				<Table sx={{ overflow: 'auto' }}>
 					<TableHead

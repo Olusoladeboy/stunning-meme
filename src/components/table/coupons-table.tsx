@@ -1,4 +1,4 @@
-import React, { CSSProperties, useState, MouseEvent } from 'react';
+import React, { CSSProperties, useState, MouseEvent, useEffect } from 'react';
 import Table from '@mui/material/Table';
 import Box from '@mui/material/Box';
 import {
@@ -33,12 +33,17 @@ import {
 	QueryKeys,
 	CouponStatus,
 	ModalDetails,
+	ADMIN_ROLE,
+	checkAmount,
+	Amount,
+	PRIVILEGE_MESSAGE,
 } from 'utilities';
 import TableLoader from '../loader/table-loader';
 import { useAlert, useHandleError } from 'hooks';
 import Loader from '../loader';
 import { updateCouponStatus } from 'api';
 import CustomTableCell from './components/custom-table-cell';
+import { useAppSelector } from 'store/hooks';
 
 interface Props {
 	data: Coupon[] | null;
@@ -60,10 +65,27 @@ const CouponsTable = ({
 	const styles = useStyles(theme);
 	const queryClient = useQueryClient();
 
+	const { user } = useAppSelector((store) => store.authState);
+
+	const [canCreateOrUpdate, setCanCreateOrUpdate] = useState<boolean>(false);
 	const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 	const [selectedCoupon, setSelectedCoupon] = useState<null | Coupon>(null);
 	const [isEdit, setEdit] = useState<boolean>(false);
 	const [modalAlert, setModalAlert] = useState<ModalDetails | null>(null);
+
+	useEffect(() => {
+		if (user) {
+			const role = user.role;
+			if (
+				role === ADMIN_ROLE.CUSTOMER_SUPPORT ||
+				role === ADMIN_ROLE.OPERATIONS
+			) {
+				setCanCreateOrUpdate(false);
+			} else {
+				setCanCreateOrUpdate(true);
+			}
+		}
+	}, [user]);
 
 	const { isLoading: isUpdatingCoupon, mutate: mutateUpdateCouponState } =
 		useMutation(updateCouponStatus, {
@@ -164,16 +186,17 @@ const CouponsTable = ({
 							alignSelf: 'flex-end',
 							display: 'flex',
 							alignItems: 'center',
-							gap: theme.spacing(3),
 						}}
 					>
-						<Button
-							onClick={() => setCreateCoupon(true)}
-							startIcon={<AddCircle />}
-							style={styles.btnOutline as CSSProperties}
-						>
-							create coupon
-						</Button>
+						{canCreateOrUpdate && (
+							<Button
+								onClick={() => setCreateCoupon(true)}
+								startIcon={<AddCircle />}
+								style={styles.btnOutline as CSSProperties}
+							>
+								create coupon
+							</Button>
+						)}
 					</Box>
 				</Box>
 				<Box
@@ -198,7 +221,7 @@ const CouponsTable = ({
 								<CustomTableCell label={'Date'} />
 								<CustomTableCell label={'Expiration'} />
 								<CustomTableCell label={'Status'} />
-								<CustomTableCell label={'Action'} />
+								{canCreateOrUpdate && <CustomTableCell label={'Action'} />}
 							</TableRow>
 						</TableHead>
 						<TableBody
@@ -226,9 +249,7 @@ const CouponsTable = ({
 														{row.type}
 													</TableCell>
 													<TableCell style={styles.tableText}>
-														{typeof row.gift === 'string'
-															? row.gift
-															: row.gift?.$numberDecimal}
+														{checkAmount(row.gift as string | Amount)}
 													</TableCell>
 													<TableCell style={styles.tableText}>
 														{row.createdBy
@@ -245,63 +266,73 @@ const CouponsTable = ({
 													<TableCell style={styles.tableText}>
 														{row.status}
 													</TableCell>
-													<TableCell>
-														<Box>
-															<IconButton
-																onClick={(event) =>
-																	handleClickAction(event, row)
-																}
-																size={'small'}
-															>
-																<MoreHoriz />
-															</IconButton>
-															<Popper
-																open={Boolean(anchorEl)}
-																anchorEl={anchorEl}
-															>
-																<List style={styles.editDeleteWrapper}>
-																	<ListItemButton
-																		onClick={() => {
-																			setAnchorEl(null);
-																			setEdit(true);
-																		}}
-																		style={styles.editBtn}
-																	>
-																		Edit
-																	</ListItemButton>
-																	<ListItemButton
-																		onClick={() => {
-																			setAnchorEl(null);
-																			handleVerifyCoupon(CouponStatus.VERIFIED);
-																		}}
-																		style={styles.verifyBtn}
-																	>
-																		Verify
-																	</ListItemButton>
-																	<ListItemButton
-																		onClick={() => {
-																			setAnchorEl(null);
-																			handleVerifyCoupon(
-																				CouponStatus.UNVERIFIED
-																			);
-																		}}
-																		style={styles.unverifyBtn}
-																	>
-																		Unverify
-																	</ListItemButton>
-																	<ListItemButton
-																		onClick={() => {
-																			setAnchorEl(null);
-																			handleDelete(row);
-																		}}
-																		style={styles.deleteBtn}
-																	>
-																		Delete
-																	</ListItemButton>
-																</List>
-															</Popper>
-														</Box>
-													</TableCell>
+													{canCreateOrUpdate && (
+														<TableCell>
+															<Box>
+																<IconButton
+																	onClick={(event) =>
+																		handleClickAction(event, row)
+																	}
+																	size={'small'}
+																>
+																	<MoreHoriz />
+																</IconButton>
+																<Popper
+																	open={Boolean(anchorEl)}
+																	anchorEl={anchorEl}
+																>
+																	<List style={styles.editDeleteWrapper}>
+																		<ListItemButton
+																			onClick={() => {
+																				setAnchorEl(null);
+																				if (!canCreateOrUpdate)
+																					return alert({
+																						message: PRIVILEGE_MESSAGE,
+																						type: 'info',
+																					});
+																				setEdit(true);
+																			}}
+																			style={styles.editBtn}
+																		>
+																			Edit
+																		</ListItemButton>
+
+																		<ListItemButton
+																			onClick={() => {
+																				setAnchorEl(null);
+																				handleVerifyCoupon(
+																					CouponStatus.VERIFIED
+																				);
+																			}}
+																			style={styles.verifyBtn}
+																		>
+																			Verify
+																		</ListItemButton>
+																		<ListItemButton
+																			onClick={() => {
+																				setAnchorEl(null);
+																				handleVerifyCoupon(
+																					CouponStatus.UNVERIFIED
+																				);
+																			}}
+																			style={styles.unverifyBtn}
+																		>
+																			Unverify
+																		</ListItemButton>
+																		<ListItemButton
+																			onClick={() => {
+																				setAnchorEl(null);
+																				handleDelete(row);
+																			}}
+																			style={styles.deleteBtn}
+																		>
+																			Delete
+																		</ListItemButton>
+																	</List>
+																</Popper>
+															</Box>
+														</TableCell>
+													)}
 												</TableRow>
 											))
 										) : (

@@ -33,6 +33,7 @@ import { useAlert, useHandleError } from 'hooks';
 import { updateDataPlan } from 'api';
 import { StyledTableCell, StyledTableRow } from './components';
 import CustomTableCell from './components/custom-table-cell';
+import { useAppSelector } from 'store/hooks';
 
 interface Props {
 	data: DataPlan[] | undefined | null;
@@ -44,6 +45,10 @@ const DataPlansTable: React.FC<Props> = ({ data, isLoading }) => {
 	const handleError = useHandleError();
 	const setAlert = useAlert();
 	const styles = useStyles(theme);
+	const { canCreateOrUpdateRecord } = useAppSelector(
+		(store) => store.authState
+	);
+
 	const [selectedPlan, setSelectedPlan] = useState<null | DataPlan>(null);
 
 	const queryClient = useQueryClient();
@@ -145,7 +150,9 @@ const DataPlansTable: React.FC<Props> = ({ data, isLoading }) => {
 								<CustomTableCell label={'Data Unit'} />
 								<CustomTableCell label={'Data Source'} />
 								<CustomTableCell label={'Status'} />
-								<CustomTableCell label={'Action'} />
+								{canCreateOrUpdateRecord && (
+									<CustomTableCell label={'Action'} />
+								)}
 							</TableRow>
 						</TableHead>
 						<TableBody
@@ -187,49 +194,52 @@ const DataPlansTable: React.FC<Props> = ({ data, isLoading }) => {
 														{plan.isActive ? 'Active' : 'Deativated'}
 													</StyledTableCell>
 
-													<StyledTableCell sx={{ paddingRight: '40px' }}>
-														<Box>
-															<IconButton
-																onClick={(event) => {
-																	handleClickAction(event);
-																	setSelectedPlan(plan);
-																}}
-																size={'small'}
-															>
-																<MoreHoriz />
-															</IconButton>
-															<Popper
-																open={Boolean(anchorEl)}
-																anchorEl={anchorEl}
-															>
-																<List style={styles.editDeleteWrapper}>
-																	<ListItemButton
-																		onClick={() => {
-																			setAnchorEl(null);
-																			setEditPlan(true);
-																		}}
-																		style={styles.editBtn}
-																	>
-																		Edit
-																	</ListItemButton>
-																	<ListItemButton
-																		onClick={() => {
-																			setAnchorEl(null);
-																			handleEnableDisablePlan();
-																		}}
-																		style={{
-																			...styles.enableDisableBtn,
-																			color: plan.isActive
-																				? DANGER_COLOR
-																				: theme.palette.primary.main,
-																		}}
-																	>
-																		{plan.isActive ? 'Disable' : 'Enable'}
-																	</ListItemButton>
-																</List>
-															</Popper>
-														</Box>
-													</StyledTableCell>
+													{canCreateOrUpdateRecord && (
+														<StyledTableCell sx={{ paddingRight: '40px' }}>
+															<Box>
+																<IconButton
+																	onClick={(event) => {
+																		handleClickAction(event);
+																		setSelectedPlan(plan);
+																	}}
+																	size={'small'}
+																>
+																	<MoreHoriz />
+																</IconButton>
+																<Popper
+																	open={Boolean(anchorEl)}
+																	anchorEl={anchorEl}
+																>
+																	<List style={styles.editDeleteWrapper}>
+																		<ListItemButton
+																			onClick={() => {
+																				setAnchorEl(null);
+																				setEditPlan(true);
+																			}}
+																			style={styles.editBtn}
+																		>
+																			Edit
+																		</ListItemButton>
+
+																		<ListItemButton
+																			onClick={() => {
+																				setAnchorEl(null);
+																				handleEnableDisablePlan();
+																			}}
+																			style={{
+																				...styles.enableDisableBtn,
+																				color: plan.isActive
+																					? DANGER_COLOR
+																					: theme.palette.primary.main,
+																			}}
+																		>
+																			{plan.isActive ? 'Disable' : 'Enable'}
+																		</ListItemButton>
+																	</List>
+																</Popper>
+															</Box>
+														</StyledTableCell>
+													)}
 												</StyledTableRow>
 											))
 										) : (

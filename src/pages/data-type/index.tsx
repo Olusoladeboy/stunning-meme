@@ -14,12 +14,16 @@ import {
 } from 'components';
 import { BOX_SHADOW, QueryKeys } from 'utilities';
 import { dataTypes } from 'api';
+import { useAppSelector } from 'store/hooks';
 
 const DataTypes = () => {
 	const theme = useTheme();
 	const { network, dataTypeName } = useParams();
 	const styles = useStyles(theme);
 	const [isDisplayModal, setDisplayModal] = useState<boolean>(false);
+	const { canCreateOrUpdateRecord } = useAppSelector(
+		(store) => store.authState
+	);
 
 	const { isLoading, data } = useQuery(
 		[QueryKeys.DataTypes, network],
@@ -60,13 +64,15 @@ const DataTypes = () => {
 							{dataTypeName} Data Type
 						</Typography>
 					</Box>
-					<Button
-						onClick={() => setDisplayModal(true)}
-						startIcon={<AddCircle />}
-						style={styles.addPlanBtn as CSSProperties}
-					>
-						Add new type
-					</Button>
+					{canCreateOrUpdateRecord && (
+						<Button
+							onClick={() => setDisplayModal(true)}
+							startIcon={<AddCircle />}
+							style={styles.addPlanBtn as CSSProperties}
+						>
+							Add new type
+						</Button>
+					)}
 				</Box>
 				<DataTypesTable isLoading={isLoading} data={data && data.payload} />
 			</Box>

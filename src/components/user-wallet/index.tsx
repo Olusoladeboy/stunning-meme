@@ -21,7 +21,9 @@ const UserWallet = ({ user }: Props) => {
 	const styles = useStyles(theme);
 	const [amount, setAmount] = useState<string>('');
 	const [isEditWallet, setEditWallet] = useState<boolean>(false);
-	const { token } = useAppSelector((store) => store.authState);
+	const { token, canCreateOrUpdateRecord } = useAppSelector(
+		(store) => store.authState
+	);
 
 	useQuery(
 		[QueryKey.UserWallet, user?.id],
@@ -78,13 +80,15 @@ const UserWallet = ({ user }: Props) => {
 					<Typography variant={'h4'}>
 						{formatNumberToCurrency(amount)}
 					</Typography>
-					<Button
-						onClick={() => setEditWallet(true)}
-						variant={'outlined'}
-						style={styles.editBtn as CSSProperties}
-					>
-						Edit wallet
-					</Button>
+					{canCreateOrUpdateRecord && (
+						<Button
+							onClick={() => setEditWallet(true)}
+							variant={'outlined'}
+							style={styles.editBtn as CSSProperties}
+						>
+							Edit wallet
+						</Button>
+					)}
 				</Box>
 			</Box>
 		</>

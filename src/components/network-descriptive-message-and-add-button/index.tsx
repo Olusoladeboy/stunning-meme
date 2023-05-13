@@ -6,6 +6,7 @@ import Button from '../button';
 import { NetworkPage } from 'utilities';
 import AddNetworkForm from '../forms/network-form';
 import ModalWrapper from '../modal/Wrapper';
+import { useAppSelector } from 'store/hooks';
 
 type Props = {
 	message: string;
@@ -18,6 +19,9 @@ type Props = {
 const NetworkDescriptiveMessageAndAddButton = ({ message, type }: Props) => {
 	const theme = useTheme();
 	const styles = useStyles(theme);
+	const { canCreateOrUpdateRecord } = useAppSelector(
+		(store) => store.authState
+	);
 
 	const [isDisplayModal, setDisplayModal] = useState<boolean>(false);
 
@@ -52,14 +56,16 @@ const NetworkDescriptiveMessageAndAddButton = ({ message, type }: Props) => {
 					</Typography>
 					<Typography variant={'h6'}>Set rate on each network</Typography>
 				</Box>
-				<Button
-					onClick={() => setDisplayModal(true)}
-					startIcon={<AddCircle />}
-					size={'large'}
-					style={styles.addBtn as CSSProperties}
-				>
-					add {type}
-				</Button>
+				{canCreateOrUpdateRecord && (
+					<Button
+						onClick={() => setDisplayModal(true)}
+						startIcon={<AddCircle />}
+						size={'large'}
+						style={styles.addBtn as CSSProperties}
+					>
+						add {type}
+					</Button>
+				)}
 			</Box>
 		</>
 	);

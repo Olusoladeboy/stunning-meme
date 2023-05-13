@@ -28,6 +28,7 @@ import Empty from '../empty';
 import ReferralForm from '../forms/referral-bonus-form';
 import CustomTableCell from './components/custom-table-cell';
 import Loader from '../loader/table-loader';
+import { useAppSelector } from 'store/hooks';
 
 interface Props {
 	data: Settings[] | undefined | null;
@@ -35,10 +36,11 @@ interface Props {
 }
 
 const ReferralBonusTable: React.FC<Props> = ({ data, isLoading }) => {
-	const [isDisplayForm, setDisplayForm] = useState<boolean>(false);
-
 	const theme = useTheme();
 	const styles = useStyles(theme);
+	const { canCreateOrUpdateRecord } = useAppSelector(
+		(store) => store.authState
+	);
 
 	const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 	const [currentRow, setCurrentRow] = useState<null | Settings>(null);
@@ -50,7 +52,6 @@ const ReferralBonusTable: React.FC<Props> = ({ data, isLoading }) => {
 	};
 	const callback = () => {
 		setCurrentRow(null);
-		setDisplayForm(false);
 	};
 
 	return (
@@ -77,7 +78,7 @@ const ReferralBonusTable: React.FC<Props> = ({ data, isLoading }) => {
 					<TableRow>
 						<CustomTableCell label={'Referral Bonus'} />
 						<CustomTableCell label={'Transaction Limit'} />
-						<CustomTableCell label={'Action'} />
+						{canCreateOrUpdateRecord && <CustomTableCell label={'Action'} />}
 					</TableRow>
 				</TableHead>
 				<TableBody
@@ -102,33 +103,38 @@ const ReferralBonusTable: React.FC<Props> = ({ data, isLoading }) => {
 												{formatNumberToCurrency(row.value as string)}
 											</TableCell>
 											<TableCell style={styles.tableText}>{row.name}</TableCell>
-											<TableCell>
-												<Box>
-													<IconButton
-														onClick={(event) => handleClickAction(event)}
-														size={'small'}
-													>
-														<MoreHoriz />
-													</IconButton>
-													<Popper open={Boolean(anchorEl)} anchorEl={anchorEl}>
-														<List style={styles.editDeleteWrapper}>
-															<ListItemButton
-																onClick={() => {
-																	setAnchorEl(null);
-																	setCurrentRow(row);
-																}}
-																style={styles.editBtn}
-															>
-																Edit
-															</ListItemButton>
+											{canCreateOrUpdateRecord && (
+												<TableCell>
+													<Box>
+														<IconButton
+															onClick={(event) => handleClickAction(event)}
+															size={'small'}
+														>
+															<MoreHoriz />
+														</IconButton>
+														<Popper
+															open={Boolean(anchorEl)}
+															anchorEl={anchorEl}
+														>
+															<List style={styles.editDeleteWrapper}>
+																<ListItemButton
+																	onClick={() => {
+																		setAnchorEl(null);
+																		setCurrentRow(row);
+																	}}
+																	style={styles.editBtn}
+																>
+																	Edit
+																</ListItemButton>
 
-															{/* <ListItemButton style={styles.declineBtn}>
+																{/* <ListItemButton style={styles.declineBtn}>
 																Delete
 															</ListItemButton> */}
-														</List>
-													</Popper>
-												</Box>
-											</TableCell>
+															</List>
+														</Popper>
+													</Box>
+												</TableCell>
+											)}
 										</TableRow>
 									))
 								) : (

@@ -4,9 +4,10 @@ import { useMutation, useQueryClient } from 'react-query';
 import { grey, red } from '@mui/material/colors';
 import UserAvatarWithDetails from '../avatar-with-details/manager';
 import Button from '../button';
-import { ManagerTypes, QueryKeys, User } from 'utilities';
+import { ManagerTypes, QueryKeys, User, ADMIN_ROLE } from 'utilities';
 import { deleteManager } from 'api';
 import { useHandleError, useAlert } from 'hooks';
+import { useAppSelector } from 'store/hooks';
 
 type Props = {
 	managerDetail: User;
@@ -26,6 +27,9 @@ const ManagerDetails = ({
 	const handleError = useHandleError();
 	const theme = useTheme();
 	const styles = useStyles(theme);
+	const { canCreateOrUpdateRecord } = useAppSelector(
+		(store) => store.authState
+	);
 
 	const { isLoading: isDeletingManager, mutate: mutateDeleteManager } =
 		useMutation(deleteManager, {
@@ -72,31 +76,32 @@ const ManagerDetails = ({
 						<Typography variant={'body1'}>{managerDetail.phone}</Typography>
 					</Box>
 				</Box>
-				{managerDetail?.role !== 'SUPER_ADMIN' && (
-					<Box
-						sx={{
-							display: 'flex',
-							flexDirection: 'column',
-							gap: theme.spacing(3),
-						}}
-					>
-						<Button
-							onClick={handleEdit}
-							style={styles.editBtn as CSSProperties}
+				{canCreateOrUpdateRecord &&
+					managerDetail?.role !== ADMIN_ROLE.SUPER_ADMIN && (
+						<Box
+							sx={{
+								display: 'flex',
+								flexDirection: 'column',
+								gap: theme.spacing(3),
+							}}
 						>
-							Edit profile
-						</Button>
-						<Button
-							onClick={handleDelete}
-							loading={isDeletingManager}
-							style={styles.deleteBtn as CSSProperties}
-						>
-							{type === ManagerTypes.Manager
-								? 'Delete Manager'
-								: 'Delete Admin'}
-						</Button>
-					</Box>
-				)}
+							<Button
+								onClick={handleEdit}
+								style={styles.editBtn as CSSProperties}
+							>
+								Edit profile
+							</Button>
+							<Button
+								onClick={handleDelete}
+								loading={isDeletingManager}
+								style={styles.deleteBtn as CSSProperties}
+							>
+								{type === ManagerTypes.Manager
+									? 'Delete Manager'
+									: 'Delete Admin'}
+							</Button>
+						</Box>
+					)}
 			</Box>
 		</Box>
 	);

@@ -126,12 +126,12 @@ const RefereesTable: React.FC<Props> = ({ data, isLoading }) => {
 																		Verify
 																	</ListItemButton>
 																)}
-																<ListItemButton
+																{/* <ListItemButton
 																	onClick={closePopper}
 																	style={styles.deleteBtn}
 																>
 																	Delete
-																</ListItemButton>
+																</ListItemButton> */}
 																<ListItemButton
 																	onClick={() => {
 																		closePopper();

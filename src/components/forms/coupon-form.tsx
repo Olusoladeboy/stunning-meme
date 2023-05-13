@@ -23,15 +23,6 @@ import {
 import { useAlert, useHandleError } from 'hooks';
 import { createCoupon, updateCoupon } from 'api';
 
-const COUPON_TYPES = [CouponType.PERCENT, CouponType.AMOUNT];
-
-const COUPON_STATUS = [
-	CouponStatus.VERIFIED,
-	CouponStatus.UNVERIFIED,
-	CouponStatus.CANCELLED,
-	CouponStatus.EXPIRED,
-];
-
 type Props = {
 	data?: Coupon;
 	isEdit?: boolean;
@@ -47,6 +38,7 @@ const CouponForm = ({ data, isEdit, onSuccess }: Props) => {
 	const queryClient = useQueryClient();
 	const setAlert = useAlert();
 	const styles = useStyles(theme);
+
 	const initialValues: Coupon = {
 		code: '',
 		type: SELECT_COUPON_TYPE,
@@ -237,7 +229,7 @@ const CouponForm = ({ data, isEdit, onSuccess }: Props) => {
 						<MenuItem value={SELECT_COUPON_STATUS} disabled>
 							{SELECT_COUPON_STATUS}
 						</MenuItem>
-						{COUPON_STATUS.map((status, key) => (
+						{Object.values(CouponStatus).map((status, key) => (
 							<MenuItem key={key} value={status}>
 								{status}
 							</MenuItem>

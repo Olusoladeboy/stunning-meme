@@ -107,6 +107,7 @@ export type AuthState = {
 	user: User | null;
 	token: string | null;
 	canViewStatistics: boolean;
+	canCreateOrUpdateRecord: boolean;
 };
 
 export enum SettingsTab {

@@ -19,6 +19,7 @@ import Loader from '../loader/table-loader';
 import Empty from '../empty/table-empty';
 import UnsuspendUser from '../unsuspend-user';
 import CustomTableCell from './components/custom-table-cell';
+import { useAppSelector } from 'store/hooks';
 
 type Props = {
 	users: User[] | null;
@@ -28,6 +29,9 @@ type Props = {
 const SuspensionTable = ({ users, isLoading }: Props) => {
 	const theme = useTheme();
 	const styles = useStyles(theme);
+	const { canCreateOrUpdateRecord } = useAppSelector(
+		(store) => store.authState
+	);
 	return (
 		<>
 			<Box style={styles.container} sx={{ overflow: 'auto' }}>
@@ -51,8 +55,7 @@ const SuspensionTable = ({ users, isLoading }: Props) => {
 							<CustomTableCell label={'Name'} />
 							<CustomTableCell label={'Suspension/Deletion Note'} />
 							<CustomTableCell label={'Status'} />
-							<CustomTableCell label={'Action'} />
-							<TableCell>Action</TableCell>
+							{canCreateOrUpdateRecord && <CustomTableCell label={'Action'} />}
 						</TableRow>
 					</TableHead>
 					<TableBody
@@ -92,16 +95,18 @@ const SuspensionTable = ({ users, isLoading }: Props) => {
 														? 'Deleted'
 														: ''}
 												</TableCell>
-												<TableCell>
-													<UnsuspendUser
-														user={row}
-														text={'unsuspend'}
-														buttonProps={{
-															size: 'small',
-															style: styles.suspendBtn as CSSProperties,
-														}}
-													/>
-												</TableCell>
+												{canCreateOrUpdateRecord && (
+													<TableCell>
+														<UnsuspendUser
+															user={row}
+															text={'unsuspend'}
+															buttonProps={{
+																size: 'small',
+																style: styles.suspendBtn as CSSProperties,
+															}}
+														/>
+													</TableCell>
+												)}
 											</TableRow>
 										))
 									) : (

@@ -102,30 +102,6 @@ const NetworkForm = ({ type, callback, network, isEdit }: Props) => {
 		});
 	};
 
-	const handleUpdateNetwork = (values: NetworkData) => {
-		const { name, rate, ussd, number } = values;
-
-		let data = {} as Partial<NetworkData>;
-
-		if (type === NetworkPage.DATA_NETWORK) data.name = name;
-		if (type === NetworkPage.AIRTIME_NETWORK) {
-			data = { ...data, rate, ussd };
-		}
-		if (type === NetworkPage.CONVERSION_NETWORK) {
-			data = { ...data, rate, number };
-		}
-
-		if (type === NetworkPage.AUTO_CONVERSION_NETWORK) {
-			data = { ...data, rate };
-		}
-
-		return mutateUpdateNetwork({
-			url,
-			data,
-			id: network?.id as string,
-		});
-	};
-
 	const { isLoading: isUpdating, mutate: mutateUpdateNetwork } = useMutation(
 		updateNetwork,
 		{
@@ -150,6 +126,30 @@ const NetworkForm = ({ type, callback, network, isEdit }: Props) => {
 			},
 		}
 	);
+
+	const handleUpdateNetwork = (values: NetworkData) => {
+		const { name, rate, ussd, number } = values;
+
+		let data = {} as Partial<NetworkData>;
+
+		if (type === NetworkPage.DATA_NETWORK) data.name = name;
+		if (type === NetworkPage.AIRTIME_NETWORK) {
+			data = { ...data, rate, ussd };
+		}
+		if (type === NetworkPage.CONVERSION_NETWORK) {
+			data = { ...data, rate, number };
+		}
+
+		if (type === NetworkPage.AUTO_CONVERSION_NETWORK) {
+			data = { ...data, rate };
+		}
+
+		return mutateUpdateNetwork({
+			url,
+			data,
+			id: network?.id as string,
+		});
+	};
 
 	const $validationSchema =
 		type === NetworkPage.DATA_NETWORK

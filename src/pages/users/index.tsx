@@ -90,6 +90,10 @@ const Users = () => {
 				setCurrentTab(USERS_TAB.Suspended);
 				setUsersStatus({ suspended: true });
 				break;
+			case USERS_TAB.Deactivated:
+				setCurrentTab(USERS_TAB.Deactivated);
+				setUsersStatus({ isActive: false });
+				break;
 			case USERS_TAB.Deleted:
 				setUsersStatus({ deleted: true });
 				setCurrentTab(USERS_TAB.Deleted);

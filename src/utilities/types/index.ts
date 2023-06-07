@@ -295,6 +295,7 @@ export type Statistics = {
 	total_conversions: number;
 	total_verified_users: number;
 	total_unverified_users: number;
+	total_deactivated_users: number;
 	total_deleted_users: number;
 	total_suspended_users: number;
 	total_airtime_converted: number;

@@ -160,6 +160,7 @@ export const USERS_TAB = {
 	Unverified: 'Unverified',
 	Suspended: 'Suspended',
 	Deleted: 'Deleted',
+	Deactivated: 'Deactivated',
 };
 
 export const TRANSACTIONS_TAB = {

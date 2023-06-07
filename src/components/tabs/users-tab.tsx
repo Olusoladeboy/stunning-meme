@@ -6,7 +6,7 @@ import VerifiedUserIcon from '../icons/verified-user';
 import SuspendedUserIcon from '../icons/suspended-user';
 import DeletedUserIcon from '../icons/deleted-user';
 import UnverifiedUserIcon from '../icons/unverified-user';
-import TransactionItem from '../transaction-item';
+import UserItem from '../transaction-item';
 import { USERS_TAB, SUCCESS_COLOR } from 'utilities';
 import { useAppSelector } from 'store/hooks';
 
@@ -30,13 +30,13 @@ const UsersTab: React.FC<Props> = ({ currentTab, changeCurrentTab }) => {
 			<Box
 				sx={{
 					display: 'grid',
-					gridTemplateColumns: 'repeat(5, 1fr)',
-					gap: (theme) => theme.spacing(3),
+					gridTemplateColumns: 'repeat(6, 1fr)',
+					gap: (theme) => theme.spacing(2),
 					padding: '0px 1rem',
 					overflow: 'auto',
 				}}
 			>
-				<TransactionItem
+				<UserItem
 					isBorder
 					borderColor={SUCCESS_COLOR}
 					onClick={() => handleChangeTab()}
@@ -57,8 +57,8 @@ const UsersTab: React.FC<Props> = ({ currentTab, changeCurrentTab }) => {
 					>
 						Total User
 					</Typography>
-				</TransactionItem>
-				<TransactionItem
+				</UserItem>
+				<UserItem
 					onClick={() => handleChangeTab(USERS_TAB.Verified)}
 					isBorder
 					borderColor={SUCCESS_COLOR}
@@ -86,8 +86,8 @@ const UsersTab: React.FC<Props> = ({ currentTab, changeCurrentTab }) => {
 					>
 						Verified User
 					</Typography>
-				</TransactionItem>{' '}
-				<TransactionItem
+				</UserItem>{' '}
+				<UserItem
 					isBorder
 					onClick={() => handleChangeTab(USERS_TAB.Unverified)}
 					bgColor={
@@ -115,8 +115,37 @@ const UsersTab: React.FC<Props> = ({ currentTab, changeCurrentTab }) => {
 					>
 						Unverified User
 					</Typography>
-				</TransactionItem>{' '}
-				<TransactionItem
+				</UserItem>
+				<UserItem
+					isBorder
+					onClick={() => handleChangeTab(USERS_TAB.Deactivated)}
+					bgColor={
+						currentTab === USERS_TAB.Deactivated ? SUCCESS_COLOR : undefined
+					}
+					borderColor={SUCCESS_COLOR}
+					amountColor={
+						currentTab === USERS_TAB.Deactivated ? grey[50] : SUCCESS_COLOR
+					}
+					amount={statistics ? statistics.total_deactivated_users : '0'}
+					icon={
+						<SuspendedUserIcon
+							color={
+								currentTab === USERS_TAB.Deactivated ? grey[50] : SUCCESS_COLOR
+							}
+						/>
+					}
+				>
+					<Typography
+						sx={{
+							color:
+								currentTab === USERS_TAB.Deactivated ? grey[50] : SUCCESS_COLOR,
+						}}
+						variant={'body1'}
+					>
+						Deactivated User
+					</Typography>
+				</UserItem>
+				<UserItem
 					isBorder
 					onClick={() => handleChangeTab(USERS_TAB.Suspended)}
 					bgColor={
@@ -144,8 +173,8 @@ const UsersTab: React.FC<Props> = ({ currentTab, changeCurrentTab }) => {
 					>
 						Suspended User
 					</Typography>
-				</TransactionItem>
-				<TransactionItem
+				</UserItem>
+				<UserItem
 					isBorder
 					bgColor={currentTab === USERS_TAB.Deleted ? SUCCESS_COLOR : undefined}
 					onClick={() => handleChangeTab(USERS_TAB.Deleted)}
@@ -171,7 +200,7 @@ const UsersTab: React.FC<Props> = ({ currentTab, changeCurrentTab }) => {
 					>
 						Deleted User
 					</Typography>
-				</TransactionItem>
+				</UserItem>
 			</Box>
 		);
 	}

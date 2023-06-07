@@ -12,6 +12,7 @@ export enum QueryKey {
 	GetSingleUser = '@Query:Get_single_user',
 	DataNetwork = '@Query:Data_Network',
 	ConvertNetwork = '@Query:Convert_Network',
+	AutoConvertNetwork = '@Query:Auto_Convert_Network',
 	ConvertAirtime = '@Query:Convert_Airtime',
 	AirtimeNetwork = '@Query:Airtime_Network',
 	KycLimit = '@Query:Kyc_Limit',
@@ -184,6 +185,7 @@ export enum NetworkPage {
 	DATA_NETWORK = 'Data network',
 	AIRTIME_NETWORK = 'Airtime network',
 	CONVERSION_NETWORK = 'Conversion network',
+	AUTO_CONVERSION_NETWORK = 'Auto conversion network',
 }
 
 export interface AirtimeConversion extends Transaction {
@@ -215,6 +217,7 @@ export enum API_ENDPOINTS {
 	DataPlans = '/data-plans',
 	AirtimeNetwork = '/airtime-networks',
 	ConvertNetworks = '/convert-networks',
+	AutoConvertNetwork = '/auto-convert-networks',
 	ConvertAirtime = '/convert-airtime',
 	Kyc = '/kyc',
 	Transaction = '/transaction',

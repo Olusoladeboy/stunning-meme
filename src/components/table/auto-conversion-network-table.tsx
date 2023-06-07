@@ -31,12 +31,7 @@ import Loader from '../loader';
 import { useAlert, useHandleError } from 'hooks';
 import { networks, updateNetwork } from 'api';
 
-interface ConversionNetworkTypes extends NetworkData {
-	isActive: boolean;
-	id: string;
-}
-
-const ConversionNetworkTable = () => {
+const AutoConversionNetworkTable = () => {
 	const theme = useTheme();
 	const handleError = useHandleError();
 	const setAlert = useAlert();
@@ -49,10 +44,13 @@ const ConversionNetworkTable = () => {
 	const { token } = useAppSelector((store) => store.authState);
 
 	const { isLoading, data } = useQuery(
-		QueryKeys.ConvertNetwork,
+		QueryKeys.AutoConvertNetwork,
 		() =>
 			networks({
-				url: API_ENDPOINTS.ConvertNetworks,
+				url: API_ENDPOINTS.AutoConvertNetwork,
+				params: {
+					sort: '-createdAt',
+				},
 			}),
 		{
 			enabled: !!token,
@@ -79,7 +77,7 @@ const ConversionNetworkTable = () => {
 				}
 
 				if (data && data.success) {
-					queryClient.invalidateQueries(QueryKeys.ConvertNetwork);
+					queryClient.invalidateQueries(QueryKeys.AutoConvertNetwork);
 					setAlert({ message: data.message, type: 'success' });
 				}
 			},
@@ -97,7 +95,7 @@ const ConversionNetworkTable = () => {
 			data: {
 				isActive: status,
 			},
-			url: API_ENDPOINTS.ConvertNetworks,
+			url: API_ENDPOINTS.AutoConvertNetwork,
 			id,
 		});
 	};
@@ -114,7 +112,7 @@ const ConversionNetworkTable = () => {
 					<NetworkForm
 						isEdit
 						network={selectedNetwork}
-						type={NetworkPage.CONVERSION_NETWORK}
+						type={NetworkPage.AUTO_CONVERSION_NETWORK}
 						callback={() => setSelectedNetwork(null)}
 					/>
 				</Modal>
@@ -131,7 +129,6 @@ const ConversionNetworkTable = () => {
 					>
 						<TableRow>
 							<TableCell>Network Name</TableCell>
-							<TableCell>Number</TableCell>
 							<TableCell>Rate</TableCell>
 							<TableCell>Actions</TableCell>
 							<TableCell sx={{ minWidth: '50px', maxWidth: '100px' }} />
@@ -150,7 +147,6 @@ const ConversionNetworkTable = () => {
 							data.payload.map((data: NetworkData) => (
 								<TableRow key={data.id}>
 									<TableCell>{data.name}</TableCell>
-									<TableCell>{data.number}</TableCell>
 									<TableCell>{data.rate}%</TableCell>
 									<TableCell>
 										<Box
@@ -223,7 +219,7 @@ const ConversionNetworkTable = () => {
 						) : (
 							<TableRow>
 								<TableCell colSpan={4}>
-									<Empty />
+									<Empty text={'No available network'} />
 								</TableCell>
 							</TableRow>
 						)}
@@ -261,4 +257,4 @@ const useStyles = (theme: any) => ({
 	},
 });
 
-export default ConversionNetworkTable;
+export default AutoConversionNetworkTable;

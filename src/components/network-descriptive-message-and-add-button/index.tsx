@@ -13,7 +13,8 @@ type Props = {
 	type:
 		| NetworkPage.AIRTIME_NETWORK
 		| NetworkPage.DATA_NETWORK
-		| NetworkPage.CONVERSION_NETWORK;
+		| NetworkPage.CONVERSION_NETWORK
+		| NetworkPage.AUTO_CONVERSION_NETWORK;
 };
 
 const NetworkDescriptiveMessageAndAddButton = ({ message, type }: Props) => {
@@ -33,10 +34,7 @@ const NetworkDescriptiveMessageAndAddButton = ({ message, type }: Props) => {
 					closeModal={() => setDisplayModal(false)}
 					title={`Add ${type}`}
 				>
-					<AddNetworkForm
-						handleContinue={() => setDisplayModal(false)}
-						type={type}
-					/>
+					<AddNetworkForm callback={() => setDisplayModal(false)} type={type} />
 				</ModalWrapper>
 			)}
 			<Box

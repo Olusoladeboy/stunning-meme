@@ -10,7 +10,11 @@ import { useAppSelector } from 'store/hooks';
 import { useAlert, useHandleError } from 'hooks';
 import { networks } from 'api';
 
-const AvailableNetwork = () => {
+interface IAvailableNetwork {
+	type?: 'normal' | 'auto';
+}
+
+const AvailableNetwork: React.FC<IAvailableNetwork> = ({ type = 'normal' }) => {
 	const theme = useTheme();
 	const handleError = useHandleError();
 	const setAlert = useAlert();
@@ -19,10 +23,13 @@ const AvailableNetwork = () => {
 	const { token } = useAppSelector((store) => store.authState);
 
 	const { isLoading, data } = useQuery(
-		QueryKey.ConvertNetwork,
+		[QueryKey.ConvertNetwork, type],
 		() =>
 			networks({
-				url: API_ENDPOINTS.ConvertNetworks,
+				url:
+					type === 'normal'
+						? API_ENDPOINTS.ConvertNetworks
+						: API_ENDPOINTS.AutoConvertNetwork,
 			}),
 		{
 			enabled: !!token,
@@ -39,7 +46,11 @@ const AvailableNetwork = () => {
 
 	const handleClick = () => {
 		if (data && data.payload.length > 0) {
-			navigate(LINKS.ConversionNetwork);
+			navigate(
+				type === 'normal'
+					? LINKS.ConversionNetwork
+					: LINKS.AutoConversionNetwork
+			);
 		} else {
 			console.log('Add network');
 		}

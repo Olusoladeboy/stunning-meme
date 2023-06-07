@@ -44,6 +44,10 @@ const ValidationSchema = {
 			.required('Specify phone number')
 			.matches(PHONE_REX, 'Invalid phone number'),
 	}),
+	AutoConvertNetwork: yup.object().shape({
+		name: yup.string().required('Specify name'),
+		rate: yup.string().required('Specify rate'),
+	}),
 	KycLimit: yup.object().shape({
 		dailyLimit: yup.number().required('Specify daily limit'),
 		weeklyLimit: yup.number().required('Specify weekly limit'),

@@ -142,7 +142,7 @@ const AutoConversions = () => {
 								}}
 								total={data && data.metadata.total}
 							/>
-							<AvailableNetwork />
+							<AvailableNetwork type={'auto'} />
 						</Box>
 					)}
 				</Box>

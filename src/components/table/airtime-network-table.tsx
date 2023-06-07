@@ -125,7 +125,7 @@ const AirtimeNetworkTable = () => {
 						isEdit
 						network={selectedNetwork}
 						type={NetworkPage.AIRTIME_NETWORK}
-						handleContinue={() => setSelectedNetwork(null)}
+						callback={() => setSelectedNetwork(null)}
 					/>
 				</Modal>
 			)}
@@ -156,7 +156,7 @@ const AirtimeNetworkTable = () => {
 						{isLoading ? (
 							<TableLoader colSpan={4} />
 						) : data && data.payload.length > 0 ? (
-							data.payload.map((data: AitimeNetworkTypes) => (
+							data.payload.map((data: NetworkData) => (
 								<TableRow key={data.id}>
 									<TableCell>{data.name}</TableCell>
 									<TableCell>{data.ussd}</TableCell>
@@ -207,7 +207,7 @@ const AirtimeNetworkTable = () => {
 												onClick={() =>
 													handleEnableDisableNetwork({
 														status: true,
-														id: data.id,
+														id: data.id as string,
 													})
 												}
 											>
@@ -218,7 +218,7 @@ const AirtimeNetworkTable = () => {
 												onClick={() =>
 													handleEnableDisableNetwork({
 														status: false,
-														id: data.id,
+														id: data.id as string,
 													})
 												}
 												style={{

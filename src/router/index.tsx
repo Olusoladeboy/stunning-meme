@@ -62,7 +62,13 @@ const Router = () => {
 					element={<Network pageType={NetworkPage.CONVERSION_NETWORK} />}
 				/>
 			</Route>
-			<Route path={'auto-conversions'} element={<AutoConversions />} />
+			<Route path={'auto-conversions'}>
+				<Route path={''} element={<AutoConversions />} />
+				<Route
+					path={'network'}
+					element={<Network pageType={NetworkPage.AUTO_CONVERSION_NETWORK} />}
+				/>
+			</Route>
 			<Route path={'data-network'}>
 				<Route
 					path={''}

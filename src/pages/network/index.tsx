@@ -7,6 +7,7 @@ import {
 	AirtimeNetworkTable,
 	ConversionNetworkTable,
 	DataNetworkTable,
+	AutoConversionNetworkTable,
 } from 'components';
 import { BOX_SHADOW } from 'utilities/constant';
 import { NetworkPage } from 'utilities/types';
@@ -15,7 +16,8 @@ interface Props extends ComponentProps<any> {
 	pageType:
 		| NetworkPage.AIRTIME_NETWORK
 		| NetworkPage.DATA_NETWORK
-		| NetworkPage.CONVERSION_NETWORK;
+		| NetworkPage.CONVERSION_NETWORK
+		| NetworkPage.AUTO_CONVERSION_NETWORK;
 }
 
 const Network = ({ pageType }: Props) => {
@@ -42,6 +44,9 @@ const Network = ({ pageType }: Props) => {
 				{pageType === NetworkPage.AIRTIME_NETWORK && <AirtimeNetworkTable />}
 				{pageType === NetworkPage.CONVERSION_NETWORK && (
 					<ConversionNetworkTable />
+				)}
+				{pageType === NetworkPage.AUTO_CONVERSION_NETWORK && (
+					<AutoConversionNetworkTable />
 				)}
 			</Box>
 		</Layout>

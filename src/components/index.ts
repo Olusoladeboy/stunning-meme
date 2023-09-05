@@ -60,6 +60,7 @@ export { default as TransactionHistoryTable } from './table/user-transaction-tab
 export { default as TransactionsTable } from './table/transactions-table';
 export { default as UsersTable } from './table/users-table';
 export { default as VerificationTable } from './table/verification-table';
+export { default as BvnVerificationTable } from './table/bvn-verification-table';
 export { default as DataPlansTable } from './table/data-plans-table';
 export { default as WalletHistoryTable } from './table/wallet-history-table';
 export { default as WalletSummaryTable } from './table/wallet-summary-table';

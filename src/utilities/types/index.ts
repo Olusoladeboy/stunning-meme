@@ -234,6 +234,49 @@ export interface ManagerDetailsData extends User {
 	phone?: string;
 }
 
+export interface IBill {
+	service_type?: string;
+	smartcard_number?: string;
+	product_code?: string;
+	price?: number | string;
+	monthsPaidFor?: number | string;
+	numberOfPins?: string | number;
+	discount_code?: string;
+	amount?: string | number;
+	meter_number?: string;
+	exam_bundle?: string;
+	internetPlan?: string;
+}
+
+export interface AvailablePricingOption {
+	monthsPaidFor: number;
+	price: number;
+	invoicePeriod: number;
+}
+
+export interface Bundle {
+	amount: number;
+	available: number;
+	description: string;
+	availablePricingOptions: AvailablePricingOption[];
+	code: string;
+	name: string;
+}
+
+export interface Provider {
+	service_type: string;
+	shortname: string;
+	billerid: number;
+	productid: number;
+	name: string;
+	type: string;
+	description?: string;
+	id?: string | number;
+	narration: string;
+	short_name: string;
+	image: string;
+}
+
 export type NetworkData = {
 	name?: string;
 	id?: string;
@@ -311,6 +354,19 @@ export type Statistics = {
 
 export interface Amount {
 	$numberDecimal: string;
+}
+
+export interface IVerification {
+	status: string;
+	user: User;
+	level: number;
+	payload: string;
+	type: string;
+	channel: string;
+	code: string;
+	createdAt: string;
+	updatedAt: string;
+	id: string;
 }
 
 export interface Coupon {

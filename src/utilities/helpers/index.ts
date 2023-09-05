@@ -109,3 +109,16 @@ export const checkTransactionAmount = ({
 
 	return 0;
 };
+
+export const cleanObject = (object: { [key: string]: any }) => {
+	let output = object;
+	const objectKeys = Object.keys(output);
+	if (objectKeys.length === 0) return {};
+
+	for (let i of objectKeys) {
+		if (output[i] === '' || !output[i]) {
+			delete output[i];
+		}
+	}
+	return output;
+};

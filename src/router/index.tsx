@@ -30,6 +30,7 @@ import {
 	ReferralsBonus,
 	CreateNotification,
 	ChangePassword,
+	BvnVerification,
 } from '../pages';
 
 const Router = () => {
@@ -106,6 +107,7 @@ const Router = () => {
 				<Route path='' element={<Verification />} />
 				<Route path='kyc' element={<Kyc />} />
 			</Route>
+			<Route path='bvn-verification' element={<BvnVerification />} />
 			<Route path={'suspension'} element={<Suspension />} />
 			<Route path={'audit-logs'} element={<AuditLogs />} />
 		</Routes>

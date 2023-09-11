@@ -264,6 +264,17 @@ const NetworkForm = ({ type, callback, network, isEdit }: Props) => {
 							onChange={handleChange('rate')}
 						/>
 					</Box>
+					<Box>
+						<Typography variant={'body1'} style={styles.label}>
+							Transfer Code
+						</Typography>
+						<TextInput
+							fullWidth
+							placeholder={'Enter transfer code'}
+
+							// onChange={handleChange('rate')}
+						/>
+					</Box>
 				</Box>
 			</Box>
 			<Button
@@ -286,7 +297,7 @@ const useStyles = (theme: any) => ({
 		display: 'flex',
 		flexDirection: 'column',
 		gap: '20px',
-		height: '320px',
+		// height: '320px',
 		justifyContent: 'space-between',
 	},
 

@@ -26,6 +26,7 @@ import TableLoader from '../loader/table-loader';
 import Loader from '../loader';
 import { updateDataType } from 'api';
 import { useAlert, useHandleError } from 'hooks';
+import { useAppSelector } from 'store/hooks';
 
 interface Props {
 	data: DataType[] | null | undefined;
@@ -40,6 +41,9 @@ const DataTypesTable: React.FC<Props> = ({ isLoading, data }) => {
 	const styles = useStyles(theme);
 	const queryClient = useQueryClient();
 	const navigate = useNavigate();
+	const { canCreateOrUpdateRecord } = useAppSelector(
+		(store) => store.authState
+	);
 
 	const { isLoading: isUpdating, mutate: mutateUpdateDataType } = useMutation(
 		updateDataType,
@@ -70,12 +74,15 @@ const DataTypesTable: React.FC<Props> = ({ isLoading, data }) => {
 		status: boolean;
 		id: string;
 	}) => {
-		mutateUpdateDataType({
-			data: {
-				isActive: status,
-			},
-			id,
-		});
+		if (canCreateOrUpdateRecord) {
+			return mutateUpdateDataType({
+				data: {
+					isActive: status,
+				},
+				id,
+			});
+		}
+		setAlert({ message: `You can't perform  this operation`, type: 'info' });
 	};
 
 	return (

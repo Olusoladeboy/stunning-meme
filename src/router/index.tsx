@@ -30,6 +30,7 @@ import {
 	ReferralsBonus,
 	CreateNotification,
 	ChangePassword,
+	BvnVerification,
 } from '../pages';
 
 const Router = () => {
@@ -62,7 +63,13 @@ const Router = () => {
 					element={<Network pageType={NetworkPage.CONVERSION_NETWORK} />}
 				/>
 			</Route>
-			<Route path={'auto-conversions'} element={<AutoConversions />} />
+			<Route path={'auto-conversions'}>
+				<Route path={''} element={<AutoConversions />} />
+				<Route
+					path={'network'}
+					element={<Network pageType={NetworkPage.AUTO_CONVERSION_NETWORK} />}
+				/>
+			</Route>
 			<Route path={'data-network'}>
 				<Route
 					path={''}
@@ -100,6 +107,7 @@ const Router = () => {
 				<Route path='' element={<Verification />} />
 				<Route path='kyc' element={<Kyc />} />
 			</Route>
+			<Route path='bvn-verification' element={<BvnVerification />} />
 			<Route path={'suspension'} element={<Suspension />} />
 			<Route path={'audit-logs'} element={<AuditLogs />} />
 		</Routes>

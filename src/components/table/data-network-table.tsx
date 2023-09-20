@@ -36,7 +36,9 @@ const DataNetworkTable = () => {
 	const styles = useStyles(theme);
 	const queryClient = useQueryClient();
 	const navigate = useNavigate();
-	const { token } = useAppSelector((store) => store.authState);
+	const { token, canCreateOrUpdateRecord } = useAppSelector(
+		(store) => store.authState
+	);
 
 	const { isLoading, data } = useQuery(
 		QueryKeys.DataNetwork,
@@ -86,13 +88,17 @@ const DataNetworkTable = () => {
 		status: boolean;
 		id: string;
 	}) => {
-		mutateUpdateNetwork({
-			data: {
-				isActive: status,
-			},
-			url: API_ENDPOINTS.DataNetwork,
-			id,
-		});
+		if (canCreateOrUpdateRecord) {
+			return mutateUpdateNetwork({
+				data: {
+					isActive: status,
+				},
+				url: API_ENDPOINTS.DataNetwork,
+				id,
+			});
+		}
+
+		setAlert({ message: `You can't perform this opertaion`, type: 'info' });
 	};
 
 	return (

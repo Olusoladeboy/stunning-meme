@@ -7,6 +7,7 @@ import { QueryKeys, User } from 'utilities';
 import Loader from '../loader';
 import { useAlert, useHandleError } from 'hooks';
 import { activateOrDeativateUser } from 'api';
+import { useAppSelector } from 'store/hooks';
 
 type Props = {
 	user: User | null;
@@ -18,6 +19,10 @@ const DeleteUserForm = ({ user }: Props) => {
 	const styles = useStyles(theme);
 	const setAlert = useAlert();
 	const queryClient = useQueryClient();
+	const { canCreateOrUpdateRecord } = useAppSelector(
+		(store) => store.authState
+	);
+
 	const [isActive, setActive] = useState<boolean>(
 		user?.isActive ? true : false
 	);
@@ -41,6 +46,11 @@ const DeleteUserForm = ({ user }: Props) => {
 	});
 
 	const handleSwitch = () => {
+		if (!canCreateOrUpdateRecord)
+			return setAlert({
+				message: `You can't perform this operation`,
+				type: 'info',
+			});
 		setActive(!isActive);
 		mutate({
 			data: {
@@ -60,15 +70,6 @@ const DeleteUserForm = ({ user }: Props) => {
 					</Typography>
 					<Switch checked={isActive} onChange={() => handleSwitch()} />
 				</Box>
-				{/* <Box style={styles.formWrapper as CSSProperties}>
-				<Box>
-					<TextArea rows={8} fullWidth placeholder={'Enter suspension note'} />
-				</Box>
-
-				<Button size={'large'} style={styles.btn}>
-					Deactivate user
-				</Button>
-			</Box> */}
 			</Box>
 		</>
 	);

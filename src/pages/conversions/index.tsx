@@ -158,7 +158,7 @@ const Conversions = () => {
 
 					{!search && total > MAX_RECORDS && !isReloading && (
 						<Pagination
-							sx={{ marginLeft: '20px' }}
+							sx={{ marginTop: '2rem', marginLeft: ['15px', '30px'] }}
 							size={'large'}
 							variant={'outlined'}
 							shape={'rounded'}
@@ -175,7 +175,7 @@ const Conversions = () => {
 
 const useStyles = (theme: any) => ({
 	container: {
-		border: `1px solid ${theme.palette.secondary.main}`,
+		border: `0.5px solid ${theme.palette.secondary.main}`,
 		padding: '1.5rem 0px',
 		backgroundColor: grey[50],
 		borderRadius: theme.spacing(2),

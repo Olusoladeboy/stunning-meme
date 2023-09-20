@@ -50,7 +50,7 @@ const ResolveDisputeButton = ({ ticket }: Props) => {
 					})
 				}
 			>
-				Close Dispute
+				Resolve Dispute
 			</Button>
 		</>
 	);

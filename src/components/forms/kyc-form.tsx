@@ -1,13 +1,14 @@
 import React, { useEffect } from 'react';
 import { useMutation, useQueryClient } from 'react-query';
 import { useFormik } from 'formik';
-import { Box, useTheme, Typography } from '@mui/material';
-import TextInput from '../form-components/TextInput';
-import Button from '../button/custom-button';
 import { grey } from '@mui/material/colors';
+import { Box, useTheme, Typography } from '@mui/material';
+import Button from '../button/custom-button';
+import TextInput from '../form-components/TextInput';
 import { QueryKeys, validationSchema } from 'utilities';
 import { useAlert, useHandleError } from 'hooks';
 import { updateKyc } from 'api';
+import { useAppSelector } from 'store/hooks';
 
 type Props = {
 	data?: { [key: string]: any };
@@ -19,6 +20,9 @@ const KycForm = ({ data, level }: Props) => {
 	const handleError = useHandleError();
 	const setAlert = useAlert();
 	const styles = useStyles(theme);
+	const { canCreateOrUpdateRecord } = useAppSelector(
+		(store) => store.authState
+	);
 
 	const initialValues = {
 		dailyLimit: '',
@@ -90,6 +94,7 @@ const KycForm = ({ data, level }: Props) => {
 					</Typography>
 					<TextInput
 						fullWidth
+						disabled={!canCreateOrUpdateRecord}
 						error={
 							errors && touched.dailyLimit && errors.dailyLimit ? true : false
 						}
@@ -105,6 +110,7 @@ const KycForm = ({ data, level }: Props) => {
 					</Typography>
 					<TextInput
 						fullWidth
+						disabled={!canCreateOrUpdateRecord}
 						placeholder={'Weekly limit'}
 						error={
 							errors && touched.weeklyLimit && errors.weeklyLimit ? true : false
@@ -120,6 +126,7 @@ const KycForm = ({ data, level }: Props) => {
 					</Typography>
 					<TextInput
 						fullWidth
+						disabled={!canCreateOrUpdateRecord}
 						placeholder={'Monthly limit'}
 						error={
 							errors && touched.monthlyLimit && errors.monthlyLimit
@@ -137,6 +144,7 @@ const KycForm = ({ data, level }: Props) => {
 					</Typography>
 					<TextInput
 						fullWidth
+						disabled={!canCreateOrUpdateRecord}
 						placeholder={'Per transaction limit'}
 						error={
 							errors &&
@@ -156,6 +164,7 @@ const KycForm = ({ data, level }: Props) => {
 				</Box>
 			</Box>
 			<Button
+				disabled={!canCreateOrUpdateRecord}
 				loading={isLoading}
 				onClick={(e: React.FormEvent<HTMLButtonElement>) => {
 					e.preventDefault();

@@ -14,12 +14,16 @@ import {
 } from 'components';
 import { BOX_SHADOW, QueryKeys } from 'utilities';
 import { dataPlans } from 'api';
+import { useAppSelector } from 'store/hooks';
 
 const ViewDataPlan = () => {
 	const { planName, network, dataType } = useParams();
 	const theme = useTheme();
 	const styles = useStyles(theme);
 	const [isDisplayModal, setDisplayModal] = useState<boolean>(false);
+	const { canCreateOrUpdateRecord } = useAppSelector(
+		(store) => store.authState
+	);
 
 	const { isLoading, data } = useQuery(
 		[QueryKeys.DataPlans, dataType, network],
@@ -60,13 +64,15 @@ const ViewDataPlan = () => {
 							{planName} Data Plan
 						</Typography>
 					</Box>
-					<Button
-						onClick={() => setDisplayModal(true)}
-						startIcon={<AddCircle />}
-						style={styles.addPlanBtn as CSSProperties}
-					>
-						Add new plan
-					</Button>
+					{canCreateOrUpdateRecord && (
+						<Button
+							onClick={() => setDisplayModal(true)}
+							startIcon={<AddCircle />}
+							style={styles.addPlanBtn as CSSProperties}
+						>
+							Add new plan
+						</Button>
+					)}
 				</Box>
 				<DataPlansTable isLoading={isLoading} data={data && data.payload} />
 			</Box>
@@ -79,7 +85,7 @@ const useStyles = (theme: any) => ({
 		display: 'flex',
 		flexDirection: 'column',
 		gap: theme.spacing(4),
-		border: `1px solid ${theme.palette.secondary.main}`,
+		border: `0.5px solid ${theme.palette.secondary.main}`,
 		padding: '1.5rem 0px',
 		backgroundColor: grey[50],
 		borderRadius: theme.spacing(2),

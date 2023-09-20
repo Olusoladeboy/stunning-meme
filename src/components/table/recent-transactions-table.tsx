@@ -124,10 +124,13 @@ const RecentTransactionsTable = () => {
 												key={key}
 											>
 												<StyledTableCell>
-													{row.user.firstname} {row.user.lastname}
+													{row.user &&
+														`${row.user?.firstname} ${row.user?.lastname}`}
 												</StyledTableCell>
 												<StyledTableCell>{row.reference}</StyledTableCell>
-												<StyledTableCell>{row.user.phone}</StyledTableCell>
+												<StyledTableCell>
+													{row.user && row.user.phone}
+												</StyledTableCell>
 												<StyledTableCell>
 													{formatNumberToCurrency(
 														typeof row.amount !== 'string'

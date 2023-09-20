@@ -1,5 +1,11 @@
 import React, { CSSProperties } from 'react';
-import { Box, useTheme, Typography, MenuItem } from '@mui/material';
+import {
+	Box,
+	useTheme,
+	Typography,
+	MenuItem,
+	InputAdornment,
+} from '@mui/material';
 import { useFormik } from 'formik';
 import moment from 'moment';
 import { grey } from '@mui/material/colors';
@@ -17,14 +23,6 @@ import {
 import { useAlert, useHandleError } from 'hooks';
 import { createCoupon, updateCoupon } from 'api';
 
-const COUPON_TYPES = [CouponType.PERCENT, CouponType.AMOUNT];
-const COUPON_STATUS = [
-	CouponStatus.VERIFIED,
-	CouponStatus.UNVERIFIED,
-	CouponStatus.CANCELLED,
-	CouponStatus.EXPIRED,
-];
-
 type Props = {
 	data?: Coupon;
 	isEdit?: boolean;
@@ -40,6 +38,7 @@ const CouponForm = ({ data, isEdit, onSuccess }: Props) => {
 	const queryClient = useQueryClient();
 	const setAlert = useAlert();
 	const styles = useStyles(theme);
+
 	const initialValues: Coupon = {
 		code: '',
 		type: SELECT_COUPON_TYPE,
@@ -163,9 +162,9 @@ const CouponForm = ({ data, isEdit, onSuccess }: Props) => {
 						<MenuItem value={SELECT_COUPON_TYPE} disabled>
 							{SELECT_COUPON_TYPE}
 						</MenuItem>
-						{COUPON_TYPES.map((coupon, key) => (
-							<MenuItem key={key} value={coupon}>
-								{coupon}
+						{Object.values(CouponType).map((value) => (
+							<MenuItem key={value} value={value}>
+								{value}
 							</MenuItem>
 						))}
 					</Select>
@@ -182,6 +181,11 @@ const CouponForm = ({ data, isEdit, onSuccess }: Props) => {
 						placeholder={'Gift'}
 						value={values.gift}
 						onChange={handleChange('gift')}
+						InputProps={{
+							endAdornment: CouponType.PERCENT === values.type && (
+								<InputAdornment position='start'>%</InputAdornment>
+							),
+						}}
 					/>
 				</Box>
 			</Box>
@@ -225,7 +229,7 @@ const CouponForm = ({ data, isEdit, onSuccess }: Props) => {
 						<MenuItem value={SELECT_COUPON_STATUS} disabled>
 							{SELECT_COUPON_STATUS}
 						</MenuItem>
-						{COUPON_STATUS.map((status, key) => (
+						{Object.values(CouponStatus).map((status, key) => (
 							<MenuItem key={key} value={status}>
 								{status}
 							</MenuItem>

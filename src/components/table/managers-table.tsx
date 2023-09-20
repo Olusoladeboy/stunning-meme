@@ -24,6 +24,7 @@ import ManagerDetails from '../manager-details';
 import TableLoader from '../loader/table-loader';
 import ManagerTableHeader from '../header/manager-table-header';
 import CustomTableCell from './components/custom-table-cell';
+import { useAppSelector } from 'store/hooks';
 
 type Props = {
 	managers: User[] | null | undefined;
@@ -40,6 +41,9 @@ const ManagersTable = ({
 }: Props) => {
 	const theme = useTheme();
 	const styles = useStyles(theme);
+	const { canCreateOrUpdateRecord } = useAppSelector(
+		(store) => store.authState
+	);
 
 	const [selectedManager, setSelectedManager] = useState<User | null>(null);
 	const [isViewManager, setViewManager] = useState<boolean>(false);
@@ -100,22 +104,24 @@ const ManagersTable = ({
 						clearSearch={clearSearch}
 						title={'Managers'}
 					/>
-					<Box
-						sx={{
-							alignSelf: 'flex-end',
-							display: 'flex',
-							alignItems: 'center',
-							gap: theme.spacing(3),
-						}}
-					>
-						<Button
-							onClick={() => setDisplayForm(true)}
-							startIcon={<AddCircle />}
-							style={styles.btnOutline as CSSProperties}
+					{canCreateOrUpdateRecord && (
+						<Box
+							sx={{
+								alignSelf: 'flex-end',
+								display: 'flex',
+								alignItems: 'center',
+								gap: theme.spacing(3),
+							}}
 						>
-							Add manager
-						</Button>
-					</Box>
+							<Button
+								onClick={() => setDisplayForm(true)}
+								startIcon={<AddCircle />}
+								style={styles.btnOutline as CSSProperties}
+							>
+								Add manager
+							</Button>
+						</Box>
+					)}
 				</Box>
 
 				<Table sx={{ overflow: 'auto' }}>

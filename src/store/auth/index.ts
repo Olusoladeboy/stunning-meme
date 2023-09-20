@@ -7,6 +7,7 @@ const initialState: AuthState = {
 	user: null,
 	token: window !== undefined ? Storage.getItem(StorageKeys.UserToken) : null,
 	canViewStatistics: false,
+	canCreateOrUpdateRecord: false,
 };
 
 export const userSlice = createSlice({
@@ -19,7 +20,10 @@ export const userSlice = createSlice({
 			state.user = action.payload;
 			if (user) {
 				const canViewStatistics = user.role !== ADMIN_ROLE.CUSTOMER_SUPPORT;
+				const canCreateOrUpdateRecord =
+					user.role !== ADMIN_ROLE.CUSTOMER_SUPPORT;
 				state.canViewStatistics = canViewStatistics;
+				state.canCreateOrUpdateRecord = canCreateOrUpdateRecord;
 			}
 		},
 		setToken: (state, action: PayloadAction<string | null>) => {

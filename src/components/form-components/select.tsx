@@ -1,5 +1,10 @@
 import React from 'react';
-import { Select as MuiSelect, SelectProps, Typography } from '@mui/material';
+import {
+	Select as MuiSelect,
+	SelectProps,
+	Typography,
+	Box,
+} from '@mui/material';
 import { grey } from '@mui/material/colors';
 import { red } from '@mui/material/colors';
 import { ThemeModeType } from 'utilities';
@@ -13,7 +18,7 @@ interface Props extends SelectProps {
 const Select = (props: Props) => {
 	const { mode } = useAppSelector((store) => store.theme);
 	return (
-		<>
+		<Box sx={{ width: '100%' }}>
 			<MuiSelect
 				{...props}
 				sx={{
@@ -37,7 +42,7 @@ const Select = (props: Props) => {
 					{props.helpertext}
 				</Typography>
 			)}
-		</>
+		</Box>
 	);
 };
 

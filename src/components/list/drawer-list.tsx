@@ -426,6 +426,26 @@ const DrawerList = () => {
 					}
 				/>
 				<ListItemButton
+					name={'Bvn Verification'}
+					link={LINKS.BvnVerification}
+					isActive={
+						getActiveLink({ name: 'bvn-verification', currentPath: pathname })
+							.isActive
+					}
+					icon={
+						<VerificationIcon
+							color={
+								getActiveLink({
+									name: 'bvn-verification',
+									currentPath: pathname,
+								}).isActive
+									? activeColor
+									: initialColor
+							}
+						/>
+					}
+				/>
+				<ListItemButton
 					name={'Suspension'}
 					link={LINKS.Suspension}
 					isActive={

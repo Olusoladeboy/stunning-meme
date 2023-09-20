@@ -44,8 +44,9 @@ const LoginForm = () => {
 				dispatch(setToken(token));
 				dispatch(setUser(user));
 				if (
-					user.defaultPasswordChanged &&
-					Boolean(user.defaultPasswordChanged)
+					// user.defaultPasswordChanged &&
+					'defaultPasswordChanged' in user &&
+					!Boolean(user.defaultPasswordChanged)
 				) {
 					modal({
 						title: 'Change Password',

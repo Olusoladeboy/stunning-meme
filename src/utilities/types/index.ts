@@ -12,6 +12,7 @@ export enum QueryKey {
 	GetSingleUser = '@Query:Get_single_user',
 	DataNetwork = '@Query:Data_Network',
 	ConvertNetwork = '@Query:Convert_Network',
+	AutoConvertNetwork = '@Query:Auto_Convert_Network',
 	ConvertAirtime = '@Query:Convert_Airtime',
 	AirtimeNetwork = '@Query:Airtime_Network',
 	KycLimit = '@Query:Kyc_Limit',
@@ -107,6 +108,7 @@ export type AuthState = {
 	user: User | null;
 	token: string | null;
 	canViewStatistics: boolean;
+	canCreateOrUpdateRecord: boolean;
 };
 
 export enum SettingsTab {
@@ -183,6 +185,7 @@ export enum NetworkPage {
 	DATA_NETWORK = 'Data network',
 	AIRTIME_NETWORK = 'Airtime network',
 	CONVERSION_NETWORK = 'Conversion network',
+	AUTO_CONVERSION_NETWORK = 'Auto conversion network',
 }
 
 export interface AirtimeConversion extends Transaction {
@@ -214,6 +217,7 @@ export enum API_ENDPOINTS {
 	DataPlans = '/data-plans',
 	AirtimeNetwork = '/airtime-networks',
 	ConvertNetworks = '/convert-networks',
+	AutoConvertNetwork = '/auto-convert-networks',
 	ConvertAirtime = '/convert-airtime',
 	Kyc = '/kyc',
 	Transaction = '/transaction',
@@ -228,6 +232,49 @@ export interface ManagerDetailsData extends User {
 	lastname: string;
 	email: string;
 	phone?: string;
+}
+
+export interface IBill {
+	service_type?: string;
+	smartcard_number?: string;
+	product_code?: string;
+	price?: number | string;
+	monthsPaidFor?: number | string;
+	numberOfPins?: string | number;
+	discount_code?: string;
+	amount?: string | number;
+	meter_number?: string;
+	exam_bundle?: string;
+	internetPlan?: string;
+}
+
+export interface AvailablePricingOption {
+	monthsPaidFor: number;
+	price: number;
+	invoicePeriod: number;
+}
+
+export interface Bundle {
+	amount: number;
+	available: number;
+	description: string;
+	availablePricingOptions: AvailablePricingOption[];
+	code: string;
+	name: string;
+}
+
+export interface Provider {
+	service_type: string;
+	shortname: string;
+	billerid: number;
+	productid: number;
+	name: string;
+	type: string;
+	description?: string;
+	id?: string | number;
+	narration: string;
+	short_name: string;
+	image: string;
 }
 
 export type NetworkData = {
@@ -252,12 +299,12 @@ export type KycData = {
 
 export type DataPlan = {
 	name?: string;
-	amount?: string | Amount;
+	amount?: string | Amount | number;
 	code?: string;
 	isActive?: boolean;
 	id?: string;
 	network?: NetworkData | string;
-	merchant_amount?: Amount | string;
+	merchant_amount?: Amount | string | number;
 	data_unit?: string;
 	data_source?: string;
 	dataType?: DataType | string;
@@ -291,6 +338,7 @@ export type Statistics = {
 	total_conversions: number;
 	total_verified_users: number;
 	total_unverified_users: number;
+	total_deactivated_users: number;
 	total_deleted_users: number;
 	total_suspended_users: number;
 	total_airtime_converted: number;
@@ -306,6 +354,19 @@ export type Statistics = {
 
 export interface Amount {
 	$numberDecimal: string;
+}
+
+export interface IVerification {
+	status: string;
+	user: User;
+	level: number;
+	payload: string;
+	type: string;
+	channel: string;
+	code: string;
+	createdAt: string;
+	updatedAt: string;
+	id: string;
 }
 
 export interface Coupon {

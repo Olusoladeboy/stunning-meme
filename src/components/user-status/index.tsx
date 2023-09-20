@@ -9,6 +9,7 @@ import DeleteUserForm from '../forms/delete-user-form';
 import { User, QueryKey } from 'utilities';
 import { useAlert, useHandleError } from 'hooks';
 import { suspendWithdraw } from 'api';
+import { useAppSelector } from 'store/hooks';
 
 type Props = {
 	user: User | null;
@@ -19,6 +20,9 @@ const UserStatus = ({ user }: Props) => {
 	const setAlert = useAlert();
 	const handleError = useHandleError();
 	const queryClient = useQueryClient();
+	const { canCreateOrUpdateRecord } = useAppSelector(
+		(store) => store.authState
+	);
 
 	const { mutate, isLoading } = useMutation(suspendWithdraw, {
 		onSettled: (data, error) => {
@@ -58,25 +62,27 @@ const UserStatus = ({ user }: Props) => {
 				}}
 			>
 				<UserAvatarWithDetails user={user} />
-				<CustomButton
-					loading={isLoading}
-					onClick={(e: React.FormEvent<HTMLButtonElement>) => {
-						e.preventDefault();
-						handleSuspendWithdraw();
-					}}
-					sx={{
-						border: `1px solid ${theme.palette.secondary.main}`,
-						':hover': {
-							backgroundColor: theme.palette.secondary.main,
-							color: grey[50],
-						},
-					}}
-					size={'large'}
-				>
-					{user?.suspendWithdrawal
-						? 'Unsuspend withdrawal'
-						: 'Suspend Withdrawal'}
-				</CustomButton>
+				{canCreateOrUpdateRecord && (
+					<CustomButton
+						loading={isLoading}
+						onClick={(e: React.FormEvent<HTMLButtonElement>) => {
+							e.preventDefault();
+							handleSuspendWithdraw();
+						}}
+						sx={{
+							border: `1px solid ${theme.palette.secondary.main}`,
+							':hover': {
+								backgroundColor: theme.palette.secondary.main,
+								color: grey[50],
+							},
+						}}
+						size={'large'}
+					>
+						{user?.suspendWithdrawal
+							? 'Unsuspend withdrawal'
+							: 'Suspend Withdrawal'}
+					</CustomButton>
+				)}
 			</Box>
 			<Box>
 				<Typography sx={{ marginBottom: theme.spacing(4) }} variant={'h5'}>

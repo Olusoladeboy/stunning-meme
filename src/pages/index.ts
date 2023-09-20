@@ -17,6 +17,7 @@ export { default as Referees } from './referrals/referees';
 export { default as Notifications } from './notifications';
 export { default as PushNotification } from './notifications/push-notification';
 export { default as Verification } from './verification';
+export { default as BvnVerification } from './verification/bvn-verification';
 export { default as Kyc } from './verification/kyc';
 export { default as Suspension } from './suspension';
 export { default as AuditLogs } from './audit-logs';

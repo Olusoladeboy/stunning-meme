@@ -16,6 +16,15 @@ export const dataPlans = async (params: {
 		params,
 	});
 
+export const dataSubscriptions = async (params: {
+	[key: string]: any;
+}): Promise<DataResponse<DataPlan[]>> =>
+	apiRequest({
+		url: ENDPOINTS.DataSubscription,
+		method: 'GET',
+		params,
+	});
+
 export const dataTypes = async (params: {
 	[key: string]: any;
 }): Promise<DataResponse<DataType[]>> =>
@@ -60,7 +69,7 @@ export const updateDataPlan = async ({
 	data,
 	id,
 }: {
-	data: any;
+	data: DataPlan;
 	id: string;
 }): Promise<DataResponse<DataPlan>> =>
 	apiRequest({

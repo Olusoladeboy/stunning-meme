@@ -1,5 +1,5 @@
 import apiRequest from './apiRequest';
-import { NetworkData } from '../utilities';
+import { DataResponse, NetworkData } from '../utilities';
 
 export const networks = async ({
 	url,
@@ -8,11 +8,10 @@ export const networks = async ({
 	url: string;
 	sort?: string;
 	params?: { [key: string]: any };
-}): Promise<any> =>
+}): Promise<DataResponse<NetworkData[]>> =>
 	apiRequest({
 		method: 'GET',
 		url,
-
 		params,
 	});
 
@@ -22,7 +21,7 @@ export const createNetwork = async ({
 }: {
 	url: string;
 	data: NetworkData;
-}): Promise<any> =>
+}): Promise<DataResponse<NetworkData>> =>
 	apiRequest({
 		method: 'POST',
 		url,

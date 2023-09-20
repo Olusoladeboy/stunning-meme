@@ -31,6 +31,8 @@ import Modal from '../modal/Wrapper';
 import Loader from '../loader';
 import { useAlert, useHandleError } from 'hooks';
 
+const WARNING_MESSAGE = `You can't perform this operation`;
+
 interface AitimeNetworkTypes extends NetworkData {
 	isActive: boolean;
 	id: string;
@@ -46,7 +48,9 @@ const AirtimeNetworkTable = () => {
 		null
 	);
 
-	const { token } = useAppSelector((store) => store.authState);
+	const { token, canCreateOrUpdateRecord } = useAppSelector(
+		(store) => store.authState
+	);
 
 	const { isLoading, data } = useQuery(
 		QueryKeys.AirtimeNetwork,
@@ -96,13 +100,16 @@ const AirtimeNetworkTable = () => {
 		status: boolean;
 		id: string;
 	}) => {
-		mutateUpdateNetwork({
-			data: {
-				isActive: status,
-			},
-			url: API_ENDPOINTS.AirtimeNetwork,
-			id,
-		});
+		if (canCreateOrUpdateRecord) {
+			return mutateUpdateNetwork({
+				data: {
+					isActive: status,
+				},
+				url: API_ENDPOINTS.AirtimeNetwork,
+				id,
+			});
+		}
+		setAlert({ message: WARNING_MESSAGE, type: 'info' });
 	};
 
 	return (
@@ -118,7 +125,7 @@ const AirtimeNetworkTable = () => {
 						isEdit
 						network={selectedNetwork}
 						type={NetworkPage.AIRTIME_NETWORK}
-						handleContinue={() => setSelectedNetwork(null)}
+						callback={() => setSelectedNetwork(null)}
 					/>
 				</Modal>
 			)}
@@ -149,13 +156,19 @@ const AirtimeNetworkTable = () => {
 						{isLoading ? (
 							<TableLoader colSpan={4} />
 						) : data && data.payload.length > 0 ? (
-							data.payload.map((data: AitimeNetworkTypes) => (
+							data.payload.map((data: NetworkData) => (
 								<TableRow key={data.id}>
 									<TableCell>{data.name}</TableCell>
 									<TableCell>{data.ussd}</TableCell>
 									<TableCell>
 										<Box
-											onClick={() => setSelectedNetwork(data)}
+											onClick={() => {
+												if (canCreateOrUpdateRecord) {
+													return setSelectedNetwork(data);
+												}
+
+												setAlert({ message: WARNING_MESSAGE, type: 'info' });
+											}}
 											style={styles.editNetwork as CSSProperties}
 										>
 											Edit network{' '}
@@ -194,7 +207,7 @@ const AirtimeNetworkTable = () => {
 												onClick={() =>
 													handleEnableDisableNetwork({
 														status: true,
-														id: data.id,
+														id: data.id as string,
 													})
 												}
 											>
@@ -205,7 +218,7 @@ const AirtimeNetworkTable = () => {
 												onClick={() =>
 													handleEnableDisableNetwork({
 														status: false,
-														id: data.id,
+														id: data.id as string,
 													})
 												}
 												style={{

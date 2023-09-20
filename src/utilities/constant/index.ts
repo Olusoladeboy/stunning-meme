@@ -16,6 +16,9 @@ export const MAX_RECORDS = 20;
 
 export const REFERRAL_BONUS = 'MININUM_BONUS_RATE';
 
+export const PRIVILEGE_MESSAGE =
+	'Unable to perform this operation, you do not have such privilege';
+
 export const QueryKeys = {
 	LoginUserDetails: '@Query:Login_user_details',
 	Managers: '@Query:All_manager',
@@ -28,7 +31,9 @@ export const QueryKeys = {
 	User: '@Query:Get_single_user',
 	SuspendUser: '@Query:Suspend_user',
 	DataNetwork: '@Query:Data_Network',
+	DataSubscription: '@Query:Data_Subscription',
 	ConvertNetwork: '@Query:Convert_Network',
+	AutoConvertNetwork: '@Query:Auto_Convert_Network',
 	ConvertAirtime: '@Query:Convert_Airtime',
 	AirtimeNetwork: '@Query:Airtime_Network',
 	KycLimit: '@Query:Kyc_Limit',
@@ -46,6 +51,7 @@ export const QueryKeys = {
 	Tickets: '@Query:Tickets',
 	Ticket: '@Query:Ticket',
 	Me: '@Query:Me',
+	Verification: '@Query:Verification',
 };
 
 export const StorageKeys = {
@@ -85,6 +91,7 @@ export const LINKS = {
 	Network: '/network',
 	DataNetwork: '/data-network',
 	ConversionNetwork: '/conversions/network',
+	AutoConversionNetwork: '/auto-conversions/network',
 	DataPlan: '/data-network/plans',
 	DataTypes: '/data-network/types',
 	AirtimeNetwork: '/airtime-network',
@@ -98,6 +105,7 @@ export const LINKS = {
 	CreateNotification: '/notifications/create',
 	PushNotification: '/push-notification',
 	Verification: '/verification',
+	BvnVerification: '/bvn-verification',
 	KycVerification: '/verification/kyc',
 	Suspension: '/suspension',
 	AuditLogs: '/audit-logs',
@@ -127,14 +135,17 @@ export const ENDPOINTS = {
 	Staff: '/staff',
 	Settings: '/setting',
 	Manager: '/manager',
+	Bill: '/bill',
 	User: '/user',
 	DataNetwork: '/data-networks',
+	DataSubscription: '/data-subscription',
 	DataPlans: '/data-plans',
 	DataTypes: '/data-types',
 	AirtimeNetwork: '/airtime-networks',
 	ConvertNetworks: '/convert-networks',
 	ConvertAirtime: '/convert-airtime',
 	Kyc: '/kyc',
+	Verification: '/verifications',
 	Transaction: '/transaction',
 	Wallet: '/wallet',
 	Coupon: '/coupon',
@@ -155,6 +166,7 @@ export const USERS_TAB = {
 	Unverified: 'Unverified',
 	Suspended: 'Suspended',
 	Deleted: 'Deleted',
+	Deactivated: 'Deactivated',
 };
 
 export const TRANSACTIONS_TAB = {
@@ -208,4 +220,25 @@ export const DEVICE = {
 	ANDROID: 'ANDROID',
 	WINDOW: 'WINDOW',
 	ALL: 'ALL',
+};
+
+export const SERVICES = {
+	WITHDRAWAL: 'WITHDRAWAL',
+	DATA_SUBSCRIPTION: 'DATA SUBSCRIPTION',
+	AIRTIME_TOP_UP: 'AIRTIME TOP UP',
+	AIRTIME_CONVERSION: 'AIRTIME CONVERSION',
+	CARD_TOP_UP: 'CARD TOP UP',
+	CABLE: 'CABLE',
+	INTERNET: 'INTERNET',
+	EDUCATION: 'EDUCATION',
+	ELECTRICITY: 'ELECTRICITY',
+	EPIN: 'EPIN',
+	REVERSAL: 'REVERSAL',
+	WALLET_TRANSFER: 'WALLET TRANSFER',
+};
+
+export const VERIFICATION_STATUS = {
+	FAILED: 'FAILED',
+	SUCCESSFUL: 'SUCCESSFUL',
+	PENDING: 'PENDING',
 };

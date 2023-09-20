@@ -102,9 +102,9 @@ const RecentConversionsTable = () => {
 									data.payload.map((row: any) => (
 										<StyledTableRow key={row.id}>
 											<StyledTableCell>
-												{row.user.firstname} {row.user.lastname}
+												{row.user?.firstname} {row.user?.lastname}
 											</StyledTableCell>
-											<StyledTableCell>{row.network.name}</StyledTableCell>
+											<StyledTableCell>{row.network?.name}</StyledTableCell>
 											<StyledTableCell>{row.phone_number}</StyledTableCell>
 											<StyledTableCell>{row.network.name}</StyledTableCell>
 										</StyledTableRow>

@@ -65,7 +65,7 @@ const TransactionsTab: React.FC<Props> = ({ currentTab, changeCurrentTab }) => {
 						}}
 						variant={'body1'}
 					>
-						Total Conversions
+						Total Transactions
 					</Typography>
 				</TransactionItem>
 				<TransactionItem
@@ -102,7 +102,7 @@ const TransactionsTab: React.FC<Props> = ({ currentTab, changeCurrentTab }) => {
 						}}
 						variant={'body1'}
 					>
-						Approved Conversions
+						Approved Transactions
 					</Typography>
 				</TransactionItem>{' '}
 				<TransactionItem
@@ -139,7 +139,7 @@ const TransactionsTab: React.FC<Props> = ({ currentTab, changeCurrentTab }) => {
 						}}
 						variant={'body1'}
 					>
-						Pending Conversions
+						Pending Transactions
 					</Typography>
 				</TransactionItem>{' '}
 				<TransactionItem
@@ -174,7 +174,7 @@ const TransactionsTab: React.FC<Props> = ({ currentTab, changeCurrentTab }) => {
 						}}
 						variant={'body1'}
 					>
-						Declined Conversions
+						Declined Transactions
 					</Typography>
 				</TransactionItem>
 			</Box>

@@ -183,7 +183,11 @@ const CouponForm = ({ data, isEdit, onSuccess }: Props) => {
 						onChange={handleChange('gift')}
 						InputProps={{
 							endAdornment: CouponType.PERCENT === values.type && (
-								<InputAdornment position='start'>%</InputAdornment>
+								<InputAdornment position='end'>%</InputAdornment>
+							),
+
+							startAdornment: CouponType.AMOUNT === values.type && (
+								<InputAdornment position='start'>₦</InputAdornment>
 							),
 						}}
 					/>

@@ -39,7 +39,7 @@ import {
 	PRIVILEGE_MESSAGE,
 } from 'utilities';
 import TableLoader from '../loader/table-loader';
-import { useAlert, useHandleError } from 'hooks';
+import { useAlert, useHandleError, useModalAlert } from 'hooks';
 import Loader from '../loader';
 import { updateCouponStatus } from 'api';
 import CustomTableCell from './components/custom-table-cell';
@@ -60,6 +60,7 @@ const CouponsTable = ({
 }: Props) => {
 	const [isCreateCoupon, setCreateCoupon] = useState<boolean>(false);
 	const setAlert = useAlert();
+	const modal = useModalAlert();
 	const handleError = useHandleError();
 	const theme = useTheme();
 	const styles = useStyles(theme);
@@ -71,7 +72,6 @@ const CouponsTable = ({
 	const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 	const [selectedCoupon, setSelectedCoupon] = useState<null | Coupon>(null);
 	const [isEdit, setEdit] = useState<boolean>(false);
-	const [modalAlert, setModalAlert] = useState<ModalDetails | null>(null);
 
 	useEffect(() => {
 		if (user) {
@@ -118,11 +118,13 @@ const CouponsTable = ({
 	};
 
 	const handleDelete = (data: { [key: string]: any }) => {
-		setModalAlert({
-			title: `Delete ${data.coupon_name}`,
-			buttonText: 'Delete plan',
-			message: `Are you sure you want to delete ${data.coupon_name}`,
-			type: 'failed',
+		modal({
+			title: `Delete Coupon`,
+			message: `Are you sure you want to delete ${selectedCoupon?.name}`,
+			primaryButtonText: 'Delete',
+			onClickPrimaryButton: () => {
+				modal(null);
+			},
 		});
 	};
 
@@ -156,7 +158,6 @@ const CouponsTable = ({
 					<CouponForm onSuccess={() => setCreateCoupon(false)} />
 				</ModalWrapper>
 			)}
-			{modalAlert && <Modal {...modalAlert} />}
 			{isEdit && selectedCoupon && (
 				<ModalWrapper
 					hasCloseButton

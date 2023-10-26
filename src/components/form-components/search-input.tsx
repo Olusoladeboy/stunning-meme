@@ -38,6 +38,7 @@ const SearchInput = ({
 		<Box {...rest} sx={{ ...rest.sx, width: fullWidth ? '100%' : 'undefined' }}>
 			<TextField
 				// {...rest.style}
+				// size='small'
 				fullWidth={fullWidth}
 				placeholder={placeholder}
 				sx={{

@@ -1,14 +1,9 @@
 import { useState } from 'react';
 import { useQuery } from 'react-query';
-import { NetworkData, ENDPOINTS, QueryKeys } from 'utilities';
+import { ENDPOINTS, QueryKeys } from 'utilities';
 import { dataSubscriptions, dataTypes, networks } from 'api';
-import useToastAlert from './useToastAlert';
-import useHandleError from './useHandleError';
 
 export const useQueryAirtimeNetwork = () => {
-	const alert = useToastAlert();
-	const handleError = useHandleError();
-
 	const [isEnable, setIsEnable] = useState<boolean>(false);
 
 	const { isLoading, data: airtimeNetworks } = useQuery(
@@ -33,9 +28,6 @@ export const useQueryAirtimeNetwork = () => {
 
 // Query Data Networks
 export const useQueryDateNetwork = () => {
-	const alert = useToastAlert();
-	const handleError = useHandleError();
-
 	const [isEnable, setIsEnable] = useState<boolean>(false);
 
 	const { isLoading, data: dataDataNetwork } = useQuery(
@@ -89,9 +81,6 @@ export const useQueryDataTypes = () => {
 
 // Query Data Networks
 export const useQueryDataSubscription = () => {
-	const alert = useToastAlert();
-	const handleError = useHandleError();
-
 	const [isEnable, setIsEnable] = useState<boolean>(false);
 	const [params, setParams] = useState<{ [key: string]: any }>({});
 
@@ -119,9 +108,6 @@ export const useQueryDataSubscription = () => {
 
 // Query Cable
 export const useQueryCableProviders = () => {
-	const alert = useToastAlert();
-	const handleError = useHandleError();
-
 	const [isEnable, setIsEnable] = useState<boolean>(false);
 	const [params, setParams] = useState<{ [key: string]: any }>({});
 

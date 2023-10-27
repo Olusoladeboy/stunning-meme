@@ -102,8 +102,6 @@ const AllTransactions = () => {
 		}
 	);
 
-	console.log(isLoad);
-
 	const handlePageChange = (page: number) => {
 		if (page !== 1) {
 			setPage(page);

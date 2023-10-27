@@ -122,3 +122,11 @@ export const cleanObject = (object: { [key: string]: any }) => {
 	}
 	return output;
 };
+
+export const truncateText = (text: string, length: number = 20): string => {
+	if (text.length > length) {
+		return `${text.substring(0, length)}...`;
+	}
+
+	return text;
+};

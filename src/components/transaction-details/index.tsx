@@ -28,16 +28,17 @@ const TransactionDetails: React.FC<Props> = ({ transaction }) => {
 		return (
 			<Box>
 				<Container>
-					{transaction.transaction && transaction.transaction.service ? (
+					{transaction.service ? (
 						<DisputeTransactionItem
 							label={'Service'}
-							value={transaction.transaction.service}
+							value={transaction.service}
 						/>
 					) : (
-						transaction.service && (
+						transaction.transaction &&
+						transaction.transaction.service && (
 							<DisputeTransactionItem
 								label={'Service'}
-								value={transaction.service}
+								value={transaction.transaction.service}
 							/>
 						)
 					)}

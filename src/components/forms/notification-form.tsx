@@ -1,5 +1,7 @@
 import axios from 'axios';
 import React, { useState } from 'react';
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
 import {
 	styled,
 	Box,
@@ -31,6 +33,7 @@ import {
 	NOTIFICATION_TYPE,
 	SECOUNDARY_COLOR,
 	ENDPOINTS,
+	TOOL_BAR_OPTIONS,
 } from 'utilities';
 import Button from '../button';
 import Image from '../image';
@@ -164,18 +167,27 @@ const NotificationForm: React.FC<Props> = ({ notification }) => {
 		initialValues,
 		validationSchema: notificationSchema,
 		onSubmit: (values) => {
-			const { type, message, subject, imageUrl, dispatchUserType } = values;
-			const default_payload = { subject, imageUrl, message, type };
-			mutate(
-				type === NOTIFICATION_TYPE.IN_APP
-					? default_payload
-					: dispatchUserType === DISPATCH_USER.SELECTED
-					? values
-					: {
-							...default_payload,
-							dispatchUserType,
-					  }
-			);
+			const {
+				type,
+				message,
+				subject,
+				imageUrl,
+				dispatchUserType,
+				device,
+				users,
+			} = values;
+			const payload: Notification = {
+				subject,
+				imageUrl,
+				message,
+				type,
+				dispatchUserType,
+			};
+
+			if (dispatchUserType === DISPATCH_USER.SELECTED) payload.users = users;
+			if (device && device !== SELECT_TARGET_DEVICE) payload.device = device;
+
+			mutate(payload);
 		},
 	});
 
@@ -273,7 +285,11 @@ const NotificationForm: React.FC<Props> = ({ notification }) => {
 				<Grid sx={{ marginTop: '15px' }}>
 					<FormControl>
 						<FormLabel>Notification Type</FormLabel>
-						<Select value={type} onChange={handleChange('type') as never}>
+						<Select
+							fullWidth
+							value={type}
+							onChange={handleChange('type') as never}
+						>
 							<MenuItem disabled value={SELECT_NOTIFICATION_TYPE}>
 								{SELECT_NOTIFICATION_TYPE}
 							</MenuItem>
@@ -289,6 +305,7 @@ const NotificationForm: React.FC<Props> = ({ notification }) => {
 							<FormControl>
 								<FormLabel>Target Device</FormLabel>
 								<Select
+									fullWidth
 									value={device}
 									onChange={handleChange('device') as never}
 								>
@@ -302,43 +319,44 @@ const NotificationForm: React.FC<Props> = ({ notification }) => {
 									))}
 								</Select>
 							</FormControl>
-							<FormControl>
-								<FormLabel>Dispatch Type</FormLabel>
-								<Select
-									value={dispatchUserType}
-									onChange={handleChange('dispatchUserType') as never}
-								>
-									<MenuItem disabled value={SELECT_DISPATCH_TYPE}>
-										{SELECT_DISPATCH_TYPE}
-									</MenuItem>
-									{Object.values(DISPATCH_USER).map((value) => (
-										<MenuItem key={value} value={value}>
-											{value}
-										</MenuItem>
-									))}
-								</Select>
-							</FormControl>
-							{dispatchUserType === DISPATCH_USER.SELECTED && (
-								<FormControl>
-									<FormLabel>Select User</FormLabel>
-									<SearchInput
-										isLoading={isSearching}
-										fullWidth
-										sx={{
-											'& .MuiOutlinedInput-root': {
-												paddingRight: '0px',
-												borderRadius: '6px !important',
-											},
-										}}
-										placeholder={'Search users by email'}
-										clearSearch={clearSearch}
-										handleSearch={searchUser}
-									/>
-								</FormControl>
-							)}
 						</>
 					)}
 				</Grid>
+				<FormControl>
+					<FormLabel>Dispatch Type</FormLabel>
+					<Select
+						fullWidth
+						value={dispatchUserType}
+						onChange={handleChange('dispatchUserType') as never}
+					>
+						<MenuItem disabled value={SELECT_DISPATCH_TYPE}>
+							{SELECT_DISPATCH_TYPE}
+						</MenuItem>
+						{Object.values(DISPATCH_USER).map((value) => (
+							<MenuItem key={value} value={value}>
+								{value}
+							</MenuItem>
+						))}
+					</Select>
+				</FormControl>
+				{dispatchUserType === DISPATCH_USER.SELECTED && (
+					<FormControl>
+						<FormLabel>Select User</FormLabel>
+						<SearchInput
+							isLoading={isSearching}
+							fullWidth
+							sx={{
+								'& .MuiOutlinedInput-root': {
+									paddingRight: '0px',
+									borderRadius: '6px !important',
+								},
+							}}
+							placeholder={'Search users by email'}
+							clearSearch={clearSearch}
+							handleSearch={searchUser}
+						/>
+					</FormControl>
+				)}
 				{selectedUser.length > 0 && (
 					<Box>
 						<FormLabel>Selected User</FormLabel>
@@ -380,7 +398,7 @@ const NotificationForm: React.FC<Props> = ({ notification }) => {
 
 					<FormControl>
 						<FormLabel>Body</FormLabel>
-						<TextInput
+						{/* <TextInput
 							multiline
 							rows={5}
 							fullWidth
@@ -389,6 +407,23 @@ const NotificationForm: React.FC<Props> = ({ notification }) => {
 							helperText={touched.message && errors.message}
 							value={message}
 							onChange={handleChange('message')}
+						/> */}
+						<ReactQuill
+							style={{
+								height: '240px',
+								position: 'relative',
+							}}
+							// formats={QUILL_FORMAT}
+							modules={{
+								toolbar: TOOL_BAR_OPTIONS,
+								clipboard: {
+									// toggle to add extra line breaks when pasting HTML:
+									matchVisual: true,
+								},
+							}}
+							theme='snow'
+							value={message}
+							onChange={(value) => setFieldValue('message', value)}
 						/>
 					</FormControl>
 				</Grid>
@@ -423,6 +458,8 @@ export const Form = styled(Box)(({ theme }) => ({
 	display: 'flex',
 	flexDirection: 'column',
 	gap: theme.spacing(3),
+	maxWidth: '720px',
+	width: '100%',
 }));
 
 const Grid = styled(Box)(({ theme }) => ({
@@ -430,9 +467,9 @@ const Grid = styled(Box)(({ theme }) => ({
 	gridTemplateColumns: '1fr',
 	columnGap: '3rem',
 	rowGap: '1.5rem',
-	[theme.breakpoints.up('md')]: {
-		gridTemplateColumns: 'repeat(2, 1fr)',
-	},
+	// [theme.breakpoints.up('md')]: {
+	// 	gridTemplateColumns: 'repeat(2, 1fr)',
+	// },
 }));
 
 const SubmitButton = styled(Button)(({ theme }) => ({
@@ -443,7 +480,7 @@ const SubmitButton = styled(Button)(({ theme }) => ({
 	backgroundColor: `${SECOUNDARY_COLOR} !important`,
 	color: 'white',
 	alignSelf: 'flex-end',
-	marginTop: '3rem',
+	marginTop: '4.2rem',
 }));
 
 const ImageContainer = styled(Box)(({ theme }) => ({

@@ -9,6 +9,7 @@ import {
 	DANGER_COLOR,
 	LINKS,
 	Notification,
+	truncateText,
 } from 'utilities';
 import ModalWrapper from '../modal/Wrapper';
 import {
@@ -126,7 +127,7 @@ const NotificationsTable: React.FC<Props> = ({ notifications, isLoading }) => {
 													{notification.subject}
 												</TableCell>
 												<TableCell style={styles.tableText}>
-													{notification.message}
+													{truncateText(notification.message as string, 50)}
 												</TableCell>
 
 												<TableCell style={styles.tableText}>

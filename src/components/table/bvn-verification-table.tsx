@@ -115,7 +115,7 @@ const BvnVerificationTable = ({
 							}}
 						>
 							{isLoading ? (
-								<TableLoader colSpan={4} />
+								<TableLoader colSpan={5} />
 							) : (
 								data && (
 									<>

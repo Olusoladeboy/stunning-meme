@@ -59,6 +59,7 @@ const BvnVerificationTable = ({
 					queryClient.invalidateQueries(QueryKeys.Users);
 					queryClient.invalidateQueries(QueryKeys.User);
 					queryClient.invalidateQueries(QueryKeys.Statistics);
+					queryClient.invalidateQueries(QueryKeys.Verification);
 				}
 			},
 		}
@@ -100,6 +101,7 @@ const BvnVerificationTable = ({
 						<TableRow>
 							<CustomTableCell label={'Name'} />
 							<CustomTableCell label={'Email'} />
+							<CustomTableCell label={'BVN'} />
 							<CustomTableCell label={'Status'} />
 							<CustomTableCell label={'Action'} />
 						</TableRow>
@@ -136,6 +138,9 @@ const BvnVerificationTable = ({
 													</TableCell>
 													<TableCell style={styles.tableText}>
 														{row.user.email}
+													</TableCell>
+													<TableCell style={styles.tableText}>
+														{row.payload}
 													</TableCell>
 
 													<TableCell
@@ -182,7 +187,7 @@ const BvnVerificationTable = ({
 											))
 										) : (
 											<TableRow>
-												<TableCell colSpan={4}>
+												<TableCell colSpan={5}>
 													<Empty text={'No available bvn record'} />
 												</TableCell>
 											</TableRow>

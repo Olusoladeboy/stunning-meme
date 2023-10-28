@@ -20,7 +20,7 @@ const UserAvatarWithDetails = ({ user, userType = 'user' }: Props) => {
 			<Avatar src={(user && user.avatar) || ''} style={styles.avatar} />
 			<Box style={styles.detailsWrapper as CSSProperties}>
 				<Typography style={styles.nameText} variant={'body1'}>
-					{user && `${user.firstname} ${user.lastname}`}
+					{user && `${user?.firstname || ''} ${user?.lastname || ''}`}
 				</Typography>
 				<Typography style={styles.text} variant={'body1'}>
 					{user && user.email}

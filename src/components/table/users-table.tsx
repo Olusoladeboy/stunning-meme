@@ -105,7 +105,9 @@ const UsersTable = ({
 										}}
 									>
 										<Avatar src={user.photoUrl as string} />
-										<span>{`${user.firstname} ${user.lastname}`}</span>
+										<span>{`${user?.firstname || ''} ${
+											user?.lastname || ''
+										}`}</span>
 									</Box>
 								</TableCell>
 								<TableCell style={styles.tableText}>{user.email}</TableCell>

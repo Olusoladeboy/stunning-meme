@@ -351,7 +351,7 @@ const CouponsTable = ({
 										) : (
 											<TableRow>
 												<TableCell colSpan={8}>
-													<Empty text={'No users'} />
+													<Empty text={'No coupon'} />
 												</TableCell>
 											</TableRow>
 										)}

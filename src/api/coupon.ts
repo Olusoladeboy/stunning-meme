@@ -46,3 +46,9 @@ export const updateCouponStatus = async ({
 		url: `${ENDPOINTS.Coupon}/status/${id}`,
 		data,
 	});
+
+export const deleteCoupon = async (id: string): Promise<any> =>
+	apiRequest({
+		method: 'DELETE',
+		url: `${ENDPOINTS.Coupon}/${id}`,
+	});

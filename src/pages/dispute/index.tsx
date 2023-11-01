@@ -23,7 +23,7 @@ const Disputes = () => {
 	}, [query, query.page]);
 
 	const { isLoading, data } = useQueryHook({
-		queryKey: QueryKeys.Tickets,
+		queryKey: [QueryKeys.Tickets, page],
 		queryFn: () =>
 			tickets({
 				params: {

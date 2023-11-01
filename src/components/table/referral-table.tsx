@@ -102,7 +102,11 @@ const ReferralTable: React.FC<Props> = ({ data, isLoading }) => {
 													{row.referredBy.no_of_referees || 0}
 												</TableCell>
 												<TableCell
-													onClick={() => navigate(LINKS.Referees(row.id))}
+													onClick={() =>
+														navigate(
+															LINKS.Referees(row.referredBy.email as string)
+														)
+													}
 													style={styles.viewReferess}
 												>
 													view referees

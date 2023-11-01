@@ -69,6 +69,12 @@ const AllTransactions = () => {
 		[]
 	);
 
+	useEffect(() => {
+		if (query && query.page) {
+			setPage(parseInt(query.page as string));
+		}
+	}, [query]);
+
 	const { isLoading, data } = useQuery(
 		[QueryKeys.Transactions, query.page, transactionService, transactionStatus],
 		() =>
@@ -105,7 +111,7 @@ const AllTransactions = () => {
 	const handlePageChange = (page: number) => {
 		if (page !== 1) {
 			setPage(page);
-			navigate(`${LINKS.Transactions}?&page=${page}`);
+			navigate(`${LINKS.Transactions}?page=${page}`);
 		} else {
 			navigate(LINKS.Transactions);
 			setPage(page);

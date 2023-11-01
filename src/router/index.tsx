@@ -96,7 +96,7 @@ const Router = () => {
 			</Route>
 			<Route path={'referrals'}>
 				<Route path={''} element={<Referrals />} />
-				<Route path={':id/referees'} element={<Referees />} />
+				<Route path={':email/referees'} element={<Referees />} />
 				<Route path={'bonus'} element={<ReferralsBonus />} />
 			</Route>
 

@@ -151,6 +151,7 @@ const NotificationForm: React.FC<Props> = ({ notification }) => {
 				alert({ message: data.message, type: 'success' });
 				queryClient.invalidateQueries([QueryKeys.Notifications]);
 				resetForm();
+				setUsers([]);
 			}
 		},
 	});

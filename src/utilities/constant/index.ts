@@ -99,7 +99,7 @@ export const LINKS = {
 	Dispute: '/dispute',
 	Referrals: '/referrals',
 	ReferralsBonus: '/referrals/bonus',
-	Referees: (id: string) => `/referrals/${id}/referees`,
+	Referees: (email: string) => `/referrals/${email}/referees`,
 	Referee: '/referee',
 	Notifications: '/notifications',
 	CreateNotification: '/notifications/create',

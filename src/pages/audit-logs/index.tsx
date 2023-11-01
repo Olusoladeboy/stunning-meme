@@ -21,13 +21,13 @@ const AuditLogs = () => {
 
 	useEffect(() => {
 		setEnableQuery(true);
-		if (query && query.page) {
-			setPage(parseInt(query.page as string));
-		}
-	}, [query, query.page]);
+		// if (query && query.page) {
+		// 	setPage(parseInt(query.page as string));
+		// }
+	}, []);
 
 	const { isLoading, data } = useQuery(
-		[QueryKeys.AuditLogs],
+		[QueryKeys.AuditLogs, page],
 		() =>
 			auditLogs({
 				sort: '-createdAt',

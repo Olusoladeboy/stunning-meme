@@ -30,7 +30,7 @@ const Verification = () => {
 	}, [query, query.page]);
 
 	const { isLoading, data } = useQuery(
-		QueryKeys.Users,
+		[QueryKeys.Users, page],
 		() =>
 			users({
 				params: {

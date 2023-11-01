@@ -3,9 +3,9 @@ import { useQuery } from 'react-query';
 import queryString from 'query-string';
 import { styled, Box } from '@mui/material';
 import { grey } from '@mui/material/colors';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation, useParams } from 'react-router-dom';
 import { Layout, Pagination, RefereesTable, TableHeader } from 'components';
-import { referrals } from 'api';
+import { searchReferrals } from 'api';
 import { useHandleError, useAlert } from 'hooks';
 import { QueryKeys, MAX_RECORDS, LINKS, BOX_SHADOW } from 'utilities';
 import { useAppSelector } from 'store/hooks';
@@ -14,6 +14,7 @@ const Referees = () => {
 	const handleError = useHandleError();
 	const alert = useAlert();
 	const { token } = useAppSelector((store) => store.authState);
+	const { email } = useParams();
 	const navigate = useNavigate();
 	const [count, setCount] = useState<number>(1);
 	const [page, setPage] = useState<number>(1);
@@ -28,16 +29,14 @@ const Referees = () => {
 	}, [query, query.page]);
 
 	const { isLoading, data } = useQuery(
-		[QueryKeys.Referees, query.page, query.id],
+		[QueryKeys.Referees, query.page, email],
 		() =>
-			referrals({
-				params: {
-					sort: '-createdAt',
-					limit: MAX_RECORDS,
-					skip: (page - 1) * MAX_RECORDS,
-					populate: 'user',
-					referredBy: query.id,
-				},
+			searchReferrals({
+				sort: '-createdAt',
+				limit: MAX_RECORDS,
+				skip: (page - 1) * MAX_RECORDS,
+				populate: 'user',
+				email,
 			}),
 		{
 			enabled: !!token,

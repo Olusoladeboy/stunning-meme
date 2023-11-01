@@ -65,7 +65,7 @@ const TransactionsTab: React.FC<Props> = ({ currentTab, changeCurrentTab }) => {
 						}}
 						variant={'body1'}
 					>
-						Total Conversions
+						Total Transactions
 					</Typography>
 				</TransactionItem>
 				<TransactionItem
@@ -82,7 +82,7 @@ const TransactionsTab: React.FC<Props> = ({ currentTab, changeCurrentTab }) => {
 							? grey[50]
 							: SECOUNDARY_COLOR
 					}
-					amount={statistics ? statistics.total_verified_users : '0'}
+					amount={statistics ? statistics.total_transactions : '0'}
 					icon={
 						<ApprovedIcon
 							color={
@@ -102,7 +102,7 @@ const TransactionsTab: React.FC<Props> = ({ currentTab, changeCurrentTab }) => {
 						}}
 						variant={'body1'}
 					>
-						Approved Conversions
+						Approved Transactions
 					</Typography>
 				</TransactionItem>{' '}
 				<TransactionItem
@@ -119,7 +119,7 @@ const TransactionsTab: React.FC<Props> = ({ currentTab, changeCurrentTab }) => {
 							? grey[50]
 							: SECOUNDARY_COLOR
 					}
-					amount={statistics ? statistics.total_unverified_users : '0'}
+					amount={statistics ? statistics.total_transactions : '0'}
 					icon={
 						<PendingIcon
 							color={
@@ -139,7 +139,7 @@ const TransactionsTab: React.FC<Props> = ({ currentTab, changeCurrentTab }) => {
 						}}
 						variant={'body1'}
 					>
-						Pending Conversions
+						Pending Transactions
 					</Typography>
 				</TransactionItem>{' '}
 				<TransactionItem
@@ -174,7 +174,7 @@ const TransactionsTab: React.FC<Props> = ({ currentTab, changeCurrentTab }) => {
 						}}
 						variant={'body1'}
 					>
-						Declined Conversions
+						Declined Transactions
 					</Typography>
 				</TransactionItem>
 			</Box>

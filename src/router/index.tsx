@@ -45,6 +45,7 @@ const Router = () => {
 			<Route path={'auth'}>
 				<Route path={'login'} element={<Login />} />
 				<Route path={'password/change'} element={<ChangePassword />} />
+				<Route path={'forget-password'} element={<ChangePassword />} />
 			</Route>
 			<Route path={'managers'}>
 				<Route path={''} element={<Managers />} />
@@ -95,7 +96,7 @@ const Router = () => {
 			</Route>
 			<Route path={'referrals'}>
 				<Route path={''} element={<Referrals />} />
-				<Route path={':id/referees'} element={<Referees />} />
+				<Route path={':email/referees'} element={<Referees />} />
 				<Route path={'bonus'} element={<ReferralsBonus />} />
 			</Route>
 

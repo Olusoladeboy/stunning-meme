@@ -379,6 +379,9 @@ export interface Coupon {
 	createdAt?: string;
 	id?: string;
 	status?: string;
+	couponUserType?: string;
+	user?: string;
+	usage?: string;
 }
 
 export enum TransactionServices {

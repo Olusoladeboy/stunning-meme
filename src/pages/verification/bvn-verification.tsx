@@ -4,7 +4,14 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import queryString from 'query-string';
 import { useQuery } from 'react-query';
 import { Layout, Pagination, BvnVerificationTable } from 'components';
-import { MAX_RECORDS, QueryKeys, LINKS, VERIFICATION_STATUS } from 'utilities';
+import {
+	MAX_RECORDS,
+	QueryKeys,
+	LINKS,
+	VERIFICATION_STATUS,
+	ADMIN_ROLE,
+	RouteGuard,
+} from 'utilities';
 import { useAppSelector } from 'store/hooks';
 import { verifications } from 'api';
 import { useSearchUser, useAlert, useHandleError } from 'hooks';
@@ -30,7 +37,7 @@ const BvnVerification = () => {
 	}, [query, query.page]);
 
 	const { isLoading, data } = useQuery(
-		QueryKeys.Verification,
+		[QueryKeys.Verification, page],
 		() =>
 			verifications({
 				sort: '-createdAt',
@@ -69,30 +76,32 @@ const BvnVerification = () => {
 	};
 	return (
 		<Layout>
-			<Box>
-				<BvnVerificationTable
-					clearSearch={clearSearch}
-					searchUser={searchUser}
-					isLoading={isLoading || isSearching}
-					data={data && data.payload}
-				/>
-			</Box>
-			{!search && total > MAX_RECORDS && (
-				<Pagination
-					sx={{
-						display: 'flex',
-						justifyContent: 'flex-end',
-						marginTop: theme.spacing(4),
-						marginRight: '1rem',
-					}}
-					size={'large'}
-					variant={'outlined'}
-					shape={'rounded'}
-					page={page}
-					count={count}
-					onChange={(e, number) => handlePageChange(number)}
-				/>
-			)}
+			<RouteGuard roles={[ADMIN_ROLE.SUPER_ADMIN]}>
+				<Box>
+					<BvnVerificationTable
+						clearSearch={clearSearch}
+						searchUser={searchUser}
+						isLoading={isLoading || isSearching}
+						data={data && data.payload}
+					/>
+				</Box>
+				{!search && total > MAX_RECORDS && (
+					<Pagination
+						sx={{
+							display: 'flex',
+							justifyContent: 'flex-end',
+							marginTop: theme.spacing(4),
+							marginRight: '1rem',
+						}}
+						size={'large'}
+						variant={'outlined'}
+						shape={'rounded'}
+						page={page}
+						count={count}
+						onChange={(e, number) => handlePageChange(number)}
+					/>
+				)}
+			</RouteGuard>
 		</Layout>
 	);
 };

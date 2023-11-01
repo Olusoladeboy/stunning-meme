@@ -18,6 +18,7 @@ interface Props extends BoxProps {
 	placeholder?: string;
 	fullWidth?: boolean;
 	clearSearch?: () => void;
+	borderRadius?: string;
 }
 
 const SearchInput = ({
@@ -26,6 +27,7 @@ const SearchInput = ({
 	fullWidth,
 	placeholder,
 	clearSearch,
+	borderRadius = '15px',
 	...rest
 }: Props) => {
 	const { mode } = useAppSelector((store) => store.theme);
@@ -38,6 +40,7 @@ const SearchInput = ({
 		<Box {...rest} sx={{ ...rest.sx, width: fullWidth ? '100%' : 'undefined' }}>
 			<TextField
 				// {...rest.style}
+				// size='small'
 				fullWidth={fullWidth}
 				placeholder={placeholder}
 				sx={{
@@ -45,7 +48,7 @@ const SearchInput = ({
 
 					'& .MuiOutlinedInput-root': {
 						paddingRight: '0px',
-						borderRadius: '15px',
+						borderRadius,
 					},
 					'& .MuiOutlinedInput-notchedOutline': {
 						borderColor: mode === ThemeModeType.dark ? grey[500] : 'initial',

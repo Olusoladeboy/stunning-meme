@@ -21,10 +21,13 @@ const Notifications = () => {
 
 	useEffect(() => {
 		setEnableQuery(true);
+	}, []);
+
+	useEffect(() => {
 		if (query && query.page) {
 			setPage(parseInt(query.page as string));
 		}
-	}, [query, query.page]);
+	}, [query]);
 
 	const { isLoading, data } = useQuery(
 		[QueryKeys.Notifications],

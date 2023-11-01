@@ -24,7 +24,6 @@ import TableHeader from '../header/table-header';
 import Empty from '../empty';
 import Button from '../button';
 import CouponForm from '../forms/coupon-form';
-import Modal from '../modal';
 import {
 	SUCCESS_COLOR,
 	BOX_SHADOW,
@@ -32,16 +31,15 @@ import {
 	Coupon,
 	QueryKeys,
 	CouponStatus,
-	ModalDetails,
 	ADMIN_ROLE,
 	checkAmount,
 	Amount,
 	PRIVILEGE_MESSAGE,
 } from 'utilities';
 import TableLoader from '../loader/table-loader';
-import { useAlert, useHandleError } from 'hooks';
+import { useAlert, useHandleError, useModalAlert } from 'hooks';
 import Loader from '../loader';
-import { updateCouponStatus } from 'api';
+import { deleteCoupon, updateCouponStatus } from 'api';
 import CustomTableCell from './components/custom-table-cell';
 import { useAppSelector } from 'store/hooks';
 
@@ -60,6 +58,7 @@ const CouponsTable = ({
 }: Props) => {
 	const [isCreateCoupon, setCreateCoupon] = useState<boolean>(false);
 	const setAlert = useAlert();
+	const modal = useModalAlert();
 	const handleError = useHandleError();
 	const theme = useTheme();
 	const styles = useStyles(theme);
@@ -71,7 +70,6 @@ const CouponsTable = ({
 	const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 	const [selectedCoupon, setSelectedCoupon] = useState<null | Coupon>(null);
 	const [isEdit, setEdit] = useState<boolean>(false);
-	const [modalAlert, setModalAlert] = useState<ModalDetails | null>(null);
 
 	useEffect(() => {
 		if (user) {
@@ -87,6 +85,7 @@ const CouponsTable = ({
 		}
 	}, [user]);
 
+	// Update Coupon
 	const { isLoading: isUpdatingCoupon, mutate: mutateUpdateCouponState } =
 		useMutation(updateCouponStatus, {
 			onSettled: (data, error) => {
@@ -107,6 +106,28 @@ const CouponsTable = ({
 			},
 		});
 
+	// Delete  Coupon
+	const { isLoading: isDeletingCoupon, mutate: mutateDeleteCoupon } =
+		useMutation(deleteCoupon, {
+			onSettled: (data, error) => {
+				if (error) {
+					const response = handleError({ error });
+					if (response?.message) {
+						setAlert({ message: response.message, type: 'error' });
+					}
+
+					return;
+				}
+
+				setSelectedCoupon(null);
+				setAlert({
+					message: 'Coupon delete successfully!!',
+					type: 'success',
+				});
+				queryClient.invalidateQueries(QueryKeys.Coupon);
+			},
+		});
+
 	const handleClickAction = (
 		event: MouseEvent<HTMLElement>,
 		coupon: Coupon
@@ -117,12 +138,15 @@ const CouponsTable = ({
 		);
 	};
 
-	const handleDelete = (data: { [key: string]: any }) => {
-		setModalAlert({
-			title: `Delete ${data.coupon_name}`,
-			buttonText: 'Delete plan',
-			message: `Are you sure you want to delete ${data.coupon_name}`,
-			type: 'failed',
+	const handleDelete = (id: string) => {
+		modal({
+			title: `Delete Coupon`,
+			message: `Are you sure you want to delete ${selectedCoupon?.name}`,
+			primaryButtonText: 'Delete',
+			onClickPrimaryButton: () => {
+				mutateDeleteCoupon(id);
+				modal(null);
+			},
 		});
 	};
 
@@ -146,7 +170,7 @@ const CouponsTable = ({
 
 	return (
 		<>
-			{isUpdatingCoupon && <Loader />}
+			{(isUpdatingCoupon || isDeletingCoupon) && <Loader />}
 			{isCreateCoupon && (
 				<ModalWrapper
 					hasCloseButton
@@ -156,7 +180,6 @@ const CouponsTable = ({
 					<CouponForm onSuccess={() => setCreateCoupon(false)} />
 				</ModalWrapper>
 			)}
-			{modalAlert && <Modal {...modalAlert} />}
 			{isEdit && selectedCoupon && (
 				<ModalWrapper
 					hasCloseButton
@@ -308,21 +331,11 @@ const CouponsTable = ({
 																		>
 																			Verify
 																		</ListItemButton>
+
 																		<ListItemButton
 																			onClick={() => {
 																				setAnchorEl(null);
-																				handleVerifyCoupon(
-																					CouponStatus.UNVERIFIED
-																				);
-																			}}
-																			style={styles.unverifyBtn}
-																		>
-																			Unverify
-																		</ListItemButton>
-																		<ListItemButton
-																			onClick={() => {
-																				setAnchorEl(null);
-																				handleDelete(row);
+																				handleDelete(row.id as string);
 																			}}
 																			style={styles.deleteBtn}
 																		>
@@ -338,7 +351,7 @@ const CouponsTable = ({
 										) : (
 											<TableRow>
 												<TableCell colSpan={8}>
-													<Empty text={'No users'} />
+													<Empty text={'No coupon'} />
 												</TableCell>
 											</TableRow>
 										)}

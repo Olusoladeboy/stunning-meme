@@ -34,13 +34,19 @@ const Transactions = () => {
 
 	useEffect(() => {
 		setEnableQuery(true);
+		// if (query && query.page) {
+		// 	setPage(parseInt(query.page as string));
+		// }
+	}, []);
+
+	useEffect(() => {
 		if (query && query.page) {
 			setPage(parseInt(query.page as string));
 		}
-	}, [query, query.page]);
+	}, [query]);
 
 	const { isLoading, data } = useQuery(
-		[QueryKeys.Transactions],
+		[QueryKeys.Transactions, page],
 		() =>
 			allTransactions({
 				params: {
@@ -72,7 +78,7 @@ const Transactions = () => {
 	const handlePageChange = (page: number) => {
 		if (page !== 1) {
 			setPage(page);
-			navigate(`${LINKS.Transactions}?&page=${page}`);
+			navigate(`${LINKS.Transactions}?page=${page}`);
 		} else {
 			navigate(LINKS.Transactions);
 			setPage(page);

@@ -60,11 +60,19 @@ const ValidationSchema = {
 			.string()
 			.notOneOf(['Select coupon type'], 'Select coupon type')
 			.required('Select coupon type'),
+		couponUserType: yup
+			.string()
+			.notOneOf(['Select user type'], 'Select user type')
+			.required('Select user type'),
 		expiresIn: yup.date().required('Specify expire date'),
 		gift: yup
 			.number()
 			.positive('Gift must be positive number')
 			.required('Specify gift in number'),
+		usage: yup
+			.number()
+			.positive('Coupon usage must be positive number')
+			.required('Specify coupon usage'),
 	}),
 	EditCoupon: yup.object().shape({
 		gift: yup
@@ -75,6 +83,14 @@ const ValidationSchema = {
 			.string()
 			.notOneOf(['Select coupon type'], 'Select coupon type')
 			.required('Select coupon type'),
+		usage: yup
+			.number()
+			.positive('Coupon usage must be positive number')
+			.required('Specify coupon usage'),
+		couponUserType: yup
+			.string()
+			.notOneOf(['Select user type'], 'Select user type')
+			.required('Select user type'),
 	}),
 };
 

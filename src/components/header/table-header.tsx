@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { ReactNode } from 'react';
 import { Box, Typography, BoxProps } from '@mui/material';
 import BackButton from '../back-button';
 import SearchInput from '../form-components/search-input';
@@ -12,6 +12,7 @@ interface Props extends BoxProps {
 	searchPlaceholder?: string;
 	handleSearch?: (value: string) => void;
 	clearSearch?: () => void;
+	statusFilter?: ReactNode;
 }
 
 const TableHeader = ({
@@ -22,6 +23,7 @@ const TableHeader = ({
 	backButtonText,
 	handleSearch,
 	clearSearch,
+	statusFilter,
 	style,
 	...rest
 }: Props) => {
@@ -53,13 +55,22 @@ const TableHeader = ({
 				)}
 			</Box>
 
-			<SearchInput
-				fullWidth
-				sx={{ maxWidth: { xs: '100%', sm: '320px' } }}
-				placeholder={rest.placeholder || searchPlaceholder}
-				handleSearch={handleSearch}
-				clearSearch={clearSearch}
-			/>
+			<Box
+				sx={{
+					display: 'flex',
+					gap: '15px',
+					alignItems: 'center',
+				}}
+			>
+				{statusFilter}
+				<SearchInput
+					fullWidth
+					sx={{ maxWidth: ['100%', '320px'], minWidth: ['100%', '300px'] }}
+					placeholder={rest.placeholder || searchPlaceholder}
+					handleSearch={handleSearch}
+					clearSearch={clearSearch}
+				/>
+			</Box>
 		</Box>
 	);
 };

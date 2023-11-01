@@ -35,7 +35,7 @@ const Users = () => {
 	}, [query, query.page]);
 
 	const { isLoading, data } = useQuery(
-		[QueryKeys.Users],
+		[QueryKeys.Users, page, currentTab],
 		() =>
 			users({
 				params: {

@@ -141,7 +141,7 @@ const CouponsTable = ({
 	const handleDelete = (id: string) => {
 		modal({
 			title: `Delete Coupon`,
-			message: `Are you sure you want to delete ${selectedCoupon?.name}`,
+			message: `Are you sure you want to delete ${selectedCoupon?.code}`,
 			primaryButtonText: 'Delete',
 			onClickPrimaryButton: () => {
 				mutateDeleteCoupon(id);

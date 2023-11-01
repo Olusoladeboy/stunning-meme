@@ -69,11 +69,15 @@ const AllTransactions = () => {
 		[]
 	);
 
-	useEffect(() => {
-		if (query && query.page) {
-			setPage(parseInt(query.page as string));
-		}
-	}, [query]);
+	useEffect(
+		() => {
+			if (query && query.page) {
+				setPage(parseInt(query.page as string));
+			}
+		},
+		// eslint-disable-next-line
+		[query]
+	);
 
 	const { isLoading, data } = useQuery(
 		[QueryKeys.Transactions, query.page, transactionService, transactionStatus],

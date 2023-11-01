@@ -89,7 +89,9 @@ const DisputeTable = ({
 												<TableCell>
 													{row.user &&
 														typeof row.user === 'object' &&
-														`${row.user.firstname} ${row.user.lastname}`}
+														`${row.user?.firstname || ''} ${
+															row.user?.lastname || ''
+														}`}
 												</TableCell>
 												<TableCell>{row.code}</TableCell>
 

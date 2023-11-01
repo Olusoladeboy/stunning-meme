@@ -22,6 +22,7 @@ import {
 	QueryKey,
 	validationSchema,
 	PRIMARY_COLOR,
+	User,
 } from 'utilities';
 import { useAlert, useHandleError, useSearchUser } from 'hooks';
 import { createCoupon, updateCoupon } from 'api';
@@ -63,7 +64,7 @@ const CouponForm = ({ data, isEdit, onSuccess }: Props) => {
 		user: '',
 	};
 
-	const foundUser = search && Array.isArray(search) && search[0];
+	const foundUser = search && search[0];
 
 	const { mutate: mutateCreateCoupon, isLoading: isCreatingCoupon } =
 		useMutation(createCoupon, {

@@ -129,7 +129,6 @@ const NotificationsTable: React.FC<Props> = ({ notifications, isLoading }) => {
 												<TableCell style={styles.tableText}>
 													<div
 														style={{
-															margin: '0px !important',
 															fontSize: '13px',
 														}}
 														dangerouslySetInnerHTML={{

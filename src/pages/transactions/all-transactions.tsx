@@ -38,7 +38,9 @@ const AllTransactions = () => {
 	const alert = useAlert();
 	const navigate = useNavigate();
 	const [count, setCount] = useState<number>(1);
-	const [page, setPage] = useState<number>(1);
+	const location = useLocation();
+	const query = queryString.parse(location.search);
+	const [page, setPage] = useState<number>(Number(query?.page) || 1);
 	const [total, setTotal] = useState<number>(0);
 
 	const [serviceAnchorEl, setServiceAnchorEl] = useState<null | HTMLElement>(
@@ -50,9 +52,6 @@ const AllTransactions = () => {
 	const [isLoad, setLoad] = useState<boolean>(false);
 	const [currentTab, setCurrentTab] = useState(TRANSACTIONS_TAB.ALL);
 	const [transactionStatus, setTransactionStatus] = useState<string>('');
-
-	const location = useLocation();
-	const query = queryString.parse(location.search);
 
 	const handleServiceClick = (e: MouseEvent<HTMLElement>) => {
 		setServiceAnchorEl(serviceAnchorEl ? null : e.currentTarget);

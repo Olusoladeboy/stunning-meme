@@ -5,7 +5,13 @@ import { useQuery } from 'react-query';
 import { Box } from '@mui/material';
 import { Layout, AuditLogsTable, TableHeader, Pagination } from 'components';
 import { useAlert, useHandleError } from 'hooks';
-import { LINKS, MAX_RECORDS, QueryKeys } from 'utilities';
+import {
+	ADMIN_ROLE,
+	LINKS,
+	MAX_RECORDS,
+	QueryKeys,
+	RouteGuard,
+} from 'utilities';
 import { auditLogs } from 'api';
 
 const AuditLogs = () => {
@@ -33,7 +39,7 @@ const AuditLogs = () => {
 				sort: '-createdAt',
 				limit: MAX_RECORDS,
 				skip: (page - 1) * MAX_RECORDS,
-				populate: 'user',
+				populate: 'staff',
 			}),
 		{
 			enabled: isEnableQuery,
@@ -67,25 +73,27 @@ const AuditLogs = () => {
 	};
 	return (
 		<Layout>
-			<TableHeader sx={{ marginBottom: '2rem' }} title={'Audit Logs'} />
-			<AuditLogsTable isLoading={isLoading} data={data && data.payload} />
-			{total > MAX_RECORDS && (
-				<Box
-					sx={{
-						marginLeft: ['15px', '30px'],
-					}}
-				>
-					<Pagination
-						sx={{}}
-						size={'large'}
-						variant={'outlined'}
-						shape={'rounded'}
-						page={page}
-						count={count}
-						onChange={(e, number) => handlePageChange(number)}
-					/>
-				</Box>
-			)}
+			<RouteGuard roles={[ADMIN_ROLE.SUPER_ADMIN]}>
+				<TableHeader sx={{ marginBottom: '2rem' }} title={'Audit Logs'} />
+				<AuditLogsTable isLoading={isLoading} data={data && data.payload} />
+				{total > MAX_RECORDS && (
+					<Box
+						sx={{
+							marginLeft: ['15px', '30px'],
+						}}
+					>
+						<Pagination
+							sx={{}}
+							size={'large'}
+							variant={'outlined'}
+							shape={'rounded'}
+							page={page}
+							count={count}
+							onChange={(e, number) => handlePageChange(number)}
+						/>
+					</Box>
+				)}
+			</RouteGuard>
 		</Layout>
 	);
 };

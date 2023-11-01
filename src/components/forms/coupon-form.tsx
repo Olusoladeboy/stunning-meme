@@ -148,7 +148,7 @@ const CouponForm = ({ data, isEdit, onSuccess }: Props) => {
 
 	useEffect(
 		() => {
-			setFieldValue('user', foundUser);
+			setFieldValue('user', foundUser?.id);
 
 			if (data) {
 				const {

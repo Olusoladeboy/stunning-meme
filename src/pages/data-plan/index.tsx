@@ -29,7 +29,7 @@ const ViewDataPlan = () => {
 		[QueryKeys.DataPlans, dataType, network],
 		() =>
 			dataPlans({
-				sort: '-cratedAt',
+				// sort: '-cratedAt',
 				dataType,
 			}),
 		{

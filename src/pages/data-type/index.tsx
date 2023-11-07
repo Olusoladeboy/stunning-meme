@@ -29,7 +29,7 @@ const DataTypes = () => {
 		[QueryKeys.DataTypes, network],
 		() =>
 			dataTypes({
-				sort: '-createdAt',
+				// sort: '-createdAt',
 				network,
 			}),
 		{

@@ -40,10 +40,10 @@ const DataPlanForm = ({ dataPayload, callback }: Props) => {
 			.string()
 			.matches(/^[1-9]\d*(\.\d+)?$/, 'Incorrect amount')
 			.required('Enter amount'),
-		merchant_amount: yup
-			.string()
-			.matches(/^[1-9]\d*(\.\d+)?$/, 'Incorrect amount')
-			.required('Enter merchant amount'),
+		// merchant_amount: yup
+		// 	.string()
+		// 	.matches(/^[1-9]\d*(\.\d+)?$/, 'Incorrect amount')
+		// 	.required('Enter merchant amount'),
 		data_source: yup
 			.string()
 			.notOneOf([SELECT_DATA_SOURCE], SELECT_DATA_SOURCE)
@@ -60,7 +60,7 @@ const DataPlanForm = ({ dataPayload, callback }: Props) => {
 		amount: '',
 		data_source: SELECT_DATA_SOURCE,
 		code: '',
-		merchant_amount: '',
+		// merchant_amount: '',
 		data_unit: '',
 	};
 
@@ -143,9 +143,6 @@ const DataPlanForm = ({ dataPayload, callback }: Props) => {
 				? {
 						...dataPayload,
 						amount: checkAmount(dataPayload.amount as string | Amount),
-						merchant_amount: checkAmount(
-							dataPayload.merchant_amount as string | Amount
-						),
 				  }
 				: initialValues,
 			validationSchema,
@@ -154,8 +151,7 @@ const DataPlanForm = ({ dataPayload, callback }: Props) => {
 			},
 		});
 
-	const { name, amount, code, merchant_amount, data_source, data_unit } =
-		values;
+	const { name, amount, code, data_source, data_unit } = values;
 
 	return (
 		<Box style={styles.form as CSSProperties} component={'form'}>
@@ -201,7 +197,7 @@ const DataPlanForm = ({ dataPayload, callback }: Props) => {
 					/>
 				</Box>
 
-				<Box>
+				{/* <Box>
 					<Typography variant={'body1'} style={styles.label}>
 						Merchant Plan Amount
 					</Typography>
@@ -219,7 +215,7 @@ const DataPlanForm = ({ dataPayload, callback }: Props) => {
 						value={merchant_amount}
 						onChange={handleChange('merchant_amount')}
 					/>
-				</Box>
+				</Box> */}
 
 				<Box>
 					<Typography variant={'body1'} style={styles.label}>

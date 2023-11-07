@@ -16,6 +16,7 @@ const Admin = () => {
 		() =>
 			staffs({
 				sort: '-createdAt',
+				deleted: false,
 			}),
 		{
 			enabled: !!token,

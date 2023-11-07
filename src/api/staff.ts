@@ -29,3 +29,9 @@ export const staffs = async (params: {
 		url: `${ENDPOINTS.Staff}`,
 		params,
 	});
+
+export const deleteStaff = async (id: string): Promise<DataResponse<User[]>> =>
+	apiRequest({
+		method: 'DELETE',
+		url: `${ENDPOINTS.Staff}/${id}`,
+	});

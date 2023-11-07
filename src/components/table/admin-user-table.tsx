@@ -105,6 +105,10 @@ const AdminUserTable = ({ managers, isLoading }: Props) => {
 						handleEdit={() => handleAddEditManager({ isEdit: true })}
 						managerDetail={selectedAdminUser}
 						type={ManagerTypes.Admin}
+						callback={() => {
+							setFormActionType('');
+							setSelectedAdminUser(null);
+						}}
 					/>
 				</ModalWrapper>
 			)}

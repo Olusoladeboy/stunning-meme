@@ -264,17 +264,6 @@ const NetworkForm = ({ type, callback, network, isEdit }: Props) => {
 							onChange={handleChange('rate')}
 						/>
 					</Box>
-					<Box>
-						<Typography variant={'body1'} style={styles.label}>
-							Transfer Code
-						</Typography>
-						<TextInput
-							fullWidth
-							placeholder={'Enter transfer code'}
-
-							// onChange={handleChange('rate')}
-						/>
-					</Box>
 				</Box>
 			</Box>
 			<Button

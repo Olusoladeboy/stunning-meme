@@ -5,7 +5,7 @@ import { grey, red } from '@mui/material/colors';
 import UserAvatarWithDetails from '../avatar-with-details/manager';
 import Button from '../button';
 import { ManagerTypes, QueryKeys, User, ADMIN_ROLE } from 'utilities';
-import { deleteManager } from 'api';
+import { deleteManager, deleteStaff } from 'api';
 import { useHandleError, useAlert } from 'hooks';
 import { useAppSelector } from 'store/hooks';
 
@@ -46,9 +46,30 @@ const ManagerDetails = ({
 			},
 		});
 
+	const { isLoading: isDeletingStaff, mutate: mutateDeleteStaff } = useMutation(
+		deleteStaff,
+		{
+			onSettled: (data, error) => {
+				if (error) {
+					const response = handleError({ error });
+					if (response?.message)
+						return alert({ message: response.message, type: 'error' });
+				}
+
+				alert({ message: 'Staff deleted successfully', type: 'success' });
+				queryClient.invalidateQueries(QueryKeys.Staffs);
+				typeof callback !== 'undefined' && callback();
+			},
+		}
+	);
+
 	const handleDelete = () => {
 		if (type === ManagerTypes.Manager) {
 			mutateDeleteManager(managerDetail.id as string);
+		}
+
+		if (type === ManagerTypes.Admin) {
+			mutateDeleteStaff(managerDetail.id as string);
 		}
 	};
 
@@ -93,7 +114,7 @@ const ManagerDetails = ({
 							</Button>
 							<Button
 								onClick={handleDelete}
-								loading={isDeletingManager}
+								loading={isDeletingManager || isDeletingStaff}
 								style={styles.deleteBtn as CSSProperties}
 							>
 								{type === ManagerTypes.Manager

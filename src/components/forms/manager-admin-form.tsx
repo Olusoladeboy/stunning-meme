@@ -45,6 +45,7 @@ const ManagerAdminForm = ({ type, callback, managerDetails }: Props) => {
 		lastname: '',
 		email: '',
 		role: SELECT_ADMIN_PRIVILEDGE,
+		phone: '',
 	};
 
 	const { isLoading: isCreatingManager, mutate: mutateCreateManager } =
@@ -174,7 +175,7 @@ const ManagerAdminForm = ({ type, callback, managerDetails }: Props) => {
 			},
 		});
 
-	const { firstname, lastname, email, role } = values;
+	const { firstname, lastname, email, role, phone } = values;
 
 	return (
 		<Box style={styles.form as CSSProperties} component={'form'}>
@@ -237,19 +238,19 @@ const ManagerAdminForm = ({ type, callback, managerDetails }: Props) => {
 							onChange={handleChange('email')}
 						/>
 					</Box>
-					{/* <Box>
+					<Box>
 						<Typography variant={'body1'} style={styles.label}>
 							Phone number
 						</Typography>
 						<TextInput
 							fullWidth
-							error={errors && touched.phone && errors.phone ? true : false}
+							error={Boolean(touched.phone && errors.phone)}
 							helperText={errors && touched.phone && errors.phone}
 							placeholder={'phone number'}
 							value={phone}
 							onChange={handleChange('phone')}
 						/>
-					</Box> */}
+					</Box>
 					<Box sx={{ display: type === ManagerTypes.Admin ? 'block' : 'none' }}>
 						<Typography variant={'body1'} style={styles.label}>
 							Select priviledge

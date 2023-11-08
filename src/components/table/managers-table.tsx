@@ -136,6 +136,7 @@ const ManagersTable = ({
 						<TableRow>
 							<CustomTableCell label={'Name'} isSortable />
 							<CustomTableCell label={'Email'} isSortable />
+							<CustomTableCell label={'Phone'} isSortable />
 							<CustomTableCell label={'Date'} isSortable />
 							<CustomTableCell label={'User'} />
 						</TableRow>
@@ -172,6 +173,9 @@ const ManagersTable = ({
 												</TableCell>
 												<TableCell style={styles.tableText}>
 													{data.email}
+												</TableCell>
+												<TableCell style={styles.tableText}>
+													{data.phone}
 												</TableCell>
 
 												<TableCell style={styles.tableText}>

@@ -145,7 +145,6 @@ const DataPlansTable: React.FC<Props> = ({ data, isLoading }) => {
 							<TableRow>
 								<CustomTableCell label={'Plan Name'} />
 								<CustomTableCell label={'Amount'} />
-								<CustomTableCell label={'Merchant Amount'} />
 								<CustomTableCell label={'Code'} />
 								<CustomTableCell label={'Data Unit'} />
 								<CustomTableCell label={'Data Source'} />
@@ -177,11 +176,6 @@ const DataPlansTable: React.FC<Props> = ({ data, isLoading }) => {
 														{typeof plan.amount === 'object'
 															? plan.amount.$numberDecimal
 															: plan.amount}
-													</StyledTableCell>
-													<StyledTableCell>
-														{typeof plan.merchant_amount === 'object'
-															? plan.merchant_amount.$numberDecimal
-															: plan.merchant_amount}
 													</StyledTableCell>
 													<StyledTableCell>{plan.code}</StyledTableCell>
 													<StyledTableCell>{plan.data_unit}</StyledTableCell>

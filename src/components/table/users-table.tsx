@@ -18,6 +18,7 @@ import {
 	BOX_SHADOW,
 	LINKS,
 	USERS_TAB,
+	userName,
 } from 'utilities';
 import {
 	StyledTableCell as TableCell,
@@ -51,6 +52,15 @@ const UsersTable = ({
 	const navigate = useNavigate();
 	const theme = useTheme();
 	const styles = useStyles(theme);
+
+	const handleClickRow = (user: User) => {
+		const isDeleted = user.deleted,
+			link = isDeleted
+				? `${LINKS.Users}/${user.id}?_deleted=true`
+				: `${LINKS.Users}/${user.id}`;
+
+		navigate(link);
+	};
 
 	return (
 		<Box style={styles.container} sx={{ overflow: 'auto' }}>
@@ -92,10 +102,7 @@ const UsersTable = ({
 						<TableLoader colSpan={5} />
 					) : users && users.length > 0 ? (
 						users.map((user: User, key: number) => (
-							<TableRow
-								onClick={() => navigate(`${LINKS.Users}/${user.id}`)}
-								key={key}
-							>
+							<TableRow onClick={() => handleClickRow(user)} key={key}>
 								<TableCell style={styles.tableText}>
 									<Box
 										sx={{
@@ -105,9 +112,12 @@ const UsersTable = ({
 										}}
 									>
 										<Avatar src={user.photoUrl as string} />
-										<span>{`${user?.firstname || ''} ${
-											user?.lastname || ''
-										}`}</span>
+										<span>
+											{userName(
+												user?.firstname as string,
+												user?.lastname as string
+											)}
+										</span>
 									</Box>
 								</TableCell>
 								<TableCell style={styles.tableText}>{user.email}</TableCell>

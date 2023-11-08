@@ -137,3 +137,10 @@ export const suspendWithdraw = async ({
 
 		data,
 	});
+
+	
+export const restoreDeletedAccount = async (id:string) =>
+	apiRequest({
+		method: 'PATCH',
+		url: `${ENDPOINTS.User}/restore/${id}`,
+	});

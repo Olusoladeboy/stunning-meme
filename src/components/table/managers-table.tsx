@@ -149,7 +149,7 @@ const ManagersTable = ({
 						}}
 					>
 						{isLoading ? (
-							<TableLoader colSpan={4} />
+							<TableLoader colSpan={5} />
 						) : (
 							managers && (
 								<>
@@ -187,7 +187,7 @@ const ManagersTable = ({
 										))
 									) : (
 										<TableRow>
-											<TableCell colSpan={4}>
+											<TableCell colSpan={5}>
 												<Empty text={'No Manager(s)'} />
 											</TableCell>
 										</TableRow>

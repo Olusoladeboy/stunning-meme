@@ -136,6 +136,7 @@ const ManagersTable = ({
 						<TableRow>
 							<CustomTableCell label={'Name'} isSortable />
 							<CustomTableCell label={'Email'} isSortable />
+							<CustomTableCell label={'Phone'} isSortable />
 							<CustomTableCell label={'Date'} isSortable />
 							<CustomTableCell label={'User'} />
 						</TableRow>
@@ -148,7 +149,7 @@ const ManagersTable = ({
 						}}
 					>
 						{isLoading ? (
-							<TableLoader colSpan={4} />
+							<TableLoader colSpan={5} />
 						) : (
 							managers && (
 								<>
@@ -173,6 +174,9 @@ const ManagersTable = ({
 												<TableCell style={styles.tableText}>
 													{data.email}
 												</TableCell>
+												<TableCell style={styles.tableText}>
+													{data.phone}
+												</TableCell>
 
 												<TableCell style={styles.tableText}>
 													{moment.utc(data.createdAt).format('l')}
@@ -183,7 +187,7 @@ const ManagersTable = ({
 										))
 									) : (
 										<TableRow>
-											<TableCell colSpan={4}>
+											<TableCell colSpan={5}>
 												<Empty text={'No Manager(s)'} />
 											</TableCell>
 										</TableRow>

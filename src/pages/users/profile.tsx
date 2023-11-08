@@ -29,29 +29,50 @@ const Profile = () => {
 	const handleError = useHandleError();
 	const styles = useStyles(theme);
 	const { id } = useParams();
+	const location = useLocation();
 	const { token } = useAppSelector((store) => store.authState);
 	const [user, setUser] = useState<null | User>(null);
 	const [isDisplayModal, setDisplayModal] = useState<boolean>(false);
 
-	const location = useLocation();
 	const navigate = useNavigate();
 
-	const { tab } = queryString.parse(location.search);
+	const query = queryString.parse(location.search);
+
+	const link = (tab: string) => {
+		const deleted = query._deleted;
+		let defaultLink = `${LINKS.Users}/${id}`;
+
+		if (tab) defaultLink = `${LINKS.Users}/${id}?tab=${tab}`;
+
+		if (deleted)
+			defaultLink = tab
+				? `${LINKS.Users}/${id}?tab=${tab}&_deleted=true`
+				: `${LINKS.Users}/${id}?_deleted=true`;
+
+		return defaultLink;
+
+		// return `${LINKS.Users}/${id}?tab=${tab}`;
+	};
+
+	const { tab, _deleted } = queryString.parse(location.search);
 	const [currentTab, setCurrentTab] = useState<string>(UserNavList.Profile);
 
 	const handleChangeTab = (value: string) => {
 		switch (value) {
 			case UserNavList.Status:
-				return navigate(`${LINKS.Users}/${id}?tab=${UserNavList.Status}`);
+				return navigate(link(UserNavList.Status));
 
 			case UserNavList.Transaction:
-				return navigate(`${LINKS.Users}/${id}?tab=${UserNavList.Transaction}`);
+				return navigate(link(UserNavList.Transaction));
+			// return navigate(`${LINKS.Users}/${id}?tab=${UserNavList.Transaction}`);
 			case UserNavList.WalletSummary:
-				return navigate(
-					`${LINKS.Users}/${id}?tab=${UserNavList.WalletSummary}`
-				);
+				return navigate(link(UserNavList.WalletSummary));
+			// return navigate(
+			// 	`${LINKS.Users}/${id}?tab=${UserNavList.WalletSummary}`
+			// );
 			case UserNavList.Manager:
-				return navigate(`${LINKS.Users}/${id}?tab=${UserNavList.Manager}`);
+				return navigate(link(UserNavList.Manager));
+			// return navigate(`${LINKS.Users}/${id}?tab=${UserNavList.Manager}`);
 
 			default:
 				navigate(`${LINKS.Users}/${id}`);
@@ -79,12 +100,13 @@ const Profile = () => {
 	}, [tab]);
 
 	const { isLoading, data } = useQuery(
-		QueryKeys.User,
+		[QueryKeys.User, id],
 		() =>
 			users({
 				params: {
 					_id: id,
 					populate: 'manager',
+					deleted: _deleted,
 				},
 			}),
 		{

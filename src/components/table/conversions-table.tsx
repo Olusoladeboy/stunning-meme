@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
 	TableBody,
 	TableHead,
@@ -17,6 +17,7 @@ import {
 	formatNumberToCurrency,
 	STATUS,
 	QueryKeys,
+	userName,
 } from 'utilities';
 import TableLoader from '../loader/table-loader';
 import Empty from '../empty/table-empty';
@@ -171,8 +172,10 @@ const ConversionsTable = ({
 											return (
 												<StyledTableRow key={conversion.id}>
 													<StyledTableCell style={styles.text}>
-														{conversion.user && conversion.user.firstname}{' '}
-														{conversion.user && conversion.user.lastname}
+														{userName(
+															conversion?.user?.firstname as string,
+															conversion?.user?.lastname as string
+														)}
 													</StyledTableCell>
 													<StyledTableCell style={styles.text}>
 														{conversion.reference}

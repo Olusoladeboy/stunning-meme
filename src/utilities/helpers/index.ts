@@ -130,3 +130,13 @@ export const truncateText = (text: string, length: number = 20): string => {
 
 	return text;
 };
+
+export const userName = (firstname: string, lastname: string) => {
+	let name = '';
+	if (firstname) name += firstname;
+	if (lastname) name = name ? name + ` ${lastname}` : lastname;
+
+	if (name) return name;
+
+	return 'No name available';
+};

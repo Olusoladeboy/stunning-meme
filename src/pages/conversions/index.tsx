@@ -19,11 +19,17 @@ import {
 	ErrorBoundary,
 } from 'utilities';
 import { useAppSelector } from 'store/hooks';
-import { useAlert, useHandleError, useSearchConversion } from 'hooks';
+import {
+	useAlert,
+	useHandleError,
+	usePageTitle,
+	useSearchConversion,
+} from 'hooks';
 import { convertAirtimes } from 'api';
 
 const Conversions = () => {
 	const theme = useTheme();
+	usePageTitle('Conversions');
 	const handleError = useHandleError();
 	const setAlert = useAlert();
 	const styles = useStyles(theme);

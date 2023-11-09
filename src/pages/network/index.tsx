@@ -11,6 +11,7 @@ import {
 } from 'components';
 import { BOX_SHADOW } from 'utilities/constant';
 import { NetworkPage } from 'utilities/types';
+import { usePageTitle } from 'hooks';
 
 interface Props extends ComponentProps<any> {
 	pageType:
@@ -21,6 +22,7 @@ interface Props extends ComponentProps<any> {
 }
 
 const Network = ({ pageType }: Props) => {
+	usePageTitle('Networks');
 	const theme = useTheme();
 	const styles = useStyles(theme);
 

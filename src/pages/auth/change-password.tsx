@@ -2,8 +2,10 @@ import React from 'react';
 import { AuthLayout, Image } from 'components';
 import ChangePasswordForm from 'components/forms/change-password-form';
 import { Typography } from '@mui/material';
+import { usePageTitle } from 'hooks';
 
 const ChangePassword = () => {
+	usePageTitle('Change Password');
 	return (
 		<AuthLayout>
 			<Image

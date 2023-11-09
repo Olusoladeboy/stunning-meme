@@ -4,10 +4,11 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import queryString from 'query-string';
 import { Layout, Pagination, CouponsTable } from 'components';
 import { MAX_RECORDS, LINKS, QueryKeys } from 'utilities';
-import { useSearchCoupon, useQueryHook } from 'hooks';
+import { useSearchCoupon, useQueryHook, usePageTitle } from 'hooks';
 import { coupons } from 'api';
 
 const Coupons = () => {
+	usePageTitle('Coupons');
 	const navigate = useNavigate();
 	const [count, setCount] = useState<number>(1);
 	const [page, setPage] = useState<number>(1);

@@ -1,14 +1,15 @@
 import React from 'react';
 import { useQuery } from 'react-query';
-import { Layout, AdminUserTable } from 'components';
+import { Layout, AdminUserTable, Seo } from 'components';
 import { useAppSelector } from 'store/hooks';
 import { QueryKeys } from 'utilities';
-import { useAlert, useHandleError } from 'hooks';
+import { useAlert, useHandleError, usePageTitle } from 'hooks';
 import { staffs } from 'api';
 
 const Admin = () => {
 	const setAlert = useAlert();
 	const handleError = useHandleError();
+	usePageTitle('Admin');
 
 	const { token } = useAppSelector((store) => store.authState);
 	const { data, isLoading } = useQuery(

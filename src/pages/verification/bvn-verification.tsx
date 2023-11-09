@@ -14,9 +14,10 @@ import {
 } from 'utilities';
 import { useAppSelector } from 'store/hooks';
 import { verifications } from 'api';
-import { useSearchUser, useAlert, useHandleError } from 'hooks';
+import { useSearchUser, useAlert, useHandleError, usePageTitle } from 'hooks';
 
 const BvnVerification = () => {
+	usePageTitle('BVN Verifications');
 	const { token } = useAppSelector((store) => store.authState);
 	const handleError = useHandleError();
 	const setAlert = useAlert();

@@ -14,8 +14,10 @@ import {
 import { QueryKeys, REFERRAL_BONUS } from 'utilities';
 import { useQuery } from 'react-query';
 import { settings } from 'api';
+import { usePageTitle } from 'hooks';
 
 const ReferralBonus = () => {
+	usePageTitle('Referral Bonus');
 	const [isDisplayForm, setDisplayForm] = useState<boolean>(false);
 
 	const { isLoading, data: dataSettings } = useQuery([QueryKeys.Settings], () =>

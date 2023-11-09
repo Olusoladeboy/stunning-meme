@@ -14,3 +14,4 @@ export { default as useSearchReferral } from './search-hooks/useSearchReferral';
 export { default as useModalAlert } from './useModalAlert';
 export * from './useTransactionServices';
 export * from './search-hooks/useSearchTransaction';
+export { default as usePageTitle } from './page-title';

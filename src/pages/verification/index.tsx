@@ -7,9 +7,10 @@ import { Layout, Pagination, VerificationTable } from 'components';
 import { MAX_RECORDS, QueryKeys, LINKS } from 'utilities';
 import { useAppSelector } from 'store/hooks';
 import { users } from 'api';
-import { useSearchUser, useAlert, useHandleError } from 'hooks';
+import { useSearchUser, useAlert, useHandleError, usePageTitle } from 'hooks';
 
 const Verification = () => {
+	usePageTitle('Verifications');
 	const { token } = useAppSelector((store) => store.authState);
 	const handleError = useHandleError();
 	const setAlert = useAlert();

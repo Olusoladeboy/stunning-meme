@@ -4,7 +4,7 @@ import queryString from 'query-string';
 import { useQuery } from 'react-query';
 import { Box } from '@mui/material';
 import { Layout, AuditLogsTable, TableHeader, Pagination } from 'components';
-import { useAlert, useHandleError } from 'hooks';
+import { useAlert, useHandleError, usePageTitle } from 'hooks';
 import {
 	ADMIN_ROLE,
 	LINKS,
@@ -15,6 +15,7 @@ import {
 import { auditLogs } from 'api';
 
 const AuditLogs = () => {
+	usePageTitle('Audit logs');
 	const handleError = useHandleError();
 	const [isEnableQuery, setEnableQuery] = useState<boolean>(false);
 	const alert = useAlert();

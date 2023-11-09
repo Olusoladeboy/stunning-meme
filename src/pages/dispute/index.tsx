@@ -4,10 +4,11 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import queryString from 'query-string';
 import { Layout, Pagination, DisputesTable } from 'components';
 import { QueryKeys, MAX_RECORDS, LINKS, TicketType } from 'utilities';
-import { useQueryHook, useSearchTicket } from 'hooks';
+import { usePageTitle, useQueryHook, useSearchTicket } from 'hooks';
 import { tickets } from 'api';
 
 const Disputes = () => {
+	usePageTitle('Disputes');
 	const navigate = useNavigate();
 	const [count, setCount] = useState<number>(1);
 	const [page, setPage] = useState<number>(1);

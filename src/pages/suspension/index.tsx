@@ -6,10 +6,11 @@ import { useQuery } from 'react-query';
 import { Layout, Pagination, SuspensionTable } from 'components';
 import { useAppSelector } from 'store/hooks';
 import { MAX_RECORDS, QueryKeys, LINKS } from 'utilities';
-import { useAlert, useHandleError } from 'hooks';
+import { useAlert, useHandleError, usePageTitle } from 'hooks';
 import { users } from 'api';
 
 const Suspension = () => {
+	usePageTitle('Suspension');
 	const handleError = useHandleError();
 	const { token } = useAppSelector((store) => store.authState);
 	const setAlert = useAlert();

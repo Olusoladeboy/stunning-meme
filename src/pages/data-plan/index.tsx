@@ -15,8 +15,10 @@ import {
 import { BOX_SHADOW, QueryKeys } from 'utilities';
 import { dataPlans } from 'api';
 import { useAppSelector } from 'store/hooks';
+import { usePageTitle } from 'hooks';
 
 const ViewDataPlan = () => {
+	usePageTitle('Data Plan');
 	const { planName, network, dataType } = useParams();
 	const theme = useTheme();
 	const styles = useStyles(theme);

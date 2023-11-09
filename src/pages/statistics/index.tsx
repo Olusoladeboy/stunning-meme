@@ -8,8 +8,10 @@ import {
 	StatisticsTotal,
 } from 'components';
 import { BOX_SHADOW, RouteGuard, ADMIN_ROLE } from 'utilities';
+import { usePageTitle } from 'hooks';
 
 const Statistics = () => {
+	usePageTitle('Statistics');
 	return (
 		<Layout>
 			<RouteGuard

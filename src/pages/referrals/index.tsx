@@ -6,11 +6,17 @@ import { grey } from '@mui/material/colors';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Layout, Pagination, ReferralTable, TableHeader } from 'components';
 import { referrals } from 'api';
-import { useHandleError, useAlert, useSearchReferral } from 'hooks';
+import {
+	useHandleError,
+	useAlert,
+	useSearchReferral,
+	usePageTitle,
+} from 'hooks';
 import { QueryKeys, MAX_RECORDS, LINKS, BOX_SHADOW } from 'utilities';
 import { useAppSelector } from 'store/hooks';
 
 const Referrals = () => {
+	usePageTitle('Referrals');
 	const handleError = useHandleError();
 	const alert = useAlert();
 	const { token } = useAppSelector((store) => store.authState);

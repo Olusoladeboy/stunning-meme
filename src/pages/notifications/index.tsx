@@ -1,14 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { Box } from '@mui/material';
 import { useQuery } from 'react-query';
 import queryString from 'query-string';
 import { Layout, NotificationsTable, Pagination } from 'components';
-import { useAlert, useHandleError } from 'hooks';
+import { useAlert, useHandleError, usePageTitle } from 'hooks';
 import { LINKS, MAX_RECORDS, QueryKeys } from 'utilities';
 import { notifications } from 'api';
-import { Box } from '@mui/material';
 
 const Notifications = () => {
+	usePageTitle('Notifications');
 	const handleError = useHandleError();
 	const [isEnableQuery, setEnableQuery] = useState<boolean>(false);
 	const alert = useAlert();

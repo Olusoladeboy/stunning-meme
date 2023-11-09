@@ -15,8 +15,10 @@ import {
 import { BOX_SHADOW, QueryKeys } from 'utilities';
 import { dataTypes } from 'api';
 import { useAppSelector } from 'store/hooks';
+import { usePageTitle } from 'hooks';
 
 const DataTypes = () => {
+	usePageTitle('Data type');
 	const theme = useTheme();
 	const { network, dataTypeName } = useParams();
 	const styles = useStyles(theme);

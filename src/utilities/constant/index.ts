@@ -1,3 +1,4 @@
+import appLogo from '../../assets/icons/app-logo.png';
 export const PRIMARY_COLOR = '#28536B';
 export const LIGHT_PRIMARY_COLOR = '#FDEDD7';
 export const SECOUNDARY_COLOR = '#F38D04';
@@ -276,3 +277,16 @@ export const TOOL_BAR_OPTIONS = [
 
 	['clean'], // remove formatting button
 ];
+
+export const SEO = {
+	meta: {
+		title: 'Airtimeflip Admin',
+		titleTemplate: '%s',
+		description:
+			'AirtimeFlip is your no 1 airtime to cash converter in Nigeria. We convert your over recharged airtime to cash. We also provide other services which includes Airtime and data purchase, utility and educational bill payments, cable tv subscriptions and lots more',
+		siteUrl: 'https://airtimeflip.com',
+		image: appLogo,
+		iconimage: appLogo,
+	},
+	ga: 'UA-XXXXXXXXX-X',
+};

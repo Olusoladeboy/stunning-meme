@@ -11,64 +11,70 @@ import {
 	TaskList,
 	RecentConversionsTable,
 	RecentTransactionsTable,
+	Seo,
 } from 'components';
 import { useAppSelector } from 'store/hooks';
+import { usePageTitle } from 'hooks';
 
 const LargeView = () => {
 	const theme = useTheme();
+	usePageTitle('Dashboard');
 	const styles = useStyles(theme);
 	const { canViewStatistics } = useAppSelector((store) => store.authState);
 	return (
-		<Box
-			sx={{
-				// display: 'grid',
-				gridTemplateColumns: '5.5fr 4.5fr',
-				gap: theme.spacing(4),
-				display: {
-					xs: 'none',
-					lg: 'grid',
-				},
-			}}
-		>
-			<Box>
-				<Box
-					sx={{
-						display: 'grid',
-						gridTemplateColumns: '1fr',
-						gap: theme.spacing(4),
-					}}
-				>
-					<WalletBalance />
-					{canViewStatistics && (
-						<Box
-							sx={{
-								gridTemplateColumns: 'repeat(3, 1fr)',
-							}}
-							style={styles.transactionGrid}
-						>
-							<TotalTransactions />
-							<TotalUsers />
-							<TotalConversions />
-						</Box>
-					)}
-					<RecentConversionsTable />
-					<RecentTransactionsTable />
+		<>
+			{/* <Seo title='Dashboard' /> */}
+			<Box
+				sx={{
+					// display: 'grid',
+					gridTemplateColumns: '5.5fr 4.5fr',
+					gap: theme.spacing(4),
+					display: {
+						xs: 'none',
+						lg: 'grid',
+					},
+				}}
+			>
+				<Box>
+					<Box
+						sx={{
+							display: 'grid',
+							gridTemplateColumns: '1fr',
+							gap: theme.spacing(4),
+						}}
+					>
+						<WalletBalance />
+						{canViewStatistics && (
+							<Box
+								sx={{
+									gridTemplateColumns: 'repeat(3, 1fr)',
+								}}
+								style={styles.transactionGrid}
+							>
+								<TotalTransactions />
+								<TotalUsers />
+								<TotalConversions />
+							</Box>
+						)}
+						<RecentConversionsTable />
+						<RecentTransactionsTable />
+					</Box>
+				</Box>
+				<Box>
+					<Box
+						sx={{
+							display: 'flex',
+							flexDirection: 'column',
+							gap: theme.spacing(4),
+						}}
+					>
+						<WalletOverview />
+						{canViewStatistics && <UserRecord />}
+						<TaskList />
+					</Box>
 				</Box>
 			</Box>
-			<Box>
-				<Box
-					sx={{
-						display: 'flex',
-						flexDirection: 'column',
-						gap: theme.spacing(4),
-					}}
-				>
-					<WalletOverview />
-					{canViewStatistics && <UserRecord />}
-					<TaskList />
-				</Box>
-			</Box>
-		</Box>
+		</>
 	);
 };
 

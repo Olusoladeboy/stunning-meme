@@ -19,10 +19,16 @@ import {
 	ErrorBoundary,
 	CONVERSIONS_TAB,
 } from 'utilities';
-import { useAlert, useHandleError, useSearchConversion } from 'hooks';
+import {
+	useAlert,
+	useHandleError,
+	usePageTitle,
+	useSearchConversion,
+} from 'hooks';
 import { convertAirtimes } from 'api';
 
 const AllConversions = () => {
+	usePageTitle('All Conversions');
 	const theme = useTheme();
 	const handleError = useHandleError();
 	const setAlert = useAlert();

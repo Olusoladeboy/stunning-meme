@@ -14,9 +14,15 @@ import {
 import { BOX_SHADOW, QueryKeys, MAX_RECORDS, LINKS } from 'utilities';
 import { useAppSelector } from 'store/hooks';
 import { allTransactions } from 'api';
-import { useHandleError, useAlert, useSearchTransaction } from 'hooks';
+import {
+	useHandleError,
+	useAlert,
+	useSearchTransaction,
+	usePageTitle,
+} from 'hooks';
 
 const Transactions = () => {
+	usePageTitle('Transactions');
 	const theme = useTheme();
 	const handleError = useHandleError();
 	const styles = useStyles(theme);

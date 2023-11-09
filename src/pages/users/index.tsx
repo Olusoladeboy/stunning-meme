@@ -6,9 +6,10 @@ import queryString from 'query-string';
 import { Layout, UsersTable, Pagination } from 'components';
 import { MAX_RECORDS, LINKS, QueryKeys, USERS_TAB } from 'utilities';
 import { users } from 'api';
-import { useAlert, useHandleError, useSearchUser } from 'hooks';
+import { useAlert, useHandleError, usePageTitle, useSearchUser } from 'hooks';
 
 const Users = () => {
+	usePageTitle('Users');
 	const navigate = useNavigate();
 	const alert = useAlert();
 	const handleError = useHandleError();

@@ -4,10 +4,11 @@ import { useQuery } from 'react-query';
 import { grey } from '@mui/material/colors';
 import { Layout, BackButton, KycForm } from 'components';
 import { BOX_SHADOW, QueryKeys } from 'utilities';
-import { useAlert, useHandleError } from 'hooks';
+import { useAlert, useHandleError, usePageTitle } from 'hooks';
 import { kycs } from 'api';
 
 const Kyc = () => {
+	usePageTitle('KYC Limit');
 	const theme = useTheme();
 	const handleError = useHandleError();
 	const styles = useStyles(theme);

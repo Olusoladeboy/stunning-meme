@@ -4,8 +4,10 @@ import { grey } from '@mui/material/colors';
 import { Layout, PushNotificationForm } from 'components';
 import { BOX_SHADOW } from 'utilities/constant';
 import BackButton from 'components/back-button';
+import { usePageTitle } from 'hooks';
 
 const CreateNotification = () => {
+	usePageTitle('Create Notification');
 	const theme = useTheme();
 	const styles = useStyles(theme);
 

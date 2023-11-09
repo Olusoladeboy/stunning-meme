@@ -1,8 +1,10 @@
 import React from 'react';
 import { Box } from '@mui/material';
 import { AuthLayout, LoginForm, Image } from 'components';
+import { usePageTitle } from 'hooks';
 
 const Login = () => {
+	usePageTitle('Login');
 	return (
 		<AuthLayout>
 			<Box>

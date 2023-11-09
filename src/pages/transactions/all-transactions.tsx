@@ -28,10 +28,16 @@ import {
 	TRANSACTION_SERVICE,
 } from 'utilities';
 import { allTransactions } from 'api';
-import { useHandleError, useAlert, useSearchTransaction } from 'hooks';
+import {
+	useHandleError,
+	useAlert,
+	useSearchTransaction,
+	usePageTitle,
+} from 'hooks';
 import { ArrowDropDown } from '@mui/icons-material';
 
 const AllTransactions = () => {
+	usePageTitle('All Transactions');
 	const theme = useTheme();
 	const handleError = useHandleError();
 	const styles = useStyles(theme);

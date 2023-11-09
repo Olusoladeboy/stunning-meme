@@ -1,10 +1,11 @@
 import React from 'react';
 import { Layout, ManagersTable } from 'components';
 import { QueryKeys } from 'utilities';
-import { useQueryHook, useSearchManager } from 'hooks';
+import { usePageTitle, useQueryHook, useSearchManager } from 'hooks';
 import { managers } from 'api';
 
 const Managers = () => {
+	usePageTitle('Managers');
 	const { isSearching, search, searchManager, clearSearch } =
 		useSearchManager();
 	const { data, isLoading } = useQueryHook({

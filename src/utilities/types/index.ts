@@ -556,17 +556,55 @@ export interface ElectricityToken {
 	transId: string;
 }
 
+export interface INetwork {
+	name?: string;
+	id?: string;
+	rate?: string;
+	number?: string;
+	ussd?: string;
+	isActive?: boolean;
+	createdAt?: Date;
+	no_of_dataTypes?: string;
+	no_of_plans?: string;
+}
+
+export interface DataType {
+	isActive?: boolean;
+	id?: string;
+	name?: string;
+	createdAt?: string;
+	no_of_plans?: number;
+	network?: INetwork | string;
+}
+
+export type IDataPlan = {
+	name?: string;
+	amount?: string | Amount;
+	code?: string;
+	isActive?: boolean;
+	id?: string;
+	type?: string;
+	network?: INetwork | string;
+	merchant_amount?: Amount | string;
+	data_unit?: string;
+	data_source?: string;
+	dataType?: DataType | string;
+};
+
 export interface Transaction {
 	id: string;
 	status:
 		| TransactionStatus.FAILED
 		| TransactionStatus.PENDING
 		| TransactionStatus.SUCCESSFUL;
-	plan: string;
+	type: string;
+	plan: string | IDataPlan;
+	dataType?: string | DataType;
 	service: string;
 	number: string;
 	createdBy: string;
 	phone_number?: string;
+	card_number?: string;
 	reference: string;
 	network?: string | NetworkData;
 	summary?: string;
@@ -575,7 +613,6 @@ export interface Transaction {
 	balanceBefore?: string | Amount;
 	balanceAfter?: string | Amount;
 	name: string;
-	type: string;
 	createdAt: Date;
 	updatedAt: Date;
 	pin_data?: PinData;

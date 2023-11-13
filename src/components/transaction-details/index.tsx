@@ -1,8 +1,15 @@
 import React, { useEffect } from 'react';
 import { Box, styled, Typography } from '@mui/material';
 import moment from 'moment';
-import { Transaction, formatNumberToCurrency, cleanString } from 'utilities';
-import DisputeTransactionItem from './transaction-item';
+import {
+	Transaction,
+	formatNumberToCurrency,
+	cleanString,
+	extractExactTransactionService,
+	extractTransactionType,
+	checkAmount,
+} from 'utilities';
+import TransactionItem from './transaction-item';
 import { useSearchCoupon } from 'hooks';
 
 interface Props {
@@ -25,75 +32,89 @@ const TransactionDetails: React.FC<Props> = ({ transaction }) => {
 	}, [transaction, searchCoupon]);
 
 	if (transaction) {
+		const service = extractExactTransactionService(transaction as Transaction);
+		const type = extractTransactionType(transaction as Transaction);
 		return (
 			<Box>
 				<Container>
-					{transaction.service ? (
-						<DisputeTransactionItem
-							label={'Service'}
-							value={transaction.service}
-						/>
-					) : (
-						transaction.transaction &&
-						transaction.transaction.service && (
-							<DisputeTransactionItem
-								label={'Service'}
-								value={transaction.transaction.service}
-							/>
-						)
+					{service && <TransactionItem label={'Service'} value={service} />}
+					{type && (
+						<TransactionItem label={'Type'} value={type.replace(/_/g, ' ')} />
 					)}
-					{transaction.transaction && transaction.transaction.type ? (
-						<DisputeTransactionItem
-							label={'Type'}
-							value={transaction.transaction.type}
+					{transaction.card_number && (
+						<TransactionItem
+							label={'Card Number'}
+							value={transaction.card_number}
 						/>
-					) : (
-						transaction.type && (
-							<DisputeTransactionItem label={'Type'} value={transaction.type} />
-						)
 					)}
 					{transaction.network && typeof transaction.network === 'object' && (
-						<DisputeTransactionItem
+						<TransactionItem
 							label={'Network'}
 							value={transaction.network.name as string}
 						/>
 					)}
+					{transaction.dataType && typeof transaction.dataType === 'object' && (
+						<TransactionItem
+							label={'Data Type'}
+							value={transaction.dataType.name as string}
+						/>
+					)}
+					{transaction.plan && typeof transaction.plan === 'object' && (
+						<TransactionItem
+							label={'Data Plan'}
+							value={transaction.plan.name as string}
+						/>
+					)}
 					{transaction.reference && (
-						<DisputeTransactionItem
+						<TransactionItem
 							label={'Reference'}
 							value={transaction.reference}
 						/>
 					)}
+					{transaction.electricity_token && (
+						<Box>
+							<Typography
+								sx={{ fontWeight: 'bold', marginBottom: '8px' }}
+								variant={'body1'}
+							>
+								Electricity Token:
+							</Typography>
+
+							<Typography>
+								{`Electricity unit of ${transaction.electricity_token.unit}`}
+							</Typography>
+						</Box>
+					)}
 					{transaction.withdrawalChannel && (
-						<DisputeTransactionItem
+						<TransactionItem
 							label={'Channel'}
 							value={transaction.withdrawalChannel}
 						/>
 					)}
 					{transaction.accountNumber && (
-						<DisputeTransactionItem
+						<TransactionItem
 							label={'Account Number'}
 							value={transaction.accountNumber}
 						/>
 					)}
 					{transaction.paymentGateway && (
-						<DisputeTransactionItem
+						<TransactionItem
 							label={'Payment Gateway'}
 							value={transaction.paymentGateway}
 						/>
 					)}
 
 					{transaction.pin_data && transaction.pin_data.service_type && (
-						<DisputeTransactionItem
+						<TransactionItem
 							label={'Service Provider'}
 							value={cleanString(transaction.pin_data.service_type as string)}
 						/>
 					)}
 					{transaction.pin && (
-						<DisputeTransactionItem label={'Pin'} value={transaction.pin} />
+						<TransactionItem label={'Pin'} value={transaction.pin} />
 					)}
 					{transaction.amount && (
-						<DisputeTransactionItem
+						<TransactionItem
 							label={'Amount'}
 							value={formatNumberToCurrency(
 								typeof transaction.amount === 'object'
@@ -103,35 +124,38 @@ const TransactionDetails: React.FC<Props> = ({ transaction }) => {
 						/>
 					)}
 
-					{transaction.number && (
-						<DisputeTransactionItem
-							label={'Phone'}
-							value={transaction.number}
+					{transaction.return_amount && (
+						<TransactionItem
+							label={'Return Amount'}
+							value={formatNumberToCurrency(
+								checkAmount(transaction.return_amount)
+							)}
 						/>
+					)}
+
+					{transaction.number && (
+						<TransactionItem label={'Phone'} value={transaction.number} />
 					)}
 					{transaction.phone_number && (
-						<DisputeTransactionItem
-							label={'Phone'}
-							value={transaction.phone_number}
-						/>
+						<TransactionItem label={'Phone'} value={transaction.phone_number} />
+					)}
+					{transaction.sentTo && typeof transaction.sentTo === 'string' && (
+						<TransactionItem label={'Sent To'} value={transaction.sentTo} />
 					)}
 					{transaction.createdAt && (
-						<DisputeTransactionItem
+						<TransactionItem
 							label={'Date'}
 							value={moment.utc(transaction.createdAt).format('l')}
 						/>
 					)}
 					{transaction.createdAt && (
-						<DisputeTransactionItem
+						<TransactionItem
 							label={'Time'}
 							value={moment.utc(transaction.createdAt).format('LT')}
 						/>
 					)}
 					{transaction.status && (
-						<DisputeTransactionItem
-							label={'Status'}
-							value={transaction.status}
-						/>
+						<TransactionItem label={'Status'} value={transaction.status} />
 					)}
 				</Container>
 			</Box>

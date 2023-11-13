@@ -66,7 +66,7 @@ const Conversions = () => {
 		sort,
 	};
 
-	const { isLoading, data } = useQuery(
+	const { isLoading, data, refetch } = useQuery(
 		[QueryKeys.ConvertAirtime, page],
 		() =>
 			convertAirtimes({
@@ -143,8 +143,9 @@ const Conversions = () => {
 						>
 							<ConversionTotal
 								handleRefresh={() => {
-									setReload(true);
+									// setReload(true);
 									setReloading(true);
+									refetch();
 								}}
 								total={data && data.metadata.total}
 							/>

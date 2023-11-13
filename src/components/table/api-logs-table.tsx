@@ -9,7 +9,7 @@ import {
 } from '@mui/material';
 import moment from 'moment';
 import { grey } from '@mui/material/colors';
-import { SUCCESS_COLOR, BOX_SHADOW, AuditLog } from 'utilities';
+import { SUCCESS_COLOR, BOX_SHADOW, AuditLog, IApiLog } from 'utilities';
 import {
 	StyledTableCell as TableCell,
 	StyledTableRow as TableRow,
@@ -22,11 +22,11 @@ import CustomTableCell from './components/custom-table-cell';
 import TableLoader from '../loader/table-loader';
 
 interface Props {
-	data: AuditLog[] | undefined | null;
+	data: IApiLog[] | null;
 	isLoading: boolean;
 }
 
-const AuditLogsTable: React.FC<Props> = ({ data, isLoading }) => {
+const ApiLogsTable: React.FC<Props> = ({ data, isLoading }) => {
 	const theme = useTheme();
 	const styles = useStyles(theme);
 	return (
@@ -41,56 +41,51 @@ const AuditLogsTable: React.FC<Props> = ({ data, isLoading }) => {
 					}}
 				>
 					<TableRow>
-						<CustomTableCell label={'Name'} />
-						<CustomTableCell label={'Email'} />
-						<CustomTableCell label={'Module'} />
-						<CustomTableCell label={'Action'} />
-						<CustomTableCell label={'Details'} />
+						<CustomTableCell label={'Reference'} />
+						{/* <CustomTableCell label={'Remark'} />
+						<CustomTableCell label={'Amount Paid'} />
+						<CustomTableCell label={'Total Payable'} />
+						<CustomTableCell label={'Settlement Amount'} />
+						<CustomTableCell label={'Payment Status'} />
+						<CustomTableCell label={'Payment Description'} /> */}
 						<CustomTableCell label={'Date'} />
-						<CustomTableCell label={'Time'} />
 					</TableRow>
 				</TableHead>
 				<TableBody
 					sx={{
-						overflow: 'auto',
 						'& tr': {
 							color: theme.palette.primary.main,
 						},
 					}}
 				>
 					{isLoading ? (
-						<TableLoader colSpan={7} />
+						<TableLoader colSpan={2} />
 					) : (
 						data && (
 							<>
 								{data.length > 0 ? (
-									data.map((row: AuditLog) => (
+									data.map((row: IApiLog) => (
 										<TableRow key={row.id}>
-											<TableCell style={{ whiteSpace: 'nowrap' }}>
-												{row.staff &&
-													typeof row.staff === 'object' &&
-													`${row.staff.firstname} ${row.staff.lastname}`}
-											</TableCell>
+											<TableCell>{row.reference}</TableCell>
+											{/* <TableCell>{row.api_log.paymentRemark}</TableCell>
+											<TableCell>{row.api_log.gateway.amountPaid}</TableCell>
+											<TableCell>{row.api_log.gateway.totalPayable}</TableCell>
 											<TableCell>
-												{row.staff &&
-													typeof row.staff === 'object' &&
-													row.staff.email}
+												{row.api_log.gateway.settlementAmount}
 											</TableCell>
-											<TableCell>{row.module}</TableCell>
-											<TableCell>{row.action}</TableCell>
-											<TableCell>{row.details}</TableCell>
+											<TableCell>{row.api_log.gateway.paymentStatus}</TableCell>
+											<TableCell>
+												{row.api_log.gateway.paymentDescription}
+											</TableCell> */}
 											<TableCell>
 												{moment.utc(row.createdAt).format('l')}
-											</TableCell>
-											<TableCell style={{ whiteSpace: 'nowrap' }}>
-												{moment.utc(row.createdAt).format('LT')}
 											</TableCell>
 										</TableRow>
 									))
 								) : (
 									<TableRow>
-										<TableCell colSpan={7}>
-											<Empty text={'No audit log(s)'} />
+										<TableCell colSpan={2}>
+											<Empty text={'No api log(s)'} />
 										</TableCell>
 									</TableRow>
 								)}
@@ -134,4 +129,4 @@ const useStyles = (theme: any) => ({
 	},
 });
 
-export default AuditLogsTable;
+export default ApiLogsTable;

@@ -691,10 +691,60 @@ export interface Notification {
 }
 
 export interface AuditLog {
-	user: string | User;
+	staff: string | User;
+	module: string;
 	action: string;
 	details: string;
 	createdAt: Date;
 	updatedAt: Date;
+	id: string;
+}
+
+export interface IApiLog {
+	reference: string;
+	user: string | User;
+	api_log: {
+		payment: boolean;
+		paymentRemark: string;
+		gateway: {
+			transactionReference: string;
+			paymentReference: string;
+			amountPaid: string;
+			totalPayable: string;
+			settlementAmount: string;
+			paidOn: string;
+			paymentStatus: string;
+			paymentDescription: string;
+			currency: string;
+			paymentMethod: string;
+			product: {
+				type: string;
+				reference: string;
+			};
+			cardDetails: {
+				cardType: string;
+				last4: string;
+				expMonth: string;
+				expYear: string;
+				bin: string;
+				bankCode: string;
+				bankName: string;
+				reusable: boolean;
+				countryCode: any;
+				cardToken: string;
+				supportsTokenization: boolean;
+				maskedPan: string;
+			};
+			accountDetails: any;
+			accountPayments: any[];
+			customer: {
+				email: string;
+				name: string;
+			};
+			metaData: {};
+		};
+	};
+	createdAt: string;
+	updatedAt: string;
 	id: string;
 }

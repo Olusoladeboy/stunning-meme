@@ -53,6 +53,7 @@ export const QueryKeys = {
 	Ticket: '@Query:Ticket',
 	Me: '@Query:Me',
 	Verification: '@Query:Verification',
+	ApiLogs: '@Query:ApiLogs',
 };
 
 export const StorageKeys = {
@@ -109,7 +110,8 @@ export const LINKS = {
 	BvnVerification: '/bvn-verification',
 	KycVerification: '/verification/kyc',
 	Suspension: '/suspension',
-	AuditLogs: '/audit-logs',
+	AuditLogs: '/logs?tab=audit',
+	ApiLogs: '/logs?tab=api',
 	Message: '/support-ticket/message',
 	Messages: '/messages',
 	Statistics: '/statistics',
@@ -153,6 +155,7 @@ export const ENDPOINTS = {
 	Ticket: '/ticket',
 	Notification: '/notification',
 	AuditLogs: '/audit-logs',
+	ApiLogs: '/api-logs',
 };
 
 export const FUND_WALLET_SERVICE = {
@@ -196,6 +199,11 @@ export const STATISTIC_TAB = {
 	LAST_7_DAY: 'LAST 7 DAYS',
 	LAST_30_DAYS: 'LAST 30 DAYS',
 	ALL_TIME: 'ALL TIME',
+};
+
+export const LOG_TAB = {
+	Audit: 'Audit',
+	Api: 'Api',
 };
 
 export const DATA_SOURCE = {

@@ -31,6 +31,7 @@ import {
 	CreateNotification,
 	ChangePassword,
 	BvnVerification,
+	ApiLogs,
 } from '../pages';
 
 const Router = () => {
@@ -110,7 +111,7 @@ const Router = () => {
 			</Route>
 			<Route path='bvn-verification' element={<BvnVerification />} />
 			<Route path={'suspension'} element={<Suspension />} />
-			<Route path={'audit-logs'} element={<AuditLogs />} />
+			<Route path={'logs'} element={<AuditLogs />} />
 		</Routes>
 	);
 };

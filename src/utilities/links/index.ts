@@ -26,6 +26,7 @@ const LINKS = {
 	KycVerification: '/verification/kyc',
 	Suspension: '/suspension',
 	AuditLogs: '/audit-logs',
+	ApiLogs: '/api-logs',
 	Message: '/support-ticket/message',
 	Messages: '/messages',
 };

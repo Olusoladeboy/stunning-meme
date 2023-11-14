@@ -44,6 +44,7 @@ export { default as AirtimeNetworkTable } from './table/airtime-network-table';
 export { default as ReferralBonusTable } from './table/referral-bonus-table';
 export { default as RefereesTable } from './table/referees-table';
 export { default as AuditLogsTable } from './table/audit-logs-table';
+export { default as ApiLogsTable } from './table/api-logs-table';
 export { default as ConversionNetworkTable } from './table/conversion-network-table';
 export { default as ConversionsTable } from './table/conversions-table';
 export { default as CouponsTable } from './table/coupons-table';

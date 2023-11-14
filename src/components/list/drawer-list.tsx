@@ -464,23 +464,22 @@ const DrawerList = () => {
 					}
 				/>
 				<ListItemButton
-					name={'Audit Logs'}
+					name={'Logs'}
 					link={LINKS.AuditLogs}
 					isActive={
-						getActiveLink({ name: 'audit-logs', currentPath: pathname })
-							.isActive
+						getActiveLink({ name: 'logs', currentPath: pathname }).isActive
 					}
 					icon={
 						<CheckIcon
 							color={
-								getActiveLink({ name: 'audit-logs', currentPath: pathname })
-									.isActive
+								getActiveLink({ name: 'logs', currentPath: pathname }).isActive
 									? activeColor
 									: initialColor
 							}
 						/>
 					}
 				/>
+
 				<MuiListItemButton
 					onClick={handleLogout}
 					style={{

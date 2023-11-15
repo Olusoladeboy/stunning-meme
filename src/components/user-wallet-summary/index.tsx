@@ -12,6 +12,7 @@ import { useAppSelector } from 'store/hooks';
 import { useAlert, useHandleError, useSearchTransaction } from 'hooks';
 import Pagination from '../pagination';
 import TableHeader from '../header/table-header';
+import UserTransactionStat from 'components/user-wallet/transaction-statistics';
 
 type Props = {
 	user: User | null;
@@ -94,7 +95,7 @@ const UserWalletSummary = ({ user }: Props) => {
 				}}
 			>
 				<UserAvatarWithDetails user={user} />
-				<UserWallet user={user} />
+				<UserTransactionStat user={user} />
 			</Box>
 			<Box sx={{ marginTop: theme.spacing(4) }}>
 				<TableHeader

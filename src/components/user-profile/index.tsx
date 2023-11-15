@@ -14,6 +14,7 @@ import VerifyUser from '../verify-user';
 import { restoreDeletedAccount } from 'api';
 import { useHandleError, useAlert } from 'hooks';
 import Loader from 'components/loader';
+import UserWallet from 'components/user-wallet';
 
 type Props = {
 	user: User | null;
@@ -76,6 +77,7 @@ const UserProfile = ({ user }: Props) => {
 					}}
 				>
 					<UserAvatarWithDetails user={user} />
+					<UserWallet user={user} />
 				</Box>
 				<Box sx={{ marginTop: theme.spacing(5) }}>
 					{isEditProfile && (

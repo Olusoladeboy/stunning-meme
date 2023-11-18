@@ -17,7 +17,8 @@ import {
 	formatNumberToCurrency,
 	STATUS,
 	QueryKeys,
-	userName,
+	extractUserName,
+	User,
 } from 'utilities';
 import TableLoader from '../loader/table-loader';
 import Empty from '../empty/table-empty';
@@ -172,10 +173,7 @@ const ConversionsTable = ({
 											return (
 												<StyledTableRow key={conversion.id}>
 													<StyledTableCell style={styles.text}>
-														{userName(
-															conversion?.user?.firstname as string,
-															conversion?.user?.lastname as string
-														)}
+														{extractUserName(conversion?.user as User)}
 													</StyledTableCell>
 													<StyledTableCell style={styles.text}>
 														{conversion.reference}

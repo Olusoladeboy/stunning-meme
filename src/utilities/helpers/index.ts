@@ -1,4 +1,4 @@
-import { Transaction } from '../types';
+import { Transaction, User } from '../types';
 import { Amount, Coupon, CouponType } from '../types';
 export { default as ErrorBoundary } from './error-boundary';
 export { default as ScrollToTop } from './scroll-to-top';
@@ -161,4 +161,15 @@ export const extractExactTransactionService = (transaction: Transaction) => {
 		: 'No available services';
 
 	return service;
+};
+
+export const extractUserName = (user: User) => {
+	let name = '';
+	if (user.firstname) name += user.firstname;
+	if (user.lastname) name = name ? name + ` ${user.lastname}` : user.lastname;
+
+	if (name) return name;
+	if (user.username) return user.username;
+
+	return 'No name available';
 };

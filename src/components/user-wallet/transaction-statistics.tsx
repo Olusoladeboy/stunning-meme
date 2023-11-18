@@ -1,12 +1,12 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Box, Typography, useTheme } from '@mui/material';
 import { grey } from '@mui/material/colors';
 import { useQuery } from 'react-query';
-import { formatNumberToCurrency, QueryKey, User } from 'utilities';
+import { formatNumberToCurrency, User } from 'utilities';
 
 import { useAppSelector } from 'store/hooks';
 import { useAlert, useHandleError } from 'hooks';
-import { walletAccount } from 'api';
+import { userTransactionStatistics } from 'api';
 
 type Props = {
 	user: User | null;
@@ -17,20 +17,13 @@ const UserTransactionStat = ({ user }: Props) => {
 	const setAlert = useAlert();
 	const handleError = useHandleError();
 	const styles = useStyles(theme);
-	const [amount, setAmount] = useState<string>('');
-	const [isEditWallet, setEditWallet] = useState<boolean>(false);
-	const { token, canCreateOrUpdateRecord } = useAppSelector(
-		(store) => store.authState
-	);
+	const userId = user?.id as string;
 
-	useQuery(
-		[QueryKey.UserWallet, user?.id],
-		() =>
-			walletAccount({
-				params: {
-					user: user?.id,
-				},
-			}),
+	const token = useAppSelector((store) => store.authState.token);
+
+	const { data } = useQuery(
+		['UserTransactionStatistics', user?.id],
+		() => userTransactionStatistics(userId),
 		{
 			enabled: !!(token && user),
 			onSettled: (data, error) => {
@@ -40,14 +33,11 @@ const UserTransactionStat = ({ user }: Props) => {
 						setAlert({ message: response.message, type: 'error' });
 					}
 				}
-
-				if (data && data.success) {
-					const amount = data.payload[0].balance;
-					setAmount(amount);
-				}
 			},
 		}
 	);
+
+	const payload = data && data.payload;
 
 	return (
 		<>
@@ -55,12 +45,16 @@ const UserTransactionStat = ({ user }: Props) => {
 				<Box>
 					<Typography>Total Balance</Typography>
 					<Typography variant={'h4'}>
-						{formatNumberToCurrency('10000')}
+						{formatNumberToCurrency(
+							(payload?.usersTotalTransactionAmount as string) || 0
+						)}
 					</Typography>
 				</Box>
 				<Box>
 					<Typography>Total Transactions</Typography>
-					<Typography variant={'h4'}>100</Typography>
+					<Typography variant={'h4'}>
+						{payload?.usersTotalNumberOfTransactions || 0}
+					</Typography>
 				</Box>
 			</Box>
 		</>

@@ -138,9 +138,14 @@ export const suspendWithdraw = async ({
 		data,
 	});
 
-	
-export const restoreDeletedAccount = async (id:string) =>
+export const restoreDeletedAccount = async (id: string) =>
 	apiRequest({
 		method: 'PATCH',
 		url: `${ENDPOINTS.User}/restore/${id}`,
+	});
+
+export const userTransactionStatistics = async (id: string) =>
+	apiRequest({
+		method: 'GET',
+		url: `${ENDPOINTS.User}/statistics/${id}`,
 	});

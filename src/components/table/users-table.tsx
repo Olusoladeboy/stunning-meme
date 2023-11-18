@@ -18,7 +18,7 @@ import {
 	BOX_SHADOW,
 	LINKS,
 	USERS_TAB,
-	userName,
+	extractUserName,
 } from 'utilities';
 import {
 	StyledTableCell as TableCell,
@@ -112,12 +112,7 @@ const UsersTable = ({
 										}}
 									>
 										<Avatar src={user.photoUrl as string} />
-										<span>
-											{userName(
-												user?.firstname as string,
-												user?.lastname as string
-											)}
-										</span>
+										<span>{extractUserName(user as User)}</span>
 									</Box>
 								</TableCell>
 								<TableCell style={styles.tableText}>{user.email}</TableCell>

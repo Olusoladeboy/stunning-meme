@@ -9,7 +9,7 @@ import Button from '../button';
 import ModalWrapper from '../modal/Wrapper';
 import EditProfileForm from '../forms/profile-form';
 import UserAvatarWithDetails from '../avatar-with-details';
-import { User, SUCCESS_COLOR, QueryKeys } from 'utilities';
+import { User, SUCCESS_COLOR, QueryKeys, extractUserName } from 'utilities';
 import VerifyUser from '../verify-user';
 import { restoreDeletedAccount } from 'api';
 import { useHandleError, useAlert } from 'hooks';
@@ -102,10 +102,7 @@ const UserProfile = ({ user }: Props) => {
 							columnGap: theme.spacing(6),
 						}}
 					>
-						<DetailItem
-							text={'name'}
-							value={user && `${user.firstname} ${user.lastname}`}
-						/>
+						<DetailItem text={'name'} value={extractUserName(user as User)} />
 						<DetailItem
 							text={'date joined'}
 							value={user && moment.utc(user.createdAt).format('l')}

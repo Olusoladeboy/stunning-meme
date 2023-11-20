@@ -11,7 +11,13 @@ import {
 
 import { grey } from '@mui/material/colors';
 import { AddCircle } from '@mui/icons-material';
-import { SUCCESS_COLOR, LINKS, IReferral } from 'utilities';
+import {
+	SUCCESS_COLOR,
+	LINKS,
+	IReferral,
+	extractUserName,
+	User,
+} from 'utilities';
 import {
 	StyledTableCell as TableCell,
 	StyledTableRow as TableRow,
@@ -90,8 +96,7 @@ const ReferralTable: React.FC<Props> = ({ data, isLoading }) => {
 													>
 														<Avatar src={row.referredBy.photoUrl as string} />
 														<span>
-															{row.referredBy.firstname}{' '}
-															{row.referredBy.lastname}
+															{extractUserName(row.referredBy as User)}
 														</span>
 													</Box>
 												</TableCell>

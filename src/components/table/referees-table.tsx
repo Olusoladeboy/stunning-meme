@@ -20,6 +20,7 @@ import {
 	IReferral,
 	User,
 	LINKS,
+	extractUserName,
 } from 'utilities';
 import CustomTableCell from './components/custom-table-cell';
 import {
@@ -95,7 +96,7 @@ const RefereesTable: React.FC<Props> = ({ data, isLoading }) => {
 													sx={{ paddingLeft: '30px !important' }}
 													style={styles.tableText}
 												>
-													{row.user.firstname} {row.user.lastname}
+													{extractUserName(row.user as User)}
 												</TableCell>
 												<TableCell style={styles.tableText}>
 													{row.user.email}

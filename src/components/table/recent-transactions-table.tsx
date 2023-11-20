@@ -20,7 +20,8 @@ import {
 	QueryKeys,
 	formatNumberToCurrency,
 	Transaction,
-	userName,
+	extractUserName,
+	User,
 } from 'utilities';
 import Link from '../link';
 import Empty from '../empty/table-empty';
@@ -125,11 +126,7 @@ const RecentTransactionsTable = () => {
 												key={key}
 											>
 												<StyledTableCell>
-													{row.user &&
-														userName(
-															row.user?.firstname as string,
-															row.user?.lastname as string
-														)}
+													{row.user && extractUserName(row.user as User)}
 												</StyledTableCell>
 												<StyledTableCell>{row.reference}</StyledTableCell>
 												<StyledTableCell>

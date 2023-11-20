@@ -7,7 +7,14 @@ import TableCell, { tableCellClasses } from '@mui/material/TableCell';
 import { styled } from '@mui/material';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
-import { LIGHT_GRAY, BOX_SHADOW, LINKS, QueryKeys, userName } from 'utilities';
+import {
+	LIGHT_GRAY,
+	BOX_SHADOW,
+	LINKS,
+	QueryKeys,
+	extractUserName,
+	User,
+} from 'utilities';
 import { grey } from '@mui/material/colors';
 import Link from '../link';
 import Loader from '../loader/table-loader';
@@ -102,10 +109,7 @@ const RecentConversionsTable = () => {
 									data.payload.map((row: any) => (
 										<StyledTableRow key={row.id}>
 											<StyledTableCell>
-												{userName(
-													row.user?.firstname as string,
-													row.user?.lastname as string
-												)}
+												{extractUserName(row.user as User)}
 											</StyledTableCell>
 											<StyledTableCell>{row.network?.name}</StyledTableCell>
 											<StyledTableCell>{row.phone_number}</StyledTableCell>

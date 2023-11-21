@@ -600,6 +600,9 @@ export interface Transaction {
 	type: string;
 	plan: string | IDataPlan;
 	dataType?: string | DataType;
+	data_unit: {
+		$numberDecimal: string;
+	};
 	service: string;
 	number: string;
 	createdBy: string;

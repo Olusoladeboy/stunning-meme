@@ -1,9 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
-import queryString from 'query-string';
+import { useNavigate } from 'react-router-dom';
 import { useQuery } from 'react-query';
 import { Box } from '@mui/material';
-import { Layout, AuditLogsTable, TableHeader, Pagination } from 'components';
+import {
+	Layout,
+	AuditLogsTable,
+	ApiLogsTable,
+	TableHeader,
+	Pagination,
+} from 'components';
 import { useAlert, useHandleError, usePageTitle } from 'hooks';
 import {
 	ADMIN_ROLE,
@@ -12,10 +17,10 @@ import {
 	QueryKeys,
 	RouteGuard,
 } from 'utilities';
-import { auditLogs } from 'api';
+import { auditLogs, apiLogs } from 'api';
 
 const ApiLogs = () => {
-	usePageTitle('Audit logs');
+	usePageTitle('Api logs');
 	const handleError = useHandleError();
 	const [isEnableQuery, setEnableQuery] = useState<boolean>(false);
 	const alert = useAlert();
@@ -23,24 +28,23 @@ const ApiLogs = () => {
 	const [count, setCount] = useState<number>(1);
 	const [page, setPage] = useState<number>(1);
 	const [total, setTotal] = useState<number>(0);
-	const location = useLocation();
-	const query = queryString.parse(location.search);
 
 	useEffect(() => {
 		setEnableQuery(true);
+
 		// if (query && query.page) {
 		// 	setPage(parseInt(query.page as string));
 		// }
 	}, []);
 
+	// Audit logs
 	const { isLoading, data } = useQuery(
-		[QueryKeys.AuditLogs, page],
+		[QueryKeys.ApiLogs, page],
 		() =>
-			auditLogs({
+			apiLogs({
 				sort: '-createdAt',
 				limit: MAX_RECORDS,
 				skip: (page - 1) * MAX_RECORDS,
-				populate: 'staff',
 			}),
 		{
 			enabled: isEnableQuery,
@@ -65,18 +69,24 @@ const ApiLogs = () => {
 	const handlePageChange = (page: number) => {
 		if (page !== 1) {
 			setPage(page);
-			navigate(`${LINKS.AuditLogs}?&page=${page}`);
+			navigate(`${LINKS.ApiLogs}&page=${page}`);
 		} else {
-			navigate(LINKS.AuditLogs);
-			setPage(page);
+			navigate(`${LINKS.ApiLogs}`);
 		}
+		setPage(page);
 		setEnableQuery(true);
 	};
+
 	return (
 		<Layout>
 			<RouteGuard roles={[ADMIN_ROLE.SUPER_ADMIN]}>
-				<TableHeader sx={{ marginBottom: '2rem' }} title={'Audit Logs'} />
-				<AuditLogsTable isLoading={isLoading} data={data && data.payload} />
+				<TableHeader
+					sx={{ marginBottom: '2rem', marginTop: '20px' }}
+					title={'Api Logs'}
+				/>
+
+				<ApiLogsTable isLoading={isLoading} data={data && data.payload} />
+
 				{total > MAX_RECORDS && (
 					<Box
 						sx={{

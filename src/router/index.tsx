@@ -1,8 +1,6 @@
 import React from 'react';
 import { Route, Routes, Navigate } from 'react-router-dom';
-import LINKS from '../utilities/links';
-import { NetworkPage } from '../utilities/types';
-import PrivateRoute from '../utilities/helpers/PrivateRoute';
+import { LINKS, NetworkPage } from '../utilities';
 import {
 	Login,
 	Dashboard,
@@ -10,14 +8,12 @@ import {
 	Managers,
 	Network,
 	Notifications,
-	PushNotification,
 	Admin,
 	Dispute,
 	Coupons,
-	AllReferrals,
 	AuditLogs,
 	ViewDataPlan,
-	ViewReferees,
+	Referees,
 	Verification,
 	Message,
 	Suspension,
@@ -26,226 +22,97 @@ import {
 	Users,
 	Conversions,
 	Referrals,
+	DataTypes,
+	AutoConversions,
+	Statistics,
+	AllTransactions,
+	AllConversions,
+	ReferralsBonus,
+	CreateNotification,
+	ChangePassword,
+	BvnVerification,
+	ApiLogs,
 } from '../pages';
 
 const Router = () => {
 	return (
 		<Routes>
 			<Route path={'/'} element={<Navigate to={LINKS.Dashboard} replace />} />
-
-			<Route
-				path={'/dashboard'}
-				element={
-					<PrivateRoute>
-						<Dashboard />
-					</PrivateRoute>
-				}
-			/>
-			<Route
-				path={'users'}
-				element={
-					<PrivateRoute>
-						<Users />
-					</PrivateRoute>
-				}
-			/>
+			<Route path={'/dashboard'} element={<Dashboard />} />
+			<Route path={'users'}>
+				<Route path={''} element={<Users />} />
+				<Route path={':id'} element={<UserProfile />} />
+			</Route>
 			<Route path={'auth'}>
 				<Route path={'login'} element={<Login />} />
+				<Route path={'password/change'} element={<ChangePassword />} />
+				<Route path={'forget-password'} element={<ChangePassword />} />
 			</Route>
-
-			<Route
-				path={'user/:id'}
-				element={
-					<PrivateRoute>
-						<UserProfile />
-					</PrivateRoute>
-				}
-			/>
 			<Route path={'managers'}>
+				<Route path={''} element={<Managers />} />
+				<Route path={'admin'} element={<Admin />} />
+			</Route>
+			<Route path={'transactions'}>
+				<Route path={''} element={<Transactions />} />
+				<Route path={'all'} element={<AllTransactions />} />
+			</Route>
+
+			<Route path={'conversions'}>
+				<Route path={''} element={<Conversions />} />
+				<Route path={'all'} element={<AllConversions />} />
+				<Route
+					path={'network'}
+					element={<Network pageType={NetworkPage.CONVERSION_NETWORK} />}
+				/>
+			</Route>
+			<Route path={'auto-conversions'}>
+				<Route path={''} element={<AutoConversions />} />
+				<Route
+					path={'network'}
+					element={<Network pageType={NetworkPage.AUTO_CONVERSION_NETWORK} />}
+				/>
+			</Route>
+			<Route path={'data-network'}>
 				<Route
 					path={''}
-					element={
-						<PrivateRoute>
-							<Managers />
-						</PrivateRoute>
-					}
+					element={<Network pageType={NetworkPage.DATA_NETWORK} />}
 				/>
-
+				<Route path={'types/:dataTypeName/:network'} element={<DataTypes />} />
 				<Route
-					path={'admin'}
-					element={
-						<PrivateRoute>
-							<Admin />
-						</PrivateRoute>
-					}
+					path={'plans/:dataType/:planName/:network'}
+					element={<ViewDataPlan />}
 				/>
 			</Route>
 
 			<Route
-				path={'transactions'}
-				element={
-					<PrivateRoute>
-						<Transactions />
-					</PrivateRoute>
-				}
+				path={'airtime-network'}
+				element={<Network pageType={NetworkPage.AIRTIME_NETWORK} />}
 			/>
-			<Route
-				path={'conversions'}
-				element={
-					<PrivateRoute>
-						<Conversions />
-					</PrivateRoute>
-				}
-			/>
-			<Route path={'network'}>
-				<Route
-					path={'data'}
-					element={
-						<PrivateRoute>
-							<Network pageType={NetworkPage.DATA_NETWORK} />
-						</PrivateRoute>
-					}
-				/>
-				<Route
-					path={'airtime'}
-					element={
-						<PrivateRoute>
-							<Network pageType={NetworkPage.AIRTIME_NETWORK} />
-						</PrivateRoute>
-					}
-				/>
-				<Route
-					path={'conversion'}
-					element={
-						<PrivateRoute>
-							<Network pageType={NetworkPage.CONVERSION_NETWORK} />
-						</PrivateRoute>
-					}
-				/>
+			<Route path={'statistics'} element={<Statistics />} />
+
+			<Route path={'coupons'} element={<Coupons />} />
+			<Route path={'dispute'}>
+				<Route path={''} element={<Dispute />} />
+				<Route path={':id'} element={<Message />} />
 			</Route>
-			<Route path={'data-plan'}>
-				<Route path={':plan'}>
-					<Route
-						path={':id'}
-						element={
-							<PrivateRoute>
-								<ViewDataPlan />
-							</PrivateRoute>
-						}
-					/>
-				</Route>
-			</Route>
-			<Route
-				path={'coupons'}
-				element={
-					<PrivateRoute>
-						<Coupons />
-					</PrivateRoute>
-				}
-			/>
-			<Route
-				path={'support-ticket/message/:id'}
-				element={
-					<PrivateRoute>
-						<Message />
-					</PrivateRoute>
-				}
-			/>
-			<Route
-				path={'dispute'}
-				element={
-					<PrivateRoute>
-						<Dispute />
-					</PrivateRoute>
-				}
-			/>
 			<Route path={'referrals'}>
-				<Route
-					path={''}
-					element={
-						<PrivateRoute>
-							<Referrals />
-						</PrivateRoute>
-					}
-				/>
-				<Route
-					path={'all'}
-					element={
-						<PrivateRoute>
-							<AllReferrals />
-						</PrivateRoute>
-					}
-				/>
+				<Route path={''} element={<Referrals />} />
+				<Route path={':email/referees'} element={<Referees />} />
+				<Route path={'bonus'} element={<ReferralsBonus />} />
 			</Route>
 
-			<Route
-				path={'referee/:id'}
-				element={
-					<PrivateRoute>
-						<ViewReferees />
-					</PrivateRoute>
-				}
-			/>
 			<Route path={'notifications'}>
-				<Route
-					path={''}
-					element={
-						<PrivateRoute>
-							<Notifications />
-						</PrivateRoute>
-					}
-				/>
-				<Route
-					path={'all'}
-					element={
-						<PrivateRoute>
-							<AllReferrals />
-						</PrivateRoute>
-					}
-				/>
+				<Route path={''} element={<Notifications />} />
+				<Route path={'create'} element={<CreateNotification />} />
 			</Route>
-			<Route
-				path={'push-notification'}
-				element={
-					<PrivateRoute>
-						<PushNotification />
-					</PrivateRoute>
-				}
-			/>
 			<Route path={'verification'}>
-				<Route
-					path=''
-					element={
-						<PrivateRoute>
-							<Verification />
-						</PrivateRoute>
-					}
-				/>
-				<Route
-					path='kyc'
-					element={
-						<PrivateRoute>
-							<Kyc />
-						</PrivateRoute>
-					}
-				/>
+				<Route path='' element={<Verification />} />
+				<Route path='kyc' element={<Kyc />} />
 			</Route>
-			<Route
-				path={'suspension'}
-				element={
-					<PrivateRoute>
-						<Suspension />
-					</PrivateRoute>
-				}
-			/>
-			<Route
-				path={'audit-logs'}
-				element={
-					<PrivateRoute>
-						<AuditLogs />
-					</PrivateRoute>
-				}
-			/>
+			<Route path='bvn-verification' element={<BvnVerification />} />
+			<Route path={'suspension'} element={<Suspension />} />
+			<Route path={'audit-logs'} element={<AuditLogs />} />
+			<Route path={'api-logs'} element={<ApiLogs />} />
 		</Routes>
 	);
 };

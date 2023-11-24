@@ -2,23 +2,20 @@ import React, { useState, useEffect } from 'react';
 import { Box } from '@mui/material';
 import { useNavigate, useLocation } from 'react-router-dom';
 import queryString from 'query-string';
-import { Layout, Pagination, DisputesTable } from '../../components';
-import { useAppSelector } from '../../store/hooks';
-import Api from '../../utilities/api';
-import { QueryKey } from '../../utilities/types';
-import { MAX_RECORDS } from '../../utilities/constant';
-import LINKS from '../../utilities/links';
-import { useQueryHook } from '../../utilities/api/hooks';
+import { Layout, Pagination, DisputesTable } from 'components';
+import { QueryKeys, MAX_RECORDS, LINKS, TicketType } from 'utilities';
+import { usePageTitle, useQueryHook, useSearchTicket } from 'hooks';
+import { tickets } from 'api';
 
 const Disputes = () => {
-	const { token } = useAppSelector((store) => store.authState);
-
+	usePageTitle('Disputes');
 	const navigate = useNavigate();
 	const [count, setCount] = useState<number>(1);
 	const [page, setPage] = useState<number>(1);
 	const [total, setTotal] = useState<number>(0);
 	const location = useLocation();
 	const query = queryString.parse(location.search);
+	const { search, isSearching, clearSearch, searchTicket } = useSearchTicket();
 
 	useEffect(() => {
 		if (query && query.page) {
@@ -27,15 +24,15 @@ const Disputes = () => {
 	}, [query, query.page]);
 
 	const { isLoading, data } = useQueryHook({
-		queryKey: QueryKey.Tickets,
+		queryKey: [QueryKeys.Tickets, page],
 		queryFn: () =>
-			Api.Ticket.Records({
-				token: token as string,
+			tickets({
 				params: {
 					sort: '-createdAt',
 					limit: MAX_RECORDS,
 					skip: (page - 1) * MAX_RECORDS,
-					populate: 'createdBy',
+					populate: 'user',
+					type: TicketType.DISPUTE,
 				},
 			}),
 		onSuccessFn: (data: any) => {
@@ -59,8 +56,13 @@ const Disputes = () => {
 	return (
 		<Layout>
 			<Box>
-				<DisputesTable isLoading={isLoading} data={data && data.payload} />
-				{total > MAX_RECORDS && (
+				<DisputesTable
+					isLoading={isLoading || isSearching}
+					data={search ? search : data && data.payload}
+					clearSearch={clearSearch}
+					searchTicket={searchTicket}
+				/>
+				{!search && total > MAX_RECORDS && (
 					<Box sx={{}}>
 						<Pagination
 							sx={{}}

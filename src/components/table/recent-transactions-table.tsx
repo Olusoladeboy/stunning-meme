@@ -1,23 +1,34 @@
-import React from 'react';
-import Table from '@mui/material/Table';
-import Box from '@mui/material/Box';
-import { Typography, useTheme } from '@mui/material';
-import TableBody from '@mui/material/TableBody';
-import TableCell, { tableCellClasses } from '@mui/material/TableCell';
-import { styled } from '@mui/material';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
-import { LIGHT_GRAY, BOX_SHADOW } from '../../utilities/constant';
+import React, { useState } from 'react';
+import {
+	Typography,
+	useTheme,
+	Box,
+	TableBody,
+	Table,
+	TableCell,
+	TableHead,
+	styled,
+	TableRow,
+} from '@mui/material';
+import { tableCellClasses } from '@mui/material/TableCell';
+
 import { grey } from '@mui/material/colors';
+import {
+	LIGHT_GRAY,
+	BOX_SHADOW,
+	LINKS,
+	QueryKeys,
+	formatNumberToCurrency,
+	Transaction,
+	extractUserName,
+	User,
+} from 'utilities';
 import Link from '../link';
 import Empty from '../empty/table-empty';
 import Loader from '../loader/table-loader';
-import LINKS from '../../utilities/links';
-import { useQueryHook } from '../../utilities/api/hooks';
-import { QueryKey } from '../../utilities/types';
-import Api from '../../utilities/api';
-import { useAppSelector } from '../../store/hooks';
-import formatNumberToCurrency from '../../utilities/helpers/formatNumberToCurrency';
+import { allTransactions } from 'api';
+import TransactionModal from '../modal/transaction-details-modal';
+import { useQueryHook } from 'hooks';
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
 	[`&.${tableCellClasses.head}`]: {
@@ -36,6 +47,7 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
 
 const StyledTableRow = styled(TableRow)(({ theme }) => ({
 	color: theme.palette.primary.main,
+	cursor: 'pointer',
 	'&:nth-of-type(odd)': {
 		backgroundColor: '#FDF8F1',
 	},
@@ -51,83 +63,100 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 const RecentTransactionsTable = () => {
 	const theme = useTheme();
 	const styles = useStyles(theme);
-	const { token } = useAppSelector((store) => store.authState);
+	const [selectedTransaction, setSelectedTransaction] =
+		useState<Transaction | null>(null);
 
 	const { isLoading, data } = useQueryHook({
-		queryKey: QueryKey.RecentTransactions,
+		queryKey: QueryKeys.RecentTransactions,
 		queryFn: () =>
-			Api.Transactions.All({
-				token: token as string,
-				params: { sort: '-createdAt', limit: 4, populate: 'user' },
+			allTransactions({
+				params: { sort: '-createdAt', limit: 4 },
 			}),
 	});
 
 	return (
-		<Box style={styles.container} sx={{ overflow: 'auto' }}>
-			<Box style={styles.header}>
-				<Typography variant={'h5'} style={styles.headerText}>
-					Recent Transactions
-				</Typography>
-				<Link style={styles.link} to={LINKS.Transactions}>
-					view more
-				</Link>
+		<>
+			{selectedTransaction && (
+				<TransactionModal
+					transaction={selectedTransaction}
+					closeModal={() => setSelectedTransaction(null)}
+				/>
+			)}
+			<Box style={styles.container} sx={{ overflow: 'auto' }}>
+				<Box style={styles.header}>
+					<Typography variant={'h5'} style={styles.headerText}>
+						Recent Transactions
+					</Typography>
+					<Link style={styles.link} to={LINKS.Transactions}>
+						view more
+					</Link>
+				</Box>
+				<Table sx={{ overflow: 'auto' }} stickyHeader>
+					<TableHead
+						sx={{
+							'& tr': {
+								backgroundColor: LIGHT_GRAY,
+								color: theme.palette.primary.main,
+							},
+						}}
+					>
+						<TableRow>
+							<StyledTableCell>Full Name</StyledTableCell>
+							<StyledTableCell>Reference</StyledTableCell>
+							<StyledTableCell>Phone No.</StyledTableCell>
+							<StyledTableCell>Amount</StyledTableCell>
+						</TableRow>
+					</TableHead>
+					<TableBody
+						sx={{
+							'& tr': {
+								color: theme.palette.primary.main,
+							},
+						}}
+					>
+						{isLoading ? (
+							<Loader colSpan={4} />
+						) : (
+							data && (
+								<>
+									{data.payload.length > 0 ? (
+										data.payload.map((row: Transaction, key: number) => (
+											<StyledTableRow
+												onClick={() => setSelectedTransaction(row)}
+												key={key}
+											>
+												<StyledTableCell>
+													{row.user && extractUserName(row.user as User)}
+												</StyledTableCell>
+												<StyledTableCell>{row.reference}</StyledTableCell>
+												<StyledTableCell>
+													{row.user && row.user.phone}
+												</StyledTableCell>
+												<StyledTableCell>
+													{formatNumberToCurrency(
+														typeof row.amount !== 'string'
+															? row.amount.$numberDecimal
+															: row.amount
+													)}
+												</StyledTableCell>
+											</StyledTableRow>
+										))
+									) : (
+										<Empty colSpan={4} />
+									)}
+								</>
+							)
+						)}
+					</TableBody>
+				</Table>
 			</Box>
-			<Table sx={{ overflow: 'auto' }} stickyHeader>
-				<TableHead
-					sx={{
-						'& tr': {
-							backgroundColor: LIGHT_GRAY,
-							color: theme.palette.primary.main,
-						},
-					}}
-				>
-					<TableRow>
-						<StyledTableCell>Full Name</StyledTableCell>
-						<StyledTableCell>Network name</StyledTableCell>
-						<StyledTableCell>Phone No.</StyledTableCell>
-						<StyledTableCell>Amount</StyledTableCell>
-					</TableRow>
-				</TableHead>
-				<TableBody
-					sx={{
-						'& tr': {
-							color: theme.palette.primary.main,
-						},
-					}}
-				>
-					{isLoading ? (
-						<Loader colSpan={4} />
-					) : (
-						data && (
-							<>
-								{data.payload.length > 0 ? (
-									data.payload.map((row: any, key: number) => (
-										<StyledTableRow key={key}>
-											<StyledTableCell>
-												{row.user.firstname} {row.user.lastname}
-											</StyledTableCell>
-											<StyledTableCell>{row.service}</StyledTableCell>
-											<StyledTableCell>{row.user.phone}</StyledTableCell>
-											<StyledTableCell>
-												{formatNumberToCurrency(row.amount.$numberDecimal)}
-											</StyledTableCell>
-										</StyledTableRow>
-									))
-								) : (
-									<Empty colSpan={4} />
-								)}
-							</>
-						)
-					)}
-				</TableBody>
-			</Table>
-		</Box>
+		</>
 	);
 };
 
 const useStyles = (theme: any) => ({
 	container: {
-		border: `1px solid ${theme.palette.secondary.main}`,
+		border: `0.5px solid ${theme.palette.secondary.main}`,
 		padding: '1rem 0px',
 		backgroundColor: grey[50],
 		borderRadius: theme.spacing(2),

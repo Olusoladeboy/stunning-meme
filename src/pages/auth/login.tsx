@@ -1,8 +1,10 @@
 import React from 'react';
 import { Box } from '@mui/material';
-import { AuthLayout, LoginForm, Image } from '../../components';
+import { AuthLayout, LoginForm, Image } from 'components';
+import { usePageTitle } from 'hooks';
 
 const Login = () => {
+	usePageTitle('Login');
 	return (
 		<AuthLayout>
 			<Box>
@@ -14,7 +16,7 @@ const Login = () => {
 							width: '100%',
 						},
 					}}
-					src={require('../../assets/images/app-logo-with-text.png')}
+					src={require('assets/images/app-logo-with-text.png')}
 					alt={'Airtimeflip-logo'}
 				/>
 				<LoginForm />

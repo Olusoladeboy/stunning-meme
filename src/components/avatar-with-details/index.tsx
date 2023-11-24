@@ -1,10 +1,9 @@
 import React, { CSSProperties } from 'react';
 import { Box, Avatar, Typography, useTheme } from '@mui/material';
-import { UserDetails } from '../../utilities/types';
-import { DANGER_COLOR, SUCCESS_COLOR } from '../../utilities/constant';
+import { DANGER_COLOR, SUCCESS_COLOR, User, extractUserName } from 'utilities';
 
 type Props = {
-	user: UserDetails | null;
+	user: User | null;
 	userType?: 'user' | 'manager';
 };
 
@@ -16,7 +15,7 @@ const UserAvatarWithDetails = ({ user, userType = 'user' }: Props) => {
 			<Avatar src={(user && user.avatar) || ''} style={styles.avatar} />
 			<Box style={styles.detailsWrapper as CSSProperties}>
 				<Typography style={styles.nameText} variant={'body1'}>
-					{user && `${user.firstname} ${user.lastname}`}
+					{extractUserName(user as User)}
 				</Typography>
 				<Typography style={styles.text} variant={'body1'}>
 					{user && user.email}

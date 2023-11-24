@@ -10,7 +10,11 @@ import {
 	BOX_SHADOW,
 	SUCCESS_COLOR,
 	DANGER_COLOR,
-} from '../../utilities/constant';
+	QueryKeys,
+	API_ENDPOINTS,
+	NetworkData,
+	NetworkPage,
+} from 'utilities';
 import {
 	StyledTableCell as TableCell,
 	StyledTableRow as TableRow,
@@ -19,19 +23,13 @@ import { grey } from '@mui/material/colors';
 import Image from '../image';
 import Button from '../button/custom-button';
 import Empty from '../empty';
-import {
-	QueryKey,
-	API_ENDPOINTS,
-	NetworkData,
-	NetworkPage,
-} from '../../utilities/types';
-import Api from '../../utilities/api';
-import { useAppSelector } from '../../store/hooks';
+import { useAppSelector } from 'store/hooks';
 import TableLoader from '../loader/table-loader';
 import NetworkForm from '../forms/network-form';
 import Modal from '../modal/Wrapper';
 import Loader from '../loader';
-import { useAlert } from '../../utilities/hooks';
+import { useAlert, useHandleError } from 'hooks';
+import { networks, updateNetwork } from 'api';
 
 interface ConversionNetworkTypes extends NetworkData {
 	isActive: boolean;
@@ -40,6 +38,7 @@ interface ConversionNetworkTypes extends NetworkData {
 
 const ConversionNetworkTable = () => {
 	const theme = useTheme();
+	const handleError = useHandleError();
 	const setAlert = useAlert();
 	const styles = useStyles(theme);
 	const queryClient = useQueryClient();
@@ -50,33 +49,38 @@ const ConversionNetworkTable = () => {
 	const { token } = useAppSelector((store) => store.authState);
 
 	const { isLoading, data } = useQuery(
-		QueryKey.ConvertNetwork,
+		QueryKeys.ConvertNetwork,
 		() =>
-			Api.Network.GetNetwork({
-				token: token || '',
+			networks({
 				url: API_ENDPOINTS.ConvertNetworks,
 			}),
 		{
 			enabled: !!token,
 			onSettled: (data, error) => {
 				if (error) {
-					setAlert({ data: error, type: 'error' });
+					const response = handleError({ error });
+					if (response?.message) {
+						setAlert({ message: response.message, type: 'error' });
+					}
 				}
 			},
 		}
 	);
 
-	const { isLoading: isUpdating, mutate: updateNetwork } = useMutation(
-		Api.Network.UpdateNetwork,
+	const { isLoading: isUpdating, mutate: mutateUpdateNetwork } = useMutation(
+		updateNetwork,
 		{
 			onSettled: (data, error) => {
 				if (error) {
-					setAlert({ data: error, type: 'error' });
+					const response = handleError({ error });
+					if (response?.message) {
+						setAlert({ message: response.message, type: 'error' });
+					}
 				}
 
 				if (data && data.success) {
-					queryClient.invalidateQueries(QueryKey.ConvertNetwork);
-					setAlert({ data: data.message, type: 'success' });
+					queryClient.invalidateQueries(QueryKeys.ConvertNetwork);
+					setAlert({ message: data.message, type: 'success' });
 				}
 			},
 		}
@@ -89,8 +93,7 @@ const ConversionNetworkTable = () => {
 		status: boolean;
 		id: string;
 	}) => {
-		updateNetwork({
-			token: token as string,
+		mutateUpdateNetwork({
 			data: {
 				isActive: status,
 			},
@@ -112,7 +115,7 @@ const ConversionNetworkTable = () => {
 						isEdit
 						network={selectedNetwork}
 						type={NetworkPage.CONVERSION_NETWORK}
-						handleContinue={() => setSelectedNetwork(null)}
+						callback={() => setSelectedNetwork(null)}
 					/>
 				</Modal>
 			)}
@@ -144,7 +147,7 @@ const ConversionNetworkTable = () => {
 						{isLoading ? (
 							<TableLoader colSpan={4} />
 						) : data && data.payload.length > 0 ? (
-							data.payload.map((data: ConversionNetworkTypes) => (
+							data.payload.map((data: NetworkData) => (
 								<TableRow key={data.id}>
 									<TableCell>{data.name}</TableCell>
 									<TableCell>{data.number}</TableCell>
@@ -162,7 +165,7 @@ const ConversionNetworkTable = () => {
 													display: 'flex',
 													alignItems: 'center',
 												}}
-												src={require('../../assets/icons/edit.png')}
+												src={require('assets/icons/edit.png')}
 												alt={'edit'}
 											/>
 										</Box>
@@ -180,9 +183,9 @@ const ConversionNetworkTable = () => {
 											style={styles.statusBtnWrapper}
 										>
 											<Button
-												disabled={data.isActive}
+												disabled={Boolean(data.isActive)}
 												style={{
-													backgroundColor: data.isActive
+													backgroundColor: Boolean(data.isActive)
 														? SUCCESS_COLOR
 														: grey[400],
 													color: grey[50],
@@ -190,22 +193,22 @@ const ConversionNetworkTable = () => {
 												onClick={() =>
 													handleEnableDisableNetwork({
 														status: true,
-														id: data.id,
+														id: data.id as string,
 													})
 												}
 											>
 												Enable
 											</Button>
 											<Button
-												disabled={!data.isActive}
+												disabled={!Boolean(data.isActive)}
 												onClick={() =>
 													handleEnableDisableNetwork({
 														status: false,
-														id: data.id,
+														id: data.id as string,
 													})
 												}
 												style={{
-													backgroundColor: !data.isActive
+													backgroundColor: !Boolean(data.isActive)
 														? DANGER_COLOR
 														: grey[400],
 													color: grey[50],

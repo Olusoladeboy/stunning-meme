@@ -9,12 +9,11 @@ import {
 	NetworkData as INetworkData,
 	QueryKey,
 	API_ENDPOINTS,
-} from '../../utilities/types';
-import ValidationSchema from '../../utilities/validationSchema';
+	validationSchema,
+} from 'utilities';
 import Button from '../button/custom-button';
-import Api from '../../utilities/api';
-import { useAppSelector } from '../../store/hooks';
-import { useAlert } from '../../utilities/hooks';
+import { useAlert, useHandleError } from 'hooks';
+import { createNetwork, updateNetwork } from 'api';
 
 interface NetworkData extends INetworkData {
 	id?: string;
@@ -24,18 +23,19 @@ type Props = {
 	type:
 		| NetworkPage.DATA_NETWORK
 		| NetworkPage.AIRTIME_NETWORK
-		| NetworkPage.CONVERSION_NETWORK;
-	handleContinue?: () => void;
+		| NetworkPage.CONVERSION_NETWORK
+		| NetworkPage.AUTO_CONVERSION_NETWORK;
+	callback?: () => void;
 	network?: NetworkData;
 	isEdit?: boolean;
 };
 
-const NetworkForm = ({ type, handleContinue, network, isEdit }: Props) => {
+const NetworkForm = ({ type, callback, network, isEdit }: Props) => {
 	const theme = useTheme();
+	const handleError = useHandleError();
 	const setAlert = useAlert();
 	const styles = useStyles(theme);
 	const queryClient = useQueryClient();
-	const { token } = useAppSelector((store) => store.authState);
 
 	const initialValues: NetworkData = {
 		name: '',
@@ -44,119 +44,130 @@ const NetworkForm = ({ type, handleContinue, network, isEdit }: Props) => {
 		number: '',
 	};
 
-	const { isLoading, mutate: createNetwork } = useMutation(
-		Api.Network.CreateNetwork,
+	const { isLoading, mutate: mutateCreateNetwork } = useMutation(
+		createNetwork,
 		{
 			onSettled: (data, error) => {
 				if (error) {
-					setAlert({ data: error, type: 'error' });
+					const response = handleError({ error });
+					if (response?.message) {
+						setAlert({ message: response.message, type: 'error' });
+					}
 				}
 
 				if (data && data.success) {
 					setAlert({
-						data: data.message,
+						message: data.message,
 						type: 'success',
 					});
 					queryClient.invalidateQueries(QueryKey.DataNetwork);
 					queryClient.invalidateQueries(QueryKey.AirtimeNetwork);
 					queryClient.invalidateQueries(QueryKey.ConvertNetwork);
-					typeof handleContinue !== 'undefined' && handleContinue();
+					queryClient.invalidateQueries(QueryKey.AutoConvertNetwork);
+					typeof callback !== 'undefined' && callback();
 				}
 			},
 		}
 	);
 
-	const handleMutateNetwork = (values: NetworkData) => {
+	const url =
+		type === NetworkPage.DATA_NETWORK
+			? API_ENDPOINTS.DataNetwork
+			: type === NetworkPage.AIRTIME_NETWORK
+			? API_ENDPOINTS.AirtimeNetwork
+			: type === NetworkPage.AUTO_CONVERSION_NETWORK
+			? API_ENDPOINTS.AutoConvertNetwork
+			: API_ENDPOINTS.ConvertNetworks;
+
+	const handleCreateNetwork = (values: NetworkData) => {
 		const { name, rate, ussd, number } = values;
-		const url =
-			type === NetworkPage.DATA_NETWORK
-				? API_ENDPOINTS.DataNetwork
-				: type === NetworkPage.AIRTIME_NETWORK
-				? API_ENDPOINTS.AirtimeNetwork
-				: API_ENDPOINTS.ConvertNetworks;
 
-		const createDataPayload =
-			type === NetworkPage.DATA_NETWORK
-				? {
-						name,
-				  }
-				: type === NetworkPage.AIRTIME_NETWORK
-				? {
-						name,
-						rate,
-						ussd,
-				  }
-				: {
-						name,
-						rate,
-						number,
-				  };
+		let data = {} as Partial<NetworkData>;
 
-		const updateDataPayload =
-			type === NetworkPage.DATA_NETWORK
-				? {
-						name,
-				  }
-				: type === NetworkPage.AIRTIME_NETWORK
-				? {
-						rate,
-						ussd,
-				  }
-				: {
-						rate,
-						number,
-				  };
-
-		if (isEdit && network) {
-			return updateNetwork({
-				url,
-				data: updateDataPayload,
-				token: token as string,
-				id: network.id as string,
-			});
+		if (type === NetworkPage.DATA_NETWORK) data.name = name;
+		if (type === NetworkPage.AIRTIME_NETWORK) {
+			data = { ...data, name, rate, ussd };
+		}
+		if (type === NetworkPage.CONVERSION_NETWORK) {
+			data = { ...data, name, rate, number };
 		}
 
-		createNetwork({
+		if (type === NetworkPage.AUTO_CONVERSION_NETWORK) {
+			data = { ...data, name, rate };
+		}
+
+		mutateCreateNetwork({
 			url,
-			data: createDataPayload,
-			token: token as string,
+			data,
 		});
 	};
 
-	const { isLoading: isUpdating, mutate: updateNetwork } = useMutation(
-		Api.Network.UpdateNetwork,
+	const { isLoading: isUpdating, mutate: mutateUpdateNetwork } = useMutation(
+		updateNetwork,
 		{
 			onSettled: (data, error) => {
 				if (error) {
-					setAlert({ data: error, type: 'error' });
+					const response = handleError({ error });
+					if (response?.message) {
+						setAlert({ message: response.message, type: 'error' });
+					}
 				}
 
 				if (data && data.success) {
 					setAlert({
-						data: data.message,
+						message: data.message,
 						type: 'success',
 					});
 					queryClient.invalidateQueries(QueryKey.AirtimeNetwork);
 					queryClient.invalidateQueries(QueryKey.ConvertNetwork);
 					queryClient.invalidateQueries(QueryKey.DataNetwork);
-					typeof handleContinue !== 'undefined' && handleContinue();
+					typeof callback !== 'undefined' && callback();
 				}
 			},
 		}
 	);
 
-	const validationSchema =
+	const handleUpdateNetwork = (values: NetworkData) => {
+		const { name, rate, ussd, number } = values;
+
+		let data = {} as Partial<NetworkData>;
+
+		if (type === NetworkPage.DATA_NETWORK) data.name = name;
+		if (type === NetworkPage.AIRTIME_NETWORK) {
+			data = { ...data, rate, ussd };
+		}
+		if (type === NetworkPage.CONVERSION_NETWORK) {
+			data = { ...data, rate, number };
+		}
+
+		if (type === NetworkPage.AUTO_CONVERSION_NETWORK) {
+			data = { ...data, rate };
+		}
+
+		return mutateUpdateNetwork({
+			url,
+			data,
+			id: network?.id as string,
+		});
+	};
+
+	const $validationSchema =
 		type === NetworkPage.DATA_NETWORK
-			? ValidationSchema.DataNetwork
+			? validationSchema.DataNetwork
 			: type === NetworkPage.AIRTIME_NETWORK
-			? ValidationSchema.AirtimeNetwork
-			: ValidationSchema.ConvertNetwork;
+			? validationSchema.AirtimeNetwork
+			: type === NetworkPage.AUTO_CONVERSION_NETWORK
+			? validationSchema.AutoConvertNetwork
+			: validationSchema.ConvertNetwork;
 
 	const { errors, touched, values, handleChange, handleSubmit } = useFormik({
 		initialValues: network ? network : initialValues,
-		validationSchema,
+		validationSchema: $validationSchema,
 		onSubmit: (values) => {
-			handleMutateNetwork(values);
+			if (network && Object.keys(network).length > 0) {
+				return handleUpdateNetwork(values);
+			}
+			handleCreateNetwork(values);
 		},
 	});
 
@@ -235,7 +246,8 @@ const NetworkForm = ({ type, handleContinue, network, isEdit }: Props) => {
 						sx={{
 							display:
 								type === NetworkPage.AIRTIME_NETWORK ||
-								type === NetworkPage.CONVERSION_NETWORK
+								type === NetworkPage.CONVERSION_NETWORK ||
+								type === NetworkPage.AUTO_CONVERSION_NETWORK
 									? 'block'
 									: 'none',
 						}}
@@ -274,7 +286,7 @@ const useStyles = (theme: any) => ({
 		display: 'flex',
 		flexDirection: 'column',
 		gap: '20px',
-		height: '320px',
+		// height: '320px',
 		justifyContent: 'space-between',
 	},
 

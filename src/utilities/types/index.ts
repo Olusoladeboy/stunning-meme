@@ -5,21 +5,14 @@ export enum ThemeModeType {
 	dark = 'dark',
 }
 
-export enum StorageKeys {
-	themeMode = '@Storage_theme_mode',
-	UserToken = '@Storage:user_token',
-	UserDetails = '@Storage:user_details',
-	Application = '@Storage:key_application',
-	SignUpDetails = '@Storage:key_signUp_Details',
-}
-
 export enum QueryKey {
-	LoginUserDetails = '@Query:Login_user_details',
+	LoginUser = '@Query:Login_user_details',
 	AllManagers = '@Query:All_manager',
 	AllUsers = '@Query:All_Users',
 	GetSingleUser = '@Query:Get_single_user',
 	DataNetwork = '@Query:Data_Network',
 	ConvertNetwork = '@Query:Convert_Network',
+	AutoConvertNetwork = '@Query:Auto_Convert_Network',
 	ConvertAirtime = '@Query:Convert_Airtime',
 	AirtimeNetwork = '@Query:Airtime_Network',
 	KycLimit = '@Query:Kyc_Limit',
@@ -58,33 +51,6 @@ export type LoginData = {
 	password: string;
 };
 
-export type UserDetails = {
-	suspensionDuration: { [key: string]: any };
-	suspendWithdrawal: boolean;
-	userType: string;
-	hasPin: boolean;
-	isActive: boolean;
-	biometricLogin: boolean;
-	verified: boolean;
-	bvnVerified: boolean;
-	suspended: boolean;
-	suspensionReason: string;
-	deleted: boolean;
-	restricted: boolean;
-	twoFactorAuth: boolean;
-	isLoggedIn: boolean;
-	suspendWalletTransactions: boolean;
-	firstname: string;
-	lastname: string;
-	email: string;
-	username: string;
-	phone: string;
-	createdAt: string;
-	id: string;
-	avatar: string;
-	kycLevel: string;
-};
-
 export type LoginDetails = {
 	email: string;
 	password: string;
@@ -107,21 +73,12 @@ export type VerificationData = {
 	};
 };
 
-export enum HttpStatusCode {
-	OK = 200,
-	BadRequest = 400,
-	Unauthorized = 401,
-	Forbidden = 403,
-	NotFound = 404,
-	InternalServerError = 500,
-	BadGateway = 502,
-	ServiceUnavailable = 503,
-}
-
 export enum TransactionStatus {
 	PENDING = 'PENDING',
 	FAILED = 'FAILED',
 	SUCCESSFUL = 'SUCCESSFUL',
+	APPROVED = 'APPROVED',
+	DECLINED = 'DECLINED',
 }
 
 export enum UserStatus {
@@ -148,8 +105,10 @@ export enum EPins {
 
 export type AuthState = {
 	isAuthenticated: boolean;
-	user: UserDetails | null;
+	user: User | null;
 	token: string | null;
+	canViewStatistics: boolean;
+	canCreateOrUpdateRecord: boolean;
 };
 
 export enum SettingsTab {
@@ -178,6 +137,37 @@ export interface ModalDetails {
 	contentWidth?: string;
 }
 
+export interface IModalAlert {
+	type?: 'success' | 'error' | 'info';
+	title?: string;
+	message?: string;
+	primaryButtonText?: string;
+	secondaryButtonText?: string;
+	onClickPrimaryButton?: () => void;
+	onClickSecondaryButton?: () => void;
+	children?: ReactNode;
+	isLoading?: boolean;
+	closeModal?: () => void;
+}
+
+export interface IModal {
+	type?: 'success' | 'error' | 'info' | 'pending' | 'verify';
+	description?: string;
+	title?: string;
+	message?: string;
+	buttonText?: string;
+	handlePrimaryButton?: () => void | null;
+	hasSecondaryButton?: boolean;
+	handleSecondaryButton?: () => void;
+	secondaryButtonText?: string;
+	handleContactUs?: () => void;
+	closeModal?: () => void | null;
+	isLoading?: boolean;
+	children?: React.ReactNode;
+	isContactSupport?: boolean;
+	hasCloseButton?: boolean;
+}
+
 export enum UserNavList {
 	Profile = 'profile',
 	Status = 'status',
@@ -195,6 +185,21 @@ export enum NetworkPage {
 	DATA_NETWORK = 'Data network',
 	AIRTIME_NETWORK = 'Airtime network',
 	CONVERSION_NETWORK = 'Conversion network',
+	AUTO_CONVERSION_NETWORK = 'Auto conversion network',
+}
+
+export interface AirtimeConversion extends Transaction {
+	amount: Amount | string;
+	return_amount: Amount | string;
+	phone_number: string;
+	network: NetworkData;
+	user: User;
+	reference: string;
+	sentTo: string;
+
+	id: string;
+	declinedBy: string | User;
+	declinedDate: Date;
 }
 
 export enum NetworkStatus {
@@ -212,28 +217,76 @@ export enum API_ENDPOINTS {
 	DataPlans = '/data-plans',
 	AirtimeNetwork = '/airtime-networks',
 	ConvertNetworks = '/convert-networks',
+	AutoConvertNetwork = '/auto-convert-networks',
 	ConvertAirtime = '/convert-airtime',
 	Kyc = '/kyc',
 	Transaction = '/transaction',
+	Notification = '/notification',
 	Wallet = '/wallet',
 	Coupon = '/coupon',
 	Ticket = '/ticket',
 }
 
-export type ManagerDetailsData = {
+export interface ManagerDetailsData extends User {
 	firstname: string;
 	lastname: string;
 	email: string;
-	phone: string;
-	avatar?: string;
-};
+	phone?: string;
+}
+
+export interface IBill {
+	service_type?: string;
+	smartcard_number?: string;
+	product_code?: string;
+	price?: number | string;
+	monthsPaidFor?: number | string;
+	numberOfPins?: string | number;
+	discount_code?: string;
+	amount?: string | number;
+	meter_number?: string;
+	exam_bundle?: string;
+	internetPlan?: string;
+}
+
+export interface AvailablePricingOption {
+	monthsPaidFor: number;
+	price: number;
+	invoicePeriod: number;
+}
+
+export interface Bundle {
+	amount: number;
+	available: number;
+	description: string;
+	availablePricingOptions: AvailablePricingOption[];
+	code: string;
+	name: string;
+}
+
+export interface Provider {
+	service_type: string;
+	shortname: string;
+	billerid: number;
+	productid: number;
+	name: string;
+	type: string;
+	description?: string;
+	id?: string | number;
+	narration: string;
+	short_name: string;
+	image: string;
+}
 
 export type NetworkData = {
 	name?: string;
+	id?: string;
 	rate?: string;
 	number?: string;
 	ussd?: string;
 	isActive?: boolean;
+	createdAt?: Date;
+	no_of_dataTypes?: string;
+	no_of_plans?: string;
 };
 
 export type KycData = {
@@ -246,12 +299,15 @@ export type KycData = {
 
 export type DataPlan = {
 	name?: string;
-	network?: string;
-	amount: string | { $numberDecimal: string };
-	type: string;
-	code: string;
-	shortcode?: string;
-	shortcode_sms?: string;
+	amount?: string | Amount | number;
+	code?: string;
+	isActive?: boolean;
+	id?: string;
+	network?: NetworkData | string;
+	merchant_amount?: Amount | string | number;
+	data_unit?: string;
+	data_source?: string;
+	dataType?: DataType | string;
 };
 
 export enum DataPlanType {
@@ -259,6 +315,15 @@ export enum DataPlanType {
 	SMS = 'SMS',
 	MANUAL = 'MANUAL',
 	KETTLESUB = 'KETTLESUB',
+}
+
+export interface DataType {
+	isActive?: boolean;
+	id?: string;
+	name?: string;
+	createdAt?: string;
+	no_of_plans?: number;
+	network?: NetworkData | string;
 }
 
 export type SuspendUser = {
@@ -273,6 +338,7 @@ export type Statistics = {
 	total_conversions: number;
 	total_verified_users: number;
 	total_unverified_users: number;
+	total_deactivated_users: number;
 	total_deleted_users: number;
 	total_suspended_users: number;
 	total_airtime_converted: number;
@@ -290,16 +356,32 @@ export interface Amount {
 	$numberDecimal: string;
 }
 
+export interface IVerification {
+	status: string;
+	user: User;
+	level: number;
+	payload: string;
+	type: string;
+	channel: string;
+	code: string;
+	createdAt: string;
+	updatedAt: string;
+	id: string;
+}
+
 export interface Coupon {
 	code?: string;
 	name?: string;
 	type?: string;
 	expiresIn?: string;
 	gift?: Amount | string;
-	createdBy?: UserDetails;
+	createdBy?: User;
 	createdAt?: string;
 	id?: string;
 	status?: string;
+	couponUserType?: string;
+	user?: string;
+	usage?: string;
 }
 
 export enum TransactionServices {
@@ -385,10 +467,10 @@ export interface Ticket {
 	priority: Priority;
 	related_transaction_type?: RelatedTransactionTypes;
 	subject: String;
-	related_transaction?: RelatedTransaction | null;
+	related_transaction?: RelatedTransaction | string | null;
 	message: string;
 	code: string;
-	user: string;
+	user: string | User;
 	replies: TicketReply[];
 	createdAt: string;
 	updatedAt: string;
@@ -408,35 +490,47 @@ export interface CloseTicket {
 	status: string;
 }
 
+export interface ResolveTicket {
+	code: string;
+	strictCheck: boolean;
+}
+
 export enum TicketReplyType {
 	Staff = 'Staff',
 	User = 'User',
 }
 
 export type User = {
-	id: string;
-	suspensionDuration: { [key: string]: any };
-	userType: string;
-	biometricLogin: boolean;
-	verified: boolean;
-	bvnVerified: boolean;
-	suspended: boolean;
-	deleted: boolean;
-	restricted: boolean;
-	twoFactorAuth: boolean;
-	isLoggedIn: boolean;
-	suspendWalletTransactions: boolean;
-	firstname: string;
-	lastname: string;
-	email: string;
-	kycLevel: number;
-	username: string;
-	phone: string;
-	hasPin: boolean;
-	manager: string | { [key: string]: any };
-	defaultBank: string;
-	photoUrl: string | null;
-	code: string;
+	suspensionDuration?: { [key: string]: any };
+	suspendWithdrawal?: boolean;
+	userType?: string;
+	hasPin?: boolean;
+	isActive?: boolean;
+	biometricLogin?: boolean;
+	verified?: boolean;
+	bvnVerified?: boolean;
+	suspended?: boolean;
+	suspensionReason?: string;
+	deleted?: boolean;
+	restricted?: boolean;
+	twoFactorAuth?: boolean;
+	isLoggedIn?: boolean;
+	role?: string;
+	suspendWalletTransactions?: boolean;
+	firstname?: string;
+	lastname?: string;
+	email?: string;
+	username?: string;
+	phone?: string;
+	createdAt?: string;
+	id?: string;
+	avatar?: string;
+	kycLevel?: string;
+	manager?: User;
+	defaultBank?: string;
+	photoUrl?: string | null;
+	no_of_referees?: number;
+	defaultPasswordChanged?: boolean;
 };
 
 export interface PinData {
@@ -462,31 +556,75 @@ export interface ElectricityToken {
 	transId: string;
 }
 
+export interface INetwork {
+	name?: string;
+	id?: string;
+	rate?: string;
+	number?: string;
+	ussd?: string;
+	isActive?: boolean;
+	createdAt?: Date;
+	no_of_dataTypes?: string;
+	no_of_plans?: string;
+}
+
+export interface DataType {
+	isActive?: boolean;
+	id?: string;
+	name?: string;
+	createdAt?: string;
+	no_of_plans?: number;
+	network?: INetwork | string;
+}
+
+export type IDataPlan = {
+	name?: string;
+	amount?: string | Amount;
+	code?: string;
+	isActive?: boolean;
+	id?: string;
+	type?: string;
+	network?: INetwork | string;
+	merchant_amount?: Amount | string;
+	data_unit?: string;
+	data_source?: string;
+	dataType?: DataType | string;
+};
+
 export interface Transaction {
 	id: string;
 	status:
 		| TransactionStatus.FAILED
 		| TransactionStatus.PENDING
 		| TransactionStatus.SUCCESSFUL;
-	plan: string;
+	type: string;
+	plan: string | IDataPlan;
+	dataType?: string | DataType;
+	data_unit: {
+		$numberDecimal: string;
+	};
 	service: string;
 	number: string;
 	createdBy: string;
+	phone_number?: string;
+	card_number?: string;
 	reference: string;
+	network?: string | NetworkData;
+	summary?: string;
 	user: User;
-	amount: string;
-	balanceBefore: string;
-	balanceAfter: string;
+	amount: string | Amount;
+	balanceBefore?: string | Amount;
+	balanceAfter?: string | Amount;
 	name: string;
-	type: string;
-	createdAt: string;
+	createdAt: Date;
+	updatedAt: Date;
 	pin_data?: PinData;
 	pin?: string;
 	pins?: EducationPin[];
 	transaction: {
 		id: string;
 		amount: Amount;
-		discount_code?: string | null;
+		discount_code?: string | Coupon;
 		balanceBefore: Amount;
 		balanceAfter: Amount;
 		type: string;
@@ -498,4 +636,118 @@ export interface Transaction {
 		updatedAt: string;
 	};
 	electricity_token?: ElectricityToken;
+	withdrawalChannel?: string;
+	accountNumber?: string;
+	paymentGateway?: string;
+	return_amount: Amount | string;
+	sentTo: string | User;
+	declinedBy: string | User;
+	declinedDate: Date;
+}
+
+export interface IReferral {
+	bonus: string;
+	user: User;
+	referredBy: User;
+	createdAt: string;
+	updatedAt: string;
+	id: string;
+}
+
+export interface Metadata {
+	total: number;
+	limit: number;
+	count: number;
+	skip: number;
+	page: number;
+	sort: string;
+}
+
+export interface DataResponse<T> {
+	success: boolean;
+	message: string;
+	metadata?: Metadata;
+	payload: T;
+}
+
+export interface Settings {
+	name?: string;
+	value?: string;
+	createdAt?: string;
+	updatedAt?: string;
+	id?: string;
+}
+
+export interface Notification {
+	subject?: string;
+	message?: string;
+	imageUrl?: string;
+	type?: string;
+	device?: string;
+	click_action?: string;
+	dispatchUserType?: string;
+	users?: string[];
+	code?: string;
+	createdAt?: string;
+	updatedAt?: string;
+	id?: string;
+}
+
+export interface AuditLog {
+	staff: string | User;
+	module: string;
+	action: string;
+	details: string;
+	createdAt: Date;
+	updatedAt: Date;
+	id: string;
+}
+
+export interface IApiLog {
+	reference: string;
+	user: string | User;
+	api_log: {
+		payment: boolean;
+		paymentRemark: string;
+		gateway: {
+			transactionReference: string;
+			paymentReference: string;
+			amountPaid: string;
+			totalPayable: string;
+			settlementAmount: string;
+			paidOn: string;
+			paymentStatus: string;
+			paymentDescription: string;
+			currency: string;
+			paymentMethod: string;
+			product: {
+				type: string;
+				reference: string;
+			};
+			cardDetails: {
+				cardType: string;
+				last4: string;
+				expMonth: string;
+				expYear: string;
+				bin: string;
+				bankCode: string;
+				bankName: string;
+				reusable: boolean;
+				countryCode: any;
+				cardToken: string;
+				supportsTokenization: boolean;
+				maskedPan: string;
+			};
+			accountDetails: any;
+			accountPayments: any[];
+			customer: {
+				email: string;
+				name: string;
+			};
+			metaData: {};
+		};
+	};
+	createdAt: string;
+	updatedAt: string;
+	id: string;
 }

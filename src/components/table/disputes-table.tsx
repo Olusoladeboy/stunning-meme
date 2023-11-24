@@ -11,8 +11,12 @@ import {
 	SUCCESS_COLOR,
 	BOX_SHADOW,
 	DANGER_COLOR,
-} from '../../utilities/constant';
-import FilterIcon from '../icons/filter';
+	extractUserName,
+	Ticket,
+	TicketStatus,
+	LINKS,
+	User,
+} from 'utilities';
 import {
 	StyledTableCell as TableCell,
 	StyledTableRow as TableRow,
@@ -20,17 +24,23 @@ import {
 import TableHeader from '../header/table-header';
 import Empty from '../empty';
 import Button from '../button';
-import { Ticket, TicketStatus } from '../../utilities/types';
 import TableLoader from '../loader/table-loader';
-import ErrorBoundary from '../../utilities/helpers/error-boundary';
-import LINKS from '../../utilities/links';
+import ErrorBoundary from 'utilities/helpers/error-boundary';
+import CustomTableCell from './components/custom-table-cell';
 
 interface Props {
 	data: Ticket[] | null;
 	isLoading?: boolean;
+	clearSearch?: () => void;
+	searchTicket?(value: string): void;
 }
 
-const DisputeTable = ({ data, isLoading }: Props) => {
+const DisputeTable = ({
+	data,
+	isLoading,
+	clearSearch,
+	searchTicket,
+}: Props) => {
 	const theme = useTheme();
 	const styles = useStyles(theme);
 	const navigate = useNavigate();
@@ -42,7 +52,12 @@ const DisputeTable = ({ data, isLoading }: Props) => {
 					style={styles.tableHeader as CSSProperties}
 					sx={{ padding: '0px 1rem' }}
 				>
-					<TableHeader title={'Dispute'} />
+					<TableHeader
+						title={'Dispute'}
+						placeholder={'Search Ticket by code...'}
+						clearSearch={clearSearch}
+						handleSearch={searchTicket}
+					/>
 				</Box>
 
 				<Table sx={{ overflow: 'auto' }}>
@@ -55,40 +70,12 @@ const DisputeTable = ({ data, isLoading }: Props) => {
 						}}
 					>
 						<TableRow>
-							<TableCell sx={{ paddingLeft: '30px' }}>Code</TableCell>
-							<TableCell>
-								<Box style={styles.filterWrapper}>
-									<Typography style={styles.tableHeaderText} variant={'body1'}>
-										Type
-									</Typography>
-									<FilterIcon />
-								</Box>
-							</TableCell>
-							<TableCell>
-								<Box style={styles.filterWrapper}>
-									<Typography style={styles.tableHeaderText} variant={'body1'}>
-										Subject
-									</Typography>
-									<FilterIcon />
-								</Box>
-							</TableCell>
-							<TableCell>
-								<Box style={styles.filterWrapper}>
-									<Typography style={styles.tableHeaderText} variant={'body1'}>
-										Status
-									</Typography>
-									<FilterIcon />
-								</Box>
-							</TableCell>
-							<TableCell>
-								<Box style={styles.filterWrapper}>
-									<Typography style={styles.tableHeaderText} variant={'body1'}>
-										Created at
-									</Typography>
-									<FilterIcon />
-								</Box>
-							</TableCell>
-							<TableCell>Action</TableCell>
+							<CustomTableCell label={'User'} />
+							<CustomTableCell label={'Code'} />
+							<CustomTableCell label={'Transaction'} />
+							<CustomTableCell label={'Status'} />
+							<CustomTableCell label={'Created At'} />
+							<CustomTableCell label={'Action'} />
 						</TableRow>
 					</TableHead>
 					<TableBody
@@ -104,21 +91,20 @@ const DisputeTable = ({ data, isLoading }: Props) => {
 							data && (
 								<>
 									{data.length > 0 ? (
-										data.map((row) => (
+										data.map((row: Ticket) => (
 											<TableRow key={row.id}>
-												<TableCell
-													sx={{ paddingLeft: '30px !important' }}
-													style={styles.tableText}
-												>
-													{row.code}
+												<TableCell>
+													{extractUserName(row.user as User)}
 												</TableCell>
-												<TableCell style={styles.tableText}>
-													{row.type}
+												<TableCell>{row.code}</TableCell>
+
+												<TableCell>
+													{row.related_transaction &&
+													typeof row.related_transaction === 'object'
+														? row.related_transaction.type
+														: 'No Specified transaction'}
 												</TableCell>
-												<TableCell style={styles.tableText}>
-													{row.subject}
-												</TableCell>
-												<TableCell style={styles.tableText}>
+												<TableCell>
 													<Box
 														sx={{
 															backgroundColor:
@@ -145,18 +131,18 @@ const DisputeTable = ({ data, isLoading }: Props) => {
 													</Box>
 												</TableCell>
 
-												<TableCell style={styles.tableText}>
+												<TableCell>
 													{moment.utc(row.createdAt).format('l')}
 												</TableCell>
 
 												<TableCell>
 													<Button
 														onClick={() =>
-															navigate(`${LINKS.Message}/${row.id}`)
+															navigate(`${LINKS.Dispute}/${row.id}`)
 														}
 														style={styles.viewDisputeBtn}
 													>
-														View dispute message
+														View dispute
 													</Button>
 												</TableCell>
 											</TableRow>

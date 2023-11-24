@@ -1,4 +1,5 @@
 import axios, { AxiosRequestConfig } from 'axios';
+import { Storage, StorageKeys } from '../utilities';
 
 const BASE_URL = process.env.REACT_APP_API_URI as string;
 const API_KEY = process.env.REACT_APP_API_KEY as string;
@@ -8,7 +9,7 @@ interface ConfigTypes extends AxiosRequestConfig {
 }
 
 const apiRequest = async (config?: ConfigTypes) => {
-	const token = config?.token || '';
+	const token = Storage.getItem(StorageKeys.UserToken) || '';
 
 	const res = await axios({
 		url: config?.url,

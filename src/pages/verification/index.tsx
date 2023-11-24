@@ -3,16 +3,16 @@ import { Box, useTheme } from '@mui/material';
 import { useNavigate, useLocation } from 'react-router-dom';
 import queryString from 'query-string';
 import { useQuery } from 'react-query';
-import { Layout, Pagination, VerificationTable } from '../../components';
-import { useAppSelector } from '../../store/hooks';
-import Api from '../../utilities/api';
-import { QueryKey } from '../../utilities/types';
-import { MAX_RECORDS } from '../../utilities/constant';
-import LINKS from '../../utilities/links';
-import { useAlert } from '../../utilities/hooks';
+import { Layout, Pagination, VerificationTable } from 'components';
+import { MAX_RECORDS, QueryKeys, LINKS } from 'utilities';
+import { useAppSelector } from 'store/hooks';
+import { users } from 'api';
+import { useSearchUser, useAlert, useHandleError, usePageTitle } from 'hooks';
 
 const Verification = () => {
+	usePageTitle('Verifications');
 	const { token } = useAppSelector((store) => store.authState);
+	const handleError = useHandleError();
 	const setAlert = useAlert();
 	const theme = useTheme();
 	const navigate = useNavigate();
@@ -22,6 +22,8 @@ const Verification = () => {
 	const location = useLocation();
 	const query = queryString.parse(location.search);
 
+	const { search, isSearching, searchUser, clearSearch } = useSearchUser();
+
 	useEffect(() => {
 		if (query && query.page) {
 			setPage(parseInt(query.page as string));
@@ -29,10 +31,9 @@ const Verification = () => {
 	}, [query, query.page]);
 
 	const { isLoading, data } = useQuery(
-		QueryKey.AllUsers,
+		[QueryKeys.Users, page],
 		() =>
-			Api.User.AllUsers({
-				token: token as string,
+			users({
 				params: {
 					sort: '-createdAt',
 					limit: MAX_RECORDS,
@@ -44,7 +45,9 @@ const Verification = () => {
 			enabled: !!token,
 			onSettled: (data, error) => {
 				if (error) {
-					setAlert({ data: error, type: 'error' });
+					const response = handleError({ error });
+					if (response?.message)
+						setAlert({ message: response.message, type: 'error' });
 				}
 				if (data && data.success) {
 					const total = data.metadata.total;
@@ -68,9 +71,14 @@ const Verification = () => {
 	return (
 		<Layout>
 			<Box>
-				<VerificationTable isLoading={isLoading} users={data && data.payload} />
+				<VerificationTable
+					clearSearch={clearSearch}
+					searchUser={searchUser}
+					isLoading={isLoading || isSearching}
+					users={search ? search : data && data.payload}
+				/>
 			</Box>
-			{total > MAX_RECORDS && (
+			{!search && total > MAX_RECORDS && (
 				<Pagination
 					sx={{
 						display: 'flex',

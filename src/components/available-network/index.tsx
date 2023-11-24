@@ -5,31 +5,40 @@ import { Box, useTheme, CircularProgress, Typography } from '@mui/material';
 import { grey } from '@mui/material/colors';
 import Button from '../button';
 import AvaliableNetworkItem from './available-network-item';
-import Api from '../../utilities/api';
-import { QueryKey, API_ENDPOINTS } from '../../utilities/types';
-import { useAppSelector } from '../../store/hooks';
-import LINKS from '../../utilities/links';
-import { useAlert } from '../../utilities/hooks';
+import { QueryKey, API_ENDPOINTS, LINKS } from 'utilities';
+import { useAppSelector } from 'store/hooks';
+import { useAlert, useHandleError } from 'hooks';
+import { networks } from 'api';
 
-const AvailableNetwork = () => {
+interface IAvailableNetwork {
+	type?: 'normal' | 'auto';
+}
+
+const AvailableNetwork: React.FC<IAvailableNetwork> = ({ type = 'normal' }) => {
 	const theme = useTheme();
+	const handleError = useHandleError();
 	const setAlert = useAlert();
 	const navigate = useNavigate();
 	const styles = useStyles(theme);
 	const { token } = useAppSelector((store) => store.authState);
 
 	const { isLoading, data } = useQuery(
-		QueryKey.ConvertNetwork,
+		[QueryKey.ConvertNetwork, type],
 		() =>
-			Api.Network.GetNetwork({
-				token: token || '',
-				url: API_ENDPOINTS.ConvertNetworks,
+			networks({
+				url:
+					type === 'normal'
+						? API_ENDPOINTS.ConvertNetworks
+						: API_ENDPOINTS.AutoConvertNetwork,
 			}),
 		{
 			enabled: !!token,
 			onSettled: (data, error) => {
 				if (error) {
-					setAlert({ data: error, type: 'error' });
+					const response = handleError({ error });
+					if (response?.message) {
+						setAlert({ message: response.message, type: 'error' });
+					}
 				}
 			},
 		}
@@ -37,7 +46,11 @@ const AvailableNetwork = () => {
 
 	const handleClick = () => {
 		if (data && data.payload.length > 0) {
-			navigate(LINKS.ConversionNetwork);
+			navigate(
+				type === 'normal'
+					? LINKS.ConversionNetwork
+					: LINKS.AutoConversionNetwork
+			);
 		} else {
 			console.log('Add network');
 		}

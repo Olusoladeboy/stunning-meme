@@ -1,102 +1,78 @@
 import React, { CSSProperties, useState } from 'react';
-import Table from '@mui/material/Table';
-import Box from '@mui/material/Box';
-import { Avatar, Typography, useTheme } from '@mui/material';
-import TableBody from '@mui/material/TableBody';
-import TableHead from '@mui/material/TableHead';
+import {
+	Table,
+	TableHead,
+	TableBody,
+	Avatar,
+	Typography,
+	useTheme,
+	Box,
+} from '@mui/material';
 import { grey } from '@mui/material/colors';
 import { AddCircle } from '@mui/icons-material';
 import moment from 'moment';
-import { SUCCESS_COLOR, BOX_SHADOW } from '../../utilities/constant';
+import { SUCCESS_COLOR, BOX_SHADOW, ManagerTypes, User } from 'utilities';
 import ModalWrapper from '../modal/Wrapper';
-import FilterIcon from '../icons/filter';
 import {
 	StyledTableCell as TableCell,
 	StyledTableRow as TableRow,
 } from './components';
 import Empty from '../empty';
-import Pagination from '../pagination';
 import Button from '../button';
-import { ManagerTypes, ManagerDetailsData } from '../../utilities/types';
-import AddManagerForm from '../forms/manager-admin-form';
+import ManagerForm from '../forms/manager-admin-form';
 import ManagerDetails from '../manager-details';
 import TableLoader from '../loader/table-loader';
 import ManagerTableHeader from '../header/manager-table-header';
-
-interface ManagerDetailsType extends ManagerDetailsData {
-	avatar: string;
-	createdAt: string;
-}
+import CustomTableCell from './components/custom-table-cell';
+import { useAppSelector } from 'store/hooks';
 
 type Props = {
-	managers: ManagerDetailsType[];
+	managers: User[] | null | undefined;
 	isLoading: boolean;
+	searchManager?: (value: string) => void;
+	clearSearch?: () => void;
 };
 
-const ManagersTable = ({ managers, isLoading }: Props) => {
-	const [managerType, setManagerType] = useState<ManagerTypes | null>(null);
-	const [formActionType, setFormActionType] = useState<'edit' | 'add' | ''>('');
-	const [selectedManager, setSelectedManager] =
-		useState<ManagerDetailsType | null>(null);
-	const [isViewManager, setViewManager] = useState<boolean>(false);
-	const [isEditManager, setEditManager] = useState<boolean>(false);
-
+const ManagersTable = ({
+	managers,
+	isLoading,
+	clearSearch,
+	searchManager,
+}: Props) => {
 	const theme = useTheme();
 	const styles = useStyles(theme);
+	const { canCreateOrUpdateRecord } = useAppSelector(
+		(store) => store.authState
+	);
 
-	const handleViewManager = (data: ManagerDetailsType) => {
+	const [selectedManager, setSelectedManager] = useState<User | null>(null);
+	const [isViewManager, setViewManager] = useState<boolean>(false);
+	const [isDisplayForm, setDisplayForm] = useState<boolean>(false);
+
+	const handleViewManager = (data: User) => {
 		setSelectedManager(data);
 		setViewManager(true);
 	};
 
-	const handleAddEditManager = ({
-		isEdit,
-		isAdd,
-		type,
-	}: {
-		isEdit?: boolean;
-		type?: ManagerTypes;
-		isAdd?: boolean;
-	}) => {
-		if (isEdit) {
-			setViewManager(false);
-			setEditManager(true);
-			setFormActionType('edit');
-		} else {
-			setEditManager(false);
-			// setFormActionType('');
-		}
-		if (isAdd) {
-			setViewManager(false);
-			setFormActionType('add');
-		} else {
-			// setFormActionType('');
-		}
-
-		type ? setManagerType(type) : setManagerType(null);
-	};
-
-	const onSuccess = () => {
-		setFormActionType('');
+	const closeModal = () => {
 		setSelectedManager(null);
-		setEditManager(false);
+		setDisplayForm(false);
 	};
 
 	return (
 		<>
-			{formActionType && (
+			{isDisplayForm && (
 				<ModalWrapper
 					hasCloseButton
-					closeModal={() => setFormActionType('')}
+					closeModal={closeModal}
 					title={
 						<Typography variant={'h5'} sx={{ textTransform: 'uppercase' }}>
-							{formActionType} {managerType}
+							{selectedManager ? 'Edit' : 'Create'} Manager
 						</Typography>
 					}
 				>
-					<AddManagerForm
-						onSuccess={() => onSuccess()}
-						isEdit={isEditManager}
+					<ManagerForm
+						callback={closeModal}
 						type={ManagerTypes.Manager}
 						managerDetails={selectedManager}
 					/>
@@ -105,12 +81,16 @@ const ManagersTable = ({ managers, isLoading }: Props) => {
 			{selectedManager && isViewManager && (
 				<ModalWrapper
 					hasCloseButton
-					closeModal={() => setSelectedManager(null)}
+					closeModal={closeModal}
 					title={'View manager'}
 				>
 					<ManagerDetails
-						handleEdit={() => handleAddEditManager({ isEdit: true })}
+						handleEdit={() => {
+							setViewManager(false);
+							setDisplayForm(true);
+						}}
 						managerDetail={selectedManager}
+						callback={closeModal}
 					/>
 				</ModalWrapper>
 			)}
@@ -119,28 +99,29 @@ const ManagersTable = ({ managers, isLoading }: Props) => {
 					style={styles.tableHeader as CSSProperties}
 					sx={{ padding: '0px 1rem' }}
 				>
-					<ManagerTableHeader title={'Managers'} />
-					<Box
-						sx={{
-							alignSelf: 'flex-end',
-							display: 'flex',
-							alignItems: 'center',
-							gap: theme.spacing(3),
-						}}
-					>
-						<Button
-							onClick={() =>
-								handleAddEditManager({
-									type: ManagerTypes.Manager,
-									isAdd: true,
-								})
-							}
-							startIcon={<AddCircle />}
-							style={styles.btnOutline as CSSProperties}
+					<ManagerTableHeader
+						handleSearch={searchManager}
+						clearSearch={clearSearch}
+						title={'Managers'}
+					/>
+					{canCreateOrUpdateRecord && (
+						<Box
+							sx={{
+								alignSelf: 'flex-end',
+								display: 'flex',
+								alignItems: 'center',
+								gap: theme.spacing(3),
+							}}
 						>
-							Add manager
-						</Button>
-					</Box>
+							<Button
+								onClick={() => setDisplayForm(true)}
+								startIcon={<AddCircle />}
+								style={styles.btnOutline as CSSProperties}
+							>
+								Add manager
+							</Button>
+						</Box>
+					)}
 				</Box>
 
 				<Table sx={{ overflow: 'auto' }}>
@@ -153,47 +134,11 @@ const ManagersTable = ({ managers, isLoading }: Props) => {
 						}}
 					>
 						<TableRow>
-							<TableCell />
-							<TableCell>
-								<Box style={styles.filterWrapper}>
-									<Typography style={styles.tableHeaderText} variant={'body1'}>
-										Name
-									</Typography>
-									<FilterIcon />
-								</Box>
-							</TableCell>
-							<TableCell>
-								<Box style={styles.filterWrapper}>
-									<Typography style={styles.tableHeaderText} variant={'body1'}>
-										Email
-									</Typography>
-									<FilterIcon />
-								</Box>
-							</TableCell>
-							<TableCell>
-								<Box style={styles.filterWrapper}>
-									<Typography style={styles.tableHeaderText} variant={'body1'}>
-										Phone no.
-									</Typography>
-									<FilterIcon />
-								</Box>
-							</TableCell>
-							<TableCell>
-								<Box style={styles.filterWrapper}>
-									<Typography style={styles.tableHeaderText} variant={'body1'}>
-										Date
-									</Typography>
-									<FilterIcon />
-								</Box>
-							</TableCell>
-							<TableCell>
-								<Box style={styles.filterWrapper}>
-									<Typography style={styles.tableHeaderText} variant={'body1'}>
-										User
-									</Typography>
-									<FilterIcon />
-								</Box>
-							</TableCell>
+							<CustomTableCell label={'Name'} isSortable />
+							<CustomTableCell label={'Email'} isSortable />
+							<CustomTableCell label={'Phone'} isSortable />
+							<CustomTableCell label={'Date'} isSortable />
+							<CustomTableCell label={'User'} />
 						</TableRow>
 					</TableHead>
 					<TableBody
@@ -204,35 +149,55 @@ const ManagersTable = ({ managers, isLoading }: Props) => {
 						}}
 					>
 						{isLoading ? (
-							<TableLoader colSpan={6} />
-						) : managers && managers.length > 0 ? (
-							managers.map((data, key) => (
-								<TableRow onClick={() => handleViewManager(data)} key={key}>
-									<TableCell sx={{ maxWidth: '60px' }}>
-										<Avatar src={data.avatar} />
-									</TableCell>
-									<TableCell
-										style={styles.tableText}
-									>{`${data.firstname} ${data.lastname}`}</TableCell>
-									<TableCell style={styles.tableText}>{data.email}</TableCell>
-									<TableCell style={styles.tableText}>{data.phone}</TableCell>
-									<TableCell style={styles.tableText}>
-										{moment.utc(data.createdAt).format('l')}
-									</TableCell>
-
-									<TableCell style={styles.tableText}>{0}</TableCell>
-								</TableRow>
-							))
+							<TableLoader colSpan={5} />
 						) : (
-							<TableRow>
-								<TableCell colSpan={6}>
-									<Empty text={'No users'} />
-								</TableCell>
-							</TableRow>
+							managers && (
+								<>
+									{managers.length > 0 ? (
+										managers.map((data: User) => (
+											<TableRow
+												onClick={() => handleViewManager(data)}
+												key={data.id}
+											>
+												<TableCell style={styles.tableText}>
+													<Box
+														sx={{
+															display: 'flex',
+															gap: '15px',
+															alignItems: 'center',
+														}}
+													>
+														<Avatar src={data.photoUrl as string} />
+														<span>{`${data.firstname} ${data.lastname}`}</span>
+													</Box>
+												</TableCell>
+												<TableCell style={styles.tableText}>
+													{data.email}
+												</TableCell>
+												<TableCell style={styles.tableText}>
+													{data.phone}
+												</TableCell>
+
+												<TableCell style={styles.tableText}>
+													{moment.utc(data.createdAt).format('l')}
+												</TableCell>
+
+												<TableCell style={styles.tableText}>{0}</TableCell>
+											</TableRow>
+										))
+									) : (
+										<TableRow>
+											<TableCell colSpan={5}>
+												<Empty text={'No Manager(s)'} />
+											</TableCell>
+										</TableRow>
+									)}
+								</>
+							)
 						)}
 					</TableBody>
 				</Table>
-				<Pagination
+				{/* 	<Pagination
 					sx={{
 						display: 'flex',
 						justifyContent: 'flex-end',
@@ -242,7 +207,7 @@ const ManagersTable = ({ managers, isLoading }: Props) => {
 					size={'large'}
 					shape={'rounded'}
 					variant={'outlined'}
-				/>
+				/> */}
 			</Box>
 		</>
 	);
@@ -253,7 +218,7 @@ const useStyles = (theme: any) => ({
 		display: 'grid',
 		gridTemplateColumn: '1fr',
 		gap: theme.spacing(4),
-		border: `1px solid ${theme.palette.secondary.main}`,
+		border: `0.5px solid ${theme.palette.secondary.main}`,
 		padding: '1.5rem 0px',
 		backgroundColor: grey[50],
 		borderRadius: theme.spacing(2),

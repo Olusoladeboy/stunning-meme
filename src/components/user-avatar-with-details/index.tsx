@@ -1,14 +1,14 @@
 import React, { CSSProperties } from 'react';
 import { Box, Avatar, Typography, useTheme } from '@mui/material';
-import { ManagerDetailsData, UserDetails } from '../../utilities/types';
+import { ManagerDetailsData, User } from 'utilities/types';
 
 interface ManagerDetails extends ManagerDetailsData {
-	role?: string;
+	// role?: string;
 	verifiedStatus?: boolean;
 }
 
 type Props = {
-	user: UserDetails | null;
+	user: User | null;
 	userType?: 'user' | 'manager';
 };
 
@@ -20,7 +20,7 @@ const UserAvatarWithDetails = ({ user, userType = 'user' }: Props) => {
 			<Avatar src={(user && user.avatar) || ''} style={styles.avatar} />
 			<Box style={styles.detailsWrapper as CSSProperties}>
 				<Typography style={styles.nameText} variant={'body1'}>
-					{user && `${user.firstname} ${user.lastname}`}
+					{user && `${user?.firstname || ''} ${user?.lastname || ''}`}
 				</Typography>
 				<Typography style={styles.text} variant={'body1'}>
 					{user && user.email}

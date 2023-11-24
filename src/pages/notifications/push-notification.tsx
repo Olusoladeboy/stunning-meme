@@ -6,11 +6,13 @@ import {
 	PushNotificationForm,
 	ImagePreview,
 	UploadImage,
-} from '../../components';
-import { BOX_SHADOW } from '../../utilities/constant';
-import BackButton from '../../components/back-button';
+} from 'components';
+import { BOX_SHADOW } from 'utilities/constant';
+import BackButton from 'components/back-button';
+import { usePageTitle } from 'hooks';
 
 const PushNotification = () => {
+	usePageTitle('Push Notification');
 	const theme = useTheme();
 	const styles = useStyles(theme);
 	const [file, setFile] = useState<any | null>(null);

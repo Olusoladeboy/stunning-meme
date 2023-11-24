@@ -8,44 +8,74 @@ import {
 	Typography,
 	Avatar,
 } from '@mui/material';
-import Image from '../image';
-import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import { setToggleDrawer } from '../../store/app';
+import { Menu } from '@mui/icons-material';
+import { useAppDispatch, useAppSelector } from 'store/hooks';
+import { setToggleDrawer, setToggleMobileDrawer } from 'store/app';
 import { grey } from '@mui/material/colors';
+import Timer from '../timer';
 
 const Header = () => {
 	const theme = useTheme();
 	const styles = useStyles(theme);
 	const dispatch = useAppDispatch();
-	const { isToggleDrawer } = useAppSelector((store) => store.appState);
+	const {
+		appState: { isToggleDrawer },
+		authState: { user },
+	} = useAppSelector((store) => store);
 	return (
 		<AppBar position={'sticky'} style={styles.appBar}>
 			<Toolbar style={styles.toolbar}>
 				<IconButton
+					sx={{
+						color: 'white',
+						display: {
+							xs: 'none',
+							md: 'block',
+						},
+					}}
 					size={'large'}
 					onClick={() => dispatch(setToggleDrawer(!isToggleDrawer))}
 				>
-					<Image
-						style={styles.appMenu}
+					<Menu />
+				</IconButton>
+				<IconButton
+					sx={{
+						color: 'white',
+						display: {
+							md: 'none',
+						},
+					}}
+					size={'large'}
+					onClick={() => dispatch(setToggleMobileDrawer(true))}
+				>
+					<Menu />
+				</IconButton>
+				<Box
+					sx={{
+						display: 'flex',
+						alignItems: 'center',
+						gap: '3rem',
+					}}
+				>
+					<Timer
 						sx={{
-							img: {
-								width: '100%',
-								display: 'block',
+							display: {
+								xs: 'none',
+								md: 'block',
 							},
 						}}
-						src={require('../../assets/icons/menu.png')}
 					/>
-				</IconButton>
-				<Box style={styles.avatarUserNameWrapper}>
-					<Box>
-						<Typography style={styles.userName} variant={'body1'}>
-							user name
-						</Typography>
-						<Typography style={styles.roleText} variant={'body2'}>
-							role
-						</Typography>
+					<Box style={styles.avatarUserNameWrapper}>
+						<Box>
+							<Typography style={styles.userName} variant={'body1'}>
+								{user && `${user.firstname} ${user.lastname}`}
+							</Typography>
+							<Typography style={styles.roleText} variant={'body2'}>
+								{user && user.role && `${user.role.replace(/_/gi, ' ')}`}
+							</Typography>
+						</Box>
+						<Avatar />
 					</Box>
-					<Avatar />
 				</Box>
 			</Toolbar>
 		</AppBar>
@@ -67,6 +97,7 @@ const useStyles = (theme: any) => ({
 		display: 'flex',
 		alignItems: 'center',
 		justifyContent: 'space-between',
+		color: 'white',
 	},
 	avatarUserNameWrapper: {
 		display: 'flex',

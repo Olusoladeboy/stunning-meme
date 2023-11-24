@@ -16,46 +16,66 @@ import {
 	ModalLayout,
 	AssignManagerForm,
 	Button,
-} from '../../components';
-import { BOX_SHADOW } from '../../utilities/constant';
-import LINKS from '../../utilities/links';
-import { UserNavList, QueryKey, UserDetails } from '../../utilities/types';
-import Api from '../../utilities/api';
-import { useAppSelector } from '../../store/hooks';
-import ErrorBoundary from '../../utilities/helpers/error-boundary';
-
-interface User extends UserDetails {
-	manager: any;
-}
+} from 'components';
+import { BOX_SHADOW, LINKS, UserNavList, QueryKeys, User } from 'utilities';
+import { useAppSelector } from 'store/hooks';
+import ErrorBoundary from 'utilities/helpers/error-boundary';
+import { useHandleError, useAlert, usePageTitle } from 'hooks';
+import { users } from 'api';
 
 const Profile = () => {
 	const theme = useTheme();
+	const alert = useAlert();
+	const handleError = useHandleError();
 	const styles = useStyles(theme);
 	const { id } = useParams();
+	const location = useLocation();
 	const { token } = useAppSelector((store) => store.authState);
-	const [userDetails, setUserDetails] = useState<null | User>(null);
+	const [user, setUser] = useState<null | User>(null);
 	const [isDisplayModal, setDisplayModal] = useState<boolean>(false);
 
-	const location = useLocation();
 	const navigate = useNavigate();
 
-	const { tab } = queryString.parse(location.search);
+	const query = queryString.parse(location.search);
+
+	const link = (tab: string) => {
+		const deleted = query._deleted;
+		let defaultLink = `${LINKS.Users}/${id}`;
+
+		if (tab) defaultLink = `${LINKS.Users}/${id}?tab=${tab}`;
+
+		if (deleted)
+			defaultLink = tab
+				? `${LINKS.Users}/${id}?tab=${tab}&_deleted=true`
+				: `${LINKS.Users}/${id}?_deleted=true`;
+
+		return defaultLink;
+
+		// return `${LINKS.Users}/${id}?tab=${tab}`;
+	};
+
+	const { tab, _deleted } = queryString.parse(location.search);
 	const [currentTab, setCurrentTab] = useState<string>(UserNavList.Profile);
 
 	const handleChangeTab = (value: string) => {
 		switch (value) {
 			case UserNavList.Status:
-				return navigate(`${LINKS.User}/${id}?tab=${UserNavList.Status}`);
+				return navigate(link(UserNavList.Status));
 
 			case UserNavList.Transaction:
-				return navigate(`${LINKS.User}/${id}?tab=${UserNavList.Transaction}`);
+				return navigate(link(UserNavList.Transaction));
+			// return navigate(`${LINKS.Users}/${id}?tab=${UserNavList.Transaction}`);
 			case UserNavList.WalletSummary:
-				return navigate(`${LINKS.User}/${id}?tab=${UserNavList.WalletSummary}`);
+				return navigate(link(UserNavList.WalletSummary));
+			// return navigate(
+			// 	`${LINKS.Users}/${id}?tab=${UserNavList.WalletSummary}`
+			// );
 			case UserNavList.Manager:
-				return navigate(`${LINKS.User}/${id}?tab=${UserNavList.Manager}`);
+				return navigate(link(UserNavList.Manager));
+			// return navigate(`${LINKS.Users}/${id}?tab=${UserNavList.Manager}`);
 
 			default:
-				navigate(`${LINKS.User}/${id}`);
+				navigate(`${LINKS.Users}/${id}`);
 		}
 		setCurrentTab(value);
 	};
@@ -80,17 +100,25 @@ const Profile = () => {
 	}, [tab]);
 
 	const { isLoading, data } = useQuery(
-		QueryKey.GetSingleUser,
+		[QueryKeys.User, id],
 		() =>
-			Api.User.GetUserById({
-				token: token || '',
-				id: id || '',
+			users({
+				params: {
+					_id: id,
+					populate: 'manager',
+					deleted: _deleted,
+				},
 			}),
 		{
 			enabled: !!(token && id),
 			onSettled: (data, error) => {
+				if (error) {
+					const response = handleError({ error });
+					if (response?.message)
+						alert({ message: response.message, type: 'error' });
+				}
 				if (data && data.success) {
-					setUserDetails(data.payload[0]);
+					setUser(data.payload[0]);
 				}
 			},
 		}
@@ -104,10 +132,7 @@ const Profile = () => {
 					hasCloseButton
 					closeModal={() => setDisplayModal(false)}
 				>
-					<AssignManagerForm
-						close={() => setDisplayModal(false)}
-						userDetails={userDetails}
-					/>
+					<AssignManagerForm close={() => setDisplayModal(false)} User={user} />
 				</ModalLayout>
 			)}
 			<Layout>
@@ -181,10 +206,10 @@ const Profile = () => {
 									sx={{ padding: { xs: '0px 1rem', md: '0px 2rem' } }}
 									hidden={currentTab !== UserNavList.Manager}
 								>
-									{userDetails && userDetails.manager ? (
+									{user && user.manager ? (
 										<UserManagerInfo
 											changeManager={() => setDisplayModal(true)}
-											manager={userDetails.manager}
+											manager={user.manager}
 										/>
 									) : (
 										<Box>

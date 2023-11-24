@@ -3,15 +3,15 @@ import { Box } from '@mui/material';
 import { useNavigate, useLocation } from 'react-router-dom';
 import queryString from 'query-string';
 import { useQuery } from 'react-query';
-import { Layout, Pagination, SuspensionTable } from '../../components';
-import { useAppSelector } from '../../store/hooks';
-import Api from '../../utilities/api';
-import { QueryKey } from '../../utilities/types';
-import { MAX_RECORDS } from '../../utilities/constant';
-import LINKS from '../../utilities/links';
-import { useAlert } from '../../utilities/hooks';
+import { Layout, Pagination, SuspensionTable } from 'components';
+import { useAppSelector } from 'store/hooks';
+import { MAX_RECORDS, QueryKeys, LINKS } from 'utilities';
+import { useAlert, useHandleError, usePageTitle } from 'hooks';
+import { users } from 'api';
 
 const Suspension = () => {
+	usePageTitle('Suspension');
+	const handleError = useHandleError();
 	const { token } = useAppSelector((store) => store.authState);
 	const setAlert = useAlert();
 	const navigate = useNavigate();
@@ -28,10 +28,9 @@ const Suspension = () => {
 	}, [query, query.page]);
 
 	const { isLoading, data } = useQuery(
-		[QueryKey.AllUsers, 'suspension'],
+		[QueryKeys.SuspendUser, 'suspension'],
 		() =>
-			Api.User.AllUsers({
-				token: token as string,
+			users({
 				params: {
 					sort: '-createdAt',
 					limit: MAX_RECORDS,
@@ -43,7 +42,10 @@ const Suspension = () => {
 			enabled: !!token,
 			onSettled: (data, error) => {
 				if (error) {
-					setAlert({ data: error, type: 'error' });
+					const response = handleError({ error });
+
+					if (response?.message)
+						setAlert({ message: response.message, type: 'error' });
 				}
 				if (data && data.success) {
 					const total = data.metadata.total;

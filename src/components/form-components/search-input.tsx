@@ -5,17 +5,20 @@ import {
 	IconButton,
 	BoxProps,
 	Box,
+	CircularProgress,
 } from '@mui/material';
-import { Search } from '@mui/icons-material';
-import { useAppSelector } from '../../store/hooks';
-import { ThemeModeType } from '../../utilities/types';
-import { grey } from '@mui/material/colors';
+import { Search, Close } from '@mui/icons-material';
+import { useAppSelector } from 'store/hooks';
+import { ThemeModeType } from 'utilities';
+import { grey, red } from '@mui/material/colors';
 
 interface Props extends BoxProps {
 	isLoading?: boolean;
 	handleSearch?: (value: string) => void;
 	placeholder?: string;
 	fullWidth?: boolean;
+	clearSearch?: () => void;
+	borderRadius?: string;
 }
 
 const SearchInput = ({
@@ -23,14 +26,21 @@ const SearchInput = ({
 	handleSearch,
 	fullWidth,
 	placeholder,
+	clearSearch,
+	borderRadius = '15px',
 	...rest
 }: Props) => {
 	const { mode } = useAppSelector((store) => store.theme);
 	const [value, setValue] = useState('');
+	const handleClose = () => {
+		setValue('');
+		typeof clearSearch !== 'undefined' && clearSearch();
+	};
 	return (
 		<Box {...rest} sx={{ ...rest.sx, width: fullWidth ? '100%' : 'undefined' }}>
 			<TextField
 				// {...rest.style}
+				// size='small'
 				fullWidth={fullWidth}
 				placeholder={placeholder}
 				sx={{
@@ -38,7 +48,7 @@ const SearchInput = ({
 
 					'& .MuiOutlinedInput-root': {
 						paddingRight: '0px',
-						borderRadius: '15px',
+						borderRadius,
 					},
 					'& .MuiOutlinedInput-notchedOutline': {
 						borderColor: mode === ThemeModeType.dark ? grey[500] : 'initial',
@@ -50,16 +60,33 @@ const SearchInput = ({
 				InputProps={{
 					endAdornment: (
 						<InputAdornment position='start'>
-							<IconButton
-								onClick={() =>
-									typeof handleSearch !== 'undefined' &&
-									value.length > 0 &&
-									handleSearch(value)
-								}
-								size={'small'}
-							>
-								<Search />
-							</IconButton>
+							{isLoading ? (
+								<CircularProgress size={16} />
+							) : (
+								<Box sx={{ display: 'flex', alignItems: 'center', gap: '3px' }}>
+									{value && (
+										<IconButton
+											sx={{
+												color: red['600'],
+											}}
+											onClick={handleClose}
+											size={'small'}
+										>
+											<Close />
+										</IconButton>
+									)}
+									<IconButton
+										onClick={() =>
+											typeof handleSearch !== 'undefined' &&
+											value.length > 0 &&
+											handleSearch(value)
+										}
+										size={'small'}
+									>
+										<Search />
+									</IconButton>
+								</Box>
+							)}
 						</InputAdornment>
 					),
 				}}

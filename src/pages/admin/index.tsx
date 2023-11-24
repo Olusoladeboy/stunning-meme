@@ -1,23 +1,31 @@
 import React from 'react';
-import { Box } from '@mui/material';
 import { useQuery } from 'react-query';
-import { Layout, AdminUserTable } from '../../components';
-import { useAppSelector } from '../../store/hooks';
-import { QueryKey } from '../../utilities/types';
-import Api from '../../utilities/api';
-import { useAlert } from '../../utilities/hooks';
+import { Layout, AdminUserTable, Seo } from 'components';
+import { useAppSelector } from 'store/hooks';
+import { QueryKeys } from 'utilities';
+import { useAlert, useHandleError, usePageTitle } from 'hooks';
+import { staffs } from 'api';
 
 const Admin = () => {
 	const setAlert = useAlert();
+	const handleError = useHandleError();
+	usePageTitle('Admin');
+
 	const { token } = useAppSelector((store) => store.authState);
 	const { data, isLoading } = useQuery(
-		QueryKey.AllStaff,
-		() => Api.Staff.RetrieveAll(token as string),
+		QueryKeys.Staffs,
+		() =>
+			staffs({
+				sort: '-createdAt',
+				deleted: false,
+			}),
 		{
 			enabled: !!token,
 			onSettled: (data, error) => {
 				if (error) {
-					setAlert({ data: error, type: 'error' });
+					const response = handleError({ error });
+					if (response?.message)
+						setAlert({ message: response.message, type: 'error' });
 				}
 			},
 		}
@@ -25,9 +33,7 @@ const Admin = () => {
 
 	return (
 		<Layout>
-			<Box>
-				<AdminUserTable isLoading={isLoading} managers={data && data.payload} />
-			</Box>
+			<AdminUserTable isLoading={isLoading} managers={data && data.payload} />
 		</Layout>
 	);
 };

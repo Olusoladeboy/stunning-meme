@@ -10,18 +10,27 @@ import {
 	ConversionTotal,
 	AvailableNetwork,
 	Pagination,
-} from '../../components';
-import { BOX_SHADOW } from '../../utilities/constant';
-import Api from '../../utilities/api';
-import { QueryKey } from '../../utilities/types';
-import { useAppSelector } from '../../store/hooks';
-import { MAX_RECORDS } from '../../utilities/constant';
-import LINKS from '../../utilities/links';
-import { useAlert } from '../../utilities/hooks';
-import ErrorBoundary from '../../utilities/helpers/error-boundary';
+} from 'components';
+import {
+	BOX_SHADOW,
+	QueryKeys,
+	MAX_RECORDS,
+	LINKS,
+	ErrorBoundary,
+} from 'utilities';
+import { useAppSelector } from 'store/hooks';
+import {
+	useAlert,
+	useHandleError,
+	usePageTitle,
+	useSearchConversion,
+} from 'hooks';
+import { convertAirtimes } from 'api';
 
 const Conversions = () => {
 	const theme = useTheme();
+	usePageTitle('Conversions');
+	const handleError = useHandleError();
 	const setAlert = useAlert();
 	const styles = useStyles(theme);
 	const [isReload, setReload] = useState<boolean>(false);
@@ -31,15 +40,15 @@ const Conversions = () => {
 	const [count, setCount] = useState<number>(1);
 	const [page, setPage] = useState<number>(1);
 	const [total, setTotal] = useState<number>(0);
-	const [search, setSearch] = useState('');
+
 	const location = useLocation();
 	const query = queryString.parse(location.search);
-	const { token } = useAppSelector((store) => store.authState);
+	const { token, canViewStatistics } = useAppSelector(
+		(store) => store.authState
+	);
 
-	useEffect(() => {
-		if (search.length === 0) {
-		}
-	});
+	const { isSearching, search, clearSearch, searchConversion } =
+		useSearchConversion();
 
 	useEffect(() => {
 		if (query && query.page) {
@@ -57,21 +66,22 @@ const Conversions = () => {
 		sort,
 	};
 
-	const { isLoading, data } = useQuery(
-		[QueryKey.ConvertAirtime, page],
+	const { isLoading, data, refetch } = useQuery(
+		[QueryKeys.ConvertAirtime, page],
 		() =>
-			Api.ConvertAirtime.Records({
-				token: token as string,
-				params: search ? { ...params, q: search } : params,
+			convertAirtimes({
+				params,
 			}),
 		{
-			enabled: !!(token && isReload),
+			enabled: !!(token || isReload),
 			keepPreviousData: true,
 			onSettled: (data, error) => {
 				setReload(false);
 				setReloading(false);
 				if (error) {
-					setAlert({ data: error, type: 'error' });
+					const response = handleError({ error });
+					if (response?.message)
+						setAlert({ message: response.message, type: 'error' });
 				}
 
 				if (data && data.success) {
@@ -102,50 +112,60 @@ const Conversions = () => {
 		}
 	};
 
-	const handleSearch = (search: string) => {
-		setSearch(search);
-		setReload(true);
-	};
-
 	return (
 		<Layout>
 			<Box style={styles.container}>
-				<Box sx={{ padding: '0px 2rem' }}>
-					<Typography sx={{ marginBottom: theme.spacing(2) }} variant={'h5'}>
+				<Box
+					sx={{
+						padding: { xs: '0px 15px', md: '0px 2rem' },
+						marginBottom: '2rem',
+					}}
+				>
+					<Typography
+						sx={{ marginBottom: theme.spacing(4), fontWeight: 'bold' }}
+						variant={'h5'}
+					>
 						Conversions
 					</Typography>
-					<Box
-						sx={{
-							display: 'grid',
-							gridTemplateColumns: {
-								xs: '1fr',
-								md: 'repeat(2, 1fr)',
-							},
-							gap: theme.spacing(5),
-						}}
-					>
-						<ConversionTotal
-							handleRefresh={() => {
-								setSearch('');
-								setReload(true);
-								setReloading(true);
+					{canViewStatistics && (
+						<Box
+							sx={{
+								display: 'grid',
+								gridTemplateColumns: {
+									xs: '1fr',
+									lg: 'repeat(2, 1fr)',
+								},
+								gap: {
+									xs: theme.spacing(3),
+									lg: theme.spacing(5),
+								},
 							}}
-							total={data && data.metadata.total}
-						/>
-						<AvailableNetwork />
-					</Box>
+						>
+							<ConversionTotal
+								handleRefresh={() => {
+									// setReload(true);
+									setReloading(true);
+									refetch();
+								}}
+								total={data && data.metadata.total}
+							/>
+							<AvailableNetwork />
+						</Box>
+					)}
 				</Box>
 				<ErrorBoundary>
 					<ConversionsTable
-						isLoading={isLoading || isReloading}
-						conversions={data && data.payload}
+						isDisplaySearchField
+						isLoading={isLoading || isReloading || isSearching}
+						conversions={search ? search : data && data.payload}
 						handleSort={handleSort}
-						handleSearch={handleSearch}
+						handleSearch={searchConversion}
+						clearSearch={clearSearch}
 					/>
 
-					{total > MAX_RECORDS && !isReloading && (
+					{!search && total > MAX_RECORDS && !isReloading && (
 						<Pagination
-							sx={{ marginLeft: '20px' }}
+							sx={{ marginTop: '2rem', marginLeft: ['15px', '30px'] }}
 							size={'large'}
 							variant={'outlined'}
 							shape={'rounded'}
@@ -162,10 +182,7 @@ const Conversions = () => {
 
 const useStyles = (theme: any) => ({
 	container: {
-		display: 'grid',
-		gridTemplateColumn: '1fr',
-		gap: theme.spacing(4),
-		border: `1px solid ${theme.palette.secondary.main}`,
+		border: `0.5px solid ${theme.palette.secondary.main}`,
 		padding: '1.5rem 0px',
 		backgroundColor: grey[50],
 		borderRadius: theme.spacing(2),

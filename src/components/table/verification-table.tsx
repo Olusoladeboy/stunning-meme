@@ -2,17 +2,17 @@ import React, { CSSProperties, useState } from 'react';
 import Table from '@mui/material/Table';
 import { useQuery, useQueryClient } from 'react-query';
 import { useNavigate } from 'react-router-dom';
-import Box from '@mui/material/Box';
-import { Avatar, Typography, useTheme } from '@mui/material';
-import TableBody from '@mui/material/TableBody';
-import TableHead from '@mui/material/TableHead';
+import { Avatar, useTheme, TableBody, TableHead, Box } from '@mui/material';
 import { grey } from '@mui/material/colors';
 import {
 	SUCCESS_COLOR,
 	BOX_SHADOW,
 	DANGER_COLOR,
-} from '../../utilities/constant';
-import FilterIcon from '../icons/filter';
+	LINKS,
+	User,
+	QueryKeys,
+	ErrorBoundaryGuard,
+} from 'utilities';
 import {
 	StyledTableCell as TableCell,
 	StyledTableRow as TableRow,
@@ -21,49 +21,54 @@ import TableHeader from '../header/table-header';
 import Empty from '../empty';
 import Button from '../button';
 import CustomButton from '../button/custom-button';
-import LINKS from '../../utilities/links';
 import Loader from '../loader/table-loader';
-import { UserDetails, QueryKey } from '../../utilities/types';
-import { useAlert } from '../../utilities/hooks';
-import { useAppSelector } from '../../store/hooks';
-import Api from '../../utilities/api';
+import { useAlert, useHandleError } from 'hooks';
+import { useAppSelector } from 'store/hooks';
+import { verifyUser } from 'api';
+import CustomTableCell from './components/custom-table-cell';
 
 type Props = {
-	users: UserDetails[] | null;
+	users: User[] | null;
 	isLoading?: boolean;
+	clearSearch?(): void;
+	searchUser?(value: string): void;
 };
 
-const VerificationTable = ({ users, isLoading }: Props) => {
+const VerificationTable = ({
+	users,
+	isLoading,
+	searchUser,
+	clearSearch,
+}: Props) => {
 	const navigate = useNavigate();
-
+	const handleError = useHandleError();
 	const theme = useTheme();
 	const styles = useStyles(theme);
 
 	const queryClient = useQueryClient();
 	const setAlert = useAlert();
 	const { token } = useAppSelector((store) => store.authState);
-	const [selectedUser, setSelectUser] = useState<null | UserDetails>(null);
+	const [selectedUser, setSelectUser] = useState<null | User>(null);
 
 	const { isLoading: isVerifyingUser } = useQuery(
 		'',
-		() =>
-			Api.User.VerifyUser({
-				token: token as string,
-				id: selectedUser?.id as string,
-			}),
+		() => verifyUser(selectedUser?.id as string),
 		{
 			enabled: !!(token && selectedUser),
 			onSettled: (data, error) => {
 				setSelectUser(null);
 				if (error) {
-					setAlert({ data: error, isError: true });
+					const response = handleError({ error });
+					if (response?.message) {
+						setAlert({ message: response?.message, type: 'error' });
+					}
 				}
 
 				if (data && data.success) {
-					setAlert({ data: data.message, type: 'success' });
-					queryClient.invalidateQueries(QueryKey.AllUsers);
-					queryClient.invalidateQueries(QueryKey.GetSingleUser);
-					queryClient.invalidateQueries(QueryKey.Statistics);
+					setAlert({ message: data.message, type: 'success' });
+					queryClient.invalidateQueries(QueryKeys.Users);
+					queryClient.invalidateQueries(QueryKeys.User);
+					queryClient.invalidateQueries(QueryKeys.Statistics);
 				}
 			},
 		}
@@ -76,7 +81,12 @@ const VerificationTable = ({ users, isLoading }: Props) => {
 					style={styles.tableHeader as CSSProperties}
 					sx={{ padding: '0px 1rem' }}
 				>
-					<TableHeader title={'Verification'} />
+					<TableHeader
+						title={'Verification'}
+						placeholder={'Search User by Email'}
+						clearSearch={clearSearch}
+						handleSearch={searchUser}
+					/>
 					<Box
 						sx={{
 							alignSelf: 'flex-end',
@@ -104,109 +114,100 @@ const VerificationTable = ({ users, isLoading }: Props) => {
 						}}
 					>
 						<TableRow>
-							<TableCell />
-							<TableCell>
-								<Box style={styles.filterWrapper}>
-									<Typography variant={'body1'}> Name</Typography>
-									<FilterIcon />
-								</Box>
-							</TableCell>
-							<TableCell>
-								<Box style={styles.filterWrapper}>
-									<Typography variant={'body1'}>Email</Typography>
-									<FilterIcon />
-								</Box>
-							</TableCell>
-							<TableCell>
-								<Box style={styles.filterWrapper}>
-									<Typography variant={'body1'}>Tier level</Typography>
-									<FilterIcon />
-								</Box>
-							</TableCell>
-							<TableCell>
-								<Box style={styles.filterWrapper}>
-									<Typography variant={'body1'}>Status</Typography>
-									<FilterIcon />
-								</Box>
-							</TableCell>
-							<TableCell>Action</TableCell>
+							<CustomTableCell label={'Name'} />
+							<CustomTableCell label={'Email'} />
+							<CustomTableCell label={'Tier Level'} />
+							<CustomTableCell label={'Status'} />
+							<CustomTableCell label={'Action'} />
 						</TableRow>
 					</TableHead>
-					<TableBody
-						sx={{
-							'& tr': {
-								color: theme.palette.primary.main,
-							},
-						}}
-					>
-						{isLoading ? (
-							<Loader colSpan={6} />
-						) : (
-							users && (
-								<>
-									{users.length > 0 ? (
-										users.map((row, key) => (
-											<TableRow key={key}>
-												<TableCell sx={{ maxWidth: '60px' }}>
-													<Avatar src={row.avatar} />
-												</TableCell>
-												<TableCell style={styles.tableText}>
-													{row.firstname} {row.lastname}
-												</TableCell>
-												<TableCell style={styles.tableText}>
-													{row.email}
-												</TableCell>
-												<TableCell style={styles.tableText}>
-													{row.kycLevel}
-												</TableCell>
-												<TableCell
-													style={{
-														...styles.tableText,
-														color: row.verified ? SUCCESS_COLOR : DANGER_COLOR,
-													}}
-												>
-													{row.verified ? 'Verified' : 'Not Verified'}
-												</TableCell>
-												<TableCell sx={{ maxWidth: '180px' }}>
-													<Box style={styles.verifyPushWrapper}>
-														{!row.verified && (
-															<CustomButton
-																loading={
-																	selectedUser &&
-																	selectedUser.id === row.id &&
-																	isVerifyingUser
-																		? true
-																		: false
-																}
-																onClick={() => setSelectUser(row)}
-																style={styles.verifyBtn as CSSProperties}
-																size={'small'}
-															>
-																Verify user
-															</CustomButton>
-														)}
-														<Button
-															onClick={() => navigate(LINKS.PushNotification)}
-															size={'small'}
-															style={styles.pushBtn as CSSProperties}
+					<ErrorBoundaryGuard>
+						<TableBody
+							sx={{
+								'& tr': {
+									color: theme.palette.primary.main,
+								},
+							}}
+						>
+							{isLoading ? (
+								<Loader colSpan={5} />
+							) : (
+								users && (
+									<>
+										{users.length > 0 ? (
+											users.map((row, key) => (
+												<TableRow key={key}>
+													<TableCell style={styles.tableText}>
+														<Box
+															sx={{
+																display: 'flex',
+																alignItems: 'center',
+																gap: '10px',
+															}}
 														>
-															Push notify
-														</Button>
-													</Box>
+															<Avatar src={row.avatar} />
+															<span>
+																{row.firstname} {row.lastname}
+															</span>
+														</Box>
+													</TableCell>
+													<TableCell style={styles.tableText}>
+														{row.email}
+													</TableCell>
+													<TableCell style={styles.tableText}>
+														{row.kycLevel}
+													</TableCell>
+													<TableCell
+														style={{
+															...styles.tableText,
+															color: row.verified
+																? SUCCESS_COLOR
+																: DANGER_COLOR,
+														}}
+													>
+														{row.verified ? 'Verified' : 'Not Verified'}
+													</TableCell>
+													<TableCell sx={{ maxWidth: '180px' }}>
+														<Box style={styles.verifyPushWrapper}>
+															{!row.verified && (
+																<CustomButton
+																	loading={
+																		selectedUser &&
+																		selectedUser.id === row.id &&
+																		isVerifyingUser
+																			? true
+																			: false
+																	}
+																	onClick={() => setSelectUser(row)}
+																	style={styles.verifyBtn as CSSProperties}
+																	size={'small'}
+																>
+																	Verify user
+																</CustomButton>
+															)}
+															<Button
+																onClick={() => navigate(LINKS.PushNotification)}
+																size={'small'}
+																style={styles.pushBtn as CSSProperties}
+															>
+																Push notify
+															</Button>
+														</Box>
+													</TableCell>
+												</TableRow>
+											))
+										) : (
+											<TableRow>
+												<TableCell colSpan={5}>
+													<Empty text={'No users'} />
 												</TableCell>
 											</TableRow>
-										))
-									) : (
-										<TableRow>
-											<TableCell colSpan={6}>
-												<Empty text={'No users'} />
-											</TableCell>
-										</TableRow>
-									)}
-								</>
-							)
-						)}
-					</TableBody>
+										)}
+									</>
+								)
+							)}
+						</TableBody>
+					</ErrorBoundaryGuard>
 				</Table>
 			</Box>
 		</>

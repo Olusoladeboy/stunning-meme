@@ -1,3 +1,9 @@
+import { Transaction, User } from '../types';
+import { Amount, Coupon, CouponType } from '../types';
+export { default as ErrorBoundary } from './error-boundary';
+export { default as ScrollToTop } from './scroll-to-top';
+export * from './reg-expression';
+
 export const calculatePercentageAmount = ({
 	rate,
 	amount,
@@ -31,7 +37,7 @@ export const getActiveLink = ({
 			isActive: true,
 		};
 	}
-	if (match && Array.isArray(match) && match[0] === name) {
+	if (match && Array.isArray(match) && match[0] === actualPathName) {
 		return {
 			isActive: true,
 		};
@@ -61,4 +67,109 @@ export const Storage = {
 	deleteItem: (key: string) => {
 		localStorage.removeItem(key);
 	},
+};
+
+export const getCoupon = (coupon: Coupon) => {
+	const gift =
+		coupon.type === CouponType.PERCENT
+			? `${coupon.gift}%`
+			: coupon.type === CouponType.AMOUNT
+			? formatNumberToCurrency(coupon.gift as string)
+			: '';
+	return `${coupon.code}-${gift}`;
+};
+
+export const cleanString = (value: string) => {
+	if (value) {
+		return value.replace(/_-*/gi, ' ');
+	}
+
+	return value;
+};
+
+export const checkAmount = (amount: number | string | Amount) => {
+	if (typeof amount === 'object') {
+		return amount.$numberDecimal;
+	}
+
+	return amount;
+};
+
+export const checkTransactionAmount = ({
+	transaction,
+	field,
+}: {
+	transaction: any;
+	field: string;
+}) => {
+	if (transaction && transaction.transaction) {
+		return checkAmount(transaction.transaction[field]);
+	}
+
+	if (transaction[field]) return checkAmount(transaction[field]);
+
+	return 0;
+};
+
+export const cleanObject = (object: { [key: string]: any }) => {
+	let output = object;
+	const objectKeys = Object.keys(output);
+	if (objectKeys.length === 0) return {};
+
+	for (let i of objectKeys) {
+		if (output[i] === '' || !output[i]) {
+			delete output[i];
+		}
+	}
+	return output;
+};
+
+export const truncateText = (text: string, length: number = 20): string => {
+	if (text.length > length) {
+		return `${text.substring(0, length)}...`;
+	}
+
+	return text;
+};
+
+export const userName = (firstname: string, lastname: string) => {
+	let name = '';
+	if (firstname) name += firstname;
+	if (lastname) name = name ? name + ` ${lastname}` : lastname;
+
+	if (name) return name;
+
+	return 'No name available';
+};
+
+export const extractTransactionType = (transaction: Transaction) => {
+	const type = transaction.name
+		? transaction.name
+		: transaction.type
+		? transaction.type
+		: transaction.transaction
+		? transaction.transaction.type
+		: '';
+	return type;
+};
+
+export const extractExactTransactionService = (transaction: Transaction) => {
+	const service = transaction.service
+		? transaction.service
+		: transaction.transaction
+		? transaction.transaction.service
+		: 'No available services';
+
+	return service;
+};
+
+export const extractUserName = (user: User) => {
+	let name = '';
+	if (user.firstname) name += user.firstname;
+	if (user.lastname) name = name ? name + ` ${user.lastname}` : user.lastname;
+
+	if (name) return name;
+	if (user.username) return user.username;
+
+	return 'No name available';
 };

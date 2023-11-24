@@ -13,14 +13,21 @@ import {
 import { ArrowDropDown } from '@mui/icons-material';
 import Search from '../form-components/search-input';
 import { grey } from '@mui/material/colors';
-import { BOX_SHADOW } from '../../utilities/constant';
-import LINKS from '../../utilities/links';
+import { BOX_SHADOW, LINKS } from 'utilities';
 
 interface Props extends BoxProps {
 	title?: any;
+	handleSearch?: (value: string) => void;
+	clearSearch?: () => void;
 }
 
-const ManagerTableHeader = ({ title, sx, style }: Props) => {
+const ManagerTableHeader = ({
+	title,
+	sx,
+	style,
+	clearSearch,
+	handleSearch,
+}: Props) => {
 	const theme = useTheme();
 	const styles = useStyles(theme);
 	const navigate = useNavigate();
@@ -67,8 +74,13 @@ const ManagerTableHeader = ({ title, sx, style }: Props) => {
 					</Popper>
 				</Box>
 			</ClickAwayListener>
-			<Box sx={{ maxWidth: '420px', width: '100%' }}>
-				<Search fullWidth placeholder={'Search...'} />
+			<Box sx={{ maxWidth: '360px', width: '100%' }}>
+				<Search
+					fullWidth
+					placeholder={'Search manager by email...'}
+					handleSearch={handleSearch}
+					clearSearch={clearSearch}
+				/>
 			</Box>
 		</Box>
 	);

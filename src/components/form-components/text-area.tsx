@@ -11,6 +11,7 @@ type Props = {
 	fullWidth?: boolean;
 	onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
 	placeholder?: string;
+	disabled?: boolean;
 };
 
 const TextArea = ({

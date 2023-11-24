@@ -5,8 +5,8 @@ import { useSnackbar } from 'notistack';
 import Button from '../button';
 import { grey } from '@mui/material/colors';
 import { ContentCopyRounded } from '@mui/icons-material';
-import { useAppSelector } from '../../store/hooks';
-import { ThemeModeType } from '../../utilities/types';
+import { useAppSelector } from 'store/hooks';
+import { ThemeModeType } from 'utilities/types';
 
 type Props = {
 	text: string;

@@ -1,53 +1,46 @@
 import apiRequest from './apiRequest';
-import { NetworkData } from '../utilities';
+import { DataResponse, NetworkData } from '../utilities';
 
-const Network = {
-	GetNetwork: async ({
-		token,
+export const networks = async ({
+	url,
+	params,
+}: {
+	url: string;
+	sort?: string;
+	params?: { [key: string]: any };
+}): Promise<DataResponse<NetworkData[]>> =>
+	apiRequest({
+		method: 'GET',
 		url,
-		sort = '-createdAt',
-	}: {
-		token: string;
-		url: string;
-		sort?: string;
-	}) =>
-		apiRequest({
-			method: 'GET',
-			url: `${url}?sort=${sort}`,
-			token,
-		}),
-	CreateNetwork: async ({
-		token,
-		url,
-		data,
-	}: {
-		token: string;
-		url: string;
-		data: NetworkData;
-	}) =>
-		apiRequest({
-			method: 'POST',
-			url,
-			token,
-			data,
-		}),
-	UpdateNetwork: async ({
-		token,
-		url,
-		data,
-		id,
-	}: {
-		token: string;
-		url: string;
-		data: NetworkData;
-		id: string;
-	}) =>
-		apiRequest({
-			method: 'PUT',
-			url: `${url}/${id}`,
-			token,
-			data,
-		}),
-};
+		params,
+	});
 
-export default Network;
+export const createNetwork = async ({
+	url,
+	data,
+}: {
+	url: string;
+	data: NetworkData;
+}): Promise<DataResponse<NetworkData>> =>
+	apiRequest({
+		method: 'POST',
+		url,
+
+		data,
+	});
+
+export const updateNetwork = async ({
+	url,
+	data,
+	id,
+}: {
+	url: string;
+	data: NetworkData;
+	id: string;
+}): Promise<any> =>
+	apiRequest({
+		method: 'PUT',
+		url: `${url}/${id}`,
+
+		data,
+	});

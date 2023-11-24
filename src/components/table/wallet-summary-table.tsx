@@ -1,116 +1,46 @@
-import React, { useState, useEffect } from 'react';
-import Table from '@mui/material/Table';
-import { useLocation, useNavigate } from 'react-router-dom';
-import queryString from 'query-string';
-import Box from '@mui/material/Box';
-import { Typography, useTheme } from '@mui/material';
-import TableBody from '@mui/material/TableBody';
-import { useQuery } from 'react-query';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
+import React, { useState } from 'react';
+import {
+	Table,
+	Box,
+	useTheme,
+	TableBody,
+	TableHead,
+	TableRow,
+} from '@mui/material';
 import moment from 'moment';
-import { LIGHT_GRAY } from '../../utilities/constant';
 import { StyledTableRow, StyledTableCell } from './components';
 import {
-	UserDetails,
-	QueryKey,
-	UserNavList,
 	Transaction,
-} from '../../utilities/types';
-import FilterIcon from '../icons/filter';
-import SearchInput from '../form-components/search-input';
-import Api from '../../utilities/api';
-import { useAppSelector } from '../../store/hooks';
+	formatNumberToCurrency,
+	LIGHT_GRAY,
+	checkTransactionAmount,
+	checkAmount,
+} from 'utilities';
 import Loader from '../loader/table-loader';
 import Empty from '../empty/table-empty';
-import formatNumberToCurrency from '../../utilities/helpers/formatNumberToCurrency';
-import Pagination from '../pagination';
-import { MAX_RECORDS } from '../../utilities/constant';
-import LINKS from '../../utilities/links';
-import { useAlert } from '../../utilities/hooks';
+
+import CustomTableCell from './components/custom-table-cell';
+import TransactionDetailsModal from '../modal/transaction-details-modal';
 
 type Props = {
-	user: UserDetails | null;
+	transactions: Transaction[] | null;
+	isLoading?: boolean;
 };
 
-const WalletSummaryTable = ({ user }: Props) => {
+const WalletSummaryTable = ({ transactions, isLoading }: Props) => {
 	const theme = useTheme();
-	const setAlert = useAlert();
 	const styles = useStyles(theme);
-	const navigate = useNavigate();
-	const [count, setCount] = useState<number>(1);
-	const [page, setPage] = useState<number>(1);
-	const [total, setTotal] = useState<number>(0);
-	const location = useLocation();
-	const query = queryString.parse(location.search);
-
-	useEffect(() => {
-		if (query && query.page) {
-			setPage(parseInt(query.page as string));
-		}
-	}, [query, query.page]);
-
-	const { token } = useAppSelector((store) => store.authState);
-
-	const { isLoading, data } = useQuery(
-		[QueryKey.UserWalletTransaction, user?.id, page],
-		() =>
-			Api.Wallet.Transactions({
-				token: token as string,
-				params: {
-					user: user?.id,
-					sort: '-createdAt',
-					limit: MAX_RECORDS,
-					skip: (page - 1) * MAX_RECORDS,
-				},
-			}),
-		{
-			enabled: !!(token && user),
-			onSettled: (data, error) => {
-				if (error) {
-					setAlert({ data: error, type: 'error' });
-				}
-
-				if (data && data.success) {
-					const total = data.metadata.total;
-					setTotal(data.metadata.total);
-					const count = Math.ceil(total / MAX_RECORDS);
-					setCount(count);
-				}
-			},
-		}
-	);
-
-	const handlePageChange = (page: number) => {
-		if (page !== 1) {
-			setPage(page);
-			navigate(
-				`${LINKS.User}/${user?.id}?tab=${UserNavList.WalletSummary}&page=${page}`
-			);
-		} else {
-			navigate(`${LINKS.User}/${user?.id}?tab=${UserNavList.WalletSummary}`);
-			setPage(page);
-		}
-	};
+	const [selectedTransaction, setSelectedTransaction] =
+		useState<Transaction | null>(null);
 
 	return (
 		<Box sx={{ overflow: 'auto' }}>
-			<Box
-				sx={{ padding: { xs: '0px 1rem', md: '0px 2rem' } }}
-				style={styles.tableHeader}
-			>
-				<Typography variant={'h5'}>User Wallet Summary</Typography>
-				<Box
-					sx={{
-						display: 'flex',
-						maxWidth: '320px',
-						width: '100%',
-						gap: theme.spacing(3),
-					}}
-				>
-					<SearchInput fullWidth placeholder={'Search...'} />
-				</Box>
-			</Box>
+			{selectedTransaction && (
+				<TransactionDetailsModal
+					closeModal={() => setSelectedTransaction(null)}
+					transaction={selectedTransaction}
+				/>
+			)}
 			<Table sx={{ overflow: 'auto' }} stickyHeader>
 				<TableHead
 					sx={{
@@ -121,32 +51,14 @@ const WalletSummaryTable = ({ user }: Props) => {
 					}}
 				>
 					<TableRow>
-						<StyledTableCell>Reference</StyledTableCell>
-						<StyledTableCell>Amount</StyledTableCell>
-						<StyledTableCell>
-							<Box style={styles.filterWrapper}>
-								<Typography>Product</Typography>
-								<FilterIcon />
-							</Box>
-						</StyledTableCell>
-						<StyledTableCell>
-							<Box style={styles.filterWrapper}>
-								<Typography>Previous Balance</Typography>
-								<FilterIcon />
-							</Box>
-						</StyledTableCell>
-						<StyledTableCell>
-							<Box style={styles.filterWrapper}>
-								<Typography>New Balance</Typography>
-								<FilterIcon />
-							</Box>
-						</StyledTableCell>
-						<StyledTableCell>
-							<Box style={styles.filterWrapper}>
-								<Typography>Date</Typography>
-								<FilterIcon />
-							</Box>
-						</StyledTableCell>
+						<CustomTableCell label={'Reference'} />
+						<CustomTableCell label={'Amount'} />
+						<CustomTableCell label={'Product'} />
+						<CustomTableCell label={'Prev Balance'} />
+						<CustomTableCell label={'New Balance'} />
+
+						<CustomTableCell label={'Date'} />
+						<CustomTableCell label={'Time'} />
 					</TableRow>
 				</TableHead>
 				<TableBody
@@ -157,56 +69,64 @@ const WalletSummaryTable = ({ user }: Props) => {
 					}}
 				>
 					{isLoading ? (
-						<Loader colSpan={6} />
+						<Loader colSpan={7} />
 					) : (
-						data && (
+						transactions && (
 							<>
-								{data.payload.length > 0 ? (
-									data.payload.map((row: Transaction) => (
-										<StyledTableRow key={row.id}>
+								{transactions.length > 0 ? (
+									transactions.map((row: Transaction) => (
+										<StyledTableRow
+											onClick={() => setSelectedTransaction(row)}
+											key={row.id}
+										>
 											<StyledTableCell style={styles.text}>
-												{row.reference}
+												{row.transaction
+													? row.transaction.reference
+													: row.reference || 'No transaction reference'}
 											</StyledTableCell>
 											<StyledTableCell style={styles.text}>
-												{formatNumberToCurrency(row.amount)}
+												{formatNumberToCurrency(checkAmount(row.amount))}
 											</StyledTableCell>
 											<StyledTableCell style={styles.text}>
-												{row.service}
+												{row.transaction
+													? row.transaction.service
+													: row.service
+													? row.service
+													: 'No Available Service'}
 											</StyledTableCell>
 											<StyledTableCell style={styles.text}>
-												{formatNumberToCurrency(row.balanceBefore)}
+												{formatNumberToCurrency(
+													checkTransactionAmount({
+														transaction: row,
+														field: 'balanceBefore',
+													})
+												)}
 											</StyledTableCell>
 											<StyledTableCell style={styles.text}>
-												{formatNumberToCurrency(row.balanceAfter)}
+												{formatNumberToCurrency(
+													checkTransactionAmount({
+														transaction: row,
+														field: 'balanceAfter',
+													})
+												)}
 											</StyledTableCell>
 
 											<StyledTableCell style={styles.text}>
 												{moment.utc(row.createdAt).format('ll')}
 											</StyledTableCell>
+											<StyledTableCell style={styles.text}>
+												{moment.utc(row.createdAt).format('LT')}
+											</StyledTableCell>
 										</StyledTableRow>
 									))
 								) : (
-									<Empty colSpan={6} text={'No Wallet Summary'} />
+									<Empty colSpan={7} text={'No Wallet Summary'} />
 								)}
 							</>
 						)
 					)}
 				</TableBody>
 			</Table>
-
-			{total > MAX_RECORDS && (
-				<Box style={styles.paginationWrapper}>
-					<Pagination
-						sx={{}}
-						size={'large'}
-						variant={'outlined'}
-						shape={'rounded'}
-						page={page}
-						count={count}
-						onChange={(e, number) => handlePageChange(number)}
-					/>
-				</Box>
-			)}
 		</Box>
 	);
 };

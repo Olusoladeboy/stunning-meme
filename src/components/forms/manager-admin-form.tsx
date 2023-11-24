@@ -1,4 +1,4 @@
-import React, { CSSProperties } from 'react';
+import React, { CSSProperties, useEffect, useState } from 'react';
 import { Box, useTheme, Typography, MenuItem } from '@mui/material';
 import { useFormik } from 'formik';
 import { useMutation, useQueryClient } from 'react-query';
@@ -7,128 +7,133 @@ import Button from '../button/custom-button';
 import { grey } from '@mui/material/colors';
 import {
 	ManagerTypes,
-	ManagerDetailsData,
-	QueryKey,
-} from '../../utilities/types';
-import Api from '../../utilities/api';
-import ValidationSchema from '../../utilities/validationSchema';
-import { useAppSelector } from '../../store/hooks';
-import Select from '../form-components/Select';
-import { useAlert } from '../../utilities/hooks';
+	QueryKeys,
+	validationSchema,
+	ADMIN_ROLE,
+	User,
+} from 'utilities';
+import Select from '../form-components/select';
+import { useAlert, useHandleError } from 'hooks';
+import { createStaff, updateStaff, createManager, updateManager } from 'api';
+import UploadUserAvatar from '../upload-user-avatar';
 
-const AMIN_ROLES = ['OPERATIONS', 'CUSTOMER_SUPPORT'];
 const SELECT_ADMIN_PRIVILEDGE = 'Select Admin Priviledge';
-
-interface ManagerDetails extends ManagerDetailsData {
-	id?: string;
-	role?: string;
-}
 
 type Props = {
 	type: ManagerTypes.Admin | ManagerTypes.Manager | null;
-	onSuccess?: () => void;
-	managerDetails?: ManagerDetails | null;
-	isEdit?: boolean;
+	callback?: () => void;
+	managerDetails?: User | null | undefined;
 };
 
-const ManagerAdminForm = ({
-	type,
-	onSuccess,
-	managerDetails,
-	isEdit,
-}: Props) => {
+const ManagerAdminForm = ({ type, callback, managerDetails }: Props) => {
 	const theme = useTheme();
 	const setAlert = useAlert();
+	const handleError = useHandleError();
 	const styles = useStyles(theme);
 	const queryClient = useQueryClient();
-	const { token } = useAppSelector((store) => store.authState);
 
-	const initialValues: ManagerDetails = {
+	const [isEdit, setEdit] = useState<boolean>(false);
+
+	useEffect(() => {
+		if (managerDetails && Object.values(managerDetails).length > 0) {
+			setEdit(true);
+		}
+	}, [managerDetails]);
+
+	const initialValues: User = {
 		firstname: '',
 		lastname: '',
-		phone: '',
 		email: '',
 		role: SELECT_ADMIN_PRIVILEDGE,
+		phone: '',
 	};
 
-	const { isLoading: isCreatingManager, mutate: createManager } = useMutation(
-		Api.Manager.CreateManager,
+	const { isLoading: isCreatingManager, mutate: mutateCreateManager } =
+		useMutation(createManager, {
+			onSettled: (data, error) => {
+				if (data && data.success) {
+					resetForm();
+					queryClient.invalidateQueries(QueryKeys.Managers);
+					setAlert({
+						message: data.message,
+						type: 'success',
+					});
+					typeof callback !== 'undefined' && callback();
+				}
+				if (error) {
+					const response = handleError({ error });
+					if (response?.message) {
+						setAlert({ message: response.message, type: 'error' });
+					}
+				}
+			},
+		});
+
+	const { isLoading: isCreatingStaff, mutate: mutateCreateStaff } = useMutation(
+		createStaff,
 		{
 			onSettled: (data, error) => {
 				if (data && data.success) {
 					resetForm();
-					queryClient.invalidateQueries(QueryKey.AllManagers);
 					setAlert({
-						data: data.message,
+						message: data.message,
 						type: 'success',
 					});
-					typeof onSuccess !== 'undefined' && onSuccess();
+
+					queryClient.invalidateQueries(QueryKeys.Staffs);
+
+					typeof callback !== 'undefined' && callback();
 				}
 				if (error) {
-					setAlert({ data: error, type: 'error' });
+					const response = handleError({ error });
+					if (response?.message) {
+						setAlert({ message: response.message, type: 'error' });
+					}
 				}
 			},
 		}
 	);
 
-	const { isLoading: isCreatingStaff, mutate: createStaff } = useMutation(
-		Api.Staff.Create,
-		{
+	const { isLoading: isUpdatingManager, mutate: mutateUpdateManager } =
+		useMutation(updateManager, {
 			onSettled: (data, error) => {
 				if (data && data.success) {
 					resetForm();
+					queryClient.invalidateQueries(QueryKeys.Managers);
 					setAlert({
-						data: data.message,
+						message: data.message,
 						type: 'success',
 					});
-					setAlert({
-						data: data.message,
-						type: 'success',
-					});
-					typeof onSuccess !== 'undefined' && onSuccess();
+					typeof callback !== 'undefined' && callback();
 				}
 				if (error) {
-					setAlert({ data: error, type: 'error' });
+					const response = handleError({ error });
+
+					if (response?.message) {
+						setAlert({ message: response.message, type: 'error' });
+					}
 				}
 			},
-		}
-	);
+		});
 
-	const { isLoading: isUpdatingManager, mutate: updateManager } = useMutation(
-		Api.Manager.UpdateManager,
+	const { isLoading: isUpdatingStaff, mutate: mutateUpdateStaff } = useMutation(
+		updateStaff,
 		{
 			onSettled: (data, error) => {
 				if (data && data.success) {
 					resetForm();
-					queryClient.invalidateQueries(QueryKey.AllManagers);
+					queryClient.invalidateQueries(QueryKeys.Staffs);
 					setAlert({
-						data: data.message,
+						message: data.message,
 						type: 'success',
 					});
-					typeof onSuccess !== 'undefined' && onSuccess();
+					typeof callback !== 'undefined' && callback();
 				}
 				if (error) {
-					setAlert({ data: error, type: 'error' });
-				}
-			},
-		}
-	);
-
-	const { isLoading: isUpdatingStaff, mutate: updateStaff } = useMutation(
-		Api.Staff.Update,
-		{
-			onSettled: (data, error) => {
-				if (data && data.success) {
-					resetForm();
-					queryClient.invalidateQueries(QueryKey.AllStaff);
-					setAlert({
-						data: data.message,
-						type: 'success',
-					});
-					typeof onSuccess !== 'undefined' && onSuccess();
-				}
-				if (error) {
-					setAlert({ data: error, type: 'error' });
+					const response = handleError({ error });
+					if (response?.message) {
+						setAlert({ message: response.message, type: 'error' });
+					}
 				}
 			},
 		}
@@ -140,7 +145,6 @@ const ManagerAdminForm = ({
 				? {
 						firstname: managerDetails.firstname,
 						lastname: managerDetails.lastname,
-						phone: managerDetails.phone,
 						email: managerDetails.email,
 						role:
 							type === ManagerTypes.Admin
@@ -148,38 +152,30 @@ const ManagerAdminForm = ({
 								: SELECT_ADMIN_PRIVILEDGE,
 				  }
 				: initialValues,
-			validationSchema: ValidationSchema.ManagerDetails,
+			validationSchema: validationSchema.ManagerDetails,
 			onSubmit: (values) => {
 				const { role, ...rest } = values;
 				if (type === ManagerTypes.Manager) {
 					if (isEdit && managerDetails && managerDetails.id) {
-						return updateManager({
-							token: token as string,
+						return mutateUpdateManager({
 							data: rest,
 							id: managerDetails.id,
 						});
 					}
-					createManager({
-						data: rest,
-						token: token as string,
-					});
+					mutateCreateManager(rest);
 				} else {
 					if (isEdit && managerDetails && managerDetails.id) {
-						return updateStaff({
-							token: token as string,
+						return mutateUpdateStaff({
 							data: { ...rest, role: role as string },
 							id: managerDetails.id,
 						});
 					}
-					createStaff({
-						data: { ...rest, role: role as string },
-						token: token as string,
-					});
+					mutateCreateStaff({ ...rest, role: role as string });
 				}
 			},
 		});
 
-	const { firstname, lastname, email, phone, role } = values;
+	const { firstname, lastname, email, role, phone } = values;
 
 	return (
 		<Box style={styles.form as CSSProperties} component={'form'}>
@@ -190,6 +186,7 @@ const ManagerAdminForm = ({
 					gap: theme.spacing(4),
 				}}
 			>
+				<UploadUserAvatar managerId={managerDetails?.id as string} />
 				<Box
 					sx={{
 						display: 'grid',
@@ -227,20 +224,13 @@ const ManagerAdminForm = ({
 							onChange={handleChange('lastname')}
 						/>
 					</Box>
-				</Box>
-				<Box
-					sx={{
-						display: 'grid',
-						gridTemplateColumns: { xs: '1fr', md: 'repeat(2, 1fr)' },
-						gap: theme.spacing(4),
-					}}
-				>
 					<Box>
 						<Typography variant={'body1'} style={styles.label}>
 							Email
 						</Typography>
 						<TextInput
 							fullWidth
+							disabled={isEdit}
 							error={errors && touched.email && errors.email ? true : false}
 							helperText={errors && touched.email && errors.email}
 							placeholder={'Email'}
@@ -254,28 +244,33 @@ const ManagerAdminForm = ({
 						</Typography>
 						<TextInput
 							fullWidth
-							error={errors && touched.phone && errors.phone ? true : false}
+							error={Boolean(touched.phone && errors.phone)}
 							helperText={errors && touched.phone && errors.phone}
 							placeholder={'phone number'}
 							value={phone}
 							onChange={handleChange('phone')}
 						/>
 					</Box>
-				</Box>
-				<Box sx={{ display: type === ManagerTypes.Admin ? 'block' : 'none' }}>
-					<Typography variant={'body1'} style={styles.label}>
-						Select priviledge
-					</Typography>
-					<Select fullWidth value={role} onChange={handleChange('role') as any}>
-						<MenuItem value={SELECT_ADMIN_PRIVILEDGE}>
-							{SELECT_ADMIN_PRIVILEDGE}
-						</MenuItem>
-						{AMIN_ROLES.map((role) => (
-							<MenuItem value={role} key={role}>
-								{role}
+					<Box sx={{ display: type === ManagerTypes.Admin ? 'block' : 'none' }}>
+						<Typography variant={'body1'} style={styles.label}>
+							Select priviledge
+						</Typography>
+						<Select
+							fullWidth
+							value={role}
+							onChange={handleChange('role') as any}
+						>
+							<MenuItem value={SELECT_ADMIN_PRIVILEDGE}>
+								{SELECT_ADMIN_PRIVILEDGE}
 							</MenuItem>
-						))}
-					</Select>
+							<MenuItem value={ADMIN_ROLE.OPERATIONS}>
+								{ADMIN_ROLE.OPERATIONS}
+							</MenuItem>
+							<MenuItem value={ADMIN_ROLE.CUSTOMER_SUPPORT}>
+								{ADMIN_ROLE.CUSTOMER_SUPPORT}
+							</MenuItem>
+						</Select>
+					</Box>
 				</Box>
 			</Box>
 			<Button

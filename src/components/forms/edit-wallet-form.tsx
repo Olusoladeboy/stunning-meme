@@ -1,101 +1,173 @@
 import React, { CSSProperties, SyntheticEvent, useState } from 'react';
-import { Box, useTheme, Typography, MenuItem } from '@mui/material';
+import {
+	Box,
+	useTheme,
+	Typography,
+	MenuItem,
+	SelectChangeEvent,
+	InputAdornment,
+	IconButton,
+	CircularProgress,
+} from '@mui/material';
 import { useMutation, useQueryClient } from 'react-query';
 import * as yup from 'yup';
 import { useFormik } from 'formik';
 import TextInput from '../form-components/TextInput';
 import Button from '../button';
 import CustomButton from '../button/custom-button';
-import { grey } from '@mui/material/colors';
-import Select from '../form-components/Select';
-import { UserDetails, QueryKey } from '../../utilities/types';
-import Api from '../../utilities/api';
-import { useAlert } from '../../utilities/hooks';
-import { useAppSelector } from '../../store/hooks';
+import { grey, red } from '@mui/material/colors';
+import Select from '../form-components/select';
+import { User, QueryKeys, FUND_WALLET_SERVICE } from 'utilities';
+import { useAlert, useHandleError } from 'hooks';
+import { transactUser } from 'api';
+import { Close, Search } from '@mui/icons-material';
+import { useSearchTransaction } from 'hooks';
 
 type Props = {
-	user: UserDetails | null;
+	user: User | null;
 	close?: () => void;
 };
 
+interface InitialValues {
+	type?: string;
+	amount?: string;
+	reference?: string;
+	summary?: string;
+}
+
 const SELECT_CONDITION = 'Select condition';
-const SELECT_SERVICE = 'Select Service';
 
-enum ConditionType {
-	Credit = 'CREDIT',
-	Debit = 'DEBIT',
-}
-
-enum ServiceType {
-	Refund = 'REFUND',
-	Others = 'OTHERS',
-}
+const VALIDATION_SCHEMA = {
+	Refund: 'Refund',
+	Other: 'Other',
+};
 
 const EditWalletForm = ({ user, close }: Props) => {
 	const theme = useTheme();
+	const handleError = useHandleError();
 	const styles = useStyles(theme);
 	const queryClient = useQueryClient();
 	const setAlert = useAlert();
-	const [isDone, setDone] = useState<boolean>(false);
-	const { token } = useAppSelector((store) => store.authState);
+	const [isTransact, setTransact] = useState<boolean>(false);
+	const [validationSchema, setValidationSchema] = useState<string>('');
 
-	const validationSchema = yup.object().shape({
+	//Search Transaction Hooks
+	const { search, searchTransaction, isSearching, clearSearch } =
+		useSearchTransaction(() =>
+			setAlert({ message: 'Tansaction reference confirm', type: 'info' })
+		);
+
+	const refundValidationSchema = yup.object().shape({
+		type: yup
+			.string()
+			.notOneOf([SELECT_CONDITION], 'Select Conditon')
+			.required('Select Condition'),
+		reference: yup.string().required('Enter related transaction reference'),
+	});
+
+	const otherValidationSchema = yup.object().shape({
 		type: yup
 			.string()
 			.notOneOf([SELECT_CONDITION], 'Select Conditon')
 			.required('Select Condition'),
 		amount: yup.number().required('Specify amount'),
-		service: yup
-			.string()
-			.notOneOf([SELECT_SERVICE], 'Select service')
-			.required('Select service'),
+		summary: yup.string().required('Specify reason for this transact'),
 	});
 
-	const { mutate, isLoading } = useMutation(Api.Transactions.TransactUser, {
+	const { isLoading, mutate: mutateTransactUser } = useMutation(transactUser, {
 		onSettled: (data, error) => {
 			if (error) {
-				setAlert({ data: error, isError: true });
+				const response = handleError({ error });
+				if (response?.message) {
+					setAlert({ message: response.message, type: 'error' });
+				}
 			}
 
 			if (data && data.success) {
-				setDone(true);
-				setAlert({ data: data.message, type: 'success' });
-				queryClient.invalidateQueries(QueryKey.GetSingleUser);
-				queryClient.invalidateQueries(QueryKey.UserWallet);
-				queryClient.invalidateQueries(QueryKey.UserWalletTransaction);
+				setTransact(true);
+				resetForm();
+				setAlert({ message: 'Transact is successful!', type: 'success' });
+				queryClient.invalidateQueries(QueryKeys.User);
+				queryClient.invalidateQueries(QueryKeys.UserWallet);
+				queryClient.invalidateQueries(QueryKeys.UserWalletTransaction);
 			}
 		},
 	});
 
-	const initialValues = {
+	const initialValues: InitialValues = {
 		type: SELECT_CONDITION,
 		amount: '',
-		service: SELECT_SERVICE,
+		reference: '',
+		summary: '',
 	};
 
-	const { values, handleChange, handleSubmit, errors, touched, resetForm } =
-		useFormik({
-			initialValues,
-			validationSchema,
-			onSubmit: (values) => {
-				mutate({
-					token: token as string,
-					data: values,
+	const {
+		values,
+		handleChange,
+		handleSubmit,
+		errors,
+		touched,
+		resetForm,
+		setFieldValue,
+	} = useFormik({
+		initialValues,
+		validationSchema:
+			validationSchema === VALIDATION_SCHEMA.Refund
+				? refundValidationSchema
+				: otherValidationSchema,
+		onSubmit: (values) => {
+			let data = { type: values.type } as { [key: string]: any };
+			if (values.type === FUND_WALLET_SERVICE.REFUND) {
+				if (!search)
+					return setAlert({
+						message: 'Confirm related transaction reference',
+						type: 'info',
+					});
+
+				if (search && values.reference !== search[0].reference)
+					return setAlert({
+						message: 'Transaction reference do not match',
+						type: 'info',
+					});
+
+				data.relatedTransactionReference = values.reference;
+				return mutateTransactUser({
 					id: user?.id as string,
+					data,
 				});
-			},
-		});
+			}
 
-	const { type, amount, service } = values;
+			data.amount = values.amount;
+			data.summary = values.summary;
 
-	const handleDone = () => {
-		if (isDone) {
-			resetForm();
-			setDone(false);
-			typeof close !== 'undefined' && close();
-		} else {
-			typeof close !== 'undefined' && close();
-		}
+			mutateTransactUser({
+				id: user?.id as string,
+				data,
+			});
+		},
+	});
+
+	const { amount, type, reference, summary } = values;
+
+	const closeModal = () => {
+		setTransact(false);
+		clearSearch();
+		typeof close !== 'undefined' && close();
+	};
+
+	/*
+	 *Clear Reference
+	 */
+	const clearReference = () => {
+		setFieldValue('reference', '');
+		clearSearch();
+	};
+
+	/*
+	 * Search Transaction by Reference
+	 */
+	const handleSearchTransaction = () => {
+		searchTransaction(reference as string);
 	};
 
 	return (
@@ -105,88 +177,159 @@ const EditWalletForm = ({ user, close }: Props) => {
 					display: 'grid',
 					gridTemplateColumns: {
 						xs: '1fr',
-						md: '3fr 7fr',
+						md: type === SELECT_CONDITION ? '1fr' : '3fr 7fr',
 					},
 					gap: theme.spacing(4),
 				}}
 			>
 				<Box>
 					<Typography variant={'body1'} style={styles.label}>
-						Condition
+						Service
 					</Typography>
 					<Select
 						fullWidth
 						error={errors && touched.type && errors.type ? true : false}
 						helpertext={errors && touched.type && errors.type}
 						value={type}
-						onChange={handleChange('type') as any}
+						onChange={(e: SelectChangeEvent<unknown>) => {
+							const value = e.target.value;
+							setTransact(false);
+							setFieldValue('type', value);
+							const schema =
+								value === FUND_WALLET_SERVICE.REFUND
+									? VALIDATION_SCHEMA.Refund
+									: VALIDATION_SCHEMA.Other;
+							setValidationSchema(schema);
+						}}
 					>
 						<MenuItem disabled value={SELECT_CONDITION}>
 							{SELECT_CONDITION}
 						</MenuItem>
-						<MenuItem value={ConditionType.Credit}>
-							{ConditionType.Credit}
-						</MenuItem>
-						<MenuItem value={ConditionType.Debit}>
-							{ConditionType.Debit}
-						</MenuItem>
+						{Object.values(FUND_WALLET_SERVICE).map((value) => (
+							<MenuItem key={value} value={value}>
+								{value}
+							</MenuItem>
+						))}
 					</Select>
 				</Box>
+				{type !== SELECT_CONDITION && (
+					<>
+						{type === FUND_WALLET_SERVICE.REFUND ? (
+							<Box>
+								<Typography variant={'body1'} style={styles.label}>
+									Reference
+								</Typography>
+								<TextInput
+									fullWidth
+									placeholder={'Enter transaction reference'}
+									error={
+										errors && touched.reference && errors.reference
+											? true
+											: false
+									}
+									helperText={errors && touched.reference && errors.reference}
+									value={reference}
+									onChange={handleChange('reference')}
+									InputProps={{
+										endAdornment: (
+											<InputAdornment position='end'>
+												{isSearching ? (
+													<CircularProgress size={16} />
+												) : (
+													reference && (
+														<Box
+															sx={{
+																display: 'flex',
+																alignItems: 'center',
+																gap: '3px',
+															}}
+														>
+															<IconButton
+																sx={{
+																	color: red['600'],
+																}}
+																onClick={clearReference}
+																size={'small'}
+															>
+																<Close />
+															</IconButton>
+
+															<IconButton
+																onClick={handleSearchTransaction}
+																size={'small'}
+															>
+																<Search />
+															</IconButton>
+														</Box>
+													)
+												)}
+											</InputAdornment>
+										),
+									}}
+								/>
+							</Box>
+						) : (
+							<Box>
+								<Typography variant={'body1'} style={styles.label}>
+									Amount
+								</Typography>
+								<TextInput
+									fullWidth
+									placeholder={'Amount'}
+									error={
+										errors && touched.amount && errors.amount ? true : false
+									}
+									helperText={errors && touched.amount && errors.amount}
+									type={'number'}
+									value={amount}
+									onChange={handleChange('amount')}
+								/>
+							</Box>
+						)}
+					</>
+				)}
+			</Box>
+			{type !== SELECT_CONDITION && type !== FUND_WALLET_SERVICE.REFUND && (
 				<Box>
 					<Typography variant={'body1'} style={styles.label}>
-						Amount
+						Reason
 					</Typography>
 					<TextInput
+						placeholder={'Enter reason'}
 						fullWidth
-						placeholder={'Amount'}
-						error={errors && touched.amount && errors.amount ? true : false}
-						helperText={errors && touched.amount && errors.amount}
-						type={'number'}
-						value={amount}
-						onChange={handleChange('amount')}
+						multiline
+						rows={3}
+						value={summary}
+						onChange={handleChange('summary')}
+						error={errors && touched.summary && errors.summary ? true : false}
+						helperText={errors && touched.summary && errors.summary}
 					/>
 				</Box>
-			</Box>
-			<Box>
-				<Typography variant={'body1'} style={styles.label}>
-					Select Service
-				</Typography>
-				<Select
-					fullWidth
-					error={errors && touched.service && errors.service ? true : false}
-					helpertext={errors && touched.service && errors.service}
-					value={service}
-					onChange={handleChange('service') as any}
-				>
-					<MenuItem disabled value={SELECT_SERVICE}>
-						{SELECT_SERVICE}
-					</MenuItem>
-					<MenuItem value={ServiceType.Refund}>{ServiceType.Refund}</MenuItem>
-					<MenuItem value={ServiceType.Others}>{ServiceType.Others}</MenuItem>
-				</Select>
-			</Box>
+			)}
 			<Box style={styles.btnWrapper}>
-				<CustomButton
-					loading={isLoading}
-					onClick={(e: React.FormEvent<HTMLButtonElement>) => {
-						e.preventDefault();
-						handleSubmit();
-					}}
-					variant={'outlined'}
-					size={'large'}
-					style={styles.btnOutline}
-				>
-					Update
-				</CustomButton>
+				{!isTransact && (
+					<CustomButton
+						loading={isLoading}
+						onClick={(e: React.FormEvent<HTMLButtonElement>) => {
+							e.preventDefault();
+							handleSubmit();
+						}}
+						variant={'outlined'}
+						size={'large'}
+						style={styles.btnOutline}
+					>
+						Update
+					</CustomButton>
+				)}
 				<Button
 					onClick={(e: SyntheticEvent) => {
 						e.preventDefault();
-						handleDone();
+						closeModal();
 					}}
 					size={'large'}
 					style={styles.btn}
 				>
-					{isDone ? 'Done' : 'Close'}
+					Close
 				</Button>
 			</Box>
 		</Box>

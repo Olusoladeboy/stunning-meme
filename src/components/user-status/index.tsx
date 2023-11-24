@@ -1,34 +1,40 @@
 import React from 'react';
+import { grey } from '@mui/material/colors';
 import { Box, Typography, useTheme } from '@mui/material';
 import { useMutation, useQueryClient } from 'react-query';
 import UserAvatarWithDetails from '../avatar-with-details';
 import CustomButton from '../button/custom-button';
-import { grey } from '@mui/material/colors';
 import SuspendUserForm from '../forms/suspend-user-form';
 import DeleteUserForm from '../forms/delete-user-form';
-import { UserDetails, QueryKey } from '../../utilities/types';
-import Api from '../../utilities/api';
-import { useAlert } from '../../utilities/hooks';
-import { useAppSelector } from '../../store/hooks';
+import { User, QueryKey } from 'utilities';
+import { useAlert, useHandleError } from 'hooks';
+import { suspendWithdraw } from 'api';
+import { useAppSelector } from 'store/hooks';
 
 type Props = {
-	user: UserDetails | null;
+	user: User | null;
 };
 
 const UserStatus = ({ user }: Props) => {
 	const theme = useTheme();
 	const setAlert = useAlert();
-	const { token } = useAppSelector((store) => store.authState);
+	const handleError = useHandleError();
 	const queryClient = useQueryClient();
+	const { canCreateOrUpdateRecord } = useAppSelector(
+		(store) => store.authState
+	);
 
-	const { mutate, isLoading } = useMutation(Api.Wallet.SuspendWithdraw, {
+	const { mutate, isLoading } = useMutation(suspendWithdraw, {
 		onSettled: (data, error) => {
 			if (error) {
-				setAlert({ data: error, isError: true });
+				const response = handleError({ error });
+				if (response?.message) {
+					setAlert({ message: response.message, type: 'error' });
+				}
 			}
 
 			if (data && data.success) {
-				setAlert({ data: data.message, type: 'success' });
+				setAlert({ message: data.message, type: 'success' });
 				queryClient.invalidateQueries(QueryKey.AllUsers);
 				queryClient.invalidateQueries(QueryKey.GetSingleUser);
 				queryClient.invalidateQueries(QueryKey.Statistics);
@@ -38,7 +44,6 @@ const UserStatus = ({ user }: Props) => {
 
 	const handleSuspendWithdraw = () =>
 		mutate({
-			token: token as string,
 			data: {
 				suspended: user?.suspended as boolean,
 				suspendWithdrawal: !user?.suspendWithdrawal,
@@ -57,25 +62,27 @@ const UserStatus = ({ user }: Props) => {
 				}}
 			>
 				<UserAvatarWithDetails user={user} />
-				<CustomButton
-					loading={isLoading}
-					onClick={(e: React.FormEvent<HTMLButtonElement>) => {
-						e.preventDefault();
-						handleSuspendWithdraw();
-					}}
-					sx={{
-						border: `1px solid ${theme.palette.secondary.main}`,
-						':hover': {
-							backgroundColor: theme.palette.secondary.main,
-							color: grey[50],
-						},
-					}}
-					size={'large'}
-				>
-					{user?.suspendWithdrawal
-						? 'Unsuspend withdrawal'
-						: 'Suspend Withdrawal'}
-				</CustomButton>
+				{canCreateOrUpdateRecord && (
+					<CustomButton
+						loading={isLoading}
+						onClick={(e: React.FormEvent<HTMLButtonElement>) => {
+							e.preventDefault();
+							handleSuspendWithdraw();
+						}}
+						sx={{
+							border: `1px solid ${theme.palette.secondary.main}`,
+							':hover': {
+								backgroundColor: theme.palette.secondary.main,
+								color: grey[50],
+							},
+						}}
+						size={'large'}
+					>
+						{user?.suspendWithdrawal
+							? 'Unsuspend withdrawal'
+							: 'Suspend Withdrawal'}
+					</CustomButton>
+				)}
 			</Box>
 			<Box>
 				<Typography sx={{ marginBottom: theme.spacing(4) }} variant={'h5'}>

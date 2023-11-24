@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { ReactNode } from 'react';
 import { Box, Typography, BoxProps } from '@mui/material';
-import FilterWithSearch from '../filter-with-search';
 import BackButton from '../back-button';
+import SearchInput from '../form-components/search-input';
 
 interface Props extends BoxProps {
 	title?: any;
@@ -9,42 +9,68 @@ interface Props extends BoxProps {
 	isDisplayBackButton?: boolean;
 	backButtonText?: string;
 	isDisplayFilter?: boolean;
+	searchPlaceholder?: string;
+	handleSearch?: (value: string) => void;
+	clearSearch?: () => void;
+	statusFilter?: ReactNode;
 }
 
 const TableHeader = ({
 	title,
 	sx,
 	isDisplayBackButton,
+	searchPlaceholder = 'Search...',
 	backButtonText,
-	isDisplayFilter,
+	handleSearch,
+	clearSearch,
+	statusFilter,
 	style,
+	...rest
 }: Props) => {
 	return (
 		<Box
 			style={style}
 			sx={{
 				display: 'flex',
-				alignItems: 'center',
+				alignItems: { sm: 'center' },
+				flexDirection: {
+					xs: 'column',
+					sm: 'row',
+				},
+				gap: '20px',
 				justifyContent:
 					title || isDisplayBackButton ? 'space-between' : 'flex-end',
-				padding: '10px 0px',
+				// padding: '10px 0px',
 				...sx,
 			}}
 		>
-			{title ? (
-				<>
-					{typeof title === 'string' ? (
-						<Typography sx={{ fontWeight: '600' }} variant={'h5'}>
-							{title}
-						</Typography>
-					) : (
-						title
-					)}
-				</>
-			) : (
-				isDisplayBackButton && <BackButton text={backButtonText} />
-			)}
-			<FilterWithSearch isDisplayFilter={isDisplayFilter} />
+			<Box sx={{ display: 'flex', alignItems: 'center', gap: '30px' }}>
+				{isDisplayBackButton && <BackButton text={backButtonText} />}
+				{title && typeof title === 'string' ? (
+					<Typography sx={{ fontWeight: '600' }} variant={'h5'}>
+						{title}
+					</Typography>
+				) : (
+					title
+				)}
+			</Box>
+
+			<Box
+				sx={{
+					display: 'flex',
+					gap: '15px',
+					alignItems: 'center',
+				}}
+			>
+				{statusFilter}
+				<SearchInput
+					fullWidth
+					sx={{ maxWidth: ['100%', '320px'], minWidth: ['100%', '300px'] }}
+					placeholder={rest.placeholder || searchPlaceholder}
+					handleSearch={handleSearch}
+					clearSearch={clearSearch}
+				/>
+			</Box>
 		</Box>
 	);
 };

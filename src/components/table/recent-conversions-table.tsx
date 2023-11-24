@@ -7,16 +7,20 @@ import TableCell, { tableCellClasses } from '@mui/material/TableCell';
 import { styled } from '@mui/material';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
-import { LIGHT_GRAY, BOX_SHADOW } from '../../utilities/constant';
+import {
+	LIGHT_GRAY,
+	BOX_SHADOW,
+	LINKS,
+	QueryKeys,
+	extractUserName,
+	User,
+} from 'utilities';
 import { grey } from '@mui/material/colors';
 import Link from '../link';
-import LINKS from '../../utilities/links';
-import Api from '../../utilities/api';
-import { QueryKey } from '../../utilities/types';
-import { useAppSelector } from '../../store/hooks';
 import Loader from '../loader/table-loader';
 import Empty from '../empty/table-empty';
-import { useQueryHook } from '../../utilities/api/hooks';
+import { useQueryHook } from 'hooks';
+import { convertAirtimes } from 'api';
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
 	[`&.${tableCellClasses.head}`]: {
@@ -50,13 +54,11 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 const RecentConversionsTable = () => {
 	const theme = useTheme();
 	const styles = useStyles(theme);
-	const { token } = useAppSelector((store) => store.authState);
 
 	const { isLoading, data } = useQueryHook({
-		queryKey: [QueryKey.ConvertAirtime, 'recent-airtime-convert'],
+		queryKey: [QueryKeys.RecentConvertAirtime, 'recent-airtime-convert'],
 		queryFn: () =>
-			Api.ConvertAirtime.Records({
-				token: token as string,
+			convertAirtimes({
 				params: {
 					limit: 4,
 					sort: '-createdAt',
@@ -107,9 +109,9 @@ const RecentConversionsTable = () => {
 									data.payload.map((row: any) => (
 										<StyledTableRow key={row.id}>
 											<StyledTableCell>
-												{row.user.firstname} {row.user.lastname}
+												{extractUserName(row.user as User)}
 											</StyledTableCell>
-											<StyledTableCell>{row.network.name}</StyledTableCell>
+											<StyledTableCell>{row.network?.name}</StyledTableCell>
 											<StyledTableCell>{row.phone_number}</StyledTableCell>
 											<StyledTableCell>{row.network.name}</StyledTableCell>
 										</StyledTableRow>
@@ -128,7 +130,7 @@ const RecentConversionsTable = () => {
 
 const useStyles = (theme: any) => ({
 	container: {
-		border: `1px solid ${theme.palette.secondary.main}`,
+		border: `0.5px solid ${theme.palette.secondary.main}`,
 		padding: '1rem 0px',
 		backgroundColor: grey[50],
 		borderRadius: theme.spacing(2),

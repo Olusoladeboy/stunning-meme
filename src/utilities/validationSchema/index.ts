@@ -1,5 +1,5 @@
 import * as yup from 'yup';
-import { PHONE_REX } from '../helpers/RegExpressions';
+import { PHONE_REX } from '../helpers/reg-expression';
 
 const ValidationSchema = {
 	OtpVerificationRequest: yup.object().shape({
@@ -16,10 +16,7 @@ const ValidationSchema = {
 		firstname: yup.string().required('Specify manager first name'),
 		lastname: yup.string().required('Specify manager last name'),
 		email: yup.string().email().required('Specify manager email'),
-		phone: yup
-			.string()
-			.required('Specify phone number')
-			.matches(PHONE_REX, 'Invalid phone number'),
+		phone: yup.string().matches(PHONE_REX, 'Invalid phone number'),
 	}),
 	EPin: yup.object().shape({
 		epinType: yup
@@ -47,6 +44,10 @@ const ValidationSchema = {
 			.required('Specify phone number')
 			.matches(PHONE_REX, 'Invalid phone number'),
 	}),
+	AutoConvertNetwork: yup.object().shape({
+		name: yup.string().required('Specify name'),
+		rate: yup.string().required('Specify rate'),
+	}),
 	KycLimit: yup.object().shape({
 		dailyLimit: yup.number().required('Specify daily limit'),
 		weeklyLimit: yup.number().required('Specify weekly limit'),
@@ -59,11 +60,19 @@ const ValidationSchema = {
 			.string()
 			.notOneOf(['Select coupon type'], 'Select coupon type')
 			.required('Select coupon type'),
+		couponUserType: yup
+			.string()
+			.notOneOf(['Select user type'], 'Select user type')
+			.required('Select user type'),
 		expiresIn: yup.date().required('Specify expire date'),
 		gift: yup
 			.number()
 			.positive('Gift must be positive number')
 			.required('Specify gift in number'),
+		usage: yup
+			.number()
+			.positive('Coupon usage must be positive number')
+			.required('Specify coupon usage'),
 	}),
 	EditCoupon: yup.object().shape({
 		gift: yup
@@ -74,6 +83,14 @@ const ValidationSchema = {
 			.string()
 			.notOneOf(['Select coupon type'], 'Select coupon type')
 			.required('Select coupon type'),
+		usage: yup
+			.number()
+			.positive('Coupon usage must be positive number')
+			.required('Specify coupon usage'),
+		couponUserType: yup
+			.string()
+			.notOneOf(['Select user type'], 'Select user type')
+			.required('Select user type'),
 	}),
 };
 

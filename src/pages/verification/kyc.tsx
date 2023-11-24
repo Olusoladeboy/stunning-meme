@@ -2,26 +2,27 @@ import React, { useState } from 'react';
 import { Box, useTheme } from '@mui/material';
 import { useQuery } from 'react-query';
 import { grey } from '@mui/material/colors';
-import { Layout, BackButton, KycForm } from '../../components';
-import { BOX_SHADOW } from '../../utilities/constant';
-import { QueryKey } from '../../utilities/types';
-import { useAppSelector } from '../../store/hooks';
-import Api from '../../utilities/api';
-import { useAlert } from '../../utilities/hooks';
+import { Layout, BackButton, KycForm } from 'components';
+import { BOX_SHADOW, QueryKeys } from 'utilities';
+import { useAlert, useHandleError, usePageTitle } from 'hooks';
+import { kycs } from 'api';
 
 const Kyc = () => {
+	usePageTitle('KYC Limit');
 	const theme = useTheme();
+	const handleError = useHandleError();
 	const styles = useStyles(theme);
 	const setAlert = useAlert();
 	const [kycLimits, setKycLimits] = useState<{ [key: string]: any } | null>(
 		null
 	);
-	const { token } = useAppSelector((store) => store.authState);
 
-	useQuery(QueryKey.KycLimit, () => Api.KycLimits.Retrieve(token || ''), {
+	useQuery(QueryKeys.KycLimit, kycs, {
 		onSettled: (data, error) => {
 			if (error) {
-				setAlert({ data: error, type: 'error' });
+				const response = handleError({ error });
+				if (response?.message)
+					setAlert({ message: response.message, type: 'error' });
 			}
 			if (data && data.success) {
 				const payload = data.payload;

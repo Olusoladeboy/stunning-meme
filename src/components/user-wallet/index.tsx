@@ -2,32 +2,33 @@ import React, { CSSProperties, useState } from 'react';
 import { Box, Typography, useTheme } from '@mui/material';
 import { grey } from '@mui/material/colors';
 import { useQuery } from 'react-query';
-import formatNumberToCurrency from '../../utilities/helpers/formatNumberToCurrency';
+import { formatNumberToCurrency, QueryKey, User } from 'utilities';
 import Button from '../button';
 import ModalWrapper from '../modal/Wrapper';
 import EditWalletForm from '../forms/edit-wallet-form';
-import Api from '../../utilities/api';
-import { useAppSelector } from '../../store/hooks';
-import { QueryKey, UserDetails } from '../../utilities/types';
-import { useAlert } from '../../utilities/hooks';
+import { useAppSelector } from 'store/hooks';
+import { useAlert, useHandleError } from 'hooks';
+import { walletAccount } from 'api';
 
 type Props = {
-	user: UserDetails | null;
+	user: User | null;
 };
 
 const UserWallet = ({ user }: Props) => {
 	const theme = useTheme();
 	const setAlert = useAlert();
+	const handleError = useHandleError();
 	const styles = useStyles(theme);
 	const [amount, setAmount] = useState<string>('');
 	const [isEditWallet, setEditWallet] = useState<boolean>(false);
-	const { token } = useAppSelector((store) => store.authState);
+	const { token, canCreateOrUpdateRecord } = useAppSelector(
+		(store) => store.authState
+	);
 
 	useQuery(
 		[QueryKey.UserWallet, user?.id],
 		() =>
-			Api.Wallet.Account({
-				token: token as string,
+			walletAccount({
 				params: {
 					user: user?.id,
 				},
@@ -36,7 +37,10 @@ const UserWallet = ({ user }: Props) => {
 			enabled: !!(token && user),
 			onSettled: (data, error) => {
 				if (error) {
-					setAlert({ data: error, type: 'error' });
+					const response = handleError({ error });
+					if (response?.message) {
+						setAlert({ message: response.message, type: 'error' });
+					}
 				}
 
 				if (data && data.success) {
@@ -76,13 +80,15 @@ const UserWallet = ({ user }: Props) => {
 					<Typography variant={'h4'}>
 						{formatNumberToCurrency(amount)}
 					</Typography>
-					<Button
-						onClick={() => setEditWallet(true)}
-						variant={'outlined'}
-						style={styles.editBtn as CSSProperties}
-					>
-						Edit wallet
-					</Button>
+					{canCreateOrUpdateRecord && (
+						<Button
+							onClick={() => setEditWallet(true)}
+							variant={'outlined'}
+							style={styles.editBtn as CSSProperties}
+						>
+							Edit wallet
+						</Button>
+					)}
 				</Box>
 			</Box>
 		</>

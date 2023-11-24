@@ -12,6 +12,7 @@ const LINKS = {
 	DataNetwork: '/network/data',
 	ConversionNetwork: '/network/conversion',
 	DataPlan: '/data-plan',
+	DataTypes: '/data-types',
 	AirtimeNetwork: '/network/airtime',
 	Coupons: '/coupons',
 	Dispute: '/dispute',
@@ -21,10 +22,13 @@ const LINKS = {
 	Notifications: '/notifications',
 	PushNotification: '/push-notification',
 	Verification: '/verification',
+	BvnVerification: '/verification/bvn',
 	KycVerification: '/verification/kyc',
 	Suspension: '/suspension',
 	AuditLogs: '/audit-logs',
+	ApiLogs: '/api-logs',
 	Message: '/support-ticket/message',
+	Messages: '/messages',
 };
 
 export const DRAWER_LINKS = {

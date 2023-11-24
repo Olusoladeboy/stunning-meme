@@ -1,15 +1,14 @@
 import React, { useEffect } from 'react';
 import { useMutation, useQueryClient } from 'react-query';
 import { useFormik } from 'formik';
-import { Box, useTheme, Typography } from '@mui/material';
-import TextInput from '../form-components/TextInput';
-import Button from '../button/custom-button';
 import { grey } from '@mui/material/colors';
-import { QueryKey } from '../../utilities/types';
-import Api from '../../utilities/api';
-import { useAppSelector } from '../../store/hooks';
-import ValidationSchemas from '../../utilities/validationSchema';
-import { useAlert } from '../../utilities/hooks';
+import { Box, useTheme, Typography } from '@mui/material';
+import Button from '../button/custom-button';
+import TextInput from '../form-components/TextInput';
+import { QueryKeys, validationSchema } from 'utilities';
+import { useAlert, useHandleError } from 'hooks';
+import { updateKyc } from 'api';
+import { useAppSelector } from 'store/hooks';
 
 type Props = {
 	data?: { [key: string]: any };
@@ -18,9 +17,12 @@ type Props = {
 
 const KycForm = ({ data, level }: Props) => {
 	const theme = useTheme();
+	const handleError = useHandleError();
 	const setAlert = useAlert();
 	const styles = useStyles(theme);
-	const { token } = useAppSelector((store) => store.authState);
+	const { canCreateOrUpdateRecord } = useAppSelector(
+		(store) => store.authState
+	);
 
 	const initialValues = {
 		dailyLimit: '',
@@ -30,17 +32,21 @@ const KycForm = ({ data, level }: Props) => {
 	};
 
 	const queryClient = useQueryClient();
-	const { isLoading, mutate } = useMutation(Api.KycLimits.Update, {
+	const { isLoading, mutate } = useMutation(updateKyc, {
 		onSettled: (data, error) => {
 			if (error) {
-				setAlert({ data: error, type: 'error' });
+				const response = handleError({ error });
+
+				if (response?.message) {
+					setAlert({ message: response.message, type: 'error' });
+				}
 			}
 			if (data && data.success) {
 				setAlert({
-					data: data.message,
+					message: data.message,
 					type: 'success',
 				});
-				queryClient.invalidateQueries(QueryKey.KycLimit);
+				queryClient.invalidateQueries(QueryKeys.KycLimit);
 			}
 		},
 	});
@@ -48,9 +54,9 @@ const KycForm = ({ data, level }: Props) => {
 	const { touched, errors, handleSubmit, handleChange, values, setValues } =
 		useFormik({
 			initialValues,
-			validationSchema: ValidationSchemas.KycLimit,
+			validationSchema: validationSchema.KycLimit,
 			onSubmit: (values) => {
-				mutate({ token: token || '', data: values, id: data ? data.id : '' });
+				mutate({ data: values, id: data ? data.id : '' });
 			},
 		});
 
@@ -88,6 +94,7 @@ const KycForm = ({ data, level }: Props) => {
 					</Typography>
 					<TextInput
 						fullWidth
+						disabled={!canCreateOrUpdateRecord}
 						error={
 							errors && touched.dailyLimit && errors.dailyLimit ? true : false
 						}
@@ -103,6 +110,7 @@ const KycForm = ({ data, level }: Props) => {
 					</Typography>
 					<TextInput
 						fullWidth
+						disabled={!canCreateOrUpdateRecord}
 						placeholder={'Weekly limit'}
 						error={
 							errors && touched.weeklyLimit && errors.weeklyLimit ? true : false
@@ -118,6 +126,7 @@ const KycForm = ({ data, level }: Props) => {
 					</Typography>
 					<TextInput
 						fullWidth
+						disabled={!canCreateOrUpdateRecord}
 						placeholder={'Monthly limit'}
 						error={
 							errors && touched.monthlyLimit && errors.monthlyLimit
@@ -135,6 +144,7 @@ const KycForm = ({ data, level }: Props) => {
 					</Typography>
 					<TextInput
 						fullWidth
+						disabled={!canCreateOrUpdateRecord}
 						placeholder={'Per transaction limit'}
 						error={
 							errors &&
@@ -154,6 +164,7 @@ const KycForm = ({ data, level }: Props) => {
 				</Box>
 			</Box>
 			<Button
+				disabled={!canCreateOrUpdateRecord}
 				loading={isLoading}
 				onClick={(e: React.FormEvent<HTMLButtonElement>) => {
 					e.preventDefault();

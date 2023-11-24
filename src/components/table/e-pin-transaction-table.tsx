@@ -12,10 +12,10 @@ import {
 	LIGHT_GRAY,
 	SUCCESS_COLOR,
 	DANGER_COLOR,
-} from '../../utilities/constant';
+	EPins,
+	formatNumberToCurrency,
+} from 'utilities';
 import { grey } from '@mui/material/colors';
-import formatNumberToCurrency from '../../utilities/helpers/formatNumberToCurrency';
-import { EPins } from '../../utilities/types';
 import Pagination from '../pagination';
 
 type Props = {
@@ -27,7 +27,7 @@ type Props = {
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
 	[`&.${tableCellClasses.head}`]: {
-		// backgroundImage: `url(${require('../../assets/images/bgImage.png')})`,
+		// backgroundImage: `url(${require('assets/images/bgImage.png')})`,
 		backgroundColor: LIGHT_GRAY,
 		backgroundSize: 'cover',
 		backgroundPosition: 'top-left',

@@ -1,30 +1,37 @@
 import React, { CSSProperties } from 'react';
-import Table from '@mui/material/Table';
-import Box from '@mui/material/Box';
-import { Avatar, Typography, useTheme } from '@mui/material';
-import TableBody from '@mui/material/TableBody';
-import TableHead from '@mui/material/TableHead';
+import {
+	Avatar,
+	useTheme,
+	TableBody,
+	Box,
+	TableHead,
+	Table,
+} from '@mui/material';
 import { grey } from '@mui/material/colors';
-import { SUCCESS_COLOR, BOX_SHADOW } from '../../utilities/constant';
-import FilterIcon from '../icons/filter';
+import { SUCCESS_COLOR, BOX_SHADOW } from 'utilities/constant';
 import {
 	StyledTableCell as TableCell,
 	StyledTableRow as TableRow,
 } from './components';
 import TableHeader from '../header/table-header';
-import { UserDetails } from '../../utilities/types';
+import { User } from 'utilities/types';
 import Loader from '../loader/table-loader';
 import Empty from '../empty/table-empty';
 import UnsuspendUser from '../unsuspend-user';
+import CustomTableCell from './components/custom-table-cell';
+import { useAppSelector } from 'store/hooks';
 
 type Props = {
-	users: UserDetails[] | null;
+	users: User[] | null;
 	isLoading: boolean;
 };
 
 const SuspensionTable = ({ users, isLoading }: Props) => {
 	const theme = useTheme();
 	const styles = useStyles(theme);
+	const { canCreateOrUpdateRecord } = useAppSelector(
+		(store) => store.authState
+	);
 	return (
 		<>
 			<Box style={styles.container} sx={{ overflow: 'auto' }}>
@@ -45,28 +52,10 @@ const SuspensionTable = ({ users, isLoading }: Props) => {
 						}}
 					>
 						<TableRow>
-							<TableCell />
-							<TableCell>
-								<Box style={styles.filterWrapper}>
-									<Typography variant={'body1'}>Name</Typography>
-									<FilterIcon />
-								</Box>
-							</TableCell>
-							<TableCell>
-								<Box style={styles.filterWrapper}>
-									<Typography variant={'body1'}>
-										Suspension/Deletion Note
-									</Typography>
-									<FilterIcon />
-								</Box>
-							</TableCell>
-							<TableCell>
-								<Box style={styles.filterWrapper}>
-									<Typography variant={'body1'}>Status</Typography>
-									<FilterIcon />
-								</Box>
-							</TableCell>
-							<TableCell>Action</TableCell>
+							<CustomTableCell label={'Name'} />
+							<CustomTableCell label={'Suspension/Deletion Note'} />
+							<CustomTableCell label={'Status'} />
+							{canCreateOrUpdateRecord && <CustomTableCell label={'Action'} />}
 						</TableRow>
 					</TableHead>
 					<TableBody
@@ -77,18 +66,26 @@ const SuspensionTable = ({ users, isLoading }: Props) => {
 						}}
 					>
 						{isLoading ? (
-							<Loader colSpan={6} />
+							<Loader colSpan={5} />
 						) : (
 							users && (
 								<>
 									{users && users.length > 0 ? (
 										users.map((row, key) => (
 											<TableRow key={key}>
-												<TableCell sx={{ maxWidth: '55px' }}>
-													<Avatar src={row.avatar} />
-												</TableCell>
 												<TableCell>
-													{row.firstname} {row.lastname}
+													<Box
+														sx={{
+															display: 'flex',
+															alignItems: 'center',
+															gap: '10px',
+														}}
+													>
+														<Avatar src={row.avatar} />
+														<span>
+															{row.firstname} {row.lastname}
+														</span>
+													</Box>
 												</TableCell>
 												<TableCell>{row.suspensionReason}</TableCell>
 												<TableCell>
@@ -98,20 +95,22 @@ const SuspensionTable = ({ users, isLoading }: Props) => {
 														? 'Deleted'
 														: ''}
 												</TableCell>
-												<TableCell>
-													<UnsuspendUser
-														user={row}
-														text={'unsuspend'}
-														buttonProps={{
-															size: 'small',
-															style: styles.suspendBtn as CSSProperties,
-														}}
-													/>
-												</TableCell>
+												{canCreateOrUpdateRecord && (
+													<TableCell>
+														<UnsuspendUser
+															user={row}
+															text={'unsuspend'}
+															buttonProps={{
+																size: 'small',
+																style: styles.suspendBtn as CSSProperties,
+															}}
+														/>
+													</TableCell>
+												)}
 											</TableRow>
 										))
 									) : (
-										<Empty colSpan={6} text={'No suspension records'} />
+										<Empty colSpan={5} text={'No suspension records'} />
 									)}
 								</>
 							)

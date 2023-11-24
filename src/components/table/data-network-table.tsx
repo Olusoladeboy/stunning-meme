@@ -13,59 +13,69 @@ import {
 	BOX_SHADOW,
 	SUCCESS_COLOR,
 	DANGER_COLOR,
-} from '../../utilities/constant';
+	QueryKeys,
+	API_ENDPOINTS,
+	LINKS,
+	NetworkData,
+} from 'utilities';
 import {
 	StyledTableCell as TableCell,
 	StyledTableRow as TableRow,
 } from './components';
 import Button from '../button';
-import { QueryKey, API_ENDPOINTS } from '../../utilities/types';
-import LINKS from '../../utilities/links';
-import Api from '../../utilities/api';
-import { useAppSelector } from '../../store/hooks';
+import { useAppSelector } from 'store/hooks';
 import TableLoader from '../loader/table-loader';
 import Loader from '../loader';
-import { useAlert } from '../../utilities/hooks';
+import { useAlert, useHandleError } from 'hooks';
+import { networks, updateNetwork } from 'api';
 
 const DataNetworkTable = () => {
 	const theme = useTheme();
 	const setAlert = useAlert();
+	const handleError = useHandleError();
 	const styles = useStyles(theme);
 	const queryClient = useQueryClient();
 	const navigate = useNavigate();
-	const { token } = useAppSelector((store) => store.authState);
+	const { token, canCreateOrUpdateRecord } = useAppSelector(
+		(store) => store.authState
+	);
 
 	const { isLoading, data } = useQuery(
-		QueryKey.DataNetwork,
+		QueryKeys.DataNetwork,
 		() =>
-			Api.Network.GetNetwork({
-				token: token || '',
+			networks({
 				url: API_ENDPOINTS.DataNetwork,
 			}),
 		{
 			enabled: !!token,
 			onSettled: (data, error) => {
 				if (error) {
-					setAlert({ data: error, type: 'error' });
+					const response = handleError({ error });
+					if (response?.message) {
+						setAlert({ message: response.message, type: 'error' });
+					}
 				}
 			},
 		}
 	);
 
-	const { isLoading: isUpdating, mutate: updateNetwork } = useMutation(
-		Api.Network.UpdateNetwork,
+	const { isLoading: isUpdating, mutate: mutateUpdateNetwork } = useMutation(
+		updateNetwork,
 		{
 			onSettled: (data, error) => {
 				if (error) {
-					setAlert({ data: error, type: 'error' });
+					const response = handleError({ error });
+					if (response?.message) {
+						setAlert({ message: response.message, type: 'error' });
+					}
 				}
 
 				if (data && data.success) {
 					setAlert({
-						data: data.message,
+						message: data.message,
 						type: 'success',
 					});
-					queryClient.invalidateQueries(QueryKey.DataNetwork);
+					queryClient.invalidateQueries(QueryKeys.DataNetwork);
 				}
 			},
 		}
@@ -78,14 +88,17 @@ const DataNetworkTable = () => {
 		status: boolean;
 		id: string;
 	}) => {
-		updateNetwork({
-			token: token || '',
-			data: {
-				isActive: status,
-			},
-			url: API_ENDPOINTS.DataNetwork,
-			id,
-		});
+		if (canCreateOrUpdateRecord) {
+			return mutateUpdateNetwork({
+				data: {
+					isActive: status,
+				},
+				url: API_ENDPOINTS.DataNetwork,
+				id,
+			});
+		}
+
+		setAlert({ message: `You can't perform this opertaion`, type: 'info' });
 	};
 
 	return (
@@ -103,7 +116,7 @@ const DataNetworkTable = () => {
 					>
 						<TableRow>
 							<TableCell>Network Name</TableCell>
-							<TableCell>Number of plans</TableCell>
+							<TableCell>Number of Types</TableCell>
 							<TableCell sx={{ minWidth: '50px', maxWidth: '100px' }} />
 							<TableCell />
 						</TableRow>
@@ -118,10 +131,10 @@ const DataNetworkTable = () => {
 						{isLoading ? (
 							<TableLoader colSpan={4} />
 						) : data && data.payload.length > 0 ? (
-							data.payload.map((data: any) => (
+							data.payload.map((data: NetworkData) => (
 								<TableRow key={data.id}>
 									<TableCell>{data.name}</TableCell>
-									<TableCell>{data.name}</TableCell>
+									<TableCell>{data.no_of_dataTypes}</TableCell>
 									<TableCell sx={{ maxWidth: '200px' }}>
 										<Box
 											sx={{
@@ -139,7 +152,7 @@ const DataNetworkTable = () => {
 												onClick={() =>
 													handleEnableDisableNetwork({
 														status: true,
-														id: data.id,
+														id: data.id as string,
 													})
 												}
 												style={{
@@ -156,7 +169,7 @@ const DataNetworkTable = () => {
 												onClick={() =>
 													handleEnableDisableNetwork({
 														status: false,
-														id: data.id,
+														id: data.id as string,
 													})
 												}
 												style={{
@@ -172,7 +185,11 @@ const DataNetworkTable = () => {
 									</TableCell>
 									<TableCell
 										onClick={() =>
-											navigate(`${LINKS.DataPlan}/${data.name}/${data.id}`)
+											navigate(
+												`${LINKS.DataTypes}/${(data.name as string)
+													.toString()
+													.toLowerCase()}/${data.id}`
+											)
 										}
 										sx={{
 											':hover': {
@@ -181,7 +198,7 @@ const DataNetworkTable = () => {
 										}}
 										style={styles.viewPlan}
 									>
-										View plan
+										View Types
 									</TableCell>
 								</TableRow>
 							))

@@ -7,45 +7,69 @@ import TextInput from '../form-components/TextInput';
 import Button from '../button';
 import { grey } from '@mui/material/colors';
 import Link from '../link';
-import LINKS from '../../utilities/links';
-import ValidationSchema from '../../utilities/validationSchema';
-import { LoginData } from '../../utilities/types';
-import Api from '../../utilities/api';
-import { useAppDispatch } from '../../store/hooks';
-import { setToken, setUser } from '../../store/auth';
+import { LINKS, LoginData, validationSchema } from 'utilities';
+import { useAppDispatch } from 'store/hooks';
+import { setToken, setUser } from 'store/auth';
 import CustomButton from '../button/custom-button';
-import { useAlert } from '../../utilities/hooks';
+import { useAlert, useHandleError, useModalAlert } from 'hooks';
+import { login } from 'api';
 
 const LoginForm = () => {
 	const theme = useTheme();
 	const setAlert = useAlert();
+	const handleError = useHandleError();
 	const styles = useStyles(theme);
 	const [isDisplayPassword, setDisplayPassword] = useState<boolean>(false);
 	const dispatch = useAppDispatch();
 	const navigate = useNavigate();
+	const modal = useModalAlert();
 
 	const initialValues: LoginData = {
 		email: '',
 		password: '',
 	};
 
-	const { isLoading, mutate } = useMutation(Api.Account.Login, {
+	const { isLoading, mutate } = useMutation(login, {
 		onSettled: (data, error) => {
 			if (error) {
-				setAlert({ data: error, type: 'error' });
+				const response = handleError({ error });
+				if (response?.message) {
+					setAlert({ message: response.message, type: 'error' });
+				}
 			}
 			if (data && data.success) {
-				setAlert({ data: data.message, type: 'success' });
-				dispatch(setToken(data.payload.token));
-				dispatch(setUser(data.payload.user));
+				const user = data.payload.user;
+				const token = data.payload.token;
+				const userName = `${user.firstname} ${user.lastname}`;
+				dispatch(setToken(token));
+				dispatch(setUser(user));
+				if (
+					// user.defaultPasswordChanged &&
+					'defaultPasswordChanged' in user &&
+					!Boolean(user.defaultPasswordChanged)
+				) {
+					modal({
+						title: 'Change Password',
+						message: 'Kindly change your password',
+						type: 'error',
+						primaryButtonText: 'Change Password',
+						onClickPrimaryButton: () => {
+							modal(null);
+							navigate(LINKS.ChangePassword);
+						},
+					});
+
+					return;
+				}
 				navigate(LINKS.Dashboard);
+				setAlert({ message: `Welcome back ${userName}!`, type: 'success' });
 			}
 		},
 	});
 
 	const { handleChange, errors, touched, values, handleSubmit } = useFormik({
 		initialValues,
-		validationSchema: ValidationSchema.Login,
+		validationSchema: validationSchema.Login,
 		onSubmit: (values) => {
 			mutate(values);
 		},

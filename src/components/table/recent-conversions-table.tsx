@@ -113,7 +113,7 @@ const RecentConversionsTable = () => {
 											</StyledTableCell>
 											<StyledTableCell>{row.network?.name}</StyledTableCell>
 											<StyledTableCell>{row.phone_number}</StyledTableCell>
-											<StyledTableCell>{row.network.name}</StyledTableCell>
+											<StyledTableCell>{row.network?.name}</StyledTableCell>
 										</StyledTableRow>
 									))
 								) : (

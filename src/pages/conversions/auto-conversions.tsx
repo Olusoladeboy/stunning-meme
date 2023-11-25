@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import queryString from 'query-string';
 import { Box, Typography, useTheme } from '@mui/material';
 import { grey } from '@mui/material/colors';
-import { useQuery } from 'react-query';
+import { useQuery, useQueryClient } from 'react-query';
 import {
 	Layout,
 	ConversionsTable,
@@ -25,10 +25,11 @@ import {
 	usePageTitle,
 	useSearchConversion,
 } from 'hooks';
-import { convertAirtimes } from 'api';
+import { autoConvertAirtimes } from 'api';
 
 const AutoConversions = () => {
 	usePageTitle('Auto Conversion');
+	const queryClient = useQueryClient();
 	const theme = useTheme();
 	const handleError = useHandleError();
 	const setAlert = useAlert();
@@ -46,6 +47,8 @@ const AutoConversions = () => {
 	const { token, canViewStatistics } = useAppSelector(
 		(store) => store.authState
 	);
+
+	const statistics = useAppSelector((store) => store.appState.statistics);
 
 	const { isSearching, search, clearSearch, searchConversion } =
 		useSearchConversion();
@@ -66,10 +69,10 @@ const AutoConversions = () => {
 		sort,
 	};
 
-	const { isLoading, data } = useQuery(
-		[QueryKeys.ConvertAirtime, page],
+	const { isLoading, data, refetch } = useQuery(
+		[QueryKeys.AutoConvertAirtime, page],
 		() =>
-			convertAirtimes({
+			autoConvertAirtimes({
 				params,
 			}),
 		{
@@ -108,7 +111,7 @@ const AutoConversions = () => {
 	const handleSort = (sort: string) => {
 		if (data) {
 			setSort(sort);
-			setReload(true);
+			refetch();
 		}
 	};
 
@@ -143,8 +146,9 @@ const AutoConversions = () => {
 						>
 							<ConversionTotal
 								handleRefresh={() => {
-									setReload(true);
+									refetch();
 									setReloading(true);
+									queryClient.invalidateQueries([QueryKeys.Statistics]);
 								}}
 								total={data && data.metadata.total}
 							/>

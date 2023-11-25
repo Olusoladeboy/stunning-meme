@@ -179,7 +179,8 @@ const ConversionsTable = ({
 														{conversion.reference}
 													</StyledTableCell>
 													<StyledTableCell style={styles.text}>
-														{(typeof conversion.network === 'object' &&
+														{(conversion.network &&
+															typeof conversion.network === 'object' &&
 															conversion.network?.name) ||
 															'No Network name'}
 													</StyledTableCell>

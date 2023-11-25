@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useQuery } from 'react-query';
 import { Box } from '@mui/material';
+import queryString from 'query-string';
 import {
 	Layout,
 	AuditLogsTable,
@@ -26,9 +27,18 @@ const AuditLogs = () => {
 	const [isEnableQuery, setEnableQuery] = useState<boolean>(false);
 	const alert = useAlert();
 	const navigate = useNavigate();
+
+	const { search } = useLocation();
+	const parseQuery = queryString.parseUrl(search).query;
+
 	const [count, setCount] = useState<number>(1);
 	const [page, setPage] = useState<number>(1);
 	const [total, setTotal] = useState<number>(0);
+
+	useEffect(() => {
+		const page = Number(parseQuery?.page || 1);
+		setPage(page);
+	}, [parseQuery, parseQuery?.page]);
 
 	useEffect(() => {
 		setEnableQuery(true);
@@ -71,7 +81,7 @@ const AuditLogs = () => {
 	const handlePageChange = (page: number) => {
 		if (page !== 1) {
 			setPage(page);
-			navigate(`${LINKS.AuditLogs}&page=${page}`);
+			navigate(`${LINKS.AuditLogs}?page=${page}`);
 		} else {
 			navigate(`${LINKS.AuditLogs}`);
 		}
@@ -93,6 +103,7 @@ const AuditLogs = () => {
 					<Box
 						sx={{
 							marginLeft: ['15px', '30px'],
+							marginTop: ['30px'],
 						}}
 					>
 						<Pagination

@@ -342,6 +342,8 @@ export type Statistics = {
 	total_deleted_users: number;
 	total_suspended_users: number;
 	total_airtime_converted: number;
+	total_auto_airtime_converted: number;
+	total_auto_airtime_conversions: number;
 	total_data_sold: number;
 	total_amount_withdrawn: number;
 	total_wallet_transfer: number;

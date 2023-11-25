@@ -179,8 +179,9 @@ const ConversionsTable = ({
 														{conversion.reference}
 													</StyledTableCell>
 													<StyledTableCell style={styles.text}>
-														{typeof conversion.network === 'object' &&
-															conversion.network.name}
+														{(typeof conversion.network === 'object' &&
+															conversion.network?.name) ||
+															'No Network name'}
 													</StyledTableCell>
 													<StyledTableCell style={styles.text}>
 														{conversion.phone_number}

@@ -57,6 +57,7 @@ const ModalWrapper = ({
 							backgroundColor: `${grey['400']} !important`,
 							border: `1.5px solid ${grey['50']}`,
 							color: theme.palette.primary.main,
+							zIndex: theme.zIndex.modal + 1000,
 						}}
 					>
 						<Close />

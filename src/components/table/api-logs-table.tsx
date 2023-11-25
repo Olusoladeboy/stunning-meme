@@ -1,25 +1,19 @@
-import React, { CSSProperties, useState } from 'react';
-import {
-	Table,
-	Box,
-	TableBody,
-	TableHead,
-	Avatar,
-	useTheme,
-} from '@mui/material';
+import React, { useState } from 'react';
+import { Table, TableBody, TableHead, useTheme, Box } from '@mui/material';
 import moment from 'moment';
 import { grey } from '@mui/material/colors';
-import { SUCCESS_COLOR, BOX_SHADOW, AuditLog, IApiLog } from 'utilities';
+import JsonFormatter from 'react-json-formatter';
+import { SUCCESS_COLOR, BOX_SHADOW, IApiLog, extractUserName } from 'utilities';
 import {
 	StyledTableCell as TableCell,
 	StyledTableRow as TableRow,
 } from './components';
-import TableHeader from '../header/table-header';
 import Empty from '../empty';
-import Pagination from '../pagination';
 import Button from '../button';
 import CustomTableCell from './components/custom-table-cell';
 import TableLoader from '../loader/table-loader';
+import { useModalAlert } from 'hooks';
+import ModalWrapper from '../modal/Wrapper';
 
 interface Props {
 	data: IApiLog[] | null;
@@ -28,9 +22,37 @@ interface Props {
 
 const ApiLogsTable: React.FC<Props> = ({ data, isLoading }) => {
 	const theme = useTheme();
-	const styles = useStyles(theme);
+
+	const jsonStyle = {
+		propertyStyle: { color: 'red' },
+		stringStyle: { color: 'green' },
+		numberStyle: { color: 'darkorange' },
+	};
+
+	const [jsonData, setJsonData] = useState<string>('');
+
+	const handleViewLog = (log: IApiLog) => {
+		const jsonObj = log.api_log;
+
+		setJsonData(JSON.stringify(jsonObj));
+	};
+
 	return (
 		<>
+			{jsonData && (
+				<ModalWrapper hasCloseButton={true} closeModal={() => setJsonData('')}>
+					<Box
+						sx={{
+							overflow: 'auto',
+							maxWidth: '540px',
+							width: '100%',
+							alignSelf: 'flex-start',
+						}}
+					>
+						<JsonFormatter json={jsonData} tabWith={4} jsonStyle={jsonStyle} />
+					</Box>
+				</ModalWrapper>
+			)}
 			<Table sx={{ overflow: 'auto' }}>
 				<TableHead
 					sx={{
@@ -42,13 +64,10 @@ const ApiLogsTable: React.FC<Props> = ({ data, isLoading }) => {
 				>
 					<TableRow>
 						<CustomTableCell label={'Reference'} />
-						{/* <CustomTableCell label={'Remark'} />
-						<CustomTableCell label={'Amount Paid'} />
-						<CustomTableCell label={'Total Payable'} />
-						<CustomTableCell label={'Settlement Amount'} />
-						<CustomTableCell label={'Payment Status'} />
-						<CustomTableCell label={'Payment Description'} /> */}
+
+						<CustomTableCell label={'User'} />
 						<CustomTableCell label={'Date'} />
+						<CustomTableCell label={'View'} />
 					</TableRow>
 				</TableHead>
 				<TableBody
@@ -59,7 +78,7 @@ const ApiLogsTable: React.FC<Props> = ({ data, isLoading }) => {
 					}}
 				>
 					{isLoading ? (
-						<TableLoader colSpan={2} />
+						<TableLoader colSpan={3} />
 					) : (
 						data && (
 							<>
@@ -67,24 +86,24 @@ const ApiLogsTable: React.FC<Props> = ({ data, isLoading }) => {
 									data.map((row: IApiLog) => (
 										<TableRow key={row.id}>
 											<TableCell>{row.reference}</TableCell>
-											{/* <TableCell>{row.api_log.paymentRemark}</TableCell>
-											<TableCell>{row.api_log.gateway.amountPaid}</TableCell>
-											<TableCell>{row.api_log.gateway.totalPayable}</TableCell>
 											<TableCell>
-												{row.api_log.gateway.settlementAmount}
+												{typeof row.user === 'object' &&
+													extractUserName(row.user)}
 											</TableCell>
-											<TableCell>{row.api_log.gateway.paymentStatus}</TableCell>
-											<TableCell>
-												{row.api_log.gateway.paymentDescription}
-											</TableCell> */}
+
 											<TableCell>
 												{moment.utc(row.createdAt).format('l')}
+											</TableCell>
+											<TableCell>
+												<Button onClick={() => handleViewLog(row)}>
+													View log
+												</Button>
 											</TableCell>
 										</TableRow>
 									))
 								) : (
 									<TableRow>
-										<TableCell colSpan={2}>
+										<TableCell colSpan={3}>
 											<Empty text={'No api log(s)'} />
 										</TableCell>
 									</TableRow>

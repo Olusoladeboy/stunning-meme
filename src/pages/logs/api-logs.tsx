@@ -45,6 +45,7 @@ const ApiLogs = () => {
 				sort: '-createdAt',
 				limit: MAX_RECORDS,
 				skip: (page - 1) * MAX_RECORDS,
+				populate: 'user',
 			}),
 		{
 			enabled: isEnableQuery,
@@ -91,6 +92,7 @@ const ApiLogs = () => {
 					<Box
 						sx={{
 							marginLeft: ['15px', '30px'],
+							marginTop: ['30px'],
 						}}
 					>
 						<Pagination

@@ -67,6 +67,7 @@ const AutoConversions = () => {
 		limit: MAX_RECORDS,
 		skip: (page - 1) * MAX_RECORDS,
 		sort,
+		populate: 'network',
 	};
 
 	const { isLoading, data, refetch } = useQuery(
@@ -151,6 +152,7 @@ const AutoConversions = () => {
 									queryClient.invalidateQueries([QueryKeys.Statistics]);
 								}}
 								total={data && data.metadata.total}
+								totalAmount={statistics?.total_auto_airtime_converted || 0}
 							/>
 							<AvailableNetwork type={'auto'} />
 						</Box>

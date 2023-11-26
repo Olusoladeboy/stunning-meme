@@ -23,6 +23,7 @@ import {
 	validationSchema,
 	PRIMARY_COLOR,
 	User,
+	extractUserName,
 } from 'utilities';
 import { useAlert, useHandleError, useSearchUser } from 'hooks';
 import { createCoupon, updateCoupon } from 'api';
@@ -241,7 +242,7 @@ const CouponForm = ({ data, isEdit, onSuccess }: Props) => {
 								}}
 							>
 								<Typography variant={'body1'}>
-									{foundUser.firstname} {foundUser.lastname}
+									{extractUserName(foundUser)}
 								</Typography>
 								<IconButton onClick={clearSearch} size={'small'}>
 									<Close />

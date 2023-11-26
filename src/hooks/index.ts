@@ -15,3 +15,4 @@ export { default as useModalAlert } from './useModalAlert';
 export * from './useTransactionServices';
 export * from './search-hooks/useSearchTransaction';
 export { default as usePageTitle } from './page-title';
+export { default as useSearchApiLog } from './search-hooks/useSearchApiLog';

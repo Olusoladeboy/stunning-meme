@@ -67,7 +67,7 @@ const AutoConversions = () => {
 		limit: MAX_RECORDS,
 		skip: (page - 1) * MAX_RECORDS,
 		sort,
-		populate: 'network',
+		populate: 'network,user',
 	};
 
 	const { isLoading, data, refetch } = useQuery(
@@ -102,9 +102,9 @@ const AutoConversions = () => {
 		setReload(true);
 		if (page !== 1) {
 			setPage(page);
-			navigate(`${LINKS.Conversions}?page=${page}`);
+			navigate(`${LINKS.AutoConversions}?page=${page}`);
 		} else {
-			navigate(LINKS.Conversions);
+			navigate(LINKS.AutoConversions);
 			setPage(page);
 		}
 	};

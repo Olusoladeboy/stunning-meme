@@ -2,14 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useQuery } from 'react-query';
 import { Box } from '@mui/material';
-import {
-	Layout,
-	AuditLogsTable,
-	ApiLogsTable,
-	TableHeader,
-	Pagination,
-} from 'components';
-import { useAlert, useHandleError, usePageTitle } from 'hooks';
+import { Layout, ApiLogsTable, TableHeader, Pagination } from 'components';
+import { useAlert, useHandleError, usePageTitle, useSearchApiLog } from 'hooks';
 import {
 	ADMIN_ROLE,
 	LINKS,
@@ -28,6 +22,9 @@ const ApiLogs = () => {
 	const [count, setCount] = useState<number>(1);
 	const [page, setPage] = useState<number>(1);
 	const [total, setTotal] = useState<number>(0);
+
+	const { apiLog, isSearchingApiLog, searchApiLog, clearSearch } =
+		useSearchApiLog();
 
 	useEffect(() => {
 		setEnableQuery(true);
@@ -84,11 +81,17 @@ const ApiLogs = () => {
 				<TableHeader
 					sx={{ marginBottom: '2rem', marginTop: '20px' }}
 					title={'Api Logs'}
+					searchPlaceholder={'Search records by reference'}
+					handleSearch={searchApiLog}
+					clearSearch={clearSearch}
 				/>
 
-				<ApiLogsTable isLoading={isLoading} data={data && data.payload} />
+				<ApiLogsTable
+					isLoading={isLoading || isSearchingApiLog}
+					data={apiLog ? apiLog : data && data.payload}
+				/>
 
-				{total > MAX_RECORDS && (
+				{!isSearchingApiLog && !isLoading && !apiLog && total > MAX_RECORDS && (
 					<Box
 						sx={{
 							marginLeft: ['15px', '30px'],

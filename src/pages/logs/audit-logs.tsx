@@ -3,13 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { useQuery } from 'react-query';
 import { Box } from '@mui/material';
 import queryString from 'query-string';
-import {
-	Layout,
-	AuditLogsTable,
-	ApiLogsTable,
-	TableHeader,
-	Pagination,
-} from 'components';
+import { Layout, AuditLogsTable, TableHeader, Pagination } from 'components';
 import { useAlert, useHandleError, usePageTitle } from 'hooks';
 import {
 	ADMIN_ROLE,

@@ -12,7 +12,6 @@ import Empty from '../empty';
 import Button from '../button';
 import CustomTableCell from './components/custom-table-cell';
 import TableLoader from '../loader/table-loader';
-import { useModalAlert } from 'hooks';
 import ModalWrapper from '../modal/Wrapper';
 
 interface Props {
@@ -78,13 +77,13 @@ const ApiLogsTable: React.FC<Props> = ({ data, isLoading }) => {
 					}}
 				>
 					{isLoading ? (
-						<TableLoader colSpan={3} />
+						<TableLoader colSpan={4} />
 					) : (
 						data && (
 							<>
 								{data.length > 0 ? (
 									data.map((row: IApiLog) => (
-										<TableRow key={row.id}>
+										<TableRow onClick={() => handleViewLog(row)} key={row.id}>
 											<TableCell>{row.reference}</TableCell>
 											<TableCell>
 												{typeof row.user === 'object' &&
@@ -103,7 +102,7 @@ const ApiLogsTable: React.FC<Props> = ({ data, isLoading }) => {
 									))
 								) : (
 									<TableRow>
-										<TableCell colSpan={3}>
+										<TableCell colSpan={4}>
 											<Empty text={'No api log(s)'} />
 										</TableCell>
 									</TableRow>

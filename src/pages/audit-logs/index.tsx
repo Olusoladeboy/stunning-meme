@@ -65,7 +65,7 @@ const AuditLogs = () => {
 	const handlePageChange = (page: number) => {
 		if (page !== 1) {
 			setPage(page);
-			navigate(`${LINKS.AuditLogs}?&page=${page}`);
+			navigate(`${LINKS.AuditLogs}?page=${page}`);
 		} else {
 			navigate(LINKS.AuditLogs);
 			setPage(page);
@@ -84,7 +84,9 @@ const AuditLogs = () => {
 						}}
 					>
 						<Pagination
-							sx={{}}
+							sx={{
+								marginTop: '20px',
+							}}
 							size={'large'}
 							variant={'outlined'}
 							shape={'rounded'}

@@ -59,6 +59,7 @@ const Transactions = () => {
 					sort: '-createdAt',
 					limit: MAX_RECORDS,
 					skip: (page - 1) * MAX_RECORDS,
+					populate: 'plan,dataType',
 				},
 			}),
 		{

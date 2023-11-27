@@ -12,6 +12,7 @@ import {
 	User,
 	QueryKeys,
 	ErrorBoundaryGuard,
+	extractUserName,
 } from 'utilities';
 import {
 	StyledTableCell as TableCell,
@@ -146,9 +147,7 @@ const VerificationTable = ({
 															}}
 														>
 															<Avatar src={row.avatar} />
-															<span>
-																{row.firstname} {row.lastname}
-															</span>
+															<span>{extractUserName(row)}</span>
 														</Box>
 													</TableCell>
 													<TableCell style={styles.tableText}>

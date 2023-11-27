@@ -94,6 +94,7 @@ const AllTransactions = () => {
 					skip: (page - 1) * MAX_RECORDS,
 					service: transactionService,
 					status: transactionStatus,
+					populate: 'network,plan,dataType',
 				},
 			}),
 		{

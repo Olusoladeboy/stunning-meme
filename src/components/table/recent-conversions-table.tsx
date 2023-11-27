@@ -111,9 +111,11 @@ const RecentConversionsTable = () => {
 											<StyledTableCell>
 												{extractUserName(row.user as User)}
 											</StyledTableCell>
-											<StyledTableCell>{row.network?.name}</StyledTableCell>
+											<StyledTableCell>
+												{row.network && row.network?.name}
+											</StyledTableCell>
 											<StyledTableCell>{row.phone_number}</StyledTableCell>
-											<StyledTableCell>{row.network.name}</StyledTableCell>
+											<StyledTableCell>{row.network?.name}</StyledTableCell>
 										</StyledTableRow>
 									))
 								) : (

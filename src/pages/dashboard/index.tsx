@@ -11,7 +11,6 @@ import {
 	TaskList,
 	RecentConversionsTable,
 	RecentTransactionsTable,
-	Seo,
 } from 'components';
 import { useAppSelector } from 'store/hooks';
 import { usePageTitle } from 'hooks';

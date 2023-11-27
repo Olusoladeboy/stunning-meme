@@ -7,9 +7,14 @@ import { formatNumberToCurrency } from 'utilities';
 type Props = {
 	total?: number;
 	handleRefresh?: () => void;
+	totalAmount?: number | string;
 };
 
-const ConversionTotal = ({ total = 0, handleRefresh }: Props) => {
+const ConversionTotal = ({
+	total = 0,
+	handleRefresh,
+	totalAmount = 0,
+}: Props) => {
 	const theme = useTheme();
 	const styles = useStyles(theme);
 	return (
@@ -20,7 +25,7 @@ const ConversionTotal = ({ total = 0, handleRefresh }: Props) => {
 						Total Conversions
 					</Typography>
 					<Typography variant={'h4'}>
-						{formatNumberToCurrency(500000)}
+						{formatNumberToCurrency(totalAmount)}
 					</Typography>
 				</Box>
 				<Box style={styles.verticalLine} />

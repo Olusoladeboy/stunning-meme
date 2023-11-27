@@ -111,7 +111,8 @@ const Router = () => {
 			</Route>
 			<Route path='bvn-verification' element={<BvnVerification />} />
 			<Route path={'suspension'} element={<Suspension />} />
-			<Route path={'logs'} element={<AuditLogs />} />
+			<Route path={'audit-logs'} element={<AuditLogs />} />
+			<Route path={'api-logs'} element={<ApiLogs />} />
 		</Routes>
 	);
 };

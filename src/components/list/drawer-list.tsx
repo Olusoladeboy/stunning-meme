@@ -464,8 +464,25 @@ const DrawerList = () => {
 					}
 				/>
 				<ListItemButton
-					name={'Logs'}
+					name={'Audit Logs'}
 					link={LINKS.AuditLogs}
+					isActive={
+						getActiveLink({ name: 'logs', currentPath: pathname }).isActive
+					}
+					icon={
+						<CheckIcon
+							color={
+								getActiveLink({ name: 'logs', currentPath: pathname }).isActive
+									? activeColor
+									: initialColor
+							}
+						/>
+					}
+				/>
+
+				<ListItemButton
+					name={'Api Logs'}
+					link={LINKS.ApiLogs}
 					isActive={
 						getActiveLink({ name: 'logs', currentPath: pathname }).isActive
 					}

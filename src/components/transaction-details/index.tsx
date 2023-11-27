@@ -47,12 +47,7 @@ const TransactionDetails: React.FC<Props> = ({ transaction }) => {
 							value={transaction.card_number}
 						/>
 					)}
-					{transaction.network && typeof transaction.network === 'object' && (
-						<TransactionItem
-							label={'Network'}
-							value={transaction.network.name as string}
-						/>
-					)}
+
 					{transaction.dataType && typeof transaction.dataType === 'object' && (
 						<TransactionItem
 							label={'Data Type'}
@@ -65,10 +60,25 @@ const TransactionDetails: React.FC<Props> = ({ transaction }) => {
 							value={transaction.plan.name as string}
 						/>
 					)}
+					{transaction.plan &&
+						typeof transaction.plan === 'object' &&
+						transaction.plan.network &&
+						typeof transaction.plan.network === 'object' && (
+							<TransactionItem
+								label={'Network'}
+								value={transaction.plan.network.name as string}
+							/>
+						)}
 					{transaction.reference && (
 						<TransactionItem
 							label={'Reference'}
 							value={transaction.reference}
+						/>
+					)}
+					{transaction.data_unit && (
+						<TransactionItem
+							label={'Data Unit'}
+							value={transaction.data_unit.$numberDecimal}
 						/>
 					)}
 					{transaction.electricity_token && (

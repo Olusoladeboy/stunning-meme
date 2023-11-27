@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import queryString from 'query-string';
 import { Box, Typography, useTheme } from '@mui/material';
 import { grey } from '@mui/material/colors';
-import { useQuery } from 'react-query';
+import { useQuery, useQueryClient } from 'react-query';
 import {
 	Layout,
 	ConversionsTable,
@@ -29,6 +29,7 @@ import { convertAirtimes } from 'api';
 
 const Conversions = () => {
 	const theme = useTheme();
+	const queryClient = useQueryClient();
 	usePageTitle('Conversions');
 	const handleError = useHandleError();
 	const setAlert = useAlert();
@@ -46,6 +47,8 @@ const Conversions = () => {
 	const { token, canViewStatistics } = useAppSelector(
 		(store) => store.authState
 	);
+
+	const statistics = useAppSelector((store) => store.appState.statistics);
 
 	const { isSearching, search, clearSearch, searchConversion } =
 		useSearchConversion();
@@ -146,8 +149,10 @@ const Conversions = () => {
 									// setReload(true);
 									setReloading(true);
 									refetch();
+									queryClient.invalidateQueries([QueryKeys.Statistics]);
 								}}
 								total={data && data.metadata.total}
+								totalAmount={statistics?.total_airtime_converted || 0}
 							/>
 							<AvailableNetwork />
 						</Box>

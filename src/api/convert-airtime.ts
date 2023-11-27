@@ -16,6 +16,21 @@ export const convertAirtimes = async ({
 		},
 	});
 
+export const autoConvertAirtimes = async ({
+	params,
+}: {
+	params?: { [key: string]: any };
+}): Promise<any> =>
+	apiRequest({
+		method: 'GET',
+		url: ENDPOINTS.AutoConvertAirtime,
+		params: {
+			populate: 'network,user',
+			sort: '-createdAt',
+			...params,
+		},
+	});
+
 export const updateConvertAirtimeStatus = async ({
 	id,
 	data,

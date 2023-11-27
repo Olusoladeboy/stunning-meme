@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
-import queryString from 'query-string';
+import { useNavigate } from 'react-router-dom';
 import { useQuery } from 'react-query';
 import { Box } from '@mui/material';
-import { Layout, AuditLogsTable, TableHeader, Pagination } from 'components';
-import { useAlert, useHandleError, usePageTitle } from 'hooks';
+import { Layout, ApiLogsTable, TableHeader, Pagination } from 'components';
+import { useAlert, useHandleError, usePageTitle, useSearchApiLog } from 'hooks';
 import {
 	ADMIN_ROLE,
 	LINKS,
@@ -12,10 +11,10 @@ import {
 	QueryKeys,
 	RouteGuard,
 } from 'utilities';
-import { auditLogs } from 'api';
+import { auditLogs, apiLogs } from 'api';
 
 const ApiLogs = () => {
-	usePageTitle('Audit logs');
+	usePageTitle('Api logs');
 	const handleError = useHandleError();
 	const [isEnableQuery, setEnableQuery] = useState<boolean>(false);
 	const alert = useAlert();
@@ -23,24 +22,27 @@ const ApiLogs = () => {
 	const [count, setCount] = useState<number>(1);
 	const [page, setPage] = useState<number>(1);
 	const [total, setTotal] = useState<number>(0);
-	const location = useLocation();
-	const query = queryString.parse(location.search);
+
+	const { apiLog, isSearchingApiLog, searchApiLog, clearSearch } =
+		useSearchApiLog();
 
 	useEffect(() => {
 		setEnableQuery(true);
+
 		// if (query && query.page) {
 		// 	setPage(parseInt(query.page as string));
 		// }
 	}, []);
 
+	// Audit logs
 	const { isLoading, data } = useQuery(
-		[QueryKeys.AuditLogs, page],
+		[QueryKeys.ApiLogs, page],
 		() =>
-			auditLogs({
+			apiLogs({
 				sort: '-createdAt',
 				limit: MAX_RECORDS,
 				skip: (page - 1) * MAX_RECORDS,
-				populate: 'staff',
+				populate: 'user',
 			}),
 		{
 			enabled: isEnableQuery,
@@ -65,22 +67,35 @@ const ApiLogs = () => {
 	const handlePageChange = (page: number) => {
 		if (page !== 1) {
 			setPage(page);
-			navigate(`${LINKS.AuditLogs}?&page=${page}`);
+			navigate(`${LINKS.ApiLogs}&page=${page}`);
 		} else {
-			navigate(LINKS.AuditLogs);
-			setPage(page);
+			navigate(`${LINKS.ApiLogs}`);
 		}
+		setPage(page);
 		setEnableQuery(true);
 	};
+
 	return (
 		<Layout>
 			<RouteGuard roles={[ADMIN_ROLE.SUPER_ADMIN]}>
-				<TableHeader sx={{ marginBottom: '2rem' }} title={'Audit Logs'} />
-				<AuditLogsTable isLoading={isLoading} data={data && data.payload} />
-				{total > MAX_RECORDS && (
+				<TableHeader
+					sx={{ marginBottom: '2rem', marginTop: '20px' }}
+					title={'Api Logs'}
+					searchPlaceholder={'Search records by reference'}
+					handleSearch={searchApiLog}
+					clearSearch={clearSearch}
+				/>
+
+				<ApiLogsTable
+					isLoading={isLoading || isSearchingApiLog}
+					data={apiLog ? apiLog : data && data.payload}
+				/>
+
+				{!isSearchingApiLog && !isLoading && !apiLog && total > MAX_RECORDS && (
 					<Box
 						sx={{
 							marginLeft: ['15px', '30px'],
+							marginTop: ['30px'],
 						}}
 					>
 						<Pagination

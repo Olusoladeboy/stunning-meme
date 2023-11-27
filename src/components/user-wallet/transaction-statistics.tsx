@@ -2,7 +2,7 @@ import React from 'react';
 import { Box, Typography, useTheme } from '@mui/material';
 import { grey } from '@mui/material/colors';
 import { useQuery } from 'react-query';
-import { formatNumberToCurrency, User } from 'utilities';
+import { formatNumberToCurrency, User, QueryKeys } from 'utilities';
 
 import { useAppSelector } from 'store/hooks';
 import { useAlert, useHandleError } from 'hooks';
@@ -22,7 +22,7 @@ const UserTransactionStat = ({ user }: Props) => {
 	const token = useAppSelector((store) => store.authState.token);
 
 	const { data } = useQuery(
-		['UserTransactionStatistics', user?.id],
+		[QueryKeys.UserTransactionStatistics, user?.id],
 		() => userTransactionStatistics(userId),
 		{
 			enabled: !!(token && user),
@@ -43,7 +43,7 @@ const UserTransactionStat = ({ user }: Props) => {
 		<>
 			<Box style={styles.container}>
 				<Box>
-					<Typography>Total Balance</Typography>
+					<Typography>Total Amount of Transaction</Typography>
 					<Typography variant={'h4'}>
 						{formatNumberToCurrency(
 							(payload?.usersTotalTransactionAmount as string) || 0
@@ -51,7 +51,7 @@ const UserTransactionStat = ({ user }: Props) => {
 					</Typography>
 				</Box>
 				<Box>
-					<Typography>Total Transactions</Typography>
+					<Typography>Total Number of Transactions</Typography>
 					<Typography variant={'h4'}>
 						{payload?.usersTotalNumberOfTransactions || 0}
 					</Typography>

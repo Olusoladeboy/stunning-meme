@@ -25,7 +25,7 @@ import {
 	DataTypes,
 	AutoConversions,
 	Statistics,
-	AllTransactions,
+	// AllTransactions,
 	AllConversions,
 	ReferralsBonus,
 	CreateNotification,
@@ -54,7 +54,7 @@ const Router = () => {
 			</Route>
 			<Route path={'transactions'}>
 				<Route path={''} element={<Transactions />} />
-				<Route path={'all'} element={<AllTransactions />} />
+				{/* <Route path={'all'} element={<AllTransactions />} /> */}
 			</Route>
 
 			<Route path={'conversions'}>

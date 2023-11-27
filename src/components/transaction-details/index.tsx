@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { Box, styled, Typography } from '@mui/material';
 import moment from 'moment';
+import { useNavigate } from 'react-router-dom';
 import {
 	Transaction,
 	formatNumberToCurrency,
@@ -8,9 +9,15 @@ import {
 	extractExactTransactionService,
 	extractTransactionType,
 	checkAmount,
+	SERVICES,
+	extractUserName,
+	User,
+	LINKS,
+	SECOUNDARY_COLOR,
 } from 'utilities';
 import TransactionItem from './transaction-item';
 import { useSearchCoupon } from 'hooks';
+import Button from 'components/button';
 
 interface Props {
 	transaction: Transaction | null;
@@ -18,6 +25,7 @@ interface Props {
 
 const TransactionDetails: React.FC<Props> = ({ transaction }) => {
 	const { searchCoupon } = useSearchCoupon();
+	const navigate = useNavigate();
 
 	useEffect(() => {
 		if (
@@ -34,6 +42,13 @@ const TransactionDetails: React.FC<Props> = ({ transaction }) => {
 	if (transaction) {
 		const service = extractExactTransactionService(transaction as Transaction);
 		const type = extractTransactionType(transaction as Transaction);
+
+		const isWalletTransfer = SERVICES.WALLET_TRANSFER === transaction.service;
+
+		const viewUser = (id: string) => {
+			navigate(`${LINKS.Users}/${id}`);
+		};
+
 		return (
 			<Box>
 				<Container>
@@ -75,6 +90,44 @@ const TransactionDetails: React.FC<Props> = ({ transaction }) => {
 							value={transaction.reference}
 						/>
 					)}
+
+					{isWalletTransfer && (
+						<>
+							<TransactionItem
+								label={'User from'}
+								value={extractUserName(transaction.userFrom as User)}
+								rightAside={
+									<Button
+										sx={{
+											color: SECOUNDARY_COLOR,
+										}}
+										onClick={() =>
+											viewUser((transaction?.userFrom as User)?.id as string)
+										}
+									>
+										View user
+									</Button>
+								}
+							/>
+							<TransactionItem
+								label={'User To'}
+								value={extractUserName(transaction.userTo as User)}
+								rightAside={
+									<Button
+										sx={{
+											color: SECOUNDARY_COLOR,
+										}}
+										onClick={() =>
+											viewUser((transaction?.userTo as User)?.id as string)
+										}
+									>
+										View user
+									</Button>
+								}
+							/>
+						</>
+					)}
+
 					{transaction.data_unit && (
 						<TransactionItem
 							label={'Data Unit'}

@@ -6,7 +6,6 @@ export { default as Users } from './users';
 export { default as UserProfile } from './users/profile';
 export { default as Managers } from './managers';
 export { default as Transactions } from './transactions';
-export { default as AllTransactions } from './transactions/all-transactions';
 export { default as Conversions } from './conversions';
 export { default as Network } from './network';
 export { default as ViewDataPlan } from './data-plan';

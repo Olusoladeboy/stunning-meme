@@ -25,7 +25,10 @@ const TransactionDetailsModal: React.FC<Props> = ({
 			closeModal={closeModal}
 			hasCloseButton
 		>
-			<Typography sx={{ marginBottom: '2rem' }} variant={'h4'}>
+			<Typography
+				sx={{ marginBottom: '2rem', fontSize: ['24px', '28px'] }}
+				variant={'h4'}
+			>
 				Transaction Details
 			</Typography>
 			<TransactionDetails transaction={transaction} />

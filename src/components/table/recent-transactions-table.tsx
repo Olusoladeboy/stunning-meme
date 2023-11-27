@@ -126,7 +126,7 @@ const RecentTransactionsTable = () => {
 												key={key}
 											>
 												<StyledTableCell>
-													{row.user && extractUserName(row.user as User)}
+													{row?.user && extractUserName(row.user as User)}
 												</StyledTableCell>
 												<StyledTableCell>{row.reference}</StyledTableCell>
 												<StyledTableCell>

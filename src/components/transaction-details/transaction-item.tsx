@@ -1,12 +1,17 @@
-import React from 'react';
+import React, { ReactNode } from 'react';
 import { Box, Typography } from '@mui/material';
 
 interface Props {
 	label: string;
 	value: string;
+	rightAside?: ReactNode;
 }
 
-const DisputeTransactionItem: React.FC<Props> = ({ label, value }) => {
+const DisputeTransactionItem: React.FC<Props> = ({
+	label,
+	value,
+	rightAside,
+}) => {
 	return (
 		<Box
 			sx={{
@@ -14,10 +19,27 @@ const DisputeTransactionItem: React.FC<Props> = ({ label, value }) => {
 				gap: '6px',
 			}}
 		>
-			<Typography sx={{ fontWeight: 'bold' }} variant={'body1'}>
+			<Typography sx={{ fontWeight: 'bold' }} variant={'body2'}>
 				{label}:
 			</Typography>
-			<Typography variant={'h6'}>{value}</Typography>
+			<Box
+				sx={{
+					display: 'flex',
+					alignItems: 'center',
+					justifyContent: 'space-between',
+					gap: '6px',
+				}}
+			>
+				<Typography
+					sx={{
+						fontSize: ['14px', '16px'],
+					}}
+					variant={'h6'}
+				>
+					{value}
+				</Typography>
+				{rightAside}
+			</Box>
 		</Box>
 	);
 };

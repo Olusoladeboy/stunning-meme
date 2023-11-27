@@ -4,7 +4,6 @@ import { Box, useTheme } from '@mui/material';
 import { useNavigate, useLocation } from 'react-router-dom';
 import queryString from 'query-string';
 import UserAvatarWithDetails from '../avatar-with-details';
-import UserWallet from '../user-wallet';
 import WalletSummaryTable from '../table/wallet-summary-table';
 import { LINKS, MAX_RECORDS, QueryKeys, User, UserNavList } from 'utilities';
 import { allTransactions } from 'api';
@@ -49,6 +48,7 @@ const UserWalletSummary = ({ user }: Props) => {
 					sort: '-createdAt',
 					limit: MAX_RECORDS,
 					skip: (page - 1) * MAX_RECORDS,
+					// service: SERVICES.WALLET_TRANSFER,
 				},
 			}),
 		{

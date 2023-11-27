@@ -1,18 +1,33 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, CSSProperties, MouseEvent } from 'react';
 import queryString from 'query-string';
-import { Box, useTheme } from '@mui/material';
+import {
+	Box,
+	Button,
+	ClickAwayListener,
+	List,
+	ListItemButton,
+	Popper,
+	useTheme,
+} from '@mui/material';
 import { useQuery } from 'react-query';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { grey } from '@mui/material/colors';
 import {
 	Layout,
 	TransactionsTable,
-	TransactionMainBalance,
 	Pagination,
 	TableHeader,
+	TransactionsTab,
+	TransactionMainBalance,
 } from 'components';
-import { BOX_SHADOW, QueryKeys, MAX_RECORDS, LINKS } from 'utilities';
-import { useAppSelector } from 'store/hooks';
+import {
+	BOX_SHADOW,
+	QueryKeys,
+	MAX_RECORDS,
+	LINKS,
+	TRANSACTIONS_TAB,
+	TRANSACTION_SERVICE,
+} from 'utilities';
 import { allTransactions } from 'api';
 import {
 	useHandleError,
@@ -20,52 +35,77 @@ import {
 	useSearchTransaction,
 	usePageTitle,
 } from 'hooks';
+import { ArrowDropDown } from '@mui/icons-material';
+import { useAppSelector } from 'store/hooks';
 
-const Transactions = () => {
-	usePageTitle('Transactions');
+const AllTransactions = () => {
+	usePageTitle('All Transactions');
 	const theme = useTheme();
 	const handleError = useHandleError();
 	const styles = useStyles(theme);
-	const [isEnableQuery, setEnableQuery] = useState<boolean>(false);
 	const alert = useAlert();
-	const { canViewStatistics } = useAppSelector((store) => store.authState);
 	const navigate = useNavigate();
 	const [count, setCount] = useState<number>(1);
-	const [page, setPage] = useState<number>(1);
-	const [total, setTotal] = useState<number>(0);
 	const location = useLocation();
 	const query = queryString.parse(location.search);
+	const [page, setPage] = useState<number>(Number(query?.page) || 1);
+	const [total, setTotal] = useState<number>(0);
+
+	const { canViewStatistics } = useAppSelector((store) => store.authState);
+
+	const [serviceAnchorEl, setServiceAnchorEl] = useState<null | HTMLElement>(
+		null
+	);
+	const [transactionService, setTransactionService] = useState<string>('');
 	const { isSearching, searchTransaction, clearSearch, search } =
 		useSearchTransaction();
+	const [isLoad, setLoad] = useState<boolean>(false);
+	const [currentTab, setCurrentTab] = useState(TRANSACTIONS_TAB.ALL);
+	const [transactionStatus, setTransactionStatus] = useState<string>('');
 
-	useEffect(() => {
-		setEnableQuery(true);
-		// if (query && query.page) {
-		// 	setPage(parseInt(query.page as string));
-		// }
-	}, []);
+	const handleServiceClick = (e: MouseEvent<HTMLElement>) => {
+		setServiceAnchorEl(serviceAnchorEl ? null : e.currentTarget);
+	};
 
-	useEffect(() => {
-		if (query && query.page) {
-			setPage(parseInt(query.page as string));
-		}
-	}, [query]);
+	useEffect(
+		() => {
+			setLoad(true);
+			// if (query && query.page) {
+			// 	setPage(parseInt(query.page as string));
+			// }
+		},
+		// eslint-disable-next-line
+		[]
+	);
+
+	useEffect(
+		() => {
+			if (query && query.page) {
+				setPage(parseInt(query.page as string));
+			}
+		},
+		// eslint-disable-next-line
+		[query]
+	);
 
 	const { isLoading, data } = useQuery(
-		[QueryKeys.Transactions, page],
+		[QueryKeys.Transactions, query.page, transactionService, transactionStatus],
 		() =>
 			allTransactions({
 				params: {
 					sort: '-createdAt',
 					limit: MAX_RECORDS,
 					skip: (page - 1) * MAX_RECORDS,
-					populate: 'plan,dataType',
+					service: transactionService,
+					status: transactionStatus,
+					populate: 'network,plan,dataType',
 				},
 			}),
 		{
-			enabled: isEnableQuery,
+			retry: 2,
+			enabled: isLoad,
 			onSettled: (data: any, error) => {
-				setEnableQuery(false);
+				setLoad(false);
 				if (error) {
 					const response = handleError({ error });
 					if (response?.message) {
@@ -90,8 +130,96 @@ const Transactions = () => {
 			navigate(LINKS.Transactions);
 			setPage(page);
 		}
-		setEnableQuery(true);
+		setLoad(true);
 	};
+
+	const switchUserType = (type?: string) => {
+		switch (type) {
+			case TRANSACTIONS_TAB.ALL:
+				setCurrentTab(TRANSACTIONS_TAB.ALL);
+				setTransactionStatus('');
+				setTransactionService('');
+				break;
+
+			case TRANSACTIONS_TAB.SUCCESSFUL:
+				setCurrentTab(TRANSACTIONS_TAB.SUCCESSFUL);
+				setTransactionStatus(TRANSACTIONS_TAB.SUCCESSFUL);
+				break;
+			case TRANSACTIONS_TAB.PENDING:
+				setCurrentTab(TRANSACTIONS_TAB.PENDING);
+				setTransactionStatus(TRANSACTIONS_TAB.PENDING);
+				break;
+			case TRANSACTIONS_TAB.FAILED:
+				setCurrentTab(TRANSACTIONS_TAB.FAILED);
+				setTransactionStatus(TRANSACTIONS_TAB.FAILED);
+				break;
+
+			default:
+				setCurrentTab(TRANSACTIONS_TAB.ALL);
+				setTransactionStatus('');
+				break;
+		}
+		setLoad(true);
+	};
+
+	const handleFilter = (transactionService: string) => {
+		setServiceAnchorEl(null);
+		if (transactionService === 'ALL SERVICES') {
+			setTransactionService('');
+		} else {
+			setTransactionService(transactionService);
+		}
+
+		setLoad(true);
+	};
+
+	const statusFilter = (
+		<ClickAwayListener onClickAway={() => setServiceAnchorEl(null)}>
+			<Box>
+				<Button
+					style={styles.button as CSSProperties}
+					onClick={(e) => handleServiceClick(e)}
+					variant={'outlined'}
+					endIcon={<ArrowDropDown />}
+				>
+					Filter by Service
+				</Button>
+				<Popper
+					sx={{ zIndex: theme.zIndex.modal }}
+					open={Boolean(serviceAnchorEl)}
+					anchorEl={serviceAnchorEl}
+				>
+					<List
+						sx={{
+							'& .MuiListItemButton-root': {
+								textTransform: 'capitalize',
+							},
+							'& .MuiListItemButton-root:hover': {
+								backgroundColor: theme.palette.primary.main,
+								color: grey[50],
+							},
+						}}
+						style={styles.list}
+					>
+						{Object.values({
+							ALL_SERVICES: 'ALL SERVICES',
+							...TRANSACTION_SERVICE,
+						}).map((value) => (
+							<ListItemButton
+								sx={{
+									textTransform: 'capitalize',
+								}}
+								onClick={() => handleFilter(value)}
+								key={value}
+							>
+								{value}
+							</ListItemButton>
+						))}
+					</List>
+				</Popper>
+			</Box>
+		</ClickAwayListener>
+	);
 
 	return (
 		<Layout>
@@ -108,9 +236,15 @@ const Transactions = () => {
 						title={'Transactions'}
 						handleSearch={searchTransaction}
 						clearSearch={clearSearch}
+						statusFilter={statusFilter}
 					/>
 					{canViewStatistics && <TransactionMainBalance />}
+					<TransactionsTab
+						currentTab={currentTab}
+						changeCurrentTab={switchUserType}
+					/>
 				</Box>
+
 				<TransactionsTable
 					isLoading={isLoading || isSearching}
 					data={search ? search : data && data.payload}
@@ -149,6 +283,15 @@ const useStyles = (theme: any) => ({
 		justifyContent: 'flex-end',
 		paddingRight: '20px',
 	},
+	button: {
+		whiteSpace: 'nowrap',
+	},
+	list: {
+		border: `1px solid ${theme.palette.primary.main}`,
+		borderRadius: theme.spacing(1),
+		backgroundColor: theme.palette.background.paper,
+		marginTop: theme.spacing(2),
+	},
 });
 
-export default Transactions;
+export default AllTransactions;

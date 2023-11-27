@@ -55,6 +55,7 @@ export const QueryKeys = {
 	Me: '@Query:Me',
 	Verification: '@Query:Verification',
 	ApiLogs: '@Query:ApiLogs',
+	UserTransactionStatistics: '@Query:UserTransactionStatistics',
 };
 
 export const StorageKeys = {

@@ -18,7 +18,7 @@ import {
 	formatNumberToCurrency,
 	Transaction,
 	TransactionStatus,
-	userName,
+	extractUserName,
 } from 'utilities';
 import { StyledTableCell, StyledTableRow } from './components';
 import Empty from '../empty/table-empty';
@@ -111,10 +111,7 @@ const TransactionsTable = ({ data, isLoading }: Props) => {
 															}
 														/>
 														<Typography>
-															{userName(
-																data.user?.firstname as string,
-																data.user?.lastname as string
-															)}
+															{data?.user && extractUserName(data.user)}
 														</Typography>
 													</Box>
 												</StyledTableCell>

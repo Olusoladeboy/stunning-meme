@@ -54,6 +54,7 @@ export const QueryKeys = {
 	Ticket: '@Query:Ticket',
 	Me: '@Query:Me',
 	Verification: '@Query:Verification',
+	BvnVerification: '@Query:BvnVerification',
 	NiNVerification: '@Query:NiNVerification',
 	ApiLogs: '@Query:ApiLogs',
 	UserTransactionStatistics: '@Query:UserTransactionStatistics',

@@ -59,7 +59,7 @@ const BvnVerificationTable = ({
 					queryClient.invalidateQueries(QueryKeys.Users);
 					queryClient.invalidateQueries(QueryKeys.User);
 					queryClient.invalidateQueries(QueryKeys.Statistics);
-					queryClient.invalidateQueries(QueryKeys.Verification);
+					queryClient.invalidateQueries(QueryKeys.BvnVerification);
 				}
 			},
 		}

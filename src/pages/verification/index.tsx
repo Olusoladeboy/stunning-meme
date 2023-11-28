@@ -38,7 +38,8 @@ const Verification = () => {
 					sort: '-createdAt',
 					limit: MAX_RECORDS,
 					skip: (page - 1) * MAX_RECORDS,
-					status: VERIFICATION_STATUS.PENDING,
+					// status: VERIFICATION_STATUS.PENDING,
+					verified: false,
 				},
 			}),
 		{

@@ -123,9 +123,10 @@ const NinVerificationTable = ({
 						}}
 					>
 						<TableRow>
-							<CustomTableCell label={'Name'} />
-							<CustomTableCell label={'Email'} />
-							<CustomTableCell label={'Tier Level'} />
+							<CustomTableCell label={'First Name'} />
+							<CustomTableCell label={'Last Name'} />
+							<CustomTableCell label={'Phone'} />
+							<CustomTableCell label={'NIN'} />
 							<CustomTableCell label={'Status'} />
 							<CustomTableCell label={'Action'} />
 						</TableRow>
@@ -139,7 +140,7 @@ const NinVerificationTable = ({
 							}}
 						>
 							{isLoading ? (
-								<Loader colSpan={5} />
+								<Loader colSpan={6} />
 							) : (
 								verifications && (
 									<>
@@ -147,23 +148,18 @@ const NinVerificationTable = ({
 											verifications.map((row, key) => (
 												<TableRow key={key}>
 													<TableCell style={styles.tableText}>
-														<Box
-															sx={{
-																display: 'flex',
-																alignItems: 'center',
-																gap: '10px',
-															}}
-														>
-															<Avatar src={row.user.avatar} />
-															<span>{extractUserName(row.user)}</span>
-														</Box>
+														{row?.request?.firstname || ''}
 													</TableCell>
 													<TableCell style={styles.tableText}>
-														{row.user.email}
+														{row?.request?.lastname || ''}
 													</TableCell>
 													<TableCell style={styles.tableText}>
-														{row.user.kycLevel}
+														{row?.request?.phone}
 													</TableCell>
+													<TableCell style={styles.tableText}>
+														{row?.request?.payload}
+													</TableCell>
+
 													<TableCell
 														style={{
 															...styles.tableText,
@@ -172,34 +168,9 @@ const NinVerificationTable = ({
 																: DANGER_COLOR,
 														}}
 													>
-														{row.user.verified ? 'Verified' : 'Not Verified'}
+														{row.status}
 													</TableCell>
 													<TableCell sx={{ maxWidth: '180px' }}>
-														{/* <Box style={styles.verifyPushWrapper}>
-															{!row.user.verified && (
-																<CustomButton
-																	loading={
-																		selectedUser &&
-																		selectedUser.id === row.id &&
-																		isVerifyingUser
-																			? true
-																			: false
-																	}
-																	onClick={() => setSelectUser(row)}
-																	style={styles.verifyBtn as CSSProperties}
-																	size={'small'}
-																>
-																	Verify user
-																</CustomButton>
-															)}
-															<Button
-																onClick={() => navigate(LINKS.PushNotification)}
-																size={'small'}
-																style={styles.pushBtn as CSSProperties}
-															>
-																Push notify
-															</Button>
-														</Box> */}
 														{row.status === VERIFICATION_STATUS.PENDING && (
 															<Box style={styles.verifyPushWrapper}>
 																<Button
@@ -233,8 +204,8 @@ const NinVerificationTable = ({
 											))
 										) : (
 											<TableRow>
-												<TableCell colSpan={5}>
-													<Empty text={'No users'} />
+												<TableCell colSpan={6}>
+													<Empty text={'No NIN Verification record'} />
 												</TableCell>
 											</TableRow>
 										)}

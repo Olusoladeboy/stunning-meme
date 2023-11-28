@@ -4,7 +4,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import queryString from 'query-string';
 import { useQuery } from 'react-query';
 import { Layout, Pagination, NinVerificationTable } from 'components';
-import { MAX_RECORDS, QueryKeys, LINKS } from 'utilities';
+import { MAX_RECORDS, QueryKeys, LINKS, VERIFICATION_STATUS } from 'utilities';
 import { useAppSelector } from 'store/hooks';
 import { users, verifications } from 'api';
 import { useSearchUser, useAlert, useHandleError, usePageTitle } from 'hooks';
@@ -39,6 +39,7 @@ const Verification = () => {
 				skip: (page - 1) * MAX_RECORDS,
 				populate: 'user',
 				type: 'NIN',
+				status: VERIFICATION_STATUS.PENDING,
 			}),
 		{
 			enabled: !!token,

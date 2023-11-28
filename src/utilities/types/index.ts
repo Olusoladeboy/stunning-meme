@@ -361,6 +361,13 @@ export interface Amount {
 export interface IVerification {
 	status: string;
 	user: User;
+	request: {
+		type: string;
+		firstname: string;
+		lastname: string;
+		phone: string;
+		payload: string;
+	};
 	level: number;
 	payload: string;
 	type: string;

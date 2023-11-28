@@ -38,7 +38,7 @@ const BvnVerification = () => {
 	}, [query, query.page]);
 
 	const { isLoading, data } = useQuery(
-		[QueryKeys.Verification, page],
+		[QueryKeys.BvnVerification, page],
 		() =>
 			verifications({
 				sort: '-createdAt',
@@ -46,7 +46,7 @@ const BvnVerification = () => {
 				skip: (page - 1) * MAX_RECORDS,
 				populate: 'user',
 				type: 'BVN',
-				// status: VERIFICATION_STATUS.PENDING,
+				status: VERIFICATION_STATUS.PENDING,
 			}),
 		{
 			enabled: !!token,

@@ -6,7 +6,7 @@ import { useQuery } from 'react-query';
 import { Layout, Pagination, VerificationTable } from 'components';
 import { MAX_RECORDS, QueryKeys, LINKS } from 'utilities';
 import { useAppSelector } from 'store/hooks';
-import { users } from 'api';
+import { users, verifications } from 'api';
 import { useSearchUser, useAlert, useHandleError, usePageTitle } from 'hooks';
 
 const Verification = () => {
@@ -31,14 +31,15 @@ const Verification = () => {
 	}, [query, query.page]);
 
 	const { isLoading, data } = useQuery(
-		[QueryKeys.Users, page],
+		[QueryKeys.NiNVerification, page],
 		() =>
-			users({
+			verifications({
 				params: {
 					sort: '-createdAt',
 					limit: MAX_RECORDS,
 					skip: (page - 1) * MAX_RECORDS,
-					populate: 'manager',
+					populate: 'user',
+					type: 'NIN',
 				},
 			}),
 		{
@@ -50,10 +51,10 @@ const Verification = () => {
 						setAlert({ message: response.message, type: 'error' });
 				}
 				if (data && data.success) {
-					const total = data.metadata.total;
-					setTotal(data.metadata.total);
-					const count = Math.ceil(total / MAX_RECORDS);
-					setCount(count);
+					// const total = data.metadata.total;
+					// setTotal(data.metadata.total);
+					// const count = Math.ceil(total / MAX_RECORDS);
+					// setCount(count);
 				}
 			},
 		}
@@ -75,7 +76,7 @@ const Verification = () => {
 					clearSearch={clearSearch}
 					searchUser={searchUser}
 					isLoading={isLoading || isSearching}
-					users={search ? search : data && data.payload}
+					verifications={(data && data.payload) || []}
 				/>
 			</Box>
 			{!search && total > MAX_RECORDS && (

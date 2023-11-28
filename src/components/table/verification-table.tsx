@@ -1,6 +1,6 @@
 import React, { CSSProperties, useState } from 'react';
 import Table from '@mui/material/Table';
-import { useQuery, useQueryClient } from 'react-query';
+import { useMutation, useQueryClient } from 'react-query';
 import { useNavigate } from 'react-router-dom';
 import { Avatar, useTheme, TableBody, TableHead, Box } from '@mui/material';
 import { grey } from '@mui/material/colors';
@@ -13,6 +13,8 @@ import {
 	QueryKeys,
 	ErrorBoundaryGuard,
 	extractUserName,
+	IVerification,
+	VERIFICATION_STATUS,
 } from 'utilities';
 import {
 	StyledTableCell as TableCell,
@@ -25,21 +27,21 @@ import CustomButton from '../button/custom-button';
 import Loader from '../loader/table-loader';
 import { useAlert, useHandleError } from 'hooks';
 import { useAppSelector } from 'store/hooks';
-import { verifyUser } from 'api';
+import { updateVerification, verifyUser } from 'api';
 import CustomTableCell from './components/custom-table-cell';
 
 type Props = {
-	users: User[] | null;
+	verifications: IVerification[] | null;
 	isLoading?: boolean;
 	clearSearch?(): void;
 	searchUser?(value: string): void;
 };
 
 const VerificationTable = ({
-	users,
 	isLoading,
 	searchUser,
 	clearSearch,
+	verifications,
 }: Props) => {
 	const navigate = useNavigate();
 	const handleError = useHandleError();
@@ -51,13 +53,34 @@ const VerificationTable = ({
 	const { token } = useAppSelector((store) => store.authState);
 	const [selectedUser, setSelectUser] = useState<null | User>(null);
 
-	const { isLoading: isVerifyingUser } = useQuery(
-		'',
-		() => verifyUser(selectedUser?.id as string),
+	// const { isLoading: isVerifyingUser } = useQuery(
+	// 	'',
+	// 	() => verifyUser(selectedUser?.id as string),
+	// 	{
+	// 		enabled: !!(token && selectedUser),
+	// 		onSettled: (data, error) => {
+	// 			setSelectUser(null);
+	// 			if (error) {
+	// 				const response = handleError({ error });
+	// 				if (response?.message) {
+	// 					setAlert({ message: response?.message, type: 'error' });
+	// 				}
+	// 			}
+
+	// 			if (data && data.success) {
+	// 				setAlert({ message: data.message, type: 'success' });
+	// 				queryClient.invalidateQueries(QueryKeys.Users);
+	// 				queryClient.invalidateQueries(QueryKeys.User);
+	// 				queryClient.invalidateQueries(QueryKeys.Statistics);
+	// 			}
+	// 		},
+	// 	}
+	// );
+
+	const { isLoading: isVerifyingUser, mutate: mutateVerifyUser } = useMutation(
+		updateVerification,
 		{
-			enabled: !!(token && selectedUser),
 			onSettled: (data, error) => {
-				setSelectUser(null);
 				if (error) {
 					const response = handleError({ error });
 					if (response?.message) {
@@ -70,10 +93,19 @@ const VerificationTable = ({
 					queryClient.invalidateQueries(QueryKeys.Users);
 					queryClient.invalidateQueries(QueryKeys.User);
 					queryClient.invalidateQueries(QueryKeys.Statistics);
+					queryClient.invalidateQueries(QueryKeys.NiNVerification);
 				}
 			},
 		}
 	);
+
+	const handleVerifyUser = (id: string, status: string) =>
+		mutateVerifyUser({
+			id,
+			data: {
+				status,
+			},
+		});
 
 	return (
 		<>
@@ -133,10 +165,10 @@ const VerificationTable = ({
 							{isLoading ? (
 								<Loader colSpan={5} />
 							) : (
-								users && (
+								verifications && (
 									<>
-										{users.length > 0 ? (
-											users.map((row, key) => (
+										{verifications.length > 0 ? (
+											verifications.map((row, key) => (
 												<TableRow key={key}>
 													<TableCell style={styles.tableText}>
 														<Box
@@ -146,29 +178,29 @@ const VerificationTable = ({
 																gap: '10px',
 															}}
 														>
-															<Avatar src={row.avatar} />
-															<span>{extractUserName(row)}</span>
+															<Avatar src={row.user.avatar} />
+															<span>{extractUserName(row.user)}</span>
 														</Box>
 													</TableCell>
 													<TableCell style={styles.tableText}>
-														{row.email}
+														{row.user.email}
 													</TableCell>
 													<TableCell style={styles.tableText}>
-														{row.kycLevel}
+														{row.user.kycLevel}
 													</TableCell>
 													<TableCell
 														style={{
 															...styles.tableText,
-															color: row.verified
+															color: row.user.verified
 																? SUCCESS_COLOR
 																: DANGER_COLOR,
 														}}
 													>
-														{row.verified ? 'Verified' : 'Not Verified'}
+														{row.user.verified ? 'Verified' : 'Not Verified'}
 													</TableCell>
 													<TableCell sx={{ maxWidth: '180px' }}>
-														<Box style={styles.verifyPushWrapper}>
-															{!row.verified && (
+														{/* <Box style={styles.verifyPushWrapper}>
+															{!row.user.verified && (
 																<CustomButton
 																	loading={
 																		selectedUser &&
@@ -191,7 +223,35 @@ const VerificationTable = ({
 															>
 																Push notify
 															</Button>
-														</Box>
+														</Box> */}
+														{row.status === VERIFICATION_STATUS.PENDING && (
+															<Box style={styles.verifyPushWrapper}>
+																<Button
+																	onClick={() =>
+																		handleVerifyUser(
+																			row.id,
+																			VERIFICATION_STATUS.SUCCESSFUL
+																		)
+																	}
+																	size={'small'}
+																	style={styles.button as CSSProperties}
+																>
+																	Approve
+																</Button>
+																<Button
+																	onClick={() =>
+																		handleVerifyUser(
+																			row.id,
+																			VERIFICATION_STATUS.FAILED
+																		)
+																	}
+																	size={'small'}
+																	style={styles.button as CSSProperties}
+																>
+																	Decline
+																</Button>
+															</Box>
+														)}
 													</TableCell>
 												</TableRow>
 											))
@@ -265,6 +325,12 @@ const useStyles = (theme: any) => ({
 		color: theme.palette.secondary.main,
 		border: `1px solid ${theme.palette.secondary.main}`,
 		whiteSpace: 'nowrap',
+	},
+	button: {
+		color: theme.palette.secondary.main,
+		border: `1px solid ${theme.palette.secondary.main}`,
+		whiteSpace: 'nowrap',
+		padding: '4px 20px',
 	},
 });
 

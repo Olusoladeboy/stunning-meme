@@ -130,7 +130,7 @@ const BvnVerificationTable = ({
 																gap: '10px',
 															}}
 														>
-															<Avatar src={row.user.avatar} />
+															<Avatar src={row.user?.avatar} />
 															<span>
 																{row.user.firstname} {row.user.lastname}
 															</span>

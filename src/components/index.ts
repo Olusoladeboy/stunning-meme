@@ -97,3 +97,4 @@ export { default as BorderContainer } from './layout/boarder-container';
 export { default as ModalWrapper } from './modal/Wrapper';
 export { default as AutoConversionNetworkTable } from './table/auto-conversion-network-table';
 export { default as Seo } from './seo';
+export { default as NinVerificationTable } from './table/nin-verification-table';

@@ -32,6 +32,7 @@ import {
 	ChangePassword,
 	BvnVerification,
 	ApiLogs,
+	NinVerification,
 } from '../pages';
 
 const Router = () => {
@@ -110,6 +111,7 @@ const Router = () => {
 				<Route path='kyc' element={<Kyc />} />
 			</Route>
 			<Route path='bvn-verification' element={<BvnVerification />} />
+			<Route path='nin-verification' element={<NinVerification />} />
 			<Route path={'suspension'} element={<Suspension />} />
 			<Route path={'audit-logs'} element={<AuditLogs />} />
 			<Route path={'api-logs'} element={<ApiLogs />} />

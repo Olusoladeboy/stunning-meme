@@ -110,6 +110,7 @@ export const LINKS = {
 	CreateNotification: '/notifications/create',
 	PushNotification: '/push-notification',
 	Verification: '/verification',
+	NinVerification: '/nin-verification',
 	BvnVerification: '/bvn-verification',
 	KycVerification: '/verification/kyc',
 	Suspension: '/suspension',

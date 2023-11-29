@@ -77,7 +77,7 @@ const ApiLogs = () => {
 
 	return (
 		<Layout>
-			<RouteGuard roles={[ADMIN_ROLE.SUPER_ADMIN]}>
+			<RouteGuard roles={[ADMIN_ROLE.SUPER_ADMIN, ADMIN_ROLE.OPERATIONS]}>
 				<TableHeader
 					sx={{ marginBottom: '2rem', marginTop: '20px' }}
 					title={'Api Logs'}

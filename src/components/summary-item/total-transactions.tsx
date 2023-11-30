@@ -24,7 +24,7 @@ const TotalTransactions = () => {
 				<Typography style={styles.text} variant={'h6'}>
 					Total transactions
 				</Typography>
-				<Link to={LINKS.AllTransactions}>
+				<Link to={LINKS.Transactions}>
 					<Typography style={styles.linkText} variant={'body1'}>
 						View all
 					</Typography>

@@ -42,6 +42,7 @@ const UserRecords = () => {
 				text={'Unverified Users'}
 				value={statistics ? statistics.total_unverified_users : '0'}
 				isPaddingLeft
+				link={LINKS.NinVerification}
 			/>
 			<RecordItem
 				isBorderRight

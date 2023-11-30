@@ -4,7 +4,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import queryString from 'query-string';
 import { useQuery } from 'react-query';
 import { Layout, Pagination, VerificationTable } from 'components';
-import { MAX_RECORDS, QueryKeys, LINKS } from 'utilities';
+import { MAX_RECORDS, QueryKeys, LINKS, VERIFICATION_STATUS } from 'utilities';
 import { useAppSelector } from 'store/hooks';
 import { users } from 'api';
 import { useSearchUser, useAlert, useHandleError, usePageTitle } from 'hooks';
@@ -31,14 +31,15 @@ const Verification = () => {
 	}, [query, query.page]);
 
 	const { isLoading, data } = useQuery(
-		[QueryKeys.Users, page],
+		[QueryKeys.Verification, page],
 		() =>
 			users({
 				params: {
 					sort: '-createdAt',
 					limit: MAX_RECORDS,
 					skip: (page - 1) * MAX_RECORDS,
-					populate: 'manager',
+					// status: VERIFICATION_STATUS.PENDING,
+					verified: false,
 				},
 			}),
 		{

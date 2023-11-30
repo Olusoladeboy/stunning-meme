@@ -361,6 +361,13 @@ export interface Amount {
 export interface IVerification {
 	status: string;
 	user: User;
+	request: {
+		type: string;
+		firstname: string;
+		lastname: string;
+		phone: string;
+		payload: string;
+	};
 	level: number;
 	payload: string;
 	type: string;
@@ -593,6 +600,21 @@ export type IDataPlan = {
 	dataType?: DataType | string;
 };
 
+export interface INestedTransaction {
+	id: string;
+	amount: Amount;
+	discount_code?: string | Coupon;
+	balanceBefore: Amount;
+	balanceAfter: Amount;
+	type: string;
+	service: string;
+	createdBy: string;
+	user: string;
+	reference: string;
+	createdAt: string;
+	updatedAt: string;
+}
+
 export interface Transaction {
 	id: string;
 	status:
@@ -614,6 +636,10 @@ export interface Transaction {
 	network?: string | NetworkData;
 	summary?: string;
 	user: User;
+	userTo?: User;
+	userFrom?: User;
+	transactionTo?: INestedTransaction;
+	transactionFrom?: INestedTransaction;
 	amount: string | Amount;
 	balanceBefore?: string | Amount;
 	balanceAfter?: string | Amount;
@@ -623,20 +649,7 @@ export interface Transaction {
 	pin_data?: PinData;
 	pin?: string;
 	pins?: EducationPin[];
-	transaction: {
-		id: string;
-		amount: Amount;
-		discount_code?: string | Coupon;
-		balanceBefore: Amount;
-		balanceAfter: Amount;
-		type: string;
-		service: string;
-		createdBy: string;
-		user: string;
-		reference: string;
-		createdAt: string;
-		updatedAt: string;
-	};
+	transaction: INestedTransaction;
 	electricity_token?: ElectricityToken;
 	withdrawalChannel?: string;
 	accountNumber?: string;

@@ -3,21 +3,14 @@ import { Box, useTheme } from '@mui/material';
 import { useNavigate, useLocation } from 'react-router-dom';
 import queryString from 'query-string';
 import { useQuery } from 'react-query';
-import { Layout, Pagination, BvnVerificationTable } from 'components';
-import {
-	MAX_RECORDS,
-	QueryKeys,
-	LINKS,
-	VERIFICATION_STATUS,
-	ADMIN_ROLE,
-	RouteGuard,
-} from 'utilities';
+import { Layout, Pagination, NinVerificationTable } from 'components';
+import { MAX_RECORDS, QueryKeys, LINKS, VERIFICATION_STATUS } from 'utilities';
 import { useAppSelector } from 'store/hooks';
-import { verifications } from 'api';
+import { users, verifications } from 'api';
 import { useSearchUser, useAlert, useHandleError, usePageTitle } from 'hooks';
 
-const BvnVerification = () => {
-	usePageTitle('BVN Verifications');
+const Verification = () => {
+	usePageTitle('Verifications');
 	const { token } = useAppSelector((store) => store.authState);
 	const handleError = useHandleError();
 	const setAlert = useAlert();
@@ -38,14 +31,14 @@ const BvnVerification = () => {
 	}, [query, query.page]);
 
 	const { isLoading, data } = useQuery(
-		[QueryKeys.BvnVerification, page],
+		[QueryKeys.NiNVerification, page],
 		() =>
 			verifications({
 				sort: '-createdAt',
 				limit: MAX_RECORDS,
 				skip: (page - 1) * MAX_RECORDS,
 				populate: 'user',
-				type: 'BVN',
+				type: 'NIN',
 				status: VERIFICATION_STATUS.PENDING,
 			}),
 		{
@@ -57,10 +50,10 @@ const BvnVerification = () => {
 						setAlert({ message: response.message, type: 'error' });
 				}
 				if (data && data.success) {
-					const total = data.metadata ? data.metadata.total : 0;
-					setTotal(total);
-					const count = Math.ceil(total / MAX_RECORDS);
-					setCount(count);
+					// const total = data.metadata.total;
+					// setTotal(data.metadata.total);
+					// const count = Math.ceil(total / MAX_RECORDS);
+					// setCount(count);
 				}
 			},
 		}
@@ -69,42 +62,40 @@ const BvnVerification = () => {
 	const handlePageChange = (page: number) => {
 		if (page !== 1) {
 			setPage(page);
-			navigate(`${LINKS.BvnVerification}?&page=${page}`);
+			navigate(`${LINKS.Users}?&page=${page}`);
 		} else {
-			navigate(LINKS.BvnVerification);
+			navigate(LINKS.Users);
 			setPage(page);
 		}
 	};
 	return (
 		<Layout>
-			<RouteGuard roles={[ADMIN_ROLE.SUPER_ADMIN]}>
-				<Box>
-					<BvnVerificationTable
-						clearSearch={clearSearch}
-						searchUser={searchUser}
-						isLoading={isLoading || isSearching}
-						data={data && data.payload}
-					/>
-				</Box>
-				{!search && total > MAX_RECORDS && (
-					<Pagination
-						sx={{
-							display: 'flex',
-							justifyContent: 'flex-end',
-							marginTop: theme.spacing(4),
-							marginRight: '1rem',
-						}}
-						size={'large'}
-						variant={'outlined'}
-						shape={'rounded'}
-						page={page}
-						count={count}
-						onChange={(e, number) => handlePageChange(number)}
-					/>
-				)}
-			</RouteGuard>
+			<Box>
+				<NinVerificationTable
+					clearSearch={clearSearch}
+					searchUser={searchUser}
+					isLoading={isLoading || isSearching}
+					verifications={(data && data.payload) || []}
+				/>
+			</Box>
+			{!search && total > MAX_RECORDS && (
+				<Pagination
+					sx={{
+						display: 'flex',
+						justifyContent: 'flex-end',
+						marginTop: theme.spacing(4),
+						marginRight: '1rem',
+					}}
+					size={'large'}
+					variant={'outlined'}
+					shape={'rounded'}
+					page={page}
+					count={count}
+					onChange={(e, number) => handlePageChange(number)}
+				/>
+			)}
 		</Layout>
 	);
 };
 
-export default BvnVerification;
+export default Verification;

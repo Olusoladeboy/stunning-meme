@@ -1,6 +1,6 @@
-import React, { CSSProperties, useState } from 'react';
+import React, { CSSProperties } from 'react';
 import Table from '@mui/material/Table';
-import { useQueryClient } from 'react-query';
+import { useMutation, useQueryClient } from 'react-query';
 import { useNavigate } from 'react-router-dom';
 import { Avatar, useTheme, TableBody, TableHead, Box } from '@mui/material';
 import { grey } from '@mui/material/colors';
@@ -8,11 +8,11 @@ import {
 	SUCCESS_COLOR,
 	BOX_SHADOW,
 	DANGER_COLOR,
-	LINKS,
-	User,
 	QueryKeys,
 	ErrorBoundaryGuard,
 	extractUserName,
+	IVerification,
+	VERIFICATION_STATUS,
 } from 'utilities';
 import {
 	StyledTableCell as TableCell,
@@ -21,56 +21,82 @@ import {
 import TableHeader from '../header/table-header';
 import Empty from '../empty';
 import Button from '../button';
-import CustomButton from '../button/custom-button';
 import Loader from '../loader/table-loader';
 import { useAlert, useHandleError } from 'hooks';
-import { verifyUser } from 'api';
+import { updateVerification } from 'api';
 import CustomTableCell from './components/custom-table-cell';
 
 type Props = {
-	users: User[] | null;
+	verifications: IVerification[] | null;
 	isLoading?: boolean;
 	clearSearch?(): void;
 	searchUser?(value: string): void;
 };
 
-const VerificationTable = ({
+const NinVerificationTable = ({
 	isLoading,
 	searchUser,
 	clearSearch,
-	users,
+	verifications,
 }: Props) => {
 	const navigate = useNavigate();
 	const handleError = useHandleError();
 	const theme = useTheme();
 	const styles = useStyles(theme);
 
-	const [isVerifyingUser, setVerifyingUser] = useState<boolean>(false);
-
 	const queryClient = useQueryClient();
 	const setAlert = useAlert();
-	const [selectedUser, setSelectUser] = useState<null | User>(null);
 
-	const handleVerifyUser = async (id: string) => {
-		setVerifyingUser(true);
-		try {
-			const response = await verifyUser(id);
-			setVerifyingUser(false);
-			if (response && response.success) {
-				setAlert({ message: response.message, type: 'success' });
+	// const { isLoading: isVerifyingUser } = useQuery(
+	// 	'',
+	// 	() => verifyUser(selectedUser?.id as string),
+	// 	{
+	// 		enabled: !!(token && selectedUser),
+	// 		onSettled: (data, error) => {
+	// 			setSelectUser(null);
+	// 			if (error) {
+	// 				const response = handleError({ error });
+	// 				if (response?.message) {
+	// 					setAlert({ message: response?.message, type: 'error' });
+	// 				}
+	// 			}
+
+	// 			if (data && data.success) {
+	// 				setAlert({ message: data.message, type: 'success' });
+	// 				queryClient.invalidateQueries(QueryKeys.Users);
+	// 				queryClient.invalidateQueries(QueryKeys.User);
+	// 				queryClient.invalidateQueries(QueryKeys.Statistics);
+	// 			}
+	// 		},
+	// 	}
+	// );
+
+	const { mutate: mutateVerifyUser } = useMutation(updateVerification, {
+		onSettled: (data, error) => {
+			if (error) {
+				const response = handleError({ error });
+				if (response?.message) {
+					setAlert({ message: response?.message, type: 'error' });
+				}
+			}
+
+			if (data && data.success) {
+				setAlert({ message: data.message, type: 'success' });
 				queryClient.invalidateQueries(QueryKeys.Users);
 				queryClient.invalidateQueries(QueryKeys.User);
 				queryClient.invalidateQueries(QueryKeys.Statistics);
+				queryClient.invalidateQueries(QueryKeys.NiNVerification);
 			}
-		} catch (error) {
-			setVerifyingUser(false);
+		},
+	});
 
-			const response = handleError({ error });
-			if (response?.message) {
-				setAlert({ message: response?.message, type: 'error' });
-			}
-		}
-	};
+	const handleVerifyUser = (id: string, status: string) =>
+		mutateVerifyUser({
+			id,
+			data: {
+				status,
+			},
+		});
 
 	return (
 		<>
@@ -80,26 +106,11 @@ const VerificationTable = ({
 					sx={{ padding: '0px 1rem' }}
 				>
 					<TableHeader
-						title={'Verification'}
+						title={'NIN Verification'}
 						placeholder={'Search User by Email'}
 						clearSearch={clearSearch}
 						handleSearch={searchUser}
 					/>
-					<Box
-						sx={{
-							alignSelf: 'flex-end',
-							display: 'flex',
-							alignItems: 'center',
-							gap: theme.spacing(3),
-						}}
-					>
-						<Button
-							onClick={() => navigate(LINKS.KycVerification)}
-							style={styles.btnKycLimit as CSSProperties}
-						>
-							KYC limit
-						</Button>
-					</Box>
 				</Box>
 
 				<Table sx={{ overflow: 'auto' }}>
@@ -112,9 +123,10 @@ const VerificationTable = ({
 						}}
 					>
 						<TableRow>
-							<CustomTableCell label={'Name'} />
-							<CustomTableCell label={'Email'} />
-							<CustomTableCell label={'Tier Level'} />
+							<CustomTableCell label={'First Name'} />
+							<CustomTableCell label={'Last Name'} />
+							<CustomTableCell label={'Phone'} />
+							<CustomTableCell label={'NIN'} />
 							<CustomTableCell label={'Status'} />
 							<CustomTableCell label={'Action'} />
 						</TableRow>
@@ -128,76 +140,72 @@ const VerificationTable = ({
 							}}
 						>
 							{isLoading ? (
-								<Loader colSpan={5} />
+								<Loader colSpan={6} />
 							) : (
-								users && (
+								verifications && (
 									<>
-										{users.length > 0 ? (
-											users.map((row, key) => (
+										{verifications.length > 0 ? (
+											verifications.map((row, key) => (
 												<TableRow key={key}>
 													<TableCell style={styles.tableText}>
-														<Box
-															sx={{
-																display: 'flex',
-																alignItems: 'center',
-																gap: '10px',
-															}}
-														>
-															<Avatar src={row.avatar} />
-															<span>{extractUserName(row)}</span>
-														</Box>
+														{row?.request?.firstname || ''}
 													</TableCell>
 													<TableCell style={styles.tableText}>
-														{row.email}
+														{row?.request?.lastname || ''}
 													</TableCell>
 													<TableCell style={styles.tableText}>
-														{row.kycLevel}
+														{row?.request?.phone}
 													</TableCell>
+													<TableCell style={styles.tableText}>
+														{row?.request?.payload}
+													</TableCell>
+
 													<TableCell
 														style={{
 															...styles.tableText,
-															color: row.verified
+															color: row.user.verified
 																? SUCCESS_COLOR
 																: DANGER_COLOR,
 														}}
 													>
-														{row.verified ? 'Verified' : 'Not Verified'}
+														{row.status}
 													</TableCell>
 													<TableCell sx={{ maxWidth: '180px' }}>
-														<Box style={styles.verifyPushWrapper}>
-															{!row.verified && (
-																<CustomButton
-																	loading={
-																		selectedUser &&
-																		selectedUser.id === row.id &&
-																		isVerifyingUser
-																			? true
-																			: false
-																	}
+														{row.status === VERIFICATION_STATUS.PENDING && (
+															<Box style={styles.verifyPushWrapper}>
+																<Button
 																	onClick={() =>
-																		handleVerifyUser(row?.id as string)
+																		handleVerifyUser(
+																			row.id,
+																			VERIFICATION_STATUS.SUCCESSFUL
+																		)
 																	}
-																	style={styles.verifyBtn as CSSProperties}
 																	size={'small'}
+																	style={styles.button as CSSProperties}
 																>
-																	Verify user
-																</CustomButton>
-															)}
-															<Button
-																onClick={() => navigate(LINKS.PushNotification)}
-																size={'small'}
-																style={styles.pushBtn as CSSProperties}
-															>
-																Push notify
-															</Button>
-														</Box>
+																	Approve
+																</Button>
+																<Button
+																	onClick={() =>
+																		handleVerifyUser(
+																			row.id,
+																			VERIFICATION_STATUS.FAILED
+																		)
+																	}
+																	size={'small'}
+																	style={styles.button as CSSProperties}
+																>
+																	Decline
+																</Button>
+															</Box>
+														)}
 													</TableCell>
 												</TableRow>
 											))
 										) : (
 											<TableRow>
-												<TableCell colSpan={5}>
-													<Empty text={'No users'} />
+												<TableCell colSpan={6}>
+													<Empty text={'No NIN Verification record'} />
 												</TableCell>
 											</TableRow>
 										)}
@@ -273,4 +281,4 @@ const useStyles = (theme: any) => ({
 	},
 });
 
-export default VerificationTable;
+export default NinVerificationTable;

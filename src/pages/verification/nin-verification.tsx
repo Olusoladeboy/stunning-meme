@@ -50,10 +50,10 @@ const Verification = () => {
 						setAlert({ message: response.message, type: 'error' });
 				}
 				if (data && data.success) {
-					// const total = data.metadata.total;
-					// setTotal(data.metadata.total);
-					// const count = Math.ceil(total / MAX_RECORDS);
-					// setCount(count);
+					const total = data.metadata ? data.metadata.total : 0;
+					setTotal(total);
+					const count = Math.ceil(total / MAX_RECORDS);
+					setCount(count);
 				}
 			},
 		}
@@ -62,9 +62,9 @@ const Verification = () => {
 	const handlePageChange = (page: number) => {
 		if (page !== 1) {
 			setPage(page);
-			navigate(`${LINKS.Users}?&page=${page}`);
+			navigate(`${LINKS.NinVerification}?&page=${page}`);
 		} else {
-			navigate(LINKS.Users);
+			navigate(LINKS.NinVerification);
 			setPage(page);
 		}
 	};

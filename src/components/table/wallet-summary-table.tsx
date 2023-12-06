@@ -80,9 +80,7 @@ const WalletSummaryTable = ({ transactions, isLoading }: Props) => {
 											key={row.id}
 										>
 											<StyledTableCell style={styles.text}>
-												{row.transaction
-													? row.transaction.reference
-													: row.reference || 'No transaction reference'}
+												{row.reference || 'No transaction reference'}
 											</StyledTableCell>
 											<StyledTableCell style={styles.text}>
 												{formatNumberToCurrency(checkAmount(row.amount))}

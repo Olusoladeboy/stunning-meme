@@ -249,7 +249,7 @@ const AllTransactions = () => {
 					isLoading={isLoading || isSearching}
 					data={search ? search : data && data.payload}
 				/>
-				{total > MAX_RECORDS && (
+				{!Boolean(search && search.length > 0) && total > MAX_RECORDS && (
 					<Box style={styles.paginationWrapper}>
 						<Pagination
 							sx={{}}

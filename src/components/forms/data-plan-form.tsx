@@ -249,7 +249,25 @@ const DataPlanForm = ({ dataPayload, callback }: Props) => {
 					<Typography variant={'body1'} style={styles.label}>
 						Data Source
 					</Typography>
-					{dataPayload && Object.keys(dataPayload).length > 0 ? (
+					<Select
+						fullWidth
+						error={
+							errors && touched.data_source && errors.data_source ? true : false
+						}
+						helpertext={errors && touched.data_source && errors.data_source}
+						value={data_source}
+						onChange={handleChange('data_source') as never}
+					>
+						<MenuItem disabled value={SELECT_DATA_SOURCE}>
+							{SELECT_DATA_SOURCE}
+						</MenuItem>
+						{Object.values(DATA_SOURCE).map((value) => (
+							<MenuItem key={value} value={value}>
+								{value}
+							</MenuItem>
+						))}
+					</Select>
+					{/* {dataPayload && Object.keys(dataPayload).length > 0 ? (
 						<TextPlaceholder text={data_source as string} hasArrowDropDown />
 					) : (
 						<Select
@@ -272,7 +290,7 @@ const DataPlanForm = ({ dataPayload, callback }: Props) => {
 								</MenuItem>
 							))}
 						</Select>
-					)}
+					)} */}
 				</Box>
 			</Box>
 			<Button

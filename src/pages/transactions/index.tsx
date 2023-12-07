@@ -247,21 +247,24 @@ const AllTransactions = () => {
 
 				<TransactionsTable
 					isLoading={isLoading || isSearching}
-					data={search ? search : data && data.payload}
+					data={search && search.length > 0 ? search : data && data.payload}
 				/>
-				{!Boolean(search && search.length > 0) && total > MAX_RECORDS && (
-					<Box style={styles.paginationWrapper}>
-						<Pagination
-							sx={{}}
-							size={'large'}
-							variant={'outlined'}
-							shape={'rounded'}
-							page={page}
-							count={count}
-							onChange={(e, number) => handlePageChange(number)}
-						/>
-					</Box>
-				)}
+				{!Boolean(search && search.length > 0) &&
+					!isSearching &&
+					!isLoading &&
+					total > MAX_RECORDS && (
+						<Box style={styles.paginationWrapper}>
+							<Pagination
+								sx={{}}
+								size={'large'}
+								variant={'outlined'}
+								shape={'rounded'}
+								page={page}
+								count={count}
+								onChange={(e, number) => handlePageChange(number)}
+							/>
+						</Box>
+					)}
 			</Box>
 		</Layout>
 	);

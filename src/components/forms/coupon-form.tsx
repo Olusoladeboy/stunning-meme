@@ -22,7 +22,6 @@ import {
 	QueryKey,
 	validationSchema,
 	PRIMARY_COLOR,
-	User,
 	extractUserName,
 } from 'utilities';
 import { useAlert, useHandleError, useSearchUser } from 'hooks';

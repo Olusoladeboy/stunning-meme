@@ -33,11 +33,6 @@ import { useAlert, useHandleError } from 'hooks';
 
 const WARNING_MESSAGE = `You can't perform this operation`;
 
-interface AitimeNetworkTypes extends NetworkData {
-	isActive: boolean;
-	id: string;
-}
-
 const AirtimeNetworkTable = () => {
 	const theme = useTheme();
 	const handleError = useHandleError();

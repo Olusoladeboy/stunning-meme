@@ -4,7 +4,7 @@ import { useFormik } from 'formik';
 import * as yup from 'yup';
 import Button from '../button';
 import Select from '../form-components/select';
-import { SECOUNDARY_COLOR, SERVICES, cleanObject } from 'utilities';
+import { SECOUNDARY_COLOR, SERVICES } from 'utilities';
 import {
 	useQueryAirtimeNetwork,
 	useQueryDateNetwork,
@@ -15,12 +15,6 @@ const SELECT_SERVICE = 'Select service';
 const SELECT_TYPE = 'Select type';
 const SELECT_PLAN = 'Select plan';
 const SELECT_PROVIDER = 'Select service provider';
-
-const VALIDATION_SCHEMA = {
-	Provider: 'Provider',
-	ProviiderWithPlan: 'ProviderWithPlan',
-	ProviderWithTypesAndPlan: 'ProviderWithTypesAndPlan',
-};
 
 const SearchStatistics = () => {
 	const [schema, setSchema] = useState<any>();
@@ -108,17 +102,17 @@ const SearchStatistics = () => {
 		}
 	};
 
-	const switchProvider = (provider: string) => {
-		setFieldValue('provider', SELECT_PROVIDER);
-		switch (service) {
-			case SERVICES.AIRTIME_TOP_UP:
-				queryAirtimeNetworks();
-				break;
+	// const switchProvider = (provider: string) => {
+	// 	setFieldValue('provider', SELECT_PROVIDER);
+	// 	switch (service) {
+	// 		case SERVICES.AIRTIME_TOP_UP:
+	// 			queryAirtimeNetworks();
+	// 			break;
 
-			default:
-				break;
-		}
-	};
+	// 		default:
+	// 			break;
+	// 	}
+	// };
 
 	const switchHandleSubmit = (values: Record<string, any>) => {
 		switch (service) {

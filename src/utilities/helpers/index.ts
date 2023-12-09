@@ -103,7 +103,8 @@ export const checkTransactionAmount = ({
 	field: string;
 }) => {
 	if (transaction && transaction.transaction) {
-		return checkAmount(transaction.transaction[field]);
+		if (transaction.transaction[field])
+			return checkAmount(transaction.transaction[field]);
 	}
 
 	if (transaction[field]) return checkAmount(transaction[field]);

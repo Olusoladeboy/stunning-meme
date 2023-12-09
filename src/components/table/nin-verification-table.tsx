@@ -1,8 +1,7 @@
 import React, { CSSProperties } from 'react';
 import Table from '@mui/material/Table';
 import { useMutation, useQueryClient } from 'react-query';
-import { useNavigate } from 'react-router-dom';
-import { Avatar, useTheme, TableBody, TableHead, Box } from '@mui/material';
+import { useTheme, TableBody, TableHead, Box } from '@mui/material';
 import { grey } from '@mui/material/colors';
 import {
 	SUCCESS_COLOR,
@@ -10,7 +9,6 @@ import {
 	DANGER_COLOR,
 	QueryKeys,
 	ErrorBoundaryGuard,
-	extractUserName,
 	IVerification,
 	VERIFICATION_STATUS,
 } from 'utilities';
@@ -39,7 +37,6 @@ const NinVerificationTable = ({
 	clearSearch,
 	verifications,
 }: Props) => {
-	const navigate = useNavigate();
 	const handleError = useHandleError();
 	const theme = useTheme();
 	const styles = useStyles(theme);

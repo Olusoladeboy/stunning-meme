@@ -6,7 +6,7 @@ import { useQuery } from 'react-query';
 import { Layout, Pagination, NinVerificationTable } from 'components';
 import { MAX_RECORDS, QueryKeys, LINKS, VERIFICATION_STATUS } from 'utilities';
 import { useAppSelector } from 'store/hooks';
-import { users, verifications } from 'api';
+import { verifications } from 'api';
 import { useSearchUser, useAlert, useHandleError, usePageTitle } from 'hooks';
 
 const Verification = () => {

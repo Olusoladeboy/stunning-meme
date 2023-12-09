@@ -11,7 +11,7 @@ import {
 	QueryKeys,
 	RouteGuard,
 } from 'utilities';
-import { auditLogs, apiLogs } from 'api';
+import { apiLogs } from 'api';
 
 const ApiLogs = () => {
 	usePageTitle('Api logs');
@@ -67,7 +67,7 @@ const ApiLogs = () => {
 	const handlePageChange = (page: number) => {
 		if (page !== 1) {
 			setPage(page);
-			navigate(`${LINKS.ApiLogs}&page=${page}`);
+			navigate(`${LINKS.ApiLogs}?page=${page}`);
 		} else {
 			navigate(`${LINKS.ApiLogs}`);
 		}

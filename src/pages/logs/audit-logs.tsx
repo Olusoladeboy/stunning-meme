@@ -8,7 +8,6 @@ import { useAlert, useHandleError, usePageTitle } from 'hooks';
 import {
 	ADMIN_ROLE,
 	LINKS,
-	LOG_TAB,
 	MAX_RECORDS,
 	QueryKeys,
 	RouteGuard,

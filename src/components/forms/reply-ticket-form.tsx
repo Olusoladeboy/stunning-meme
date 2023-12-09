@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Box, useTheme } from '@mui/material';
 import * as yup from 'yup';
 import { useFormik } from 'formik';
@@ -10,13 +10,11 @@ import {
 	TicketReply,
 	Ticket,
 	QueryKey,
-	ModalDetails,
 	TicketReplyType,
 	TicketStatus,
 } from 'utilities';
 import { grey } from '@mui/material/colors';
 import Button from '../button/custom-button';
-import Modal from '../modal';
 import { useAlert, useHandleError } from 'hooks';
 import { replyTicket } from 'api';
 
@@ -32,7 +30,6 @@ const ReplyTicketForm = ({ ticket }: Props) => {
 	} = useAppSelector((store) => store);
 	const theme = useTheme();
 	const queryClient = useQueryClient();
-	const [modal, setModal] = useState<null | ModalDetails>(null);
 
 	const validationSchema = yup.object().shape({
 		reply: yup.string().required('Enter reply message'),
@@ -77,7 +74,6 @@ const ReplyTicketForm = ({ ticket }: Props) => {
 
 	return (
 		<>
-			{modal && <Modal {...modal} />}
 			<Box
 				sx={{ display: 'grid', gridTemplateColumns: '1fr', gap: '8px' }}
 				component={'form'}

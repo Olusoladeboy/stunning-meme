@@ -3,7 +3,7 @@ import { Table, TableBody, TableHead, useTheme, Box } from '@mui/material';
 import moment from 'moment';
 import { grey } from '@mui/material/colors';
 import JsonFormatter from 'react-json-formatter';
-import { SUCCESS_COLOR, BOX_SHADOW, IApiLog, extractUserName } from 'utilities';
+import { IApiLog, extractUserName } from 'utilities';
 import {
 	StyledTableCell as TableCell,
 	StyledTableRow as TableRow,
@@ -116,35 +116,35 @@ const ApiLogsTable: React.FC<Props> = ({ data, isLoading }) => {
 	);
 };
 
-const useStyles = (theme: any) => ({
-	container: {
-		display: 'grid',
-		gridTemplateColumn: '1fr',
-		gap: theme.spacing(4),
-		border: `1px solid ${theme.palette.secondary.main}`,
-		padding: '1.5rem 0px',
-		backgroundColor: grey[50],
-		borderRadius: theme.spacing(2),
-		boxShadow: BOX_SHADOW,
-	},
-	filterWrapper: {
-		display: 'flex',
-		gap: '10px',
-		alignItems: 'center',
-	},
-	tableHeader: {
-		display: 'flex',
-		flexDirection: 'column',
-		gap: theme.spacing(3),
-	},
-	suspendBtn: {
-		paddingLeft: theme.spacing(3),
-		paddingRight: theme.spacing(3),
-		textTransform: 'uppercase',
-		border: `1px solid ${SUCCESS_COLOR}`,
-		color: SUCCESS_COLOR,
-		// fontWeight: '600',
-	},
-});
+// const useStyles = (theme: any) => ({
+// 	container: {
+// 		display: 'grid',
+// 		gridTemplateColumn: '1fr',
+// 		gap: theme.spacing(4),
+// 		border: `1px solid ${theme.palette.secondary.main}`,
+// 		padding: '1.5rem 0px',
+// 		backgroundColor: grey[50],
+// 		borderRadius: theme.spacing(2),
+// 		boxShadow: BOX_SHADOW,
+// 	},
+// 	filterWrapper: {
+// 		display: 'flex',
+// 		gap: '10px',
+// 		alignItems: 'center',
+// 	},
+// 	tableHeader: {
+// 		display: 'flex',
+// 		flexDirection: 'column',
+// 		gap: theme.spacing(3),
+// 	},
+// 	suspendBtn: {
+// 		paddingLeft: theme.spacing(3),
+// 		paddingRight: theme.spacing(3),
+// 		textTransform: 'uppercase',
+// 		border: `1px solid ${SUCCESS_COLOR}`,
+// 		color: SUCCESS_COLOR,
+// 		// fontWeight: '600',
+// 	},
+// });
 
 export default ApiLogsTable;

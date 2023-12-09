@@ -1,23 +1,13 @@
-import React, { CSSProperties, useState } from 'react';
-import {
-	Table,
-	Box,
-	TableBody,
-	TableHead,
-	Avatar,
-	useTheme,
-} from '@mui/material';
+import React from 'react';
+import { Table, TableBody, TableHead, useTheme } from '@mui/material';
 import moment from 'moment';
 import { grey } from '@mui/material/colors';
-import { SUCCESS_COLOR, BOX_SHADOW, AuditLog } from 'utilities';
+import { AuditLog } from 'utilities';
 import {
 	StyledTableCell as TableCell,
 	StyledTableRow as TableRow,
 } from './components';
-import TableHeader from '../header/table-header';
 import Empty from '../empty';
-import Pagination from '../pagination';
-import Button from '../button';
 import CustomTableCell from './components/custom-table-cell';
 import TableLoader from '../loader/table-loader';
 
@@ -28,7 +18,6 @@ interface Props {
 
 const AuditLogsTable: React.FC<Props> = ({ data, isLoading }) => {
 	const theme = useTheme();
-	const styles = useStyles(theme);
 	return (
 		<>
 			<Table sx={{ overflow: 'auto' }}>
@@ -103,35 +92,35 @@ const AuditLogsTable: React.FC<Props> = ({ data, isLoading }) => {
 	);
 };
 
-const useStyles = (theme: any) => ({
-	container: {
-		display: 'grid',
-		gridTemplateColumn: '1fr',
-		gap: theme.spacing(4),
-		border: `1px solid ${theme.palette.secondary.main}`,
-		padding: '1.5rem 0px',
-		backgroundColor: grey[50],
-		borderRadius: theme.spacing(2),
-		boxShadow: BOX_SHADOW,
-	},
-	filterWrapper: {
-		display: 'flex',
-		gap: '10px',
-		alignItems: 'center',
-	},
-	tableHeader: {
-		display: 'flex',
-		flexDirection: 'column',
-		gap: theme.spacing(3),
-	},
-	suspendBtn: {
-		paddingLeft: theme.spacing(3),
-		paddingRight: theme.spacing(3),
-		textTransform: 'uppercase',
-		border: `1px solid ${SUCCESS_COLOR}`,
-		color: SUCCESS_COLOR,
-		// fontWeight: '600',
-	},
-});
+// const useStyles = (theme: any) => ({
+// 	container: {
+// 		display: 'grid',
+// 		gridTemplateColumn: '1fr',
+// 		gap: theme.spacing(4),
+// 		border: `1px solid ${theme.palette.secondary.main}`,
+// 		padding: '1.5rem 0px',
+// 		backgroundColor: grey[50],
+// 		borderRadius: theme.spacing(2),
+// 		boxShadow: BOX_SHADOW,
+// 	},
+// 	filterWrapper: {
+// 		display: 'flex',
+// 		gap: '10px',
+// 		alignItems: 'center',
+// 	},
+// 	tableHeader: {
+// 		display: 'flex',
+// 		flexDirection: 'column',
+// 		gap: theme.spacing(3),
+// 	},
+// 	suspendBtn: {
+// 		paddingLeft: theme.spacing(3),
+// 		paddingRight: theme.spacing(3),
+// 		textTransform: 'uppercase',
+// 		border: `1px solid ${SUCCESS_COLOR}`,
+// 		color: SUCCESS_COLOR,
+// 		// fontWeight: '600',
+// 	},
+// });
 
 export default AuditLogsTable;

@@ -71,10 +71,10 @@ const UserTransaction = ({ user }: Props) => {
 		if (page !== 1) {
 			setPage(page);
 			navigate(
-				`${LINKS.User}/${user?.id}?tab=${UserNavList.Transaction}&page=${page}`
+				`${LINKS.Users}/${user?.id}?tab=${UserNavList.Transaction}&page=${page}`
 			);
 		} else {
-			navigate(`${LINKS.User}/${user?.id}?tab=${UserNavList.Transaction}`);
+			navigate(`${LINKS.Users}/${user?.id}?tab=${UserNavList.Transaction}`);
 			setPage(page);
 		}
 	};

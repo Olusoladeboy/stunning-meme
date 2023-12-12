@@ -42,6 +42,7 @@ const Users = () => {
 				params: {
 					sort: '-createdAt',
 					limit: MAX_RECORDS,
+					// limit: 10,
 					skip: (page - 1) * MAX_RECORDS,
 					populate: 'manager',
 					...usersStatus,
@@ -69,7 +70,7 @@ const Users = () => {
 	const handlePageChange = (page: number) => {
 		if (page !== 1) {
 			setPage(page);
-			navigate(`${LINKS.Users}?&page=${page}`);
+			navigate(`${LINKS.Users}?page=${page}`);
 		} else {
 			navigate(LINKS.Users);
 			setPage(page);
@@ -121,7 +122,11 @@ const Users = () => {
 				isDisplayTab={!search}
 			/>
 			{!search && total > MAX_RECORDS && (
-				<Box sx={{}}>
+				<Box
+					sx={{
+						marginTop: '20px',
+					}}
+				>
 					<Pagination
 						sx={{}}
 						size={'large'}

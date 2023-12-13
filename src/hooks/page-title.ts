@@ -5,7 +5,7 @@ const usePageTitle = (title?: string) => {
 		document.title = title
 			? `${title} | Airtimeflip Admin`
 			: 'Airtimeflip Admin';
-	}, []);
+	}, [title]);
 };
 
 export default usePageTitle;

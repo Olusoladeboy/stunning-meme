@@ -20,7 +20,7 @@ import {
 import { BOX_SHADOW, LINKS, UserNavList, QueryKeys, User } from 'utilities';
 import { useAppSelector } from 'store/hooks';
 import ErrorBoundary from 'utilities/helpers/error-boundary';
-import { useHandleError, useAlert, usePageTitle } from 'hooks';
+import { useHandleError, useAlert } from 'hooks';
 import { users } from 'api';
 
 const Profile = () => {

@@ -1,6 +1,6 @@
 import React from 'react';
 import { useQuery } from 'react-query';
-import { Layout, AdminUserTable, Seo } from 'components';
+import { Layout, AdminUserTable } from 'components';
 import { useAppSelector } from 'store/hooks';
 import { QueryKeys } from 'utilities';
 import { useAlert, useHandleError, usePageTitle } from 'hooks';

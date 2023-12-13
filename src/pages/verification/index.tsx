@@ -4,7 +4,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import queryString from 'query-string';
 import { useQuery } from 'react-query';
 import { Layout, Pagination, VerificationTable } from 'components';
-import { MAX_RECORDS, QueryKeys, LINKS, VERIFICATION_STATUS } from 'utilities';
+import { MAX_RECORDS, QueryKeys, LINKS } from 'utilities';
 import { useAppSelector } from 'store/hooks';
 import { users } from 'api';
 import { useSearchUser, useAlert, useHandleError, usePageTitle } from 'hooks';

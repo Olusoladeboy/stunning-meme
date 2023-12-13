@@ -31,10 +31,6 @@ import Loader from '../loader';
 import { useAlert, useHandleError } from 'hooks';
 import { networks, updateNetwork } from 'api';
 
-interface ConversionNetworkTypes extends NetworkData {
-	isActive: boolean;
-	id: string;
-}
 
 const ConversionNetworkTable = () => {
 	const theme = useTheme();

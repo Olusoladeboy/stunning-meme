@@ -51,7 +51,9 @@ const AutoConversions = () => {
 	const statistics = useAppSelector((store) => store.appState.statistics);
 
 	const { isSearching, search, clearSearch, searchConversion } =
-		useSearchConversion();
+		useSearchConversion({
+			isAutoConvert: true,
+		});
 
 	useEffect(() => {
 		if (query && query.page) {

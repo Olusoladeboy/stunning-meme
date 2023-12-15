@@ -169,7 +169,16 @@ const DataPlanForm = ({ dataPayload, callback }: Props) => {
 					<Typography variant={'body1'} style={styles.label}>
 						Data Name
 					</Typography>
-					{dataPayload && Object.keys(dataPayload).length > 0 ? (
+
+					<TextInput
+						fullWidth
+						error={errors && touched.name && errors.name ? true : false}
+						helperText={errors && touched.name && errors.name}
+						placeholder={'Data name'}
+						value={name}
+						onChange={handleChange('name')}
+					/>
+					{/* {dataPayload && Object.keys(dataPayload).length > 0 ? (
 						<TextPlaceholder text={name || ''} />
 					) : (
 						<TextInput
@@ -180,7 +189,7 @@ const DataPlanForm = ({ dataPayload, callback }: Props) => {
 							value={name}
 							onChange={handleChange('name')}
 						/>
-					)}
+					)} */}
 				</Box>
 
 				<Box>

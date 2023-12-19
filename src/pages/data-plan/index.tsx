@@ -31,7 +31,7 @@ const ViewDataPlan = () => {
 		[QueryKeys.DataPlans, dataType, network],
 		() =>
 			dataPlans({
-				sort: 'createdAt',
+				sort: 'level',
 				dataType,
 			}),
 		{

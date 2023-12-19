@@ -36,6 +36,7 @@ const DataPlanForm = ({ dataPayload, callback }: Props) => {
 
 	const validationSchema = yup.object().shape({
 		name: yup.string().required('Enter name'),
+		level: yup.number().positive('Level must be positive digit'),
 		amount: yup
 			.string()
 			.matches(/^[1-9]\d*(\.\d+)?$/, 'Incorrect amount')
@@ -62,6 +63,7 @@ const DataPlanForm = ({ dataPayload, callback }: Props) => {
 		code: '',
 		// merchant_amount: '',
 		data_unit: '',
+		level: '',
 	};
 
 	const { isLoading: isCreatingPlan, mutate: mutateCreatePlan } = useMutation(
@@ -128,13 +130,19 @@ const DataPlanForm = ({ dataPayload, callback }: Props) => {
 				data_source: data.data_source,
 			};
 
+			if (values.level) payload.level = values.level;
+
 			return mutateUpdatePlan({
 				data: payload,
 				id: dataPayload?.id as string,
 			});
 		}
 
-		mutateCreatePlan({ ...data, network, dataType });
+		mutateCreatePlan(
+			values.level
+				? { ...data, network, dataType, level: values.level }
+				: { ...data, network, dataType }
+		);
 	};
 
 	const { values, handleChange, errors, touched, handleSubmit, resetForm } =
@@ -151,7 +159,7 @@ const DataPlanForm = ({ dataPayload, callback }: Props) => {
 			},
 		});
 
-	const { name, amount, code, data_source, data_unit } = values;
+	const { name, amount, code, data_source, data_unit, level } = values;
 
 	return (
 		<Box style={styles.form as CSSProperties} component={'form'}>
@@ -276,6 +284,7 @@ const DataPlanForm = ({ dataPayload, callback }: Props) => {
 							</MenuItem>
 						))}
 					</Select>
+
 					{/* {dataPayload && Object.keys(dataPayload).length > 0 ? (
 						<TextPlaceholder text={data_source as string} hasArrowDropDown />
 					) : (
@@ -300,6 +309,20 @@ const DataPlanForm = ({ dataPayload, callback }: Props) => {
 							))}
 						</Select>
 					)} */}
+				</Box>
+				<Box>
+					<Typography variant={'body1'} style={styles.label}>
+						Level
+					</Typography>
+					<TextInput
+						fullWidth
+						placeholder={'Enter data plan level'}
+						type='number'
+						error={errors && touched.level && errors.level ? true : false}
+						helperText={errors && touched.level && errors.level}
+						value={level}
+						onChange={handleChange('level')}
+					/>
 				</Box>
 			</Box>
 			<Button

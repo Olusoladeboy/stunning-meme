@@ -148,6 +148,7 @@ const DataPlansTable: React.FC<Props> = ({ data, isLoading }) => {
 								<CustomTableCell label={'Code'} />
 								<CustomTableCell label={'Data Unit'} />
 								<CustomTableCell label={'Data Source'} />
+								<CustomTableCell label={'Level'} />
 								<CustomTableCell label={'Status'} />
 								{canCreateOrUpdateRecord && (
 									<CustomTableCell label={'Action'} />
@@ -180,6 +181,7 @@ const DataPlansTable: React.FC<Props> = ({ data, isLoading }) => {
 													<StyledTableCell>{plan.code}</StyledTableCell>
 													<StyledTableCell>{plan.data_unit}</StyledTableCell>
 													<StyledTableCell>{plan.data_source}</StyledTableCell>
+													<StyledTableCell>{plan.level}</StyledTableCell>
 													<StyledTableCell
 														sx={{
 															color: plan.isActive ? green['600'] : red['600'],

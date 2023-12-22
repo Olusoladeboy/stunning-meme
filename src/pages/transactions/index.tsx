@@ -1,4 +1,10 @@
-import React, { useState, useEffect, CSSProperties, MouseEvent } from 'react';
+import React, {
+	useState,
+	useEffect,
+	CSSProperties,
+	MouseEvent,
+	useRef,
+} from 'react';
 import queryString from 'query-string';
 import {
 	Box,
@@ -19,6 +25,7 @@ import {
 	TableHeader,
 	TransactionsTab,
 	TransactionMainBalance,
+	TablePagination,
 } from 'components';
 import {
 	BOX_SHADOW,
@@ -50,6 +57,7 @@ const AllTransactions = () => {
 	const query = queryString.parse(location.search);
 	const [page, setPage] = useState<number>(Number(query?.page) || 1);
 	const [total, setTotal] = useState<number>(0);
+	const maxRecordRef = useRef<number>(MAX_RECORDS);
 
 	const { canViewStatistics } = useAppSelector((store) => store.authState);
 
@@ -88,14 +96,14 @@ const AllTransactions = () => {
 		[query]
 	);
 
-	const { isLoading, data } = useQuery(
+	const { isLoading, data, refetch } = useQuery(
 		[QueryKeys.Transactions, query.page, transactionService, transactionStatus],
 		() =>
 			allTransactions({
 				params: {
 					sort: '-createdAt',
-					limit: MAX_RECORDS,
-					skip: (page - 1) * MAX_RECORDS,
+					limit: maxRecordRef.current,
+					skip: (page - 1) * maxRecordRef.current,
 					service: transactionService,
 					status: transactionStatus,
 					populate: 'network,plan,dataType',
@@ -115,7 +123,7 @@ const AllTransactions = () => {
 				if (data && data.success) {
 					const total = data.metadata.total;
 					setTotal(data.metadata.total);
-					const count = Math.ceil(total / MAX_RECORDS);
+					const count = Math.ceil(total / maxRecordRef.current);
 					setCount(count);
 				}
 			},
@@ -221,6 +229,11 @@ const AllTransactions = () => {
 		</ClickAwayListener>
 	);
 
+	const handleChangeRowsPerPage = (value: number) => {
+		maxRecordRef.current = value;
+		refetch();
+	};
+
 	return (
 		<Layout>
 			<Box style={styles.container}>
@@ -252,9 +265,16 @@ const AllTransactions = () => {
 				{!Boolean(search && search.length > 0) &&
 					!isSearching &&
 					!isLoading &&
-					total > MAX_RECORDS && (
+					total > maxRecordRef.current && (
 						<Box style={styles.paginationWrapper}>
-							<Pagination
+							<TablePagination
+								page={page - 1}
+								count={Number(total)}
+								onPageChange={(value) => handlePageChange(value + 1)}
+								rowsPerPage={maxRecordRef.current}
+								handleChangeRowsPerPage={handleChangeRowsPerPage}
+							/>
+							{/* <Pagination
 								sx={{}}
 								size={'large'}
 								variant={'outlined'}
@@ -262,7 +282,7 @@ const AllTransactions = () => {
 								page={page}
 								count={count}
 								onChange={(e, number) => handlePageChange(number)}
-							/>
+							/> */}
 						</Box>
 					)}
 			</Box>

@@ -27,8 +27,6 @@ const TransactionDetails: React.FC<Props> = ({ transaction }) => {
 	const { searchCoupon } = useSearchCoupon();
 	const navigate = useNavigate();
 
-	console.log(transaction);
-
 	useEffect(() => {
 		if (
 			transaction &&

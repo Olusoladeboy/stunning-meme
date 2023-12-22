@@ -1,8 +1,14 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useQuery } from 'react-query';
 import { Box } from '@mui/material';
-import { Layout, ApiLogsTable, TableHeader, Pagination } from 'components';
+import {
+	Layout,
+	ApiLogsTable,
+	TableHeader,
+	Pagination,
+	TablePagination,
+} from 'components';
 import { useAlert, useHandleError, usePageTitle, useSearchApiLog } from 'hooks';
 import {
 	ADMIN_ROLE,
@@ -19,33 +25,26 @@ const ApiLogs = () => {
 	const [isEnableQuery, setEnableQuery] = useState<boolean>(false);
 	const alert = useAlert();
 	const navigate = useNavigate();
-	const [count, setCount] = useState<number>(1);
-	const [page, setPage] = useState<number>(1);
-	const [total, setTotal] = useState<number>(0);
+
+	const totalRef = useRef<number>(0);
+	const pageRef = useRef<number>(0);
+
+	const maxRecordRef = useRef<number>(MAX_RECORDS);
 
 	const { apiLog, isSearchingApiLog, searchApiLog, clearSearch } =
 		useSearchApiLog();
 
-	useEffect(() => {
-		setEnableQuery(true);
-
-		// if (query && query.page) {
-		// 	setPage(parseInt(query.page as string));
-		// }
-	}, []);
-
 	// Audit logs
-	const { isLoading, data } = useQuery(
-		[QueryKeys.ApiLogs, page],
+	const { isLoading, data, refetch } = useQuery(
+		[QueryKeys.ApiLogs, pageRef.current],
 		() =>
 			apiLogs({
 				sort: '-createdAt',
-				limit: MAX_RECORDS,
-				skip: (page - 1) * MAX_RECORDS,
+				limit: maxRecordRef.current,
+				skip: pageRef.current * maxRecordRef.current,
 				populate: 'user',
 			}),
 		{
-			enabled: isEnableQuery,
 			onSettled: (data: any, error) => {
 				setEnableQuery(false);
 				if (error) {
@@ -56,23 +55,28 @@ const ApiLogs = () => {
 				}
 				if (data && data.success) {
 					const total = data.metadata.total;
-					setTotal(data.metadata.total);
-					const count = Math.ceil(total / MAX_RECORDS);
-					setCount(count);
+					// setTotal(data.metadata.total);
+					totalRef.current = total;
+					// const count = Math.ceil(total / maxRecordRef.current);
+					// setCount(count);
 				}
 			},
 		}
 	);
 
 	const handlePageChange = (page: number) => {
-		if (page !== 1) {
-			setPage(page);
+		pageRef.current = page;
+		if (page !== 0) {
 			navigate(`${LINKS.ApiLogs}?page=${page}`);
 		} else {
 			navigate(`${LINKS.ApiLogs}`);
 		}
-		setPage(page);
-		setEnableQuery(true);
+		refetch();
+	};
+
+	const handleChangeRowsPerPage = (value: number) => {
+		maxRecordRef.current = value;
+		refetch();
 	};
 
 	return (
@@ -91,14 +95,24 @@ const ApiLogs = () => {
 					data={apiLog ? apiLog : data && data.payload}
 				/>
 
-				{!isSearchingApiLog && !isLoading && !apiLog && total > MAX_RECORDS && (
-					<Box
-						sx={{
-							marginLeft: ['15px', '30px'],
-							marginTop: ['30px'],
-						}}
-					>
-						<Pagination
+				{!isSearchingApiLog &&
+					!isLoading &&
+					!apiLog &&
+					totalRef.current > maxRecordRef.current && (
+						<Box
+							sx={{
+								marginLeft: ['15px', '30px'],
+								marginTop: ['30px'],
+							}}
+						>
+							<TablePagination
+								page={pageRef.current}
+								count={Number(totalRef.current)}
+								onPageChange={handlePageChange}
+								rowsPerPage={maxRecordRef.current}
+								handleChangeRowsPerPage={handleChangeRowsPerPage}
+							/>
+							{/* <Pagination
 							sx={{}}
 							size={'large'}
 							variant={'outlined'}
@@ -106,9 +120,9 @@ const ApiLogs = () => {
 							page={page}
 							count={count}
 							onChange={(e, number) => handlePageChange(number)}
-						/>
-					</Box>
-				)}
+						/> */}
+						</Box>
+					)}
 			</RouteGuard>
 		</Layout>
 	);

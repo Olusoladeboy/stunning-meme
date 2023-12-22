@@ -27,6 +27,8 @@ const TransactionDetails: React.FC<Props> = ({ transaction }) => {
 	const { searchCoupon } = useSearchCoupon();
 	const navigate = useNavigate();
 
+	console.log(transaction);
+
 	useEffect(() => {
 		if (
 			transaction &&
@@ -172,6 +174,9 @@ const TransactionDetails: React.FC<Props> = ({ transaction }) => {
 							label={'Service Provider'}
 							value={cleanString(transaction.pin_data.service_type as string)}
 						/>
+					)}
+					{transaction.summary && (
+						<TransactionItem label={'Reason'} value={transaction.summary} />
 					)}
 					{transaction.pin && (
 						<TransactionItem label={'Pin'} value={transaction.pin} />

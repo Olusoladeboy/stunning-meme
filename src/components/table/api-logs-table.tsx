@@ -64,7 +64,8 @@ const ApiLogsTable: React.FC<Props> = ({ data, isLoading }) => {
 					<TableRow>
 						<CustomTableCell label={'Reference'} />
 
-						<CustomTableCell label={'User'} />
+						<CustomTableCell label={'User Name'} />
+						<CustomTableCell label={'User Email'} />
 						<CustomTableCell label={'Date'} />
 						<CustomTableCell label={'View'} />
 					</TableRow>
@@ -89,7 +90,9 @@ const ApiLogsTable: React.FC<Props> = ({ data, isLoading }) => {
 												{typeof row.user === 'object' &&
 													extractUserName(row.user)}
 											</TableCell>
-
+											<TableCell>
+												{typeof row.user === 'object' && row.user.email}
+											</TableCell>
 											<TableCell>
 												{moment.utc(row.createdAt).format('l')}
 											</TableCell>

@@ -308,7 +308,7 @@ export type DataPlan = {
 	data_unit?: string;
 	data_source?: string;
 	dataType?: DataType | string;
-	level?: string | number
+	level?: string | number;
 };
 
 export enum DataPlanType {

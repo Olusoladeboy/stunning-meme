@@ -32,7 +32,7 @@ type Props = {
 };
 
 const setColor = (status: string) => {
-	if (status === TransactionStatus.SUCCESSFUL) {
+	if (status === TransactionStatus.SUCCESSFUL || status === 'APPROVED') {
 		return SUCCESS_COLOR;
 	} else if (status === TransactionStatus.PENDING) {
 		return PENDING_COLOR;

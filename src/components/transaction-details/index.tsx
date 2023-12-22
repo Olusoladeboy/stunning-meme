@@ -173,6 +173,9 @@ const TransactionDetails: React.FC<Props> = ({ transaction }) => {
 							value={cleanString(transaction.pin_data.service_type as string)}
 						/>
 					)}
+					{transaction.summary && (
+						<TransactionItem label={'Reason'} value={transaction.summary} />
+					)}
 					{transaction.pin && (
 						<TransactionItem label={'Pin'} value={transaction.pin} />
 					)}

@@ -149,6 +149,12 @@ const ConversionsTable = ({
 								style={styles.headTableCell}
 								label={'Return'}
 							/>
+							{conversionType === 'auto' && (
+								<CustomTableCell
+									style={styles.headTableCell}
+									label={'Number of Share'}
+								/>
+							)}
 							<CustomTableCell
 								onClick={() => handleSortRecord('status')}
 								style={styles.headTableCell}
@@ -164,7 +170,7 @@ const ConversionsTable = ({
 						}}
 					>
 						{isLoading ? (
-							<TableLoader colSpan={7} />
+							<TableLoader colSpan={conversionType === 'auto' ? 8 : 7} />
 						) : (
 							conversions && (
 								<>
@@ -201,6 +207,11 @@ const ConversionsTable = ({
 																: conversion.return_amount
 														)}
 													</StyledTableCell>
+													{conversionType === 'auto' && (
+														<StyledTableCell style={styles.text}>
+															{conversion?.noOfRetries}
+														</StyledTableCell>
+													)}
 													<StyledTableCell style={styles.text}>
 														{/* {conversion.status} */}
 														{conversion.status === STATUS.APPROVED ? (
@@ -245,7 +256,10 @@ const ConversionsTable = ({
 											);
 										})
 									) : (
-										<Empty colSpan={7} text={'No Airtime Convert'} />
+										<Empty
+											colSpan={conversionType === 'auto' ? 8 : 7}
+											text={'No Airtime Convert'}
+										/>
 									)}
 								</>
 							)

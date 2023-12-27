@@ -630,6 +630,7 @@ export interface Transaction {
 	};
 	service: string;
 	number: string;
+	noOfRetries: string;
 	createdBy: string;
 	phone_number?: string;
 	card_number?: string;

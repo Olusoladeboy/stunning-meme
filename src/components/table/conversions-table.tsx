@@ -9,6 +9,7 @@ import {
 	styled,
 } from '@mui/material';
 import { green, grey, red } from '@mui/material/colors';
+import { useNavigate } from 'react-router-dom';
 import { useMutation, useQueryClient } from 'react-query';
 import { StyledTableCell, StyledTableRow } from './components';
 import {
@@ -19,6 +20,7 @@ import {
 	QueryKeys,
 	extractUserName,
 	User,
+	LINKS,
 } from 'utilities';
 import TableLoader from '../loader/table-loader';
 import Empty from '../empty/table-empty';
@@ -57,6 +59,7 @@ const ConversionsTable = ({
 	const handleError = useHandleError();
 	const alert = useAlert();
 	const queryClient = useQueryClient();
+	const navigate = useNavigate();
 
 	const handleSortRecord = (field: string) => {
 		typeof handleSort !== 'undefined' && handleSort(field);
@@ -92,6 +95,10 @@ const ConversionsTable = ({
 			id,
 			data: { status },
 		});
+	};
+
+	const handleClickRow = (id: string) => {
+		if (conversionType === 'auto') navigate(`${LINKS.AutoConversions}/${id}`);
 	};
 
 	return (
@@ -177,7 +184,10 @@ const ConversionsTable = ({
 									{conversions.length > 0 ? (
 										conversions.map((conversion: Transaction, key: number) => {
 											return (
-												<StyledTableRow key={conversion.id}>
+												<StyledTableRow
+													onClick={() => handleClickRow(conversion.id)}
+													key={conversion.id}
+												>
 													<StyledTableCell style={styles.text}>
 														{extractUserName(conversion?.user as User)}
 													</StyledTableCell>

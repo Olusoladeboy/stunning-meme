@@ -25,7 +25,6 @@ export const createNetwork = async ({
 	apiRequest({
 		method: 'POST',
 		url,
-
 		data,
 	});
 

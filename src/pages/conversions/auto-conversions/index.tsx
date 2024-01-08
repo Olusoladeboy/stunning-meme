@@ -74,10 +74,7 @@ const AutoConversions = () => {
 
 	const { isLoading, data, refetch } = useQuery(
 		[QueryKeys.AutoConvertAirtime, page],
-		() =>
-			autoConvertAirtimes({
-				params,
-			}),
+		() => autoConvertAirtimes(params),
 		{
 			enabled: !!(token || isReload),
 			keepPreviousData: true,

@@ -1,13 +1,20 @@
 import { useState } from 'react';
 import { useQuery } from 'react-query';
 import { ENDPOINTS, QueryKeys } from 'utilities';
-import { dataSubscriptions, dataTypes, networks } from 'api';
+import {
+	dataSubscriptions,
+	dataTypes,
+	networks,
+	dataPlans,
+	airtimeTransactions,
+	convertAirtimes,
+} from 'api';
 
-export const useQueryAirtimeNetwork = () => {
+export const useQueryAirtimeNetwork = (queryKey?: string) => {
 	const [isEnable, setIsEnable] = useState<boolean>(false);
 
 	const { isLoading, data: airtimeNetworks } = useQuery(
-		QueryKeys.AirtimeNetwork,
+		[QueryKeys.AirtimeNetwork, queryKey],
 		() => networks({ url: ENDPOINTS.AirtimeNetwork }),
 		{
 			enabled: isEnable,
@@ -27,11 +34,11 @@ export const useQueryAirtimeNetwork = () => {
 };
 
 // Query Data Networks
-export const useQueryDateNetwork = () => {
+export const useQueryDateNetwork = (queryKey?: string) => {
 	const [isEnable, setIsEnable] = useState<boolean>(false);
 
 	const { isLoading, data: dataDataNetwork } = useQuery(
-		QueryKeys.DataNetwork,
+		[QueryKeys.DataNetwork, queryKey],
 		() => networks({ url: ENDPOINTS.DataNetwork }),
 		{
 			enabled: isEnable,
@@ -47,6 +54,61 @@ export const useQueryDateNetwork = () => {
 		isLoadingDataNetwork: isLoading,
 		dataDataNetwork,
 		queryDataNetwork,
+	};
+};
+
+// Query Airtime convert Networks
+export const useQueryConvertAirtimeNetworks = (queryKey?: string) => {
+	const [isEnable, setIsEnable] = useState<boolean>(false);
+
+	const { isLoading, data: convertAirtimeNetworks } = useQuery(
+		[QueryKeys.ConvertAirtime, queryKey],
+		() => networks({ url: ENDPOINTS.ConvertNetworks }),
+		{
+			enabled: isEnable,
+			onSettled: (data) => {
+				setIsEnable(false);
+			},
+		}
+	);
+
+	const queryConvertAirtimeNetwork = () => setIsEnable(true);
+
+	return {
+		isLoadingConvertAirtimeNetwork: isLoading,
+		convertAirtimeNetworks,
+		queryConvertAirtimeNetwork,
+	};
+};
+
+// Query Convert Airtimes
+export const useQueryConvertAirtimes = (callback?: (data: any) => void) => {
+	const [dataConvertAirtimes, setDataConvertAirtime] = useState<
+		{ [key: string]: any }[] | null
+	>(null);
+	const [isLoading, setLoading] = useState<boolean>(false);
+
+	const queryConvertAirtimes = async (params: Record<string, any>) => {
+		setLoading(true);
+		try {
+			const response = await convertAirtimes({ params });
+			setLoading(false);
+
+			if (response && response.success) {
+				setDataConvertAirtime(response.payload);
+				typeof callback === 'function' && callback(response.payload);
+				return response.payload;
+			}
+		} catch (error) {
+			console.log(error);
+			setLoading(false);
+		}
+	};
+
+	return {
+		isLoadingConvertAirtime: isLoading,
+		convertAirtimes: dataConvertAirtimes,
+		queryConvertAirtimes,
 	};
 };
 
@@ -79,30 +141,95 @@ export const useQueryDataTypes = () => {
 	};
 };
 
-// Query Data Networks
-export const useQueryDataSubscription = () => {
+// Query Data Types
+export const useQueryDataPlans = () => {
 	const [isEnable, setIsEnable] = useState<boolean>(false);
 	const [params, setParams] = useState<{ [key: string]: any }>({});
 
-	const { isLoading, data: dataDataNetwork } = useQuery(
-		'statistics-data-subscriptions',
-		() => dataSubscriptions(params),
+	const { isLoading, data: dataDataPlans } = useQuery(
+		'statistics-data-plans',
+		() => dataPlans(params),
 		{
-			enabled: isEnable,
+			enabled: !!(isEnable && Object.keys(params).length > 0),
 			onSettled: (data) => {
 				setIsEnable(false);
 			},
 		}
 	);
 
-	const queryDataSubscriptions = (params?: Record<string, any>) => {
+	const queryDataPlans = async (params: Record<string, any> = {}) => {
+		setParams({}); // Clear State
 		setIsEnable(true);
+		setParams(params);
 	};
 
 	return {
-		isLoadingDataNetwork: isLoading,
-		dataDataNetwork,
+		isLoadingDataPlans: isLoading,
+		dataDataPlans,
+		queryDataPlans,
+	};
+};
+
+// Query Data Subscription
+export const useQueryDataSubscriptions = (callback?: (data: any) => void) => {
+	const [dataDataSubscriptions, setDataDataSubscriptions] = useState<
+		{ [key: string]: any }[] | null
+	>(null);
+	const [isLoading, setLoading] = useState<boolean>(false);
+
+	const queryDataSubscriptions = async (params: Record<string, any>) => {
+		setLoading(true);
+		try {
+			const response = await dataSubscriptions(params);
+			setLoading(false);
+
+			if (response && response.success) {
+				setDataDataSubscriptions(response.payload);
+				typeof callback === 'function' && callback(response.payload);
+				return response.payload;
+			}
+		} catch (error) {
+			console.log(error);
+			setLoading(false);
+		}
+	};
+
+	return {
+		isLoadingDataSubscriptions: isLoading,
+		dataSubscriptions: dataDataSubscriptions,
 		queryDataSubscriptions,
+	};
+};
+
+// Query Airtime Transactiion
+export const useQueryAirtimeTransactions = (callback?: (data: any) => void) => {
+	const [dataAirtimeTransactions, setDataAirtimeTransactions] = useState<
+		{ [key: string]: any }[] | null
+	>(null);
+
+	const [isLoading, setLoading] = useState<boolean>(false);
+
+	const queryAirtimeTransactions = async (params: Record<string, any>) => {
+		setLoading(true);
+		try {
+			const response = await airtimeTransactions(params);
+			setLoading(false);
+
+			if (response && response.success) {
+				setDataAirtimeTransactions(response.payload);
+				typeof callback === 'function' && callback(response.payload);
+				return response.payload;
+			}
+		} catch (error) {
+			console.log(error);
+			setLoading(false);
+		}
+	};
+
+	return {
+		isLoadingAirtimeTransactions: isLoading,
+		dataAirtimeTransactions: dataAirtimeTransactions,
+		queryAirtimeTransactions,
 	};
 };
 
@@ -122,7 +249,8 @@ export const useQueryCableProviders = () => {
 		}
 	);
 
-	const queryDataSubscriptions = (params?: Record<string, any>) => {
+	const queryDataSubscriptions = (params: { [key: string]: any }) => {
+		setParams(params);
 		setIsEnable(true);
 	};
 

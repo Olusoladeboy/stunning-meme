@@ -1,8 +1,13 @@
 import React from 'react';
 import { Box, Card as MuiCard, Typography, useTheme } from '@mui/material';
+import { useParams } from 'react-router-dom';
 import { Layout, AutoConversionTaskTable } from 'components';
+import { useQuery } from 'react-query';
 import { BOX_SHADOW, formatNumberToCurrency } from 'utilities';
 import { grey } from '@mui/material/colors';
+import { QueryKeys } from 'utilities';
+import { autoConvertAirtimeGroups } from 'api';
+import { useHandleError, useAlert } from 'hooks';
 
 interface ICard {
 	title: string;
@@ -28,6 +33,33 @@ const Card = ({ title, description }: ICard) => {
 const AutoConversionDetails = () => {
 	const theme = useTheme();
 	const styles = useStyles(theme);
+	const handleResponse = useHandleError();
+	const alert = useAlert();
+
+	const { id } = useParams();
+
+	const { isLoading, data: dataAutoAirtimeConvert } = useQuery(
+		[QueryKeys.AutoAirtimeConvertGroup],
+		() => autoConvertAirtimeGroups(),
+		{
+			onSettled: (data, error) => {
+				if (error) {
+					const response = handleResponse({ error });
+					if (response && response.message) {
+						alert({
+							type: 'error',
+							message: response.message,
+						});
+					}
+				}
+
+				if (data && data.success) {
+					console.log(data);
+				}
+			},
+		}
+	);
+
 	return (
 		<Layout>
 			<Box style={styles.container}>

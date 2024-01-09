@@ -33,6 +33,7 @@ import {
 	BvnVerification,
 	ApiLogs,
 	NinVerification,
+	AutoConversionDetails,
 } from '../pages';
 
 const Router = () => {
@@ -68,6 +69,7 @@ const Router = () => {
 			</Route>
 			<Route path={'auto-conversions'}>
 				<Route path={''} element={<AutoConversions />} />
+				<Route path={':id'} element={<AutoConversionDetails />} />
 				<Route
 					path={'network'}
 					element={<Network pageType={NetworkPage.AUTO_CONVERSION_NETWORK} />}

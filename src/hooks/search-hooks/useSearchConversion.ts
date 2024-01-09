@@ -44,7 +44,7 @@ const useSearchConversion = (props?: { isAutoConvert?: boolean }) => {
 
 		try {
 			const data = await (isAutoConvert
-				? autoConvertAirtimes({ params })
+				? autoConvertAirtimes(params)
 				: convertAirtimes({ params }));
 			setSearching(false);
 			if (data && Array.isArray(data.payload)) {

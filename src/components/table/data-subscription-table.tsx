@@ -21,6 +21,7 @@ import {
 	extractUserName,
 	User,
 	LINKS,
+	checkAmount,
 } from 'utilities';
 import TableLoader from '../loader/table-loader';
 import Empty from '../empty/table-empty';
@@ -36,23 +37,21 @@ interface UpdateStatusPayload {
 }
 
 type Props = {
-	conversions: Transaction[] | null;
+	subscriptions: Transaction[] | null;
 	isLoading?: boolean;
 	handleSort?: (filter: string) => void;
 	handleSearch?: (search: string) => void;
 	clearSearch?: () => void;
 	isDisplaySearchField?: boolean;
-	conversionType?: 'auto' | 'default';
 };
 
-const ConversionsTable = ({
-	conversions,
+const DataSubscriptionTable = ({
+	subscriptions,
 	isLoading,
 	handleSort,
 	handleSearch,
 	clearSearch,
 	isDisplaySearchField = false,
-	conversionType,
 }: Props) => {
 	const theme = useTheme();
 	const styles = useStyles(theme);
@@ -97,9 +96,7 @@ const ConversionsTable = ({
 		});
 	};
 
-	const handleClickRow = (id: string) => {
-		if (conversionType === 'auto') navigate(`${LINKS.AutoConversions}/${id}`);
-	};
+	const handleClickRow = (id: string) => {};
 
 	return (
 		<Container>
@@ -126,47 +123,14 @@ const ConversionsTable = ({
 						}}
 					>
 						<StyledTableRow>
-							<CustomTableCell
-								onClick={() => handleSortRecord('user')}
-								label={'User'}
-								isSortable
-							/>
-							<CustomTableCell
-								onClick={() => handleSortRecord('id')}
-								label={'Order ID'}
-							/>
-							<CustomTableCell
-								onClick={() => handleSortRecord('network')}
-								style={styles.headTableCell}
-								label={'Network'}
-							/>
-							<CustomTableCell
-								onClick={() => handleSortRecord('number')}
-								style={styles.headTableCell}
-								label={'Number'}
-							/>
-
-							<CustomTableCell
-								onClick={() => handleSortRecord('amount')}
-								style={styles.headTableCell}
-								label={'Income'}
-							/>
-							<CustomTableCell
-								onClick={() => handleSortRecord('return_amount')}
-								style={styles.headTableCell}
-								label={'Return'}
-							/>
-							{conversionType === 'auto' && (
-								<CustomTableCell
-									style={styles.headTableCell}
-									label={'Number of Share'}
-								/>
-							)}
-							<CustomTableCell
-								onClick={() => handleSortRecord('status')}
-								style={styles.headTableCell}
-								label={'Status'}
-							/>
+							<CustomTableCell label={'Reference'} isSortable />
+							<CustomTableCell label={'User'} isSortable />
+							<CustomTableCell style={styles.headTableCell} label={'Network'} />
+							<CustomTableCell label={'Plan'} />
+							<CustomTableCell label={'Data Type'} />
+							<CustomTableCell style={styles.headTableCell} label={'Number'} />
+							<CustomTableCell style={styles.headTableCell} label={'Amount'} />
+							<CustomTableCell style={styles.headTableCell} label={'Status'} />
 						</StyledTableRow>
 					</TableHead>
 					<TableBody
@@ -177,99 +141,53 @@ const ConversionsTable = ({
 						}}
 					>
 						{isLoading ? (
-							<TableLoader colSpan={conversionType === 'auto' ? 8 : 7} />
+							<TableLoader colSpan={8} />
 						) : (
-							conversions && (
+							subscriptions && (
 								<>
-									{conversions.length > 0 ? (
-										conversions.map((conversion: Transaction, key: number) => {
+									{subscriptions.length > 0 ? (
+										subscriptions.map((subscription, key: number) => {
 											return (
 												<StyledTableRow
-													onClick={() => handleClickRow(conversion.id)}
-													key={conversion.id}
+													onClick={() => handleClickRow(subscription.id)}
+													key={subscription.id}
 												>
 													<StyledTableCell style={styles.text}>
-														{extractUserName(conversion?.user as User)}
+														{subscription.reference}
 													</StyledTableCell>
 													<StyledTableCell style={styles.text}>
-														{conversion.reference}
+														{extractUserName(subscription?.user as User)}
+													</StyledTableCell>
+
+													<StyledTableCell style={styles.text}>
+														Network
 													</StyledTableCell>
 													<StyledTableCell style={styles.text}>
-														{(conversion.network &&
-															typeof conversion.network === 'object' &&
-															conversion.network?.name) ||
-															'No Network name'}
+														{typeof subscription.plan === 'object' &&
+															subscription.plan.name}
 													</StyledTableCell>
 													<StyledTableCell style={styles.text}>
-														{conversion.phone_number}
+														{typeof subscription.dataType === 'object' &&
+															subscription.dataType.name}
 													</StyledTableCell>
+													<StyledTableCell style={styles.text}>
+														{subscription.number}
+													</StyledTableCell>
+
 													<StyledTableCell style={styles.text}>
 														{formatNumberToCurrency(
-															typeof conversion.amount === 'object'
-																? conversion.amount.$numberDecimal
-																: conversion.amount
+															checkAmount(subscription.amount)
 														)}
 													</StyledTableCell>
+
 													<StyledTableCell style={styles.text}>
-														{formatNumberToCurrency(
-															typeof conversion.return_amount === 'object'
-																? conversion.return_amount.$numberDecimal
-																: conversion.return_amount
-														)}
-													</StyledTableCell>
-													{conversionType === 'auto' && (
-														<StyledTableCell style={styles.text}>
-															{conversion?.noOfRetries}
-														</StyledTableCell>
-													)}
-													<StyledTableCell style={styles.text}>
-														{/* {conversion.status} */}
-														{conversion.status === STATUS.APPROVED ? (
-															TransactionStatus.APPROVED
-														) : conversion.status === STATUS.DECLINED ? (
-															STATUS.DECLINED
-														) : conversionType === 'auto' ? (
-															conversion.status
-														) : (
-															<Box
-																sx={{
-																	display: 'flex',
-																	gap: theme.spacing(2),
-																}}
-															>
-																<ApproveButton
-																	onClick={() =>
-																		handleUpdateStatus({
-																			id: conversion.id,
-																			status: STATUS.APPROVED,
-																		})
-																	}
-																	size={'small'}
-																>
-																	Approve
-																</ApproveButton>
-																<DeclineButton
-																	onClick={() =>
-																		handleUpdateStatus({
-																			id: conversion.id,
-																			status: STATUS.DECLINED,
-																		})
-																	}
-																	size={'small'}
-																>
-																	Decline
-																</DeclineButton>
-															</Box>
-														)}
+														{subscription.status}
 													</StyledTableCell>
 												</StyledTableRow>
 											);
 										})
 									) : (
-										<Empty
-											colSpan={conversionType === 'auto' ? 8 : 7}
-											text={'No Airtime Convert'}
-										/>
+										<Empty colSpan={8} text={'No Airtime Convert'} />
 									)}
 								</>
 							)
@@ -330,4 +248,4 @@ const useStyles = (theme: any) => ({
 	},
 });
 
-export default ConversionsTable;
+export default DataSubscriptionTable;

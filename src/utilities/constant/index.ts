@@ -57,6 +57,7 @@ export const QueryKeys = {
 	BvnVerification: '@Query:BvnVerification',
 	NiNVerification: '@Query:NiNVerification',
 	ApiLogs: '@Query:ApiLogs',
+	AutoAirtimeConvertGroup: '@Query:AutoAirtimeConvertGroup',
 	UserTransactionStatistics: '@Query:UserTransactionStatistics',
 };
 
@@ -146,6 +147,7 @@ export const ENDPOINTS = {
 	Bill: '/bill',
 	User: '/user',
 	DataNetwork: '/data-networks',
+	Airtime: '/airtime',
 	DataSubscription: '/data-subscription',
 	DataPlans: '/data-plans',
 	DataTypes: '/data-types',

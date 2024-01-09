@@ -99,3 +99,6 @@ export { default as AutoConversionNetworkTable } from './table/auto-conversion-n
 export { default as Seo } from './seo';
 export { default as NinVerificationTable } from './table/nin-verification-table';
 export { default as TablePagination } from './pagination/table-pagination';
+export { default as AutoConversionTaskTable } from './table/auto-conversion-task-table';
+export { default as DataSubscriptionTable } from './table/data-subscription-table';
+export { default as AirtimePurchaseTable } from './table/airtime-purchase-table';

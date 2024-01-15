@@ -6,7 +6,7 @@ import { grey } from '@mui/material/colors';
 import { useQuery, useQueryClient } from 'react-query';
 import {
 	Layout,
-	ConversionsTable,
+	AutoConversionsTable,
 	ConversionTotal,
 	AvailableNetwork,
 	Pagination,
@@ -25,7 +25,7 @@ import {
 	usePageTitle,
 	useSearchConversion,
 } from 'hooks';
-import { autoConvertAirtimes } from 'api';
+import { autoConvertAirtimeGroups } from 'api';
 
 const AutoConversions = () => {
 	usePageTitle('Auto Conversion');
@@ -74,7 +74,7 @@ const AutoConversions = () => {
 
 	const { isLoading, data, refetch } = useQuery(
 		[QueryKeys.AutoConvertAirtime, page],
-		() => autoConvertAirtimes(params),
+		() => autoConvertAirtimeGroups(params),
 		{
 			enabled: !!(token || isReload),
 			keepPreviousData: true,
@@ -158,14 +158,13 @@ const AutoConversions = () => {
 					)}
 				</Box>
 				<ErrorBoundary>
-					<ConversionsTable
+					<AutoConversionsTable
 						isDisplaySearchField
 						isLoading={isLoading || isReloading || isSearching}
 						conversions={search ? search : data && data.payload}
 						handleSort={handleSort}
 						handleSearch={searchConversion}
 						clearSearch={clearSearch}
-						conversionType={'auto'}
 					/>
 
 					{!search && total > MAX_RECORDS && !isReloading && (

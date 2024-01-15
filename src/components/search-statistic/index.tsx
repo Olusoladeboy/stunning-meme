@@ -218,6 +218,7 @@ const SearchStatistics = ({ setDataStatistics }: ISearchStatistics) => {
 	const handleSelectProvider = (provider: string) => {
 		setFieldValue('provider', provider);
 		setFieldValue('type', SELECT_TYPE);
+		setFieldValue('plan', SELECT_PLAN);
 
 		switch (service) {
 			case SERVICES.DATA_SUBSCRIPTION:

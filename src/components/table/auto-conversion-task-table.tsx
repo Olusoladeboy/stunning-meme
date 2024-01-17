@@ -1,32 +1,36 @@
-import React, { CSSProperties, useState } from 'react';
-import { useQuery, useQueryClient } from 'react-query';
+import React from 'react';
 import Table from '@mui/material/Table';
+import moment from 'moment';
 import Box from '@mui/material/Box';
 import { useTheme } from '@mui/material';
 import TableBody from '@mui/material/TableBody';
 import TableHead from '@mui/material/TableHead';
-import { LIGHT_GRAY, BOX_SHADOW } from 'utilities';
+import {
+	LIGHT_GRAY,
+	BOX_SHADOW,
+	checkAmount,
+	formatNumberToCurrency,
+} from 'utilities';
 import {
 	StyledTableCell as TableCell,
 	StyledTableRow as TableRow,
 } from './components';
 import { grey } from '@mui/material/colors';
 
-import Empty from '../empty';
-import TableLoader from '../loader/table-loader';
-import NetworkForm from '../forms/network-form';
-import Modal from '../modal/Wrapper';
-import Loader from '../loader';
-import { useAlert, useHandleError } from 'hooks';
-import { networks, updateNetwork } from 'api';
+import Empty from '../empty/table-empty';
+import { Transaction } from 'utilities';
 
-const AutoConversionTaskTable = () => {
+interface ETransaction extends Transaction {
+	networkResponse: string;
+}
+
+interface Props {
+	transactions: ETransaction[];
+}
+
+const AutoConversionTaskTable: React.FC<Props> = ({ transactions }) => {
 	const theme = useTheme();
-	const handleError = useHandleError();
-	const setAlert = useAlert();
 	const styles = useStyles(theme);
-
-	const data = [];
 
 	return (
 		<>
@@ -56,7 +60,33 @@ const AutoConversionTaskTable = () => {
 								color: theme.palette.primary.main,
 							},
 						}}
-					></TableBody>
+					>
+						{transactions.length > 0 ? (
+							transactions.map((transaction: ETransaction) => {
+								return (
+									<TableRow key={transaction.id}>
+										<TableCell style={styles.text}>
+											{transaction.reference}
+										</TableCell>
+										<TableCell style={styles.text}>
+											{formatNumberToCurrency(checkAmount(transaction.amount))}
+										</TableCell>
+										<TableCell style={styles.text}>
+											{moment(transaction.createdAt).format('l')}
+										</TableCell>
+										<TableCell style={styles.text}>
+											{transaction.status}
+										</TableCell>
+										<TableCell style={styles.text}>
+											{transaction.networkResponse}
+										</TableCell>
+									</TableRow>
+								);
+							})
+						) : (
+							<Empty colSpan={5} text={'No Airtime Convert'} />
+						)}
+					</TableBody>
 				</Table>
 			</Box>
 		</>
@@ -87,6 +117,9 @@ const useStyles = (theme: any) => ({
 		display: 'flex',
 		alignItems: 'center',
 		gap: theme.spacing(4),
+	},
+	text: {
+		color: theme.palette.primary.main,
 	},
 });
 

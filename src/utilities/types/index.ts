@@ -645,6 +645,13 @@ export interface IGroupAutoTransaction {
 	phone_number: string;
 	sentTo: string;
 	network: NetworkData;
+	user: {
+		firstname: string;
+		lastname: string;
+		username: string;
+		phone: string;
+		email: string;
+	};
 	totalAmount: Amount;
 	totalReturnAmount: Amount;
 	transactions: IGroupTransaction[];

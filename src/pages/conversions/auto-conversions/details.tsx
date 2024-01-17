@@ -1,9 +1,9 @@
 import React from 'react';
 import { Box, Card as MuiCard, Typography, useTheme } from '@mui/material';
 import { useParams } from 'react-router-dom';
-import { Layout, AutoConversionTaskTable } from 'components';
+import { Layout, AutoConversionTaskTable, CircularProgress } from 'components';
 import { useQuery } from 'react-query';
-import { BOX_SHADOW, formatNumberToCurrency } from 'utilities';
+import { BOX_SHADOW, checkAmount, formatNumberToCurrency } from 'utilities';
 import { grey } from '@mui/material/colors';
 import { QueryKeys } from 'utilities';
 import { autoConvertAirtimeGroups } from 'api';
@@ -39,8 +39,11 @@ const AutoConversionDetails = () => {
 	const { id } = useParams();
 
 	const { isLoading, data: dataAutoAirtimeConvert } = useQuery(
-		[QueryKeys.AutoAirtimeConvertGroup],
-		() => autoConvertAirtimeGroups(),
+		[QueryKeys.AutoAirtimeConvertGroup, id],
+		() =>
+			autoConvertAirtimeGroups({
+				reference: id,
+			}),
 		{
 			onSettled: (data, error) => {
 				if (error) {
@@ -52,48 +55,87 @@ const AutoConversionDetails = () => {
 						});
 					}
 				}
-
-				if (data && data.success) {
-					console.log(data);
-				}
 			},
 		}
 	);
 
 	return (
 		<Layout>
-			<Box style={styles.container}>
-				<Box
+			{isLoading ? (
+				<CircularProgress
+					spinnerSize={'20px'}
 					sx={{
-						display: 'grid',
-						gap: '30px',
-						gridTemplateColumns: ['repeat(2, 1fr)', 'repeat(5, 1fr)'],
-						marginBottom: '3rem',
-						padding: ['0px 15px', '0px 2rem'],
+						display: 'flex',
+						alignItems: 'center',
+						justifyContent: 'center',
 					}}
-				>
-					<Card title='Network' description='MTN (Airtime)' />
-					<Card title='Sender' description='08109022197' />
-					<Card title='Beneficiary' description='08109022197' />
-					<Card title='Amount' description={formatNumberToCurrency('50000')} />
-					<Card
-						title='Amount Sent'
-						description={formatNumberToCurrency('50000')}
-					/>
-				</Box>
+				/>
+			) : (
+				dataAutoAirtimeConvert && (
+					<Box style={styles.container}>
+						{dataAutoAirtimeConvert.payload &&
+						Array.isArray(dataAutoAirtimeConvert.payload) &&
+						dataAutoAirtimeConvert.payload.length > 0 ? (
+							<>
+								<Box
+									sx={{
+										display: 'grid',
+										gap: '30px',
+										gridTemplateColumns: ['repeat(2, 1fr)', 'repeat(5, 1fr)'],
+										marginBottom: '3rem',
+										padding: ['0px 15px', '0px 2rem'],
+									}}
+								>
+									<Card
+										title='Network'
+										description={`${dataAutoAirtimeConvert.payload[0].network.name}`}
+									/>
+									<Card
+										title='Sender'
+										description={dataAutoAirtimeConvert.payload[0].phone_number}
+									/>
+									<Card
+										title='Beneficiary'
+										description={dataAutoAirtimeConvert.payload[0].sentTo}
+									/>
+									<Card
+										title='Amount'
+										description={formatNumberToCurrency(
+											checkAmount(dataAutoAirtimeConvert.payload[0].totalAmount)
+										)}
+									/>
+									<Card
+										title='Return Amount'
+										description={formatNumberToCurrency(
+											checkAmount(
+												dataAutoAirtimeConvert.payload[0].totalReturnAmount
+											)
+										)}
+									/>
+								</Box>
 
-				<Typography
-					variant='h6'
-					sx={{
-						fontWeight: 'bold',
-						marginBottom: '20px',
-						padding: ['0px 15px', '0px 2rem'],
-					}}
-				>
-					Tasks
-				</Typography>
-				<AutoConversionTaskTable />
-			</Box>
+								<Typography
+									variant='h6'
+									sx={{
+										fontWeight: 'bold',
+										marginBottom: '20px',
+										padding: ['0px 15px', '0px 2rem'],
+									}}
+								>
+									Tasks
+								</Typography>
+								<AutoConversionTaskTable
+									transactions={dataAutoAirtimeConvert.payload[0].transactions}
+								/>
+							</>
+						) : (
+							<Box>
+								<Typography>No record for the reference {id} fouund</Typography>
+							</Box>
+						)}
+					</Box>
+				)
+			)}
 		</Layout>
 	);
 };

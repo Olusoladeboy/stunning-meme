@@ -5,10 +5,8 @@ import {
 	Table,
 	useTheme,
 	Box,
-	Button,
 	styled,
 } from '@mui/material';
-import { green, grey, red } from '@mui/material/colors';
 import { useNavigate } from 'react-router-dom';
 import { useMutation, useQueryClient } from 'react-query';
 import { StyledTableCell, StyledTableRow } from './components';
@@ -17,6 +15,7 @@ import {
 	QueryKeys,
 	LINKS,
 	IGroupAutoTransaction,
+	extractUserName,
 } from 'utilities';
 import TableLoader from '../loader/table-loader';
 import Empty from '../empty/table-empty';
@@ -25,11 +24,6 @@ import CustomTableCell from './components/custom-table-cell';
 import { updateConvertAirtimeStatus } from 'api';
 import Loader from '../loader';
 import { useAlert, useHandleError } from 'hooks';
-
-interface UpdateStatusPayload {
-	id: string;
-	status: string;
-}
 
 type Props = {
 	conversions: IGroupAutoTransaction[] | null;
@@ -62,7 +56,7 @@ const AutoConversionsTable = ({
 	/* 
 		Mutation
 	*/
-	const { isLoading: isUpdatingStatus, mutate } = useMutation(
+	const { isLoading: isUpdatingStatus } = useMutation(
 		updateConvertAirtimeStatus,
 		{
 			onSettled: (data, error) => {
@@ -167,11 +161,15 @@ const AutoConversionsTable = ({
 											(conversion: IGroupAutoTransaction, key: number) => {
 												return (
 													<StyledTableRow
-														onClick={() => handleClickRow(conversion.id)}
+														onClick={() =>
+															handleClickRow(
+																conversion?.transactions[0].reference
+															)
+														}
 														key={conversion.id}
 													>
 														<StyledTableCell style={styles.text}>
-															{/* {extractUserName(conversion?.user as User)} */}
+															{extractUserName(conversion?.user)}
 														</StyledTableCell>
 														<StyledTableCell style={styles.text}>
 															{conversion.id}
@@ -231,16 +229,6 @@ const SearchContainer = styled(Box)(({ theme }) => ({
 	justifyContent: 'flex-end',
 	padding: '0px 15px',
 	marginBottom: '2rem',
-}));
-
-const ApproveButton = styled(Button)(({ theme }) => ({
-	color: grey['50'],
-	backgroundColor: `${green['600']} !important`,
-}));
-
-const DeclineButton = styled(Button)(({ theme }) => ({
-	color: grey['50'],
-	backgroundColor: `${red['600']} !important`,
 }));
 
 const useStyles = (theme: any) => ({

@@ -55,8 +55,8 @@ interface SelectedUserItemProps {
 }
 
 const NotificationLists = [
-	NOTIFICATION_TYPE.EMAIL_NOTIFICATION,
 	NOTIFICATION_TYPE.PUSH_NOTIFICATION,
+	NOTIFICATION_TYPE.EMAIL_NOTIFICATION,
 ];
 
 const SelectedUserItem: React.FC<SelectedUserItemProps> = ({
@@ -185,6 +185,9 @@ const NotificationForm: React.FC<Props> = ({ notification }) => {
 				dispatchUserType,
 			};
 
+			if (NotificationLists.includes(type as string)) {
+			}
+
 			if (dispatchUserType === DISPATCH_USER.SELECTED) payload.users = users;
 			if (device && device !== SELECT_TARGET_DEVICE) payload.device = device;
 
@@ -216,7 +219,6 @@ const NotificationForm: React.FC<Props> = ({ notification }) => {
 			);
 			const data = res.data;
 			if (data && data.success) {
-				console.log('Image', data.payload.url);
 				setFieldValue('imageUrl', data.payload.url);
 				alert({ message: data.message, type: 'success' });
 			}
@@ -228,6 +230,11 @@ const NotificationForm: React.FC<Props> = ({ notification }) => {
 		}
 
 		setUploading(false);
+	};
+
+	const handleSelectNotificationType = (type: string) => {
+		setFieldValue('dispatchUserType', SELECT_DISPATCH_TYPE);
+		setFieldValue('type', type);
 	};
 
 	return (
@@ -289,7 +296,9 @@ const NotificationForm: React.FC<Props> = ({ notification }) => {
 						<Select
 							fullWidth
 							value={type}
-							onChange={handleChange('type') as never}
+							onChange={(e) =>
+								handleSelectNotificationType(e.target.value as string) as never
+							}
 						>
 							<MenuItem disabled value={SELECT_NOTIFICATION_TYPE}>
 								{SELECT_NOTIFICATION_TYPE}
@@ -303,17 +312,36 @@ const NotificationForm: React.FC<Props> = ({ notification }) => {
 					</FormControl>
 					{NotificationLists.includes(type as string) && (
 						<>
+							{type === NOTIFICATION_TYPE.PUSH_NOTIFICATION && (
+								<FormControl>
+									<FormLabel>Target Device</FormLabel>
+									<Select
+										fullWidth
+										value={device}
+										onChange={handleChange('device') as never}
+									>
+										<MenuItem disabled value={SELECT_TARGET_DEVICE}>
+											{SELECT_TARGET_DEVICE}
+										</MenuItem>
+										{Object.values(DEVICE).map((value) => (
+											<MenuItem key={value} value={value}>
+												{value}
+											</MenuItem>
+										))}
+									</Select>
+								</FormControl>
+							)}
 							<FormControl>
-								<FormLabel>Target Device</FormLabel>
+								<FormLabel>Dispatch Type</FormLabel>
 								<Select
 									fullWidth
-									value={device}
-									onChange={handleChange('device') as never}
+									value={dispatchUserType}
+									onChange={handleChange('dispatchUserType') as never}
 								>
-									<MenuItem disabled value={SELECT_TARGET_DEVICE}>
-										{SELECT_TARGET_DEVICE}
+									<MenuItem disabled value={SELECT_DISPATCH_TYPE}>
+										{SELECT_DISPATCH_TYPE}
 									</MenuItem>
-									{Object.values(DEVICE).map((value) => (
+									{Object.values(DISPATCH_USER).map((value) => (
 										<MenuItem key={value} value={value}>
 											{value}
 										</MenuItem>
@@ -322,68 +350,51 @@ const NotificationForm: React.FC<Props> = ({ notification }) => {
 							</FormControl>
 						</>
 					)}
-				</Grid>
-				<FormControl>
-					<FormLabel>Dispatch Type</FormLabel>
-					<Select
-						fullWidth
-						value={dispatchUserType}
-						onChange={handleChange('dispatchUserType') as never}
-					>
-						<MenuItem disabled value={SELECT_DISPATCH_TYPE}>
-							{SELECT_DISPATCH_TYPE}
-						</MenuItem>
-						{Object.values(DISPATCH_USER).map((value) => (
-							<MenuItem key={value} value={value}>
-								{value}
-							</MenuItem>
-						))}
-					</Select>
-				</FormControl>
-				{dispatchUserType === DISPATCH_USER.SELECTED && (
-					<FormControl>
-						<FormLabel>Select User</FormLabel>
-						<SearchInput
-							isLoading={isSearching}
-							fullWidth
-							sx={{
-								'& .MuiOutlinedInput-root': {
-									paddingRight: '0px',
-									borderRadius: '6px !important',
-								},
-							}}
-							placeholder={'Search users by email'}
-							clearSearch={clearSearch}
-							handleSearch={searchUser}
-						/>
-					</FormControl>
-				)}
-				{selectedUser.length > 0 && (
-					<Box>
-						<FormLabel>Selected User</FormLabel>
-						<Box
-							sx={{
-								display: 'grid',
-								gap: '8px',
-								gridTemplateColumns: [
-									'1fr',
-									'repeat(2, 1fr)',
-									'repeat(4, 1fr)',
-								],
-							}}
-						>
-							<List disablePadding>
-								{selectedUser.map((user: User) => (
-									<SelectedUserItem
-										key={user.id}
-										removeUser={() => removeUser(user)}
-										user={user}
-									/>
-								))}
-							</List>
+					{dispatchUserType === DISPATCH_USER.SELECTED && (
+						<FormControl>
+							<FormLabel>Select User</FormLabel>
+							<SearchInput
+								isLoading={isSearching}
+								fullWidth
+								sx={{
+									'& .MuiOutlinedInput-root': {
+										paddingRight: '0px',
+										borderRadius: '6px !important',
+									},
+								}}
+								placeholder={'Search users by email'}
+								clearSearch={clearSearch}
+								handleSearch={searchUser}
+							/>
+						</FormControl>
+					)}
+					{selectedUser.length > 0 && (
+						<Box>
+							<FormLabel>Selected User</FormLabel>
+							<Box
+								sx={{
+									display: 'grid',
+									gap: '8px',
+									gridTemplateColumns: [
+										'1fr',
+										'repeat(2, 1fr)',
+										'repeat(4, 1fr)',
+									],
+								}}
+							>
+								<List disablePadding>
+									{selectedUser.map((user: User) => (
+										<SelectedUserItem
+											key={user.id}
+											removeUser={() => removeUser(user)}
+											user={user}
+										/>
+									))}
+								</List>
+							</Box>
 						</Box>
-					</Box>
-				)}
+					)}
+				</Grid>
 				<Grid sx={{ marginTop: '15px' }}>
 					<FormControl>
 						<FormLabel>Title</FormLabel>

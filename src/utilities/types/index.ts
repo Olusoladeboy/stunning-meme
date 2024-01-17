@@ -616,6 +616,47 @@ export interface INestedTransaction {
 	updatedAt: string;
 }
 
+export interface IGroupTransaction {
+	id: string;
+	amount: Amount;
+	status: string;
+	returnAmount: Amount;
+	service: string;
+	sentTo: string;
+	phone_number: string;
+	sessionId: string;
+	createdBy: string;
+	user: string;
+	reference: string;
+	network: string;
+	networkResponse: string;
+	simBalanceLog: {
+		before: string;
+		after: string;
+	};
+	transaction: string;
+	createdAt: string;
+	updatedAt: string;
+}
+
+export interface IGroupAutoTransaction {
+	id: string;
+	count: number;
+	phone_number: string;
+	sentTo: string;
+	network: NetworkData;
+	user: {
+		firstname: string;
+		lastname: string;
+		username: string;
+		phone: string;
+		email: string;
+	};
+	totalAmount: Amount;
+	totalReturnAmount: Amount;
+	transactions: IGroupTransaction[];
+}
+
 export interface Transaction {
 	id: string;
 	status:

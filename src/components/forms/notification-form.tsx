@@ -73,7 +73,7 @@ const SelectedUserItem: React.FC<SelectedUserItemProps> = ({
 			}}
 		>
 			<Typography>
-				{user.firstname} {user.lastname}
+				{user.username}
 			</Typography>
 			<Tooltip title={'Remove user'}>
 				<IconButton onClick={() => removeUser(user)}>
@@ -133,7 +133,7 @@ const NotificationForm: React.FC<Props> = ({ notification }) => {
 		subject: '',
 		imageUrl: '',
 		type: SELECT_NOTIFICATION_TYPE,
-		device: SELECT_TARGET_DEVICE,
+		devices: SELECT_TARGET_DEVICE,
 		dispatchUserType: SELECT_DISPATCH_TYPE,
 		users: [],
 	};
@@ -174,8 +174,8 @@ const NotificationForm: React.FC<Props> = ({ notification }) => {
 				subject,
 				imageUrl,
 				dispatchUserType,
-				device,
-				users,
+				devices,
+				// users,
 			} = values;
 			const payload: Notification = {
 				subject,
@@ -189,13 +189,13 @@ const NotificationForm: React.FC<Props> = ({ notification }) => {
 			}
 
 			if (dispatchUserType === DISPATCH_USER.SELECTED) payload.users = users;
-			if (device && device !== SELECT_TARGET_DEVICE) payload.device = device;
+			if (devices && devices !== SELECT_TARGET_DEVICE) payload.devices = devices;
 
 			mutate(payload);
 		},
 	});
 
-	const { message, subject, imageUrl, type, device, dispatchUserType } = values;
+	const { message, subject, imageUrl, type, devices, dispatchUserType } = values;
 
 	/*
 	 *Save Image
@@ -235,6 +235,10 @@ const NotificationForm: React.FC<Props> = ({ notification }) => {
 	const handleSelectNotificationType = (type: string) => {
 		setFieldValue('dispatchUserType', SELECT_DISPATCH_TYPE);
 		setFieldValue('type', type);
+		setUsers([]);
+		setSelectedUser([]);
+		setFieldValue('subject', '');
+		setFieldValue('message', '');
 	};
 
 	return (
@@ -249,7 +253,7 @@ const NotificationForm: React.FC<Props> = ({ notification }) => {
 						}}
 					>
 						<Typography>
-							{search && `${search[0].firstname} ${search[0].lastname}`}
+							{search && search[0].username}
 						</Typography>
 						<AddUserButton onClick={() => handleSelectUser(search[0])}>
 							Add user
@@ -317,8 +321,8 @@ const NotificationForm: React.FC<Props> = ({ notification }) => {
 									<FormLabel>Target Device</FormLabel>
 									<Select
 										fullWidth
-										value={device}
-										onChange={handleChange('device') as never}
+										value={devices}
+										onChange={handleChange('devices') as never}
 									>
 										<MenuItem disabled value={SELECT_TARGET_DEVICE}>
 											{SELECT_TARGET_DEVICE}

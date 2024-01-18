@@ -734,7 +734,8 @@ export interface Notification {
 	message?: string;
 	imageUrl?: string;
 	type?: string;
-	device?: string;
+	// device?: string; - changed to devices in backend
+	devices?: string;
 	click_action?: string;
 	dispatchUserType?: string;
 	users?: string[];

@@ -152,6 +152,7 @@ const NotificationForm: React.FC<Props> = ({ notification }) => {
 				queryClient.invalidateQueries([QueryKeys.Notifications]);
 				resetForm();
 				setUsers([]);
+				setSelectedUser([]);
 			}
 		},
 	});
@@ -177,6 +178,7 @@ const NotificationForm: React.FC<Props> = ({ notification }) => {
 				devices,
 				// users,
 			} = values;
+
 			const payload: Notification = {
 				subject,
 				imageUrl,
@@ -185,11 +187,19 @@ const NotificationForm: React.FC<Props> = ({ notification }) => {
 				dispatchUserType,
 			};
 
-			if (NotificationLists.includes(type as string)) {
+			if (dispatchUserType === SELECT_DISPATCH_TYPE) {
+				payload.dispatchUserType = DISPATCH_USER.ALL;
 			}
 
-			if (dispatchUserType === DISPATCH_USER.SELECTED) payload.users = users;
-			if (devices && devices !== SELECT_TARGET_DEVICE) payload.devices = devices;
+			if (dispatchUserType === DISPATCH_USER.SELECTED && (type === NOTIFICATION_TYPE.PUSH_NOTIFICATION || type ===
+				NOTIFICATION_TYPE.EMAIL_NOTIFICATION)) {
+					payload.users = users;
+			}
+
+			if (devices && devices !== SELECT_TARGET_DEVICE && (type === NOTIFICATION_TYPE.PUSH_NOTIFICATION || type ===
+				NOTIFICATION_TYPE.EMAIL_NOTIFICATION)) {
+					payload.devices = devices;
+			}
 
 			mutate(payload);
 		},

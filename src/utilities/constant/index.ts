@@ -239,7 +239,7 @@ export const DISPATCH_USER = {
 export const DEVICE = {
 	IOS: 'IOS',
 	ANDROID: 'ANDROID',
-	WINDOW: 'WINDOW',
+	WINDOW: 'WINDOWS',
 	ALL: 'ALL',
 };
 

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useAlert, useHandleError } from '..';
 import { PHONE_REX, AirtimeConversion, TEN_CHARACTERS } from 'utilities';
-import { convertAirtimes, autoConvertAirtimes } from 'api';
+import { convertAirtimes, autoConvertAirtimeGroups } from 'api';
 
 interface SearchPayload {
 	phone_number?: string;
@@ -44,7 +44,7 @@ const useSearchConversion = (props?: { isAutoConvert?: boolean }) => {
 
 		try {
 			const data = await (isAutoConvert
-				? autoConvertAirtimes(params)
+				? autoConvertAirtimeGroups(params)
 				: convertAirtimes({ params }));
 			setSearching(false);
 			if (data && Array.isArray(data.payload)) {

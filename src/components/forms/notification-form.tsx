@@ -73,7 +73,7 @@ const SelectedUserItem: React.FC<SelectedUserItemProps> = ({
 			}}
 		>
 			<Typography>
-				{user.firstname} {user.lastname}
+				{user.username}
 			</Typography>
 			<Tooltip title={'Remove user'}>
 				<IconButton onClick={() => removeUser(user)}>
@@ -133,7 +133,7 @@ const NotificationForm: React.FC<Props> = ({ notification }) => {
 		subject: '',
 		imageUrl: '',
 		type: SELECT_NOTIFICATION_TYPE,
-		device: SELECT_TARGET_DEVICE,
+		devices: SELECT_TARGET_DEVICE,
 		dispatchUserType: SELECT_DISPATCH_TYPE,
 		users: [],
 	};
@@ -152,6 +152,7 @@ const NotificationForm: React.FC<Props> = ({ notification }) => {
 				queryClient.invalidateQueries([QueryKeys.Notifications]);
 				resetForm();
 				setUsers([]);
+				setSelectedUser([]);
 			}
 		},
 	});
@@ -174,9 +175,10 @@ const NotificationForm: React.FC<Props> = ({ notification }) => {
 				subject,
 				imageUrl,
 				dispatchUserType,
-				device,
-				users,
+				devices,
+				// users,
 			} = values;
+
 			const payload: Notification = {
 				subject,
 				imageUrl,
@@ -185,17 +187,25 @@ const NotificationForm: React.FC<Props> = ({ notification }) => {
 				dispatchUserType,
 			};
 
-			if (NotificationLists.includes(type as string)) {
+			if (dispatchUserType === SELECT_DISPATCH_TYPE) {
+				payload.dispatchUserType = DISPATCH_USER.ALL;
 			}
 
-			if (dispatchUserType === DISPATCH_USER.SELECTED) payload.users = users;
-			if (device && device !== SELECT_TARGET_DEVICE) payload.device = device;
+			if (dispatchUserType === DISPATCH_USER.SELECTED && (type === NOTIFICATION_TYPE.PUSH_NOTIFICATION || type ===
+				NOTIFICATION_TYPE.EMAIL_NOTIFICATION)) {
+					payload.users = users;
+			}
+
+			if (devices && devices !== SELECT_TARGET_DEVICE && (type === NOTIFICATION_TYPE.PUSH_NOTIFICATION || type ===
+				NOTIFICATION_TYPE.EMAIL_NOTIFICATION)) {
+					payload.devices = devices;
+			}
 
 			mutate(payload);
 		},
 	});
 
-	const { message, subject, imageUrl, type, device, dispatchUserType } = values;
+	const { message, subject, imageUrl, type, devices, dispatchUserType } = values;
 
 	/*
 	 *Save Image
@@ -235,6 +245,10 @@ const NotificationForm: React.FC<Props> = ({ notification }) => {
 	const handleSelectNotificationType = (type: string) => {
 		setFieldValue('dispatchUserType', SELECT_DISPATCH_TYPE);
 		setFieldValue('type', type);
+		setUsers([]);
+		setSelectedUser([]);
+		setFieldValue('subject', '');
+		setFieldValue('message', '');
 	};
 
 	return (
@@ -249,7 +263,7 @@ const NotificationForm: React.FC<Props> = ({ notification }) => {
 						}}
 					>
 						<Typography>
-							{search && `${search[0].firstname} ${search[0].lastname}`}
+							{search && search[0].username}
 						</Typography>
 						<AddUserButton onClick={() => handleSelectUser(search[0])}>
 							Add user
@@ -317,8 +331,8 @@ const NotificationForm: React.FC<Props> = ({ notification }) => {
 									<FormLabel>Target Device</FormLabel>
 									<Select
 										fullWidth
-										value={device}
-										onChange={handleChange('device') as never}
+										value={devices}
+										onChange={handleChange('devices') as never}
 									>
 										<MenuItem disabled value={SELECT_TARGET_DEVICE}>
 											{SELECT_TARGET_DEVICE}

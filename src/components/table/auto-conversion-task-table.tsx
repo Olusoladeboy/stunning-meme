@@ -18,14 +18,10 @@ import {
 import { grey } from '@mui/material/colors';
 
 import Empty from '../empty/table-empty';
-import { Transaction } from 'utilities';
-
-interface ETransaction extends Transaction {
-	networkResponse: string;
-}
+import { IGroupTransaction } from 'utilities';
 
 interface Props {
-	transactions: ETransaction[];
+	transactions: IGroupTransaction[];
 }
 
 const AutoConversionTaskTable: React.FC<Props> = ({ transactions }) => {
@@ -47,6 +43,12 @@ const AutoConversionTaskTable: React.FC<Props> = ({ transactions }) => {
 						<TableRow>
 							<TableCell>Reference</TableCell>
 							<TableCell>Amount</TableCell>
+							<TableCell sx={{ whiteSpace: 'nowrap' }}>
+								SIM Balance Before
+							</TableCell>
+							<TableCell sx={{ whiteSpace: 'nowrap' }}>
+								SIM Balance After
+							</TableCell>
 							<TableCell>Date</TableCell>
 							<TableCell>Status</TableCell>
 							<TableCell>Response</TableCell>
@@ -62,7 +64,7 @@ const AutoConversionTaskTable: React.FC<Props> = ({ transactions }) => {
 						}}
 					>
 						{transactions.length > 0 ? (
-							transactions.map((transaction: ETransaction) => {
+							transactions.map((transaction: IGroupTransaction) => {
 								return (
 									<TableRow key={transaction.id}>
 										<TableCell style={styles.text}>
@@ -72,19 +74,25 @@ const AutoConversionTaskTable: React.FC<Props> = ({ transactions }) => {
 											{formatNumberToCurrency(checkAmount(transaction.amount))}
 										</TableCell>
 										<TableCell style={styles.text}>
+											{transaction.simBalanceLog.before}
+										</TableCell>
+										<TableCell style={styles.text}>
+											{transaction.simBalanceLog.after}
+										</TableCell>
+										<TableCell style={styles.text}>
 											{moment(transaction.createdAt).format('l')}
 										</TableCell>
 										<TableCell style={styles.text}>
 											{transaction.status}
 										</TableCell>
-										<TableCell style={styles.text}>
+										<TableCell sx={{ minWidth: '500px' }} style={styles.text}>
 											{transaction.networkResponse}
 										</TableCell>
 									</TableRow>
 								);
 							})
 						) : (
-							<Empty colSpan={5} text={'No Airtime Convert'} />
+							<Empty colSpan={7} text={'No Airtime Convert'} />
 						)}
 					</TableBody>
 				</Table>

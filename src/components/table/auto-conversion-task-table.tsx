@@ -50,6 +50,7 @@ const AutoConversionTaskTable: React.FC<Props> = ({ transactions }) => {
 								SIM Balance After
 							</TableCell>
 							<TableCell>Date</TableCell>
+							<TableCell>Time</TableCell>
 							<TableCell>Status</TableCell>
 							<TableCell>Response</TableCell>
 
@@ -81,6 +82,12 @@ const AutoConversionTaskTable: React.FC<Props> = ({ transactions }) => {
 										</TableCell>
 										<TableCell style={styles.text}>
 											{moment(transaction.createdAt).format('l')}
+										</TableCell>
+										<TableCell
+											sx={{ whiteSpace: 'nowrap' }}
+											style={styles.text}
+										>
+											{moment(transaction.createdAt).format('LT')}
 										</TableCell>
 										<TableCell style={styles.text}>
 											{transaction.status}

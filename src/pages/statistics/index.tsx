@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Box, Typography, styled } from '@mui/material';
 import { grey } from '@mui/material/colors';
 import {
@@ -9,6 +9,7 @@ import {
 	StatisticsTotal,
 	AirtimePurchaseTable,
 	ConversionsTable,
+	CableTransactionsTable,
 } from 'components';
 import {
 	BOX_SHADOW,
@@ -75,6 +76,9 @@ const Statistics = () => {
 							)}
 							{dataStatistics.service === SERVICES.AIRTIME_CONVERSION && (
 								<ConversionsTable conversions={dataStatistics.data as any} />
+							)}
+							{dataStatistics.service === SERVICES.CABLE && (
+								<CableTransactionsTable data={dataStatistics.data as any} />
 							)}
 						</>
 					)}

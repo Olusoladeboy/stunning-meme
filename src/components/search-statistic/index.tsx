@@ -14,6 +14,8 @@ import {
 	useQueryAirtimeTransactions,
 	useQueryConvertAirtimeNetworks,
 	useQueryConvertAirtimes,
+	useQueryCableProviders,
+	useQueryCableTransactions,
 } from 'hooks';
 
 const SELECT_SERVICE = 'Select service';
@@ -79,6 +81,23 @@ const SearchStatistics = ({ setDataStatistics }: ISearchStatistics) => {
 					data,
 				});
 		});
+
+	const {
+		isLoadingCableProviders,
+		dataCableProviders,
+		queryCableProviders,
+	} = useQueryCableProviders();
+
+	const {
+    isLoadingCableTransactions,
+    queryCableTransactions,
+  } = useQueryCableTransactions((data) => {
+    typeof setDataStatistics === "function" &&
+      setDataStatistics({
+        service: SERVICES.CABLE,
+        data,
+      });
+  });
 
 	const initialValues = {
 		service: SELECT_SERVICE,
@@ -180,6 +199,13 @@ const SearchStatistics = ({ setDataStatistics }: ISearchStatistics) => {
 			queryConvertAirtimes(payload);
 			return;
 		}
+
+		if (values.service === SERVICES.CABLE) {
+			if (values.provider && values.provider !== SELECT_PROVIDER)
+				payload.provider = values.provider;
+			queryCableTransactions(payload);
+			return;
+		}
 	};
 
 	const { values, handleChange, setFieldValue, handleSubmit, touched, errors } =
@@ -208,6 +234,10 @@ const SearchStatistics = ({ setDataStatistics }: ISearchStatistics) => {
 
 			case SERVICES.AIRTIME_CONVERSION:
 				queryConvertAirtimeNetwork();
+				break;
+
+			case SERVICES.CABLE:
+				queryCableProviders();
 				break;
 
 			default:
@@ -408,11 +438,42 @@ const SearchStatistics = ({ setDataStatistics }: ISearchStatistics) => {
 				</>
 			)}
 
+			{service === SERVICES.CABLE && (
+				<>
+					<SelectContainer>
+						<Select
+							fullWidth
+							error={touched.provider && Boolean(errors.provider)}
+							helpertext={touched.provider && errors.provider}
+							value={provider}
+							onChange={handleChange('provider') as never}
+						>
+							<MenuItem disabled value={SELECT_PROVIDER}>
+								{isLoadingCableProviders
+									? 'Loading...'
+									: dataCableProviders &&
+									  dataCableProviders.payload.length === 0
+									? 'No available provider'
+									: 'Select cable provider'}
+							</MenuItem>
+							{dataCableProviders &&
+								dataCableProviders.payload.length > 0 &&
+								dataCableProviders.payload.map((provider) => (
+									<MenuItem key={provider.billerid} value={provider.service_type}>
+										{provider.service_type}
+									</MenuItem>
+								))}
+						</Select>
+					</SelectContainer>
+				</>
+			)}
+
 			<Button
 				loading={
 					isLoadingDataSubscriptions ||
 					isLoadingAirtimeTransactions ||
-					isLoadingConvertAirtime
+					isLoadingConvertAirtime ||
+					isLoadingCableTransactions
 				}
 				size={'large'}
 				onClick={(e: React.FormEvent<HTMLButtonElement>) => {

@@ -9,6 +9,7 @@ import {
 	airtimeTransactions,
 	convertAirtimes,
 } from 'api';
+import { cableProviders, cableTransactions } from 'api/cable';
 
 export const useQueryAirtimeNetwork = (queryKey?: string) => {
 	const [isEnable, setIsEnable] = useState<boolean>(false);
@@ -236,11 +237,10 @@ export const useQueryAirtimeTransactions = (callback?: (data: any) => void) => {
 // Query Cable
 export const useQueryCableProviders = () => {
 	const [isEnable, setIsEnable] = useState<boolean>(false);
-	const [params, setParams] = useState<{ [key: string]: any }>({});
 
-	const { isLoading, data: dataDataNetwork } = useQuery(
+	const { isLoading, data: dataCableProviders } = useQuery(
 		'statistics-cable-providers',
-		() => dataSubscriptions(params),
+		() => cableProviders(),
 		{
 			enabled: isEnable,
 			onSettled: (data) => {
@@ -249,14 +249,43 @@ export const useQueryCableProviders = () => {
 		}
 	);
 
-	const queryDataSubscriptions = (params: { [key: string]: any }) => {
-		setParams(params);
+	const queryCableProviders = () => {
 		setIsEnable(true);
 	};
 
 	return {
-		isLoadingDataNetwork: isLoading,
-		dataDataNetwork,
-		queryDataSubscriptions,
+		isLoadingCableProviders: isLoading,
+		dataCableProviders,
+		queryCableProviders,
 	};
+};
+
+export const useQueryCableTransactions = (callback?: (data: any) => void) => {
+  const [dataCableTransactions, setDataCableTransactions] = useState<
+    { [key: string]: any }[] | null
+  >(null);
+
+  const [isLoading, setLoading] = useState<boolean>(false);
+
+  const queryCableTransactions = async (params: Record<string, any>) => {
+    setLoading(true);
+    try {
+      const response = await cableTransactions(params);
+      setLoading(false);
+
+      if (response && response.success) {
+        setDataCableTransactions(response.payload);
+        typeof callback === "function" && callback(response.payload);
+        return response.payload;
+      }
+    } catch (error) {
+      setLoading(false);
+    }
+  };
+
+  return {
+    isLoadingCableTransactions: isLoading,
+    dataCableTransactions: dataCableTransactions,
+    queryCableTransactions,
+  };
 };

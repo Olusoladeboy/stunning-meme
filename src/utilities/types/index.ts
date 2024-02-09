@@ -810,3 +810,16 @@ export interface IApiLog {
 	updatedAt: string;
 	id: string;
 }
+
+export interface CableProvider {
+  billerid: number;
+  name: string;
+  productid: number;
+  service_type: string;
+  shortname: string;
+}
+
+export interface CablePackage {
+  code: string;
+  name: string;
+}

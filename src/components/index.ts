@@ -103,3 +103,4 @@ export { default as AutoConversionTaskTable } from './table/auto-conversion-task
 export { default as DataSubscriptionTable } from './table/data-subscription-table';
 export { default as AirtimePurchaseTable } from './table/airtime-purchase-table';
 export { default as AutoConversionsTable } from './table/auto-conversions-table';
+export { default as CableTransactionsTable } from "./table/cable-transactions-table";

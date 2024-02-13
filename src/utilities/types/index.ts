@@ -837,3 +837,17 @@ export interface InternetPackage {
   available: number;
   description: string;
 }
+
+export interface EducationProvider {
+  billerid: number;
+  name: string;
+  productid: number;
+  service_type: string;
+  shortname: string;
+}
+
+export interface EducationBundle {
+  amount: number;
+  available: number;
+  description: string;
+}

@@ -18,6 +18,8 @@ import {
   useQueryCableTransactions,
   useQueryInternetProviders,
   useQueryInternetTransactions,
+  useQueryEducationProviders,
+  useQueryEducationTransactions,
 } from "hooks";
 
 const SELECT_SERVICE = "Select service";
@@ -107,6 +109,21 @@ const SearchStatistics = ({ setDataStatistics }: ISearchStatistics) => {
       typeof setDataStatistics === "function" &&
         setDataStatistics({
           service: SERVICES.INTERNET,
+          data,
+        });
+    });
+
+  const {
+    isLoadingEducationProviders,
+    dataEducationProviders,
+    queryEducationProviders,
+  } = useQueryEducationProviders();
+
+  const { isLoadingEducationTransactions, queryEducationTransactions } =
+    useQueryEducationTransactions((data) => {
+      typeof setDataStatistics === "function" &&
+        setDataStatistics({
+          service: SERVICES.EDUCATION,
           data,
         });
     });
@@ -225,6 +242,12 @@ const SearchStatistics = ({ setDataStatistics }: ISearchStatistics) => {
       queryInternetTransactions(payload);
       return;
     }
+    if (values.service === SERVICES.EDUCATION) {
+      if (values.provider && values.provider !== SELECT_PROVIDER)
+        payload.provider = values.provider;
+      queryEducationTransactions(payload);
+      return;
+    }
   };
 
   const { values, handleChange, setFieldValue, handleSubmit, touched, errors } =
@@ -261,6 +284,10 @@ const SearchStatistics = ({ setDataStatistics }: ISearchStatistics) => {
 
       case SERVICES.INTERNET:
         queryInternetProviders();
+        break;
+
+      case SERVICES.EDUCATION:
+        queryEducationProviders();
         break;
 
       default:
@@ -527,13 +554,47 @@ const SearchStatistics = ({ setDataStatistics }: ISearchStatistics) => {
         </>
       )}
 
+      {service === SERVICES.EDUCATION && (
+        <>
+          <SelectContainer>
+            <Select
+              fullWidth
+              error={touched.provider && Boolean(errors.provider)}
+              helpertext={touched.provider && errors.provider}
+              value={provider}
+              onChange={handleChange("provider") as never}
+            >
+              <MenuItem disabled value={SELECT_PROVIDER}>
+                {isLoadingEducationProviders
+                  ? "Loading..."
+                  : dataEducationProviders &&
+                    dataEducationProviders.payload.length === 0
+                  ? "No available provider"
+                  : "Select education provider"}
+              </MenuItem>
+              {dataEducationProviders &&
+                dataEducationProviders.payload.length > 0 &&
+                dataEducationProviders.payload.map((provider) => (
+                  <MenuItem
+                    key={provider.billerid}
+                    value={provider.service_type}
+                  >
+                    {provider.service_type}
+                  </MenuItem>
+                ))}
+            </Select>
+          </SelectContainer>
+        </>
+      )}
+
       <Button
         loading={
           isLoadingDataSubscriptions ||
           isLoadingAirtimeTransactions ||
           isLoadingConvertAirtime ||
           isLoadingCableTransactions ||
-          isLoadingInternetTransactions
+          isLoadingInternetTransactions ||
+          isLoadingEducationTransactions
         }
         size={"large"}
         onClick={(e: React.FormEvent<HTMLButtonElement>) => {

@@ -165,6 +165,7 @@ export const ENDPOINTS = {
 	AuditLogs: '/audit-logs',
 	ApiLogs: '/api-logs',
 	CableProviders: '/bills/cable-providers',
+	InternetProviders: '/bills/internet-providers',
 };
 
 export const FUND_WALLET_SERVICE = {

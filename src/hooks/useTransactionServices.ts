@@ -11,6 +11,7 @@ import {
 } from "api";
 import { cableProviders, cableTransactions } from "api/cable";
 import { internetProviders, internetTransactions } from "api/internet";
+import { educationProviders, educationTransactions } from "api/education";
 
 export const useQueryAirtimeNetwork = (queryKey?: string) => {
   const [isEnable, setIsEnable] = useState<boolean>(false);
@@ -346,5 +347,63 @@ export const useQueryInternetTransactions = (
     isLoadingInternetTransactions: isLoading,
     dataInternetTransactions: dataInternetTransactions,
     queryInternetTransactions,
+  };
+};
+
+// Query Education
+export const useQueryEducationProviders = () => {
+  const [isEnable, setIsEnable] = useState<boolean>(false);
+
+  const { isLoading, data: dataEducationProviders } = useQuery(
+    "statistics-education-providers",
+    () => educationProviders(),
+    {
+      enabled: isEnable,
+      onSettled: (data) => {
+        setIsEnable(false);
+      },
+    }
+  );
+
+  const queryEducationProviders = () => {
+    setIsEnable(true);
+  };
+
+  return {
+    isLoadingEducationProviders: isLoading,
+    dataEducationProviders,
+    queryEducationProviders,
+  };
+};
+
+export const useQueryEducationTransactions = (
+  callback?: (data: any) => void
+) => {
+  const [dataEducationTransactions, setDataEducationTransactions] = useState<
+    { [key: string]: any }[] | null
+  >(null);
+
+  const [isLoading, setLoading] = useState<boolean>(false);
+
+  const queryEducationTransactions = async (params: Record<string, any>) => {
+    setLoading(true);
+    try {
+      const response = await educationTransactions(params);
+      setLoading(false);
+
+      if (response && response.success) {
+        setDataEducationTransactions(response.payload);
+        typeof callback === "function" && callback(response.payload);
+        return response.payload;
+      }
+    } catch (error) {
+      setLoading(false);
+    }
+  };
+
+  return {
+    isLoadingEducationTransactions: isLoading,
+    dataEducationTransactions: dataEducationTransactions,
+    queryEducationTransactions,
   };
 };

@@ -35,7 +35,7 @@ const Users = () => {
 		}
 	}, [query, query.page]);
 
-	const { isLoading, data } = useQuery(
+	const { isLoading, data, refetch } = useQuery(
 		[QueryKeys.Users, page, currentTab],
 		() =>
 			users({
@@ -49,7 +49,7 @@ const Users = () => {
 				},
 			}),
 		{
-			enabled: isLoad,
+			// enabled: isLoad,
 			onSettled: (data, error) => {
 				setLoad(false);
 				if (error) {
@@ -75,6 +75,7 @@ const Users = () => {
 			navigate(LINKS.Users);
 			setPage(page);
 		}
+		refetch();
 	};
 
 	const switchUserType = (type?: string) => {

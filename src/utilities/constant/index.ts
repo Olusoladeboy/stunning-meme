@@ -164,6 +164,9 @@ export const ENDPOINTS = {
 	Notification: '/notification',
 	AuditLogs: '/audit-logs',
 	ApiLogs: '/api-logs',
+	CableProviders: '/bills/cable-providers',
+	InternetProviders: '/bills/internet-providers',
+	EducationProviders: '/bills/education-providers',
 };
 
 export const FUND_WALLET_SERVICE = {

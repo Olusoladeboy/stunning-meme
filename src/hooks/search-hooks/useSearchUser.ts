@@ -6,6 +6,7 @@ import { users } from 'api';
 interface SearchPayload {
 	email?: string;
 	phone?: string;
+	deleted?: boolean;
 }
 
 const useSearchUser = () => {
@@ -24,7 +25,7 @@ const useSearchUser = () => {
 	 *Update found MUser State
 	 *Handle Network error response, trigger an alert if any
 	 */
-	const searchUser = async (value: string) => {
+	const searchUser = async (value: string, deleted = false) => {
 		if (!value) {
 			return alert({
 				message: 'Incorrect search parameter',
@@ -34,6 +35,8 @@ const useSearchUser = () => {
 
 		let params = {} as SearchPayload;
 		const value$ = value.trim().toLowerCase();
+
+		if (deleted) params.deleted = true;
 
 		if (EMAIL_REX.test(value$)) {
 			params.email = value$;

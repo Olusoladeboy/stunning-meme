@@ -13,6 +13,7 @@ interface Props extends BoxProps {
 	handleSearch?: (value: string) => void;
 	clearSearch?: () => void;
 	statusFilter?: ReactNode;
+	deletedCheckbox?: ReactNode;
 }
 
 const TableHeader = ({
@@ -25,6 +26,7 @@ const TableHeader = ({
 	clearSearch,
 	statusFilter,
 	style,
+	deletedCheckbox,
 	...rest
 }: Props) => {
 	return (
@@ -63,6 +65,7 @@ const TableHeader = ({
 				}}
 			>
 				{statusFilter}
+				{deletedCheckbox}
 				<SearchInput
 					fullWidth
 					sx={{ maxWidth: ['100%', '320px'], minWidth: ['100%', '300px'] }}

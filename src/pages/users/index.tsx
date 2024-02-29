@@ -17,6 +17,7 @@ const Users = () => {
 	const [count, setCount] = useState<number>(1);
 	const [page, setPage] = useState<number>(1);
 	const [total, setTotal] = useState<number>(0);
+	const searchDeletedUser = React.useRef<boolean>(false);
 	const location = useLocation();
 	const query = queryString.parse(location.search);
 	const [usersStatus, setUsersStatus] = useState<{ [key: string]: boolean }>(
@@ -111,6 +112,13 @@ const Users = () => {
 		setLoad(true);
 	};
 
+	const handleChangeSearchDeletedUser = (state: boolean) =>
+		(searchDeletedUser.current = state);
+
+	const handleSearch = (value: string) => {
+		searchUser(value, searchDeletedUser.current);
+	};
+
 	return (
 		<Layout>
 			<UsersTable
@@ -118,9 +126,10 @@ const Users = () => {
 				isLoading={isLoading || isSearching}
 				users={search ? search : data && data.payload}
 				currentTab={currentTab}
-				searchUser={searchUser}
+				searchUser={handleSearch}
 				clearSearch={clearSearch}
 				isDisplayTab={!search}
+				changeSearchDeletedUser={handleChangeSearchDeletedUser}
 			/>
 			{!search && total > MAX_RECORDS && (
 				<Box

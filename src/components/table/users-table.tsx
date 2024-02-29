@@ -8,6 +8,7 @@ import {
 	TableHead,
 	Table,
 	Box,
+	Typography,
 } from '@mui/material';
 import { grey } from '@mui/material/colors';
 import {
@@ -29,6 +30,7 @@ import Empty from '../empty';
 import TableLoader from '../loader/table-loader';
 import CustomTableCell from './components/custom-table-cell';
 import UsersTab from '../tabs/users-tab';
+import Checkbox from '../form-components/check-box';
 
 type Props = {
 	isLoading?: boolean;
@@ -38,6 +40,7 @@ type Props = {
 	searchUser?: (value: string) => void;
 	clearSearch?: () => void;
 	isDisplayTab?: boolean;
+	changeSearchDeletedUser?: (state: boolean) => void;
 };
 
 const UsersTable = ({
@@ -48,6 +51,7 @@ const UsersTable = ({
 	searchUser,
 	clearSearch,
 	isDisplayTab = true,
+	changeSearchDeletedUser,
 }: Props) => {
 	const navigate = useNavigate();
 	const theme = useTheme();
@@ -62,6 +66,25 @@ const UsersTable = ({
 		navigate(link);
 	};
 
+	const deletedCheckbox = (
+		<Box
+			sx={{
+				display: 'flex',
+				alignItems: 'center',
+				gap: '4px',
+				marginRight: '15px',
+			}}
+		>
+			<Checkbox
+				onChange={(e) => {
+					typeof changeSearchDeletedUser === 'function' &&
+						changeSearchDeletedUser(e.target.checked);
+				}}
+			/>
+			<Typography sx={{ whiteSpace: 'nowrap' }}>Search Deleted User</Typography>
+		</Box>
+	);
+
 	return (
 		<Box style={styles.container} sx={{ overflow: 'auto' }}>
 			<TableHeader
@@ -70,6 +93,7 @@ const UsersTable = ({
 				title={'Users'}
 				handleSearch={searchUser}
 				clearSearch={clearSearch}
+				deletedCheckbox={deletedCheckbox}
 			/>
 			{isDisplayTab && (
 				<UsersTab currentTab={currentTab} changeCurrentTab={changeUserType} />

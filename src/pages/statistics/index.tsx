@@ -12,6 +12,7 @@ import {
   CableTransactionsTable,
   InternetTransactionsTable,
   EducationTransactionsTable,
+  ElectricityTransactionsTable,
 } from "components";
 import {
   BOX_SHADOW,
@@ -87,6 +88,11 @@ const Statistics = () => {
               )}
               {dataStatistics.service === SERVICES.EDUCATION && (
                 <EducationTransactionsTable data={dataStatistics.data as any} />
+              )}
+              {dataStatistics.service === SERVICES.ELECTRICITY && (
+                <ElectricityTransactionsTable
+                  data={dataStatistics.data as any}
+                />
               )}
             </>
           )}

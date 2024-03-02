@@ -15,7 +15,7 @@ type Props = {
   data: BillsAdmin[];
 };
 
-const InternetTransactionsTable = ({ data }: Props) => {
+const ElectricityTransactionsTable = ({ data }: Props) => {
   const theme = useTheme();
   const styles = useStyles(theme);
 
@@ -71,7 +71,7 @@ const InternetTransactionsTable = ({ data }: Props) => {
                     </StyledTableRow>
                   ))
                 ) : (
-                  <Empty colSpan={8} text={"No Internet Information"} />
+                  <Empty colSpan={8} text={"No Electricity Information"} />
                 )}
               </>
             )}
@@ -113,4 +113,4 @@ const useStyles = (theme: any) => ({
   },
 });
 
-export default InternetTransactionsTable;
+export default ElectricityTransactionsTable;

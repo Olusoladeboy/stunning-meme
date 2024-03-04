@@ -811,43 +811,21 @@ export interface IApiLog {
   id: string;
 }
 
-export interface CableProvider {
-  billerid: number;
+export interface BillsAdmin {
   name: string;
-  productid: number;
-  service_type: string;
-  shortname: string;
-}
-
-export interface CablePackage {
-  code: string;
-  name: string;
-}
-
-export interface InternetProvider {
-  billerid: number;
-  name: string;
-  productid: number;
-  service_type: string;
-  shortname: string;
-}
-
-export interface InternetPackage {
-  amount: number;
-  available: number;
-  description: string;
-}
-
-export interface EducationProvider {
-  billerid: number;
-  name: string;
-  productid: number;
-  service_type: string;
-  shortname: string;
-}
-
-export interface EducationBundle {
-  amount: number;
-  available: number;
-  description: string;
+  amount: string;
+  reference: string;
+  user: string;
+  transaction: string;
+  type: string;
+  service: string;
+  electricity_token: {
+    token: string;
+    unit: number;
+    transId: string;
+    amount: string;
+  };
+  createdAt: string;
+  updatedAt: string;
+  id: string;
 }

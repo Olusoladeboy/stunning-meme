@@ -106,3 +106,4 @@ export { default as AutoConversionsTable } from "./table/auto-conversions-table"
 export { default as CableTransactionsTable } from "./table/cable-transactions-table";
 export { default as InternetTransactionsTable } from "./table/internet-transactions-table";
 export { default as EducationTransactionsTable } from "./table/education-transactions-table";
+export { default as ElectricityTransactionsTable } from "./table/electricity-transactions-table";

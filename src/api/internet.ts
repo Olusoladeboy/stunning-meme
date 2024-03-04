@@ -1,25 +1,23 @@
 import apiRequest from "./apiRequest";
-import { InternetProvider, DataResponse, ENDPOINTS } from "../utilities";
+import { BillsAdmin, DataResponse, ENDPOINTS } from "../utilities";
 
-export const internetProviders = async (): Promise<
-  DataResponse<InternetProvider[]>
-> =>
+export const internetAdmin = async (): Promise<DataResponse<BillsAdmin[]>> =>
   apiRequest({
-    url: ENDPOINTS.InternetProviders,
+    url: `${ENDPOINTS.BillsAdmin}?type=INTERNET`,
     method: "GET",
   });
 
-export const internetTransactions = async (params: {
-  provider?: string;
-  [key: string]: any;
-}): Promise<DataResponse<InternetProvider[]>> => {
-  if (params.provider) {
-    return apiRequest({
-      url: `${ENDPOINTS.InternetProviders}/packages`,
-      method: "GET",
-      params,
-    });
-  } else {
-    return internetProviders();
-  }
-};
+// export const internetTransactions = async (params: {
+//   provider?: string;
+//   [key: string]: any;
+// }): Promise<DataResponse<InternetProvider[]>> => {
+//   if (params.provider) {
+//     return apiRequest({
+//       url: `${ENDPOINTS.InternetProviders}/packages`,
+//       method: "GET",
+//       params,
+//     });
+//   } else {
+//     return internetProviders();
+//   }
+// };

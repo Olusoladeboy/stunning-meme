@@ -7,12 +7,12 @@ import {
   styled,
 } from "@mui/material";
 import { StyledTableCell, StyledTableRow } from "./components";
-import { EducationBundle, EducationProvider } from "utilities";
+import { BillsAdmin } from "utilities";
 import Empty from "../empty/table-empty";
 import CustomTableCell from "./components/custom-table-cell";
 
 type Props = {
-  data: EducationProvider[] | EducationBundle[];
+  data: BillsAdmin[];
 };
 
 const EducationTransactionsTable = ({ data }: Props) => {
@@ -30,49 +30,16 @@ const EducationTransactionsTable = ({ data }: Props) => {
               },
             }}
           >
-            {"billerid" in data[0] ? (
-              <>
-                <StyledTableRow>
-                  <CustomTableCell
-                    style={styles.headTableCell}
-                    label={"Biller Id"}
-                  />
-                  <CustomTableCell
-                    style={styles.headTableCell}
-                    label={"Provider Name"}
-                  />
-                  <CustomTableCell
-                    style={styles.headTableCell}
-                    label={"Service Type"}
-                  />
-                  <CustomTableCell
-                    style={styles.headTableCell}
-                    label={"Shortname"}
-                  />
-                  <CustomTableCell
-                    style={styles.headTableCell}
-                    label={"Product Id"}
-                  />
-                </StyledTableRow>
-              </>
-            ) : (
-              <>
-                <StyledTableRow>
-                  <CustomTableCell
-                    style={styles.headTableCell}
-                    label={"Amount"}
-                  />
-                  <CustomTableCell
-                    style={styles.headTableCell}
-                    label={"Quantity Available"}
-                  />
-                  <CustomTableCell
-                    style={styles.headTableCell}
-                    label={"Description"}
-                  />
-                </StyledTableRow>
-              </>
-            )}
+            <StyledTableRow>
+              <CustomTableCell
+                style={styles.headTableCell}
+                label={"Reference ID"}
+              />
+              <CustomTableCell style={styles.headTableCell} label={"Name"} />
+              <CustomTableCell style={styles.headTableCell} label={"Amount"} />
+              <CustomTableCell style={styles.headTableCell} label={"Type"} />
+              <CustomTableCell style={styles.headTableCell} label={"Service"} />
+            </StyledTableRow>
           </TableHead>
           <TableBody
             sx={{
@@ -84,43 +51,25 @@ const EducationTransactionsTable = ({ data }: Props) => {
             {data && (
               <>
                 {data.length > 0 ? (
-                  data.map((datum) => {
-                    if ("billerid" in datum) {
-                      return (
-                        <StyledTableRow key={datum.billerid}>
-                          <StyledTableCell style={styles.text}>
-                            {datum.billerid}
-                          </StyledTableCell>
-                          <StyledTableCell style={styles.text}>
-                            {datum.name}
-                          </StyledTableCell>
-                          <StyledTableCell style={styles.text}>
-                            {datum.service_type}
-                          </StyledTableCell>
-                          <StyledTableCell style={styles.text}>
-                            {datum.shortname}
-                          </StyledTableCell>
-                          <StyledTableCell style={styles.text}>
-                            {datum.productid}
-                          </StyledTableCell>
-                        </StyledTableRow>
-                      );
-                    } else {
-                      return (
-                        <StyledTableRow key={datum.description}>
-                          <StyledTableCell style={styles.text}>
-                            {datum.amount}
-                          </StyledTableCell>
-                          <StyledTableCell style={styles.text}>
-                            {datum.available}
-                          </StyledTableCell>
-                          <StyledTableCell style={styles.text}>
-                            {datum.description}
-                          </StyledTableCell>
-                        </StyledTableRow>
-                      );
-                    }
-                  })
+                  data.map((datum) => (
+                    <StyledTableRow key={datum.reference}>
+                      <StyledTableCell style={styles.text}>
+                        {datum.reference}
+                      </StyledTableCell>
+                      <StyledTableCell style={styles.text}>
+                        {datum.name}
+                      </StyledTableCell>
+                      <StyledTableCell style={styles.text}>
+                        {datum.amount}
+                      </StyledTableCell>
+                      <StyledTableCell style={styles.text}>
+                        {datum.type}
+                      </StyledTableCell>
+                      <StyledTableCell style={styles.text}>
+                        {datum.service}
+                      </StyledTableCell>
+                    </StyledTableRow>
+                  ))
                 ) : (
                   <Empty colSpan={8} text={"No Education Information"} />
                 )}

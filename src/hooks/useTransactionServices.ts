@@ -9,9 +9,10 @@ import {
   airtimeTransactions,
   convertAirtimes,
 } from "api";
-import { cableProviders, cableTransactions } from "api/cable";
-import { internetProviders, internetTransactions } from "api/internet";
-import { educationProviders, educationTransactions } from "api/education";
+import { cableAdmin } from "api/cable";
+import { internetAdmin } from "api/internet";
+import { educationAdmin } from "api/education";
+import { electricityAdmin } from "api/electricity";
 
 export const useQueryAirtimeNetwork = (queryKey?: string) => {
   const [isEnable, setIsEnable] = useState<boolean>(false);
@@ -237,12 +238,12 @@ export const useQueryAirtimeTransactions = (callback?: (data: any) => void) => {
 };
 
 // Query Cable
-export const useQueryCableProviders = () => {
+export const useQueryCableAdmin = () => {
   const [isEnable, setIsEnable] = useState<boolean>(false);
 
-  const { isLoading, data: dataCableProviders } = useQuery(
-    "statistics-cable-providers",
-    () => cableProviders(),
+  const { isLoading, data: dataCableAdmin } = useQuery(
+    "statistics-cable-admin",
+    () => cableAdmin(),
     {
       enabled: isEnable,
       onSettled: (data) => {
@@ -251,32 +252,36 @@ export const useQueryCableProviders = () => {
     }
   );
 
-  const queryCableProviders = () => {
+  const queryCableAdmin = () => {
     setIsEnable(true);
   };
 
   return {
-    isLoadingCableProviders: isLoading,
-    dataCableProviders,
-    queryCableProviders,
+    isLoadingCableAdmin: isLoading,
+    dataCableAdmin,
+    queryCableAdmin,
   };
 };
 
-export const useQueryCableTransactions = (callback?: (data: any) => void) => {
-  const [dataCableTransactions, setDataCableTransactions] = useState<
+export const useQueryCableAdminTransactions = (
+  callback?: (data: any) => void
+) => {
+  const [dataCableAdminTransactions, setDataCableAdminTransactions] = useState<
     { [key: string]: any }[] | null
   >(null);
 
   const [isLoading, setLoading] = useState<boolean>(false);
 
-  const queryCableTransactions = async (params: Record<string, any>) => {
+  // const queryCableAdminTransactions = async (params: Record<string, any>) => {
+  const queryCableAdminTransactions = async () => {
     setLoading(true);
     try {
-      const response = await cableTransactions(params);
+      // const response = await cableAdmin(params);
+      const response = await cableAdmin();
       setLoading(false);
 
       if (response && response.success) {
-        setDataCableTransactions(response.payload);
+        setDataCableAdminTransactions(response.payload);
         typeof callback === "function" && callback(response.payload);
         return response.payload;
       }
@@ -286,19 +291,19 @@ export const useQueryCableTransactions = (callback?: (data: any) => void) => {
   };
 
   return {
-    isLoadingCableTransactions: isLoading,
-    dataCableTransactions: dataCableTransactions,
-    queryCableTransactions,
+    isLoadingCableAdminTransactions: isLoading,
+    dataCableAdminTransactions,
+    queryCableAdminTransactions,
   };
 };
 
 // Query Internet
-export const useQueryInternetProviders = () => {
+export const useQueryInternetAdmin = () => {
   const [isEnable, setIsEnable] = useState<boolean>(false);
 
-  const { isLoading, data: dataInternetProviders } = useQuery(
-    "statistics-internet-providers",
-    () => internetProviders(),
+  const { isLoading, data: dataInternetAdmin } = useQuery(
+    "statistics-internet-admin",
+    () => internetAdmin(),
     {
       enabled: isEnable,
       onSettled: (data) => {
@@ -307,34 +312,35 @@ export const useQueryInternetProviders = () => {
     }
   );
 
-  const queryInternetProviders = () => {
+  const queryInternetAdmin = () => {
     setIsEnable(true);
   };
 
   return {
-    isLoadingInternetProviders: isLoading,
-    dataInternetProviders,
-    queryInternetProviders,
+    isLoadingInternetAdmin: isLoading,
+    dataInternetAdmin,
+    queryInternetAdmin,
   };
 };
 
-export const useQueryInternetTransactions = (
+export const useQueryInternetAdminTransactions = (
   callback?: (data: any) => void
 ) => {
-  const [dataInternetTransactions, setDataInternetTransactions] = useState<
-    { [key: string]: any }[] | null
-  >(null);
+  const [dataInternetAdminTransactions, setDataInternetAdminTransactions] =
+    useState<{ [key: string]: any }[] | null>(null);
 
   const [isLoading, setLoading] = useState<boolean>(false);
 
-  const queryInternetTransactions = async (params: Record<string, any>) => {
+  // const queryInternetAdminTransactions = async (params: Record<string, any>) => {
+  const queryInternetAdminTransactions = async () => {
     setLoading(true);
     try {
-      const response = await internetTransactions(params);
+      // const response = await internetAdmin(params);
+      const response = await internetAdmin();
       setLoading(false);
 
       if (response && response.success) {
-        setDataInternetTransactions(response.payload);
+        setDataInternetAdminTransactions(response.payload);
         typeof callback === "function" && callback(response.payload);
         return response.payload;
       }
@@ -344,19 +350,19 @@ export const useQueryInternetTransactions = (
   };
 
   return {
-    isLoadingInternetTransactions: isLoading,
-    dataInternetTransactions: dataInternetTransactions,
-    queryInternetTransactions,
+    isLoadingInternetAdminTransactions: isLoading,
+    dataInternetAdminTransactions,
+    queryInternetAdminTransactions,
   };
 };
 
 // Query Education
-export const useQueryEducationProviders = () => {
+export const useQueryEducationAdmin = () => {
   const [isEnable, setIsEnable] = useState<boolean>(false);
 
-  const { isLoading, data: dataEducationProviders } = useQuery(
-    "statistics-education-providers",
-    () => educationProviders(),
+  const { isLoading, data: dataEducationAdmin } = useQuery(
+    "statistics-education-admin",
+    () => educationAdmin(),
     {
       enabled: isEnable,
       onSettled: (data) => {
@@ -365,34 +371,35 @@ export const useQueryEducationProviders = () => {
     }
   );
 
-  const queryEducationProviders = () => {
+  const queryEducationAdmin = () => {
     setIsEnable(true);
   };
 
   return {
-    isLoadingEducationProviders: isLoading,
-    dataEducationProviders,
-    queryEducationProviders,
+    isLoadingEducationAdmin: isLoading,
+    dataEducationAdmin,
+    queryEducationAdmin,
   };
 };
 
-export const useQueryEducationTransactions = (
+export const useQueryEducationAdminTransactions = (
   callback?: (data: any) => void
 ) => {
-  const [dataEducationTransactions, setDataEducationTransactions] = useState<
-    { [key: string]: any }[] | null
-  >(null);
+  const [dataEducationAdminTransactions, setDataEducationAdminTransactions] =
+    useState<{ [key: string]: any }[] | null>(null);
 
   const [isLoading, setLoading] = useState<boolean>(false);
 
-  const queryEducationTransactions = async (params: Record<string, any>) => {
+  // const queryEducationAdminTransactions = async (params: Record<string, any>) => {
+  const queryEducationAdminTransactions = async () => {
     setLoading(true);
     try {
-      const response = await educationTransactions(params);
+      // const response = await educationAdmin(params);
+      const response = await educationAdmin();
       setLoading(false);
 
       if (response && response.success) {
-        setDataEducationTransactions(response.payload);
+        setDataEducationAdminTransactions(response.payload);
         typeof callback === "function" && callback(response.payload);
         return response.payload;
       }
@@ -402,8 +409,69 @@ export const useQueryEducationTransactions = (
   };
 
   return {
-    isLoadingEducationTransactions: isLoading,
-    dataEducationTransactions: dataEducationTransactions,
-    queryEducationTransactions,
+    isLoadingEducationAdminTransactions: isLoading,
+    dataEducationAdminTransactions,
+    queryEducationAdminTransactions,
+  };
+};
+
+// Query Electricity
+export const useQueryElectricityAdmin = () => {
+  const [isEnable, setIsEnable] = useState<boolean>(false);
+
+  const { isLoading, data: dataElectricityAdmin } = useQuery(
+    "statistics-electricity-admin",
+    () => electricityAdmin(),
+    {
+      enabled: isEnable,
+      onSettled: (data) => {
+        setIsEnable(false);
+      },
+    }
+  );
+
+  const queryElectricityAdmin = () => {
+    setIsEnable(true);
+  };
+
+  return {
+    isLoadingElectricityAdmin: isLoading,
+    dataElectricityAdmin,
+    queryElectricityAdmin,
+  };
+};
+
+export const useQueryElectricityAdminTransactions = (
+  callback?: (data: any) => void
+) => {
+  const [
+    dataElectricityAdminTransactions,
+    setDataElectricityAdminTransactions,
+  ] = useState<{ [key: string]: any }[] | null>(null);
+
+  const [isLoading, setLoading] = useState<boolean>(false);
+
+  // const queryElectricityAdminTransactions = async (params: Record<string, any>) => {
+  const queryElectricityAdminTransactions = async () => {
+    setLoading(true);
+    try {
+      // const response = await electricityAdmin(params);
+      const response = await electricityAdmin();
+      setLoading(false);
+
+      if (response && response.success) {
+        setDataElectricityAdminTransactions(response.payload);
+        typeof callback === "function" && callback(response.payload);
+        return response.payload;
+      }
+    } catch (error) {
+      setLoading(false);
+    }
+  };
+
+  return {
+    isLoadingElectricityAdminTransactions: isLoading,
+    dataElectricityAdminTransactions,
+    queryElectricityAdminTransactions,
   };
 };

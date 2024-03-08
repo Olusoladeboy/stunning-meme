@@ -39,6 +39,7 @@ const CableTransactionsTable = ({ data }: Props) => {
               <CustomTableCell style={styles.headTableCell} label={"Amount"} />
               <CustomTableCell style={styles.headTableCell} label={"Type"} />
               <CustomTableCell style={styles.headTableCell} label={"Service"} />
+              <CustomTableCell style={styles.headTableCell} label={"Status"} />
             </StyledTableRow>
           </TableHead>
           <TableBody
@@ -67,6 +68,9 @@ const CableTransactionsTable = ({ data }: Props) => {
                       </StyledTableCell>
                       <StyledTableCell style={styles.text}>
                         {datum.service}
+                      </StyledTableCell>
+                      <StyledTableCell style={styles.text}>
+                        {datum.status}
                       </StyledTableCell>
                     </StyledTableRow>
                   ))

@@ -828,4 +828,5 @@ export interface BillsAdmin {
   createdAt: string;
   updatedAt: string;
   id: string;
+  status: "SUCCESSFUL" | "FAILED";
 }

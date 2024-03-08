@@ -22,6 +22,22 @@ import {
   useQueryEducationAdminTransactions,
   useQueryElectricityAdmin,
   useQueryElectricityAdminTransactions,
+  useQueryWithdrawalAdminTransactions,
+  useQueryAutoAirtimeConversionAdminTransactions,
+  useQueryCardTopUpAdminTransactions,
+  useQueryBettingAdminTransactions,
+  useQueryBankFundingAdminTransactions,
+  useQueryEPinAdminTransactions,
+  useQueryReversalAdminTransactions,
+  useQueryWalletTransferAdminTransactions,
+  useQueryWithdrawalAdmin,
+  useQueryAutoAirtimeConversionAdmin,
+  useQueryCardTopUpAdmin,
+  useQueryBettingAdmin,
+  useQueryBankFundingAdmin,
+  useQueryEPinAdmin,
+  useQueryReversalAdmin,
+  useQueryWalletTransferAdmin,
 } from "hooks";
 
 const SELECT_SERVICE = "Select service";
@@ -139,6 +155,124 @@ const SearchStatistics = ({ setDataStatistics }: ISearchStatistics) => {
     typeof setDataStatistics === "function" &&
       setDataStatistics({
         service: SERVICES.ELECTRICITY,
+        data,
+      });
+  });
+
+  const {
+    isLoadingWithdrawalAdmin,
+    dataWithdrawalAdmin,
+    queryWithdrawalAdmin,
+  } = useQueryWithdrawalAdmin();
+
+  const {
+    isLoadingWithdrawalAdminTransactions,
+    queryWithdrawalAdminTransactions,
+  } = useQueryWithdrawalAdminTransactions((data) => {
+    typeof setDataStatistics === "function" &&
+      setDataStatistics({
+        service: SERVICES.WITHDRAWAL,
+        data,
+      });
+  });
+
+  const {
+    isLoadingAutoAirtimeConversionAdmin,
+    dataAutoAirtimeConversionAdmin,
+    queryAutoAirtimeConversionAdmin,
+  } = useQueryAutoAirtimeConversionAdmin();
+
+  const {
+    isLoadingAutoAirtimeConversionAdminTransactions,
+    queryAutoAirtimeConversionAdminTransactions,
+  } = useQueryAutoAirtimeConversionAdminTransactions((data) => {
+    typeof setDataStatistics === "function" &&
+      setDataStatistics({
+        service: SERVICES.AUTO_AIRTIME_CONVERSION,
+        data,
+      });
+  });
+
+  const { isLoadingCardTopUpAdmin, dataCardTopUpAdmin, queryCardTopUpAdmin } =
+    useQueryCardTopUpAdmin();
+
+  const {
+    isLoadingCardTopUpAdminTransactions,
+    queryCardTopUpAdminTransactions,
+  } = useQueryCardTopUpAdminTransactions((data) => {
+    typeof setDataStatistics === "function" &&
+      setDataStatistics({
+        service: SERVICES.CARD_TOP_UP,
+        data,
+      });
+  });
+
+  const { isLoadingBettingAdmin, dataBettingAdmin, queryBettingAdmin } =
+    useQueryBettingAdmin();
+
+  const { isLoadingBettingAdminTransactions, queryBettingAdminTransactions } =
+    useQueryBettingAdminTransactions((data) => {
+      typeof setDataStatistics === "function" &&
+        setDataStatistics({
+          service: SERVICES.BETTING,
+          data,
+        });
+    });
+
+  const {
+    isLoadingBankFundingAdmin,
+    dataBankFundingAdmin,
+    queryBankFundingAdmin,
+  } = useQueryBankFundingAdmin();
+
+  const {
+    isLoadingBankFundingAdminTransactions,
+    queryBankFundingAdminTransactions,
+  } = useQueryBankFundingAdminTransactions((data) => {
+    typeof setDataStatistics === "function" &&
+      setDataStatistics({
+        service: SERVICES.BANK_FUNDING,
+        data,
+      });
+  });
+
+  const { isLoadingEPinAdmin, dataEPinAdmin, queryEPinAdmin } =
+    useQueryEPinAdmin();
+
+  const { isLoadingEPinAdminTransactions, queryEPinAdminTransactions } =
+    useQueryEPinAdminTransactions((data) => {
+      typeof setDataStatistics === "function" &&
+        setDataStatistics({
+          service: SERVICES.EPIN,
+          data,
+        });
+    });
+
+  const { isLoadingReversalAdmin, dataReversalAdmin, queryReversalAdmin } =
+    useQueryReversalAdmin();
+
+  const { isLoadingReversalAdminTransactions, queryReversalAdminTransactions } =
+    useQueryReversalAdminTransactions((data) => {
+      typeof setDataStatistics === "function" &&
+        setDataStatistics({
+          service: SERVICES.REVERSAL,
+          data,
+        });
+    });
+
+  const {
+    isLoadingWalletTransferAdmin,
+    dataWalletTransferAdmin,
+    queryWalletTransferAdmin,
+  } = useQueryWalletTransferAdmin();
+
+  const {
+    isLoadingWalletTransferAdminTransactions,
+    queryWalletTransferAdminTransactions,
+  } = useQueryWalletTransferAdminTransactions((data) => {
+    typeof setDataStatistics === "function" &&
+      setDataStatistics({
+        service: SERVICES.WALLET_TRANSFER,
         data,
       });
   });
@@ -291,6 +425,102 @@ const SearchStatistics = ({ setDataStatistics }: ISearchStatistics) => {
       queryElectricityAdminTransactions();
       return;
     }
+
+    // if (values.service === SERVICES.WITHDRAWAL) {
+    //   if (values.provider && values.provider !== SELECT_PROVIDER)
+    //     payload.provider = values.provider;
+    //   queryWithdrawalAdminTransactions(payload);
+    //   return;
+    // }
+
+    if (values.service === SERVICES.WITHDRAWAL) {
+      queryWithdrawalAdminTransactions();
+      return;
+    }
+
+    // if (values.service === SERVICES.AUTO_AIRTIME_CONVERSION) {
+    //   if (values.provider && values.provider !== SELECT_PROVIDER)
+    //     payload.provider = values.provider;
+    //   queryAutoAirtimeConversionAdminTransactions(payload);
+    //   return;
+    // }
+
+    if (values.service === SERVICES.AUTO_AIRTIME_CONVERSION) {
+      queryAutoAirtimeConversionAdminTransactions();
+      return;
+    }
+
+    // if (values.service === SERVICES.CARD_TOP_UP) {
+    //   if (values.provider && values.provider !== SELECT_PROVIDER)
+    //     payload.provider = values.provider;
+    //   queryCardTopUpAdminTransactions(payload);
+    //   return;
+    // }
+
+    if (values.service === SERVICES.CARD_TOP_UP) {
+      queryCardTopUpAdminTransactions();
+      return;
+    }
+
+    // if (values.service === SERVICES.BETTING) {
+    //   if (values.provider && values.provider !== SELECT_PROVIDER)
+    //     payload.provider = values.provider;
+    //   queryBettingAdminTransactions(payload);
+    //   return;
+    // }
+
+    if (values.service === SERVICES.BETTING) {
+      queryBettingAdminTransactions();
+      return;
+    }
+
+    // if (values.service === SERVICES.BANK_FUNDING) {
+    //   if (values.provider && values.provider !== SELECT_PROVIDER)
+    //     payload.provider = values.provider;
+    //   queryBankFundingAdminTransactions(payload);
+    //   return;
+    // }
+
+    if (values.service === SERVICES.BANK_FUNDING) {
+      queryBankFundingAdminTransactions();
+      return;
+    }
+
+    // if (values.service === SERVICES.EPIN) {
+    //   if (values.provider && values.provider !== SELECT_PROVIDER)
+    //     payload.provider = values.provider;
+    //   queryEPinAdminTransactions(payload);
+    //   return;
+    // }
+
+    if (values.service === SERVICES.EPIN) {
+      queryEPinAdminTransactions();
+      return;
+    }
+
+    // if (values.service === SERVICES.REVERSAL) {
+    //   if (values.provider && values.provider !== SELECT_PROVIDER)
+    //     payload.provider = values.provider;
+    //   queryReversalAdminTransactions(payload);
+    //   return;
+    // }
+
+    if (values.service === SERVICES.REVERSAL) {
+      queryReversalAdminTransactions();
+      return;
+    }
+
+    // if (values.service === SERVICES.WALLET_TRANSFER) {
+    //   if (values.provider && values.provider !== SELECT_PROVIDER)
+    //     payload.provider = values.provider;
+    //   queryWalletTransferAdminTransactions(payload);
+    //   return;
+    // }
+
+    if (values.service === SERVICES.WALLET_TRANSFER) {
+      queryWalletTransferAdminTransactions();
+      return;
+    }
   };
 
   const { values, handleChange, setFieldValue, handleSubmit, touched, errors } =
@@ -335,6 +565,38 @@ const SearchStatistics = ({ setDataStatistics }: ISearchStatistics) => {
 
       case SERVICES.ELECTRICITY:
         queryElectricityAdmin();
+        break;
+
+      case SERVICES.WITHDRAWAL:
+        queryWithdrawalAdmin();
+        break;
+
+      case SERVICES.AUTO_AIRTIME_CONVERSION:
+        queryAutoAirtimeConversionAdmin();
+        break;
+
+      case SERVICES.CARD_TOP_UP:
+        queryCardTopUpAdmin();
+        break;
+
+      case SERVICES.BETTING:
+        queryBettingAdmin();
+        break;
+
+      case SERVICES.BANK_FUNDING:
+        queryBankFundingAdmin();
+        break;
+
+      case SERVICES.EPIN:
+        queryEPinAdmin();
+        break;
+
+      case SERVICES.REVERSAL:
+        queryReversalAdmin();
+        break;
+
+      case SERVICES.WALLET_TRANSFER:
+        queryWalletTransferAdmin();
         break;
 
       default:
@@ -673,7 +935,15 @@ const SearchStatistics = ({ setDataStatistics }: ISearchStatistics) => {
           isLoadingCableAdminTransactions ||
           isLoadingInternetAdminTransactions ||
           isLoadingEducationAdminTransactions ||
-          isLoadingElectricityAdminTransactions
+          isLoadingElectricityAdminTransactions ||
+          isLoadingWithdrawalAdminTransactions ||
+          isLoadingAutoAirtimeConversionAdminTransactions ||
+          isLoadingCardTopUpAdminTransactions ||
+          isLoadingBettingAdminTransactions ||
+          isLoadingBankFundingAdminTransactions ||
+          isLoadingEPinAdminTransactions ||
+          isLoadingReversalAdminTransactions ||
+          isLoadingWalletTransferAdminTransactions
         }
         size={"large"}
         onClick={(e: React.FormEvent<HTMLButtonElement>) => {

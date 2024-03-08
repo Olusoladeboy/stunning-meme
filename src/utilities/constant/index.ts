@@ -289,7 +289,7 @@ export const TRANSACTION_SERVICE = {
 
 export const TOOL_BAR_OPTIONS = [
 	[{ header: [1, 2, 3, 4, 5, 6, false] }],
-	['bold', 'italic', 'underline', 'strike'], // toggled buttons
+	['bold', 'italic', 'underline', 'strike'],
 	[{ color: [] }, { background: [] }], // dropdown with defaults from theme
 	['link'],
 	['blockquote', 'code-block'],

@@ -156,32 +156,36 @@ const DataSubscriptionTable = ({
 														{subscription.reference}
 													</StyledTableCell>
 													<StyledTableCell style={styles.text}>
-														{extractUserName(subscription?.user as User)}
+														{subscription.user &&
+															extractUserName(subscription?.user as User)}
 													</StyledTableCell>
 
 													<StyledTableCell style={styles.text}>
 														Network
 													</StyledTableCell>
 													<StyledTableCell style={styles.text}>
-														{typeof subscription.plan === 'object' &&
+														{subscription.plan &&
+															typeof subscription.plan === 'object' &&
 															subscription.plan.name}
 													</StyledTableCell>
 													<StyledTableCell style={styles.text}>
-														{typeof subscription.dataType === 'object' &&
+														{subscription.dataType &&
+															typeof subscription.dataType === 'object' &&
 															subscription.dataType.name}
 													</StyledTableCell>
 													<StyledTableCell style={styles.text}>
-														{subscription.number}
+														{subscription.number && subscription.number}
 													</StyledTableCell>
 
 													<StyledTableCell style={styles.text}>
-														{formatNumberToCurrency(
-															checkAmount(subscription.amount)
-														)}
+														{subscription.amount &&
+															formatNumberToCurrency(
+																checkAmount(subscription.amount)
+															)}
 													</StyledTableCell>
 
 													<StyledTableCell style={styles.text}>
-														{subscription.status}
+														{subscription.status && subscription.status}
 													</StyledTableCell>
 												</StyledTableRow>
 											);

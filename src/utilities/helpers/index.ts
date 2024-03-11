@@ -166,11 +166,15 @@ export const extractExactTransactionService = (transaction: Transaction) => {
 
 export const extractUserName = (user: User) => {
 	let name = '';
-	if (user.firstname) name += user.firstname;
-	if (user.lastname) name = name ? name + ` ${user.lastname}` : user.lastname;
+	if (Object.keys(user).length > 0) {
+		if (user?.firstname) name += user.firstname;
+		if (user?.lastname)
+			name = name ? name + ` ${user.lastname}` : user.lastname;
 
-	if (name) return name;
-	if (user.username) return user.username;
+		if (name) return name;
+
+		if (user?.username) return user.username;
+	}
 
 	return 'No name available';
 };

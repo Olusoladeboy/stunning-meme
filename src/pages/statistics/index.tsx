@@ -12,6 +12,15 @@ import {
   CableTransactionsTable,
   InternetTransactionsTable,
   EducationTransactionsTable,
+  ElectricityTransactionsTable,
+  WalletTransferTransactionsTable,
+  WithdrawalTransactionsTable,
+  AutoAirtimeConversionTransactionsTable,
+  CardTopUpTransactionsTable,
+  BettingTransactionsTable,
+  BankFundingTransactionsTable,
+  EPinTransactionsTable,
+  ReversalTransactionsTable,
 } from "components";
 import {
   BOX_SHADOW,
@@ -87,6 +96,43 @@ const Statistics = () => {
               )}
               {dataStatistics.service === SERVICES.EDUCATION && (
                 <EducationTransactionsTable data={dataStatistics.data as any} />
+              )}
+              {dataStatistics.service === SERVICES.ELECTRICITY && (
+                <ElectricityTransactionsTable
+                  data={dataStatistics.data as any}
+                />
+              )}
+              {dataStatistics.service === SERVICES.WITHDRAWAL && (
+                <WithdrawalTransactionsTable
+                  data={dataStatistics.data as any}
+                />
+              )}
+              {dataStatistics.service === SERVICES.AUTO_AIRTIME_CONVERSION && (
+                <AutoAirtimeConversionTransactionsTable
+                  data={dataStatistics.data as any}
+                />
+              )}
+              {dataStatistics.service === SERVICES.CARD_TOP_UP && (
+                <CardTopUpTransactionsTable data={dataStatistics.data as any} />
+              )}
+              {dataStatistics.service === SERVICES.BETTING && (
+                <BettingTransactionsTable data={dataStatistics.data as any} />
+              )}
+              {dataStatistics.service === SERVICES.BANK_FUNDING && (
+                <BankFundingTransactionsTable
+                  data={dataStatistics.data as any}
+                />
+              )}
+              {dataStatistics.service === SERVICES.REVERSAL && (
+                <ReversalTransactionsTable data={dataStatistics.data as any} />
+              )}
+              {dataStatistics.service === SERVICES.EPIN && (
+                <EPinTransactionsTable data={dataStatistics.data as any} />
+              )}
+              {dataStatistics.service === SERVICES.WALLET_TRANSFER && (
+                <WalletTransferTransactionsTable
+                  data={dataStatistics.data as any}
+                />
               )}
             </>
           )}

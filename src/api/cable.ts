@@ -1,7 +1,7 @@
 import apiRequest from "./apiRequest";
 import {
   AuditLog,
-  CableProvider,
+  BillsAdmin,
   DataResponse,
   ENDPOINTS,
   Provider,
@@ -16,25 +16,23 @@ export const cables = async (params?: {
     params,
   });
 
-export const cableProviders = async (): Promise<
-  DataResponse<CableProvider[]>
-> =>
+export const cableAdmin = async (): Promise<DataResponse<BillsAdmin[]>> =>
   apiRequest({
-    url: ENDPOINTS.CableProviders,
+    url: `${ENDPOINTS.BillsAdmin}?type=CABLE`,
     method: "GET",
   });
 
-export const cableTransactions = async (params: {
-  provider?: string;
-  [key: string]: any;
-}): Promise<DataResponse<CableProvider[]>> => {
-  if (params.provider) {
-    return apiRequest({
-      url: `${ENDPOINTS.CableProviders}/packages`,
-      method: "GET",
-      params,
-    });
-  } else {
-    return cableProviders();
-  }
-};
+// export const cableTransactions = async (params: {
+//   provider?: string;
+//   [key: string]: any;
+// }): Promise<DataResponse<BillsAdmin[]>> => {
+//   if (params.provider) {
+//     return apiRequest({
+//       url: `${ENDPOINTS.BillsAdmin}/packages`,
+//       method: "GET",
+//       params,
+//     });
+//   } else {
+//     return cableProviders();
+//   }
+// };

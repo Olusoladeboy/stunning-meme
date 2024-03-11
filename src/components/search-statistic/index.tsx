@@ -14,12 +14,30 @@ import {
   useQueryAirtimeTransactions,
   useQueryConvertAirtimeNetworks,
   useQueryConvertAirtimes,
-  useQueryCableProviders,
-  useQueryCableTransactions,
-  useQueryInternetProviders,
-  useQueryInternetTransactions,
-  useQueryEducationProviders,
-  useQueryEducationTransactions,
+  useQueryCableAdmin,
+  useQueryCableAdminTransactions,
+  useQueryInternetAdmin,
+  useQueryInternetAdminTransactions,
+  useQueryEducationAdmin,
+  useQueryEducationAdminTransactions,
+  useQueryElectricityAdmin,
+  useQueryElectricityAdminTransactions,
+  useQueryWithdrawalAdminTransactions,
+  useQueryAutoAirtimeConversionAdminTransactions,
+  useQueryCardTopUpAdminTransactions,
+  useQueryBettingAdminTransactions,
+  useQueryBankFundingAdminTransactions,
+  useQueryEPinAdminTransactions,
+  useQueryReversalAdminTransactions,
+  useQueryWalletTransferAdminTransactions,
+  useQueryWithdrawalAdmin,
+  useQueryAutoAirtimeConversionAdmin,
+  useQueryCardTopUpAdmin,
+  useQueryBettingAdmin,
+  useQueryBankFundingAdmin,
+  useQueryEPinAdmin,
+  useQueryReversalAdmin,
+  useQueryWalletTransferAdmin,
 } from "hooks";
 
 const SELECT_SERVICE = "Select service";
@@ -86,11 +104,11 @@ const SearchStatistics = ({ setDataStatistics }: ISearchStatistics) => {
         });
     });
 
-  const { isLoadingCableProviders, dataCableProviders, queryCableProviders } =
-    useQueryCableProviders();
+  const { isLoadingCableAdmin, dataCableAdmin, queryCableAdmin } =
+    useQueryCableAdmin();
 
-  const { isLoadingCableTransactions, queryCableTransactions } =
-    useQueryCableTransactions((data) => {
+  const { isLoadingCableAdminTransactions, queryCableAdminTransactions } =
+    useQueryCableAdminTransactions((data) => {
       typeof setDataStatistics === "function" &&
         setDataStatistics({
           service: SERVICES.CABLE,
@@ -98,14 +116,11 @@ const SearchStatistics = ({ setDataStatistics }: ISearchStatistics) => {
         });
     });
 
-  const {
-    isLoadingInternetProviders,
-    dataInternetProviders,
-    queryInternetProviders,
-  } = useQueryInternetProviders();
+  const { isLoadingInternetAdmin, dataInternetAdmin, queryInternetAdmin } =
+    useQueryInternetAdmin();
 
-  const { isLoadingInternetTransactions, queryInternetTransactions } =
-    useQueryInternetTransactions((data) => {
+  const { isLoadingInternetAdminTransactions, queryInternetAdminTransactions } =
+    useQueryInternetAdminTransactions((data) => {
       typeof setDataStatistics === "function" &&
         setDataStatistics({
           service: SERVICES.INTERNET,
@@ -113,20 +128,154 @@ const SearchStatistics = ({ setDataStatistics }: ISearchStatistics) => {
         });
     });
 
-  const {
-    isLoadingEducationProviders,
-    dataEducationProviders,
-    queryEducationProviders,
-  } = useQueryEducationProviders();
+  const { isLoadingEducationAdmin, dataEducationAdmin, queryEducationAdmin } =
+    useQueryEducationAdmin();
 
-  const { isLoadingEducationTransactions, queryEducationTransactions } =
-    useQueryEducationTransactions((data) => {
+  const {
+    isLoadingEducationAdminTransactions,
+    queryEducationAdminTransactions,
+  } = useQueryEducationAdminTransactions((data) => {
+    typeof setDataStatistics === "function" &&
+      setDataStatistics({
+        service: SERVICES.EDUCATION,
+        data,
+      });
+  });
+
+  const {
+    isLoadingElectricityAdmin,
+    dataElectricityAdmin,
+    queryElectricityAdmin,
+  } = useQueryElectricityAdmin();
+
+  const {
+    isLoadingElectricityAdminTransactions,
+    queryElectricityAdminTransactions,
+  } = useQueryElectricityAdminTransactions((data) => {
+    typeof setDataStatistics === "function" &&
+      setDataStatistics({
+        service: SERVICES.ELECTRICITY,
+        data,
+      });
+  });
+
+  const {
+    isLoadingWithdrawalAdmin,
+    dataWithdrawalAdmin,
+    queryWithdrawalAdmin,
+  } = useQueryWithdrawalAdmin();
+
+  const {
+    isLoadingWithdrawalAdminTransactions,
+    queryWithdrawalAdminTransactions,
+  } = useQueryWithdrawalAdminTransactions((data) => {
+    typeof setDataStatistics === "function" &&
+      setDataStatistics({
+        service: SERVICES.WITHDRAWAL,
+        data,
+      });
+  });
+
+  const {
+    isLoadingAutoAirtimeConversionAdmin,
+    dataAutoAirtimeConversionAdmin,
+    queryAutoAirtimeConversionAdmin,
+  } = useQueryAutoAirtimeConversionAdmin();
+
+  const {
+    isLoadingAutoAirtimeConversionAdminTransactions,
+    queryAutoAirtimeConversionAdminTransactions,
+  } = useQueryAutoAirtimeConversionAdminTransactions((data) => {
+    typeof setDataStatistics === "function" &&
+      setDataStatistics({
+        service: SERVICES.AUTO_AIRTIME_CONVERSION,
+        data,
+      });
+  });
+
+  const { isLoadingCardTopUpAdmin, dataCardTopUpAdmin, queryCardTopUpAdmin } =
+    useQueryCardTopUpAdmin();
+
+  const {
+    isLoadingCardTopUpAdminTransactions,
+    queryCardTopUpAdminTransactions,
+  } = useQueryCardTopUpAdminTransactions((data) => {
+    typeof setDataStatistics === "function" &&
+      setDataStatistics({
+        service: SERVICES.CARD_TOP_UP,
+        data,
+      });
+  });
+
+  const { isLoadingBettingAdmin, dataBettingAdmin, queryBettingAdmin } =
+    useQueryBettingAdmin();
+
+  const { isLoadingBettingAdminTransactions, queryBettingAdminTransactions } =
+    useQueryBettingAdminTransactions((data) => {
       typeof setDataStatistics === "function" &&
         setDataStatistics({
-          service: SERVICES.EDUCATION,
+          service: SERVICES.BETTING,
           data,
         });
     });
+
+  const {
+    isLoadingBankFundingAdmin,
+    dataBankFundingAdmin,
+    queryBankFundingAdmin,
+  } = useQueryBankFundingAdmin();
+
+  const {
+    isLoadingBankFundingAdminTransactions,
+    queryBankFundingAdminTransactions,
+  } = useQueryBankFundingAdminTransactions((data) => {
+    typeof setDataStatistics === "function" &&
+      setDataStatistics({
+        service: SERVICES.BANK_FUNDING,
+        data,
+      });
+  });
+
+  const { isLoadingEPinAdmin, dataEPinAdmin, queryEPinAdmin } =
+    useQueryEPinAdmin();
+
+  const { isLoadingEPinAdminTransactions, queryEPinAdminTransactions } =
+    useQueryEPinAdminTransactions((data) => {
+      typeof setDataStatistics === "function" &&
+        setDataStatistics({
+          service: SERVICES.EPIN,
+          data,
+        });
+    });
+
+  const { isLoadingReversalAdmin, dataReversalAdmin, queryReversalAdmin } =
+    useQueryReversalAdmin();
+
+  const { isLoadingReversalAdminTransactions, queryReversalAdminTransactions } =
+    useQueryReversalAdminTransactions((data) => {
+      typeof setDataStatistics === "function" &&
+        setDataStatistics({
+          service: SERVICES.REVERSAL,
+          data,
+        });
+    });
+
+  const {
+    isLoadingWalletTransferAdmin,
+    dataWalletTransferAdmin,
+    queryWalletTransferAdmin,
+  } = useQueryWalletTransferAdmin();
+
+  const {
+    isLoadingWalletTransferAdminTransactions,
+    queryWalletTransferAdminTransactions,
+  } = useQueryWalletTransferAdminTransactions((data) => {
+    typeof setDataStatistics === "function" &&
+      setDataStatistics({
+        service: SERVICES.WALLET_TRANSFER,
+        data,
+      });
+  });
 
   const initialValues = {
     service: SELECT_SERVICE,
@@ -229,23 +378,147 @@ const SearchStatistics = ({ setDataStatistics }: ISearchStatistics) => {
       return;
     }
 
+    // if (values.service === SERVICES.CABLE) {
+    //   if (values.provider && values.provider !== SELECT_PROVIDER)
+    //     payload.provider = values.provider;
+    //   queryCableAdminTransactions(payload);
+    //   return;
+    // }
+
     if (values.service === SERVICES.CABLE) {
-      if (values.provider && values.provider !== SELECT_PROVIDER)
-        payload.provider = values.provider;
-      queryCableTransactions(payload);
+      queryCableAdminTransactions();
       return;
     }
 
+    // if (values.service === SERVICES.INTERNET) {
+    //   if (values.provider && values.provider !== SELECT_PROVIDER)
+    //     payload.provider = values.provider;
+    //   queryInternetAdminTransactions(payload);
+    //   return;
+    // }
+
     if (values.service === SERVICES.INTERNET) {
-      if (values.provider && values.provider !== SELECT_PROVIDER)
-        payload.provider = values.provider;
-      queryInternetTransactions(payload);
+      queryInternetAdminTransactions();
       return;
     }
+
+    // if (values.service === SERVICES.EDUCATION) {
+    //   if (values.provider && values.provider !== SELECT_PROVIDER)
+    //     payload.provider = values.provider;
+    //   queryEducationAdminTransactions(payload);
+    //   return;
+    // }
+
     if (values.service === SERVICES.EDUCATION) {
-      if (values.provider && values.provider !== SELECT_PROVIDER)
-        payload.provider = values.provider;
-      queryEducationTransactions(payload);
+      queryEducationAdminTransactions();
+      return;
+    }
+
+    // if (values.service === SERVICES.ELECTRICITY) {
+    //   if (values.provider && values.provider !== SELECT_PROVIDER)
+    //     payload.provider = values.provider;
+    //   queryElectricityAdminTransactions(payload);
+    //   return;
+    // }
+
+    if (values.service === SERVICES.ELECTRICITY) {
+      queryElectricityAdminTransactions();
+      return;
+    }
+
+    // if (values.service === SERVICES.WITHDRAWAL) {
+    //   if (values.provider && values.provider !== SELECT_PROVIDER)
+    //     payload.provider = values.provider;
+    //   queryWithdrawalAdminTransactions(payload);
+    //   return;
+    // }
+
+    if (values.service === SERVICES.WITHDRAWAL) {
+      queryWithdrawalAdminTransactions();
+      return;
+    }
+
+    // if (values.service === SERVICES.AUTO_AIRTIME_CONVERSION) {
+    //   if (values.provider && values.provider !== SELECT_PROVIDER)
+    //     payload.provider = values.provider;
+    //   queryAutoAirtimeConversionAdminTransactions(payload);
+    //   return;
+    // }
+
+    if (values.service === SERVICES.AUTO_AIRTIME_CONVERSION) {
+      queryAutoAirtimeConversionAdminTransactions();
+      return;
+    }
+
+    // if (values.service === SERVICES.CARD_TOP_UP) {
+    //   if (values.provider && values.provider !== SELECT_PROVIDER)
+    //     payload.provider = values.provider;
+    //   queryCardTopUpAdminTransactions(payload);
+    //   return;
+    // }
+
+    if (values.service === SERVICES.CARD_TOP_UP) {
+      queryCardTopUpAdminTransactions();
+      return;
+    }
+
+    // if (values.service === SERVICES.BETTING) {
+    //   if (values.provider && values.provider !== SELECT_PROVIDER)
+    //     payload.provider = values.provider;
+    //   queryBettingAdminTransactions(payload);
+    //   return;
+    // }
+
+    if (values.service === SERVICES.BETTING) {
+      queryBettingAdminTransactions();
+      return;
+    }
+
+    // if (values.service === SERVICES.BANK_FUNDING) {
+    //   if (values.provider && values.provider !== SELECT_PROVIDER)
+    //     payload.provider = values.provider;
+    //   queryBankFundingAdminTransactions(payload);
+    //   return;
+    // }
+
+    if (values.service === SERVICES.BANK_FUNDING) {
+      queryBankFundingAdminTransactions();
+      return;
+    }
+
+    // if (values.service === SERVICES.EPIN) {
+    //   if (values.provider && values.provider !== SELECT_PROVIDER)
+    //     payload.provider = values.provider;
+    //   queryEPinAdminTransactions(payload);
+    //   return;
+    // }
+
+    if (values.service === SERVICES.EPIN) {
+      queryEPinAdminTransactions();
+      return;
+    }
+
+    // if (values.service === SERVICES.REVERSAL) {
+    //   if (values.provider && values.provider !== SELECT_PROVIDER)
+    //     payload.provider = values.provider;
+    //   queryReversalAdminTransactions(payload);
+    //   return;
+    // }
+
+    if (values.service === SERVICES.REVERSAL) {
+      queryReversalAdminTransactions();
+      return;
+    }
+
+    // if (values.service === SERVICES.WALLET_TRANSFER) {
+    //   if (values.provider && values.provider !== SELECT_PROVIDER)
+    //     payload.provider = values.provider;
+    //   queryWalletTransferAdminTransactions(payload);
+    //   return;
+    // }
+
+    if (values.service === SERVICES.WALLET_TRANSFER) {
+      queryWalletTransferAdminTransactions();
       return;
     }
   };
@@ -279,15 +552,51 @@ const SearchStatistics = ({ setDataStatistics }: ISearchStatistics) => {
         break;
 
       case SERVICES.CABLE:
-        queryCableProviders();
+        queryCableAdmin();
         break;
 
       case SERVICES.INTERNET:
-        queryInternetProviders();
+        queryInternetAdmin();
         break;
 
       case SERVICES.EDUCATION:
-        queryEducationProviders();
+        queryEducationAdmin();
+        break;
+
+      case SERVICES.ELECTRICITY:
+        queryElectricityAdmin();
+        break;
+
+      case SERVICES.WITHDRAWAL:
+        queryWithdrawalAdmin();
+        break;
+
+      case SERVICES.AUTO_AIRTIME_CONVERSION:
+        queryAutoAirtimeConversionAdmin();
+        break;
+
+      case SERVICES.CARD_TOP_UP:
+        queryCardTopUpAdmin();
+        break;
+
+      case SERVICES.BETTING:
+        queryBettingAdmin();
+        break;
+
+      case SERVICES.BANK_FUNDING:
+        queryBankFundingAdmin();
+        break;
+
+      case SERVICES.EPIN:
+        queryEPinAdmin();
+        break;
+
+      case SERVICES.REVERSAL:
+        queryReversalAdmin();
+        break;
+
+      case SERVICES.WALLET_TRANSFER:
+        queryWalletTransferAdmin();
         break;
 
       default:
@@ -488,7 +797,7 @@ const SearchStatistics = ({ setDataStatistics }: ISearchStatistics) => {
         </>
       )}
 
-      {service === SERVICES.CABLE && (
+      {/* {service === SERVICES.CABLE && (
         <>
           <SelectContainer>
             <Select
@@ -499,29 +808,25 @@ const SearchStatistics = ({ setDataStatistics }: ISearchStatistics) => {
               onChange={handleChange("provider") as never}
             >
               <MenuItem disabled value={SELECT_PROVIDER}>
-                {isLoadingCableProviders
+                {isLoadingCableAdmin
                   ? "Loading..."
-                  : dataCableProviders &&
-                    dataCableProviders.payload.length === 0
+                  : dataCableAdmin && dataCableAdmin.payload.length === 0
                   ? "No available provider"
                   : "Select cable provider"}
               </MenuItem>
-              {dataCableProviders &&
-                dataCableProviders.payload.length > 0 &&
-                dataCableProviders.payload.map((provider) => (
-                  <MenuItem
-                    key={provider.billerid}
-                    value={provider.service_type}
-                  >
-                    {provider.service_type}
+              {dataCableAdmin &&
+                dataCableAdmin.payload.length > 0 &&
+                dataCableAdmin.payload.map((admin) => (
+                  <MenuItem key={admin.billerid} value={admin.service_type}>
+                    {admin.service_type}
                   </MenuItem>
                 ))}
             </Select>
           </SelectContainer>
         </>
-      )}
+      )} */}
 
-      {service === SERVICES.INTERNET && (
+      {/* {service === SERVICES.INTERNET && (
         <>
           <SelectContainer>
             <Select
@@ -585,16 +890,60 @@ const SearchStatistics = ({ setDataStatistics }: ISearchStatistics) => {
             </Select>
           </SelectContainer>
         </>
-      )}
+      )} 
+
+      {service === SERVICES.ELECTRICITY && (
+        <>
+          <SelectContainer>
+            <Select
+              fullWidth
+              error={touched.provider && Boolean(errors.provider)}
+              helpertext={touched.provider && errors.provider}
+              value={provider}
+              onChange={handleChange("provider") as never}
+            >
+              <MenuItem disabled value={SELECT_PROVIDER}>
+                {isLoadingElectricityProviders
+                  ? "Loading..."
+                  : dataElectricityProviders &&
+                    dataElectricityProviders.payload.length === 0
+                  ? "No available provider"
+                  : "Select electricity provider"}
+              </MenuItem>
+              {dataElectricityProviders &&
+                dataElectricityProviders.payload.length > 0 &&
+                dataElectricityProviders.payload.map((provider) => (
+                  <MenuItem
+                    key={provider.billerid}
+                    value={provider.service_type}
+                  >
+                    {provider.service_type}
+                  </MenuItem>
+                ))}
+            </Select>
+          </SelectContainer>
+        </>
+      )} 
+      
+      */}
 
       <Button
         loading={
           isLoadingDataSubscriptions ||
           isLoadingAirtimeTransactions ||
           isLoadingConvertAirtime ||
-          isLoadingCableTransactions ||
-          isLoadingInternetTransactions ||
-          isLoadingEducationTransactions
+          isLoadingCableAdminTransactions ||
+          isLoadingInternetAdminTransactions ||
+          isLoadingEducationAdminTransactions ||
+          isLoadingElectricityAdminTransactions ||
+          isLoadingWithdrawalAdminTransactions ||
+          isLoadingAutoAirtimeConversionAdminTransactions ||
+          isLoadingCardTopUpAdminTransactions ||
+          isLoadingBettingAdminTransactions ||
+          isLoadingBankFundingAdminTransactions ||
+          isLoadingEPinAdminTransactions ||
+          isLoadingReversalAdminTransactions ||
+          isLoadingWalletTransferAdminTransactions
         }
         size={"large"}
         onClick={(e: React.FormEvent<HTMLButtonElement>) => {

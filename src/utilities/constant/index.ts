@@ -164,9 +164,7 @@ export const ENDPOINTS = {
 	Notification: '/notification',
 	AuditLogs: '/audit-logs',
 	ApiLogs: '/api-logs',
-	CableProviders: '/bills/cable-providers',
-	InternetProviders: '/bills/internet-providers',
-	EducationProviders: '/bills/education-providers',
+	BillsAdmin: '/bills',
 };
 
 export const FUND_WALLET_SERVICE = {
@@ -251,11 +249,14 @@ export const SERVICES = {
 	DATA_SUBSCRIPTION: 'DATA SUBSCRIPTION',
 	AIRTIME_TOP_UP: 'AIRTIME TOP UP',
 	AIRTIME_CONVERSION: 'AIRTIME CONVERSION',
-	CARD_TOP_UP: 'CARD TOP UP',
+	AUTO_AIRTIME_CONVERSION: 'AIRTIME AUTO CONVERSION',
+	CARD_TOP_UP: 'CARD FUNDING',
 	CABLE: 'CABLE',
 	INTERNET: 'INTERNET',
 	EDUCATION: 'EDUCATION',
 	ELECTRICITY: 'ELECTRICITY',
+	BETTING: 'BETTING',
+	BANK_FUNDING: 'BANK FUNDING',
 	EPIN: 'EPIN',
 	REVERSAL: 'REVERSAL',
 	WALLET_TRANSFER: 'WALLET TRANSFER',
@@ -272,8 +273,8 @@ export const TRANSACTION_SERVICE = {
 	DATA_SUBSCRIPTION: 'DATA SUBSCRIPTION',
 	AIRTIME_TOP_UP: 'AIRTIME TOP UP',
 	AIRTIME_CONVERSION: 'AIRTIME CONVERSION',
-	AUTO_AIRTIME_CONVERSION: 'AUTO AIRTIME CONVERSION',
-	CARD_TOP_UP: 'CARD TOP UP',
+	AUTO_AIRTIME_CONVERSION: 'AIRTIME AUTO CONVERSION',
+	CARD_TOP_UP: 'CARD FUNDING',
 	CABLE: 'CABLE',
 	INTERNET: 'INTERNET',
 	EDUCATION: 'EDUCATION',
@@ -283,11 +284,13 @@ export const TRANSACTION_SERVICE = {
 	CREDIT: 'CREDIT',
 	DEBIT: 'DEBIT',
 	REFUND: 'REFUND',
+	ACCOUNT_UPGRADE: 'ACCOUNT_UPGRADE',
+	BANK_FUNDING: 'BANK FUNDING',
 };
 
 export const TOOL_BAR_OPTIONS = [
 	[{ header: [1, 2, 3, 4, 5, 6, false] }],
-	['bold', 'italic', 'underline', 'strike'], // toggled buttons
+	['bold', 'italic', 'underline', 'strike'],
 	[{ color: [] }, { background: [] }], // dropdown with defaults from theme
 	['link'],
 	['blockquote', 'code-block'],

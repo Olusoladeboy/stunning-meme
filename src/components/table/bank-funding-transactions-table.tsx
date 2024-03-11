@@ -15,7 +15,7 @@ type Props = {
   data: BillsAdmin[];
 };
 
-const EducationTransactionsTable = ({ data }: Props) => {
+const BankFundingTransactionsTable = ({ data }: Props) => {
   const theme = useTheme();
   const styles = useStyles(theme);
 
@@ -75,7 +75,7 @@ const EducationTransactionsTable = ({ data }: Props) => {
                     </StyledTableRow>
                   ))
                 ) : (
-                  <Empty colSpan={8} text={"No Education Information"} />
+                  <Empty colSpan={8} text={"No Bank Funding Information"} />
                 )}
               </>
             )}
@@ -117,4 +117,4 @@ const useStyles = (theme: any) => ({
   },
 });
 
-export default EducationTransactionsTable;
+export default BankFundingTransactionsTable;

@@ -13,6 +13,14 @@ import { cableAdmin } from "api/cable";
 import { internetAdmin } from "api/internet";
 import { educationAdmin } from "api/education";
 import { electricityAdmin } from "api/electricity";
+import { withdrawalAdmin } from "api/withdrawal";
+import { autoAirtimeConversionAdmin } from "api/auto-airtime-conversion";
+import { cardTopUpAdmin } from "api/card-topup";
+import { bettingAdmin } from "api/betting";
+import { bankFundingAdmin } from "api/bank-funding";
+import { ePinAdmin } from "api/epin";
+import { reversalAdmin } from "api/reversal";
+import { walletTransferAdmin } from "api/wallet-transfer";
 
 export const useQueryAirtimeNetwork = (queryKey?: string) => {
   const [isEnable, setIsEnable] = useState<boolean>(false);
@@ -473,5 +481,484 @@ export const useQueryElectricityAdminTransactions = (
     isLoadingElectricityAdminTransactions: isLoading,
     dataElectricityAdminTransactions,
     queryElectricityAdminTransactions,
+  };
+};
+
+// Query Withdrawal
+export const useQueryWithdrawalAdmin = () => {
+  const [isEnable, setIsEnable] = useState<boolean>(false);
+
+  const { isLoading, data: dataWithdrawalAdmin } = useQuery(
+    "statistics-withdrawal-admin",
+    () => withdrawalAdmin(),
+    {
+      enabled: isEnable,
+      onSettled: (data) => {
+        setIsEnable(false);
+      },
+    }
+  );
+
+  const queryWithdrawalAdmin = () => {
+    setIsEnable(true);
+  };
+
+  return {
+    isLoadingWithdrawalAdmin: isLoading,
+    dataWithdrawalAdmin,
+    queryWithdrawalAdmin,
+  };
+};
+
+export const useQueryWithdrawalAdminTransactions = (
+  callback?: (data: any) => void
+) => {
+  const [dataWithdrawalAdminTransactions, setDataWithdrawalAdminTransactions] =
+    useState<{ [key: string]: any }[] | null>(null);
+
+  const [isLoading, setLoading] = useState<boolean>(false);
+
+  // const queryWithdrawalAdminTransactions = async (params: Record<string, any>) => {
+  const queryWithdrawalAdminTransactions = async () => {
+    setLoading(true);
+    try {
+      // const response = await withdrawalAdmin(params);
+      const response = await withdrawalAdmin();
+      setLoading(false);
+
+      if (response && response.success) {
+        setDataWithdrawalAdminTransactions(response.payload);
+        typeof callback === "function" && callback(response.payload);
+        return response.payload;
+      }
+    } catch (error) {
+      setLoading(false);
+    }
+  };
+
+  return {
+    isLoadingWithdrawalAdminTransactions: isLoading,
+    dataWithdrawalAdminTransactions,
+    queryWithdrawalAdminTransactions,
+  };
+};
+
+// Query AutoAirtimeConversion
+export const useQueryAutoAirtimeConversionAdmin = () => {
+  const [isEnable, setIsEnable] = useState<boolean>(false);
+
+  const { isLoading, data: dataAutoAirtimeConversionAdmin } = useQuery(
+    "statistics-auto-airtime-conversion-admin",
+    () => autoAirtimeConversionAdmin(),
+    {
+      enabled: isEnable,
+      onSettled: (data) => {
+        setIsEnable(false);
+      },
+    }
+  );
+
+  const queryAutoAirtimeConversionAdmin = () => {
+    setIsEnable(true);
+  };
+
+  return {
+    isLoadingAutoAirtimeConversionAdmin: isLoading,
+    dataAutoAirtimeConversionAdmin,
+    queryAutoAirtimeConversionAdmin,
+  };
+};
+
+export const useQueryAutoAirtimeConversionAdminTransactions = (
+  callback?: (data: any) => void
+) => {
+  const [
+    dataAutoAirtimeConversionAdminTransactions,
+    setDataAutoAirtimeConversionAdminTransactions,
+  ] = useState<{ [key: string]: any }[] | null>(null);
+
+  const [isLoading, setLoading] = useState<boolean>(false);
+
+  // const queryAutoAirtimeConversionAdminTransactions = async (params: Record<string, any>) => {
+  const queryAutoAirtimeConversionAdminTransactions = async () => {
+    setLoading(true);
+    try {
+      // const response = await autoAirtimeConversionAdmin(params);
+      const response = await autoAirtimeConversionAdmin();
+      setLoading(false);
+
+      if (response && response.success) {
+        setDataAutoAirtimeConversionAdminTransactions(response.payload);
+        typeof callback === "function" && callback(response.payload);
+        return response.payload;
+      }
+    } catch (error) {
+      setLoading(false);
+    }
+  };
+
+  return {
+    isLoadingAutoAirtimeConversionAdminTransactions: isLoading,
+    dataAutoAirtimeConversionAdminTransactions,
+    queryAutoAirtimeConversionAdminTransactions,
+  };
+};
+
+// Query CardTopUp
+export const useQueryCardTopUpAdmin = () => {
+  const [isEnable, setIsEnable] = useState<boolean>(false);
+
+  const { isLoading, data: dataCardTopUpAdmin } = useQuery(
+    "statistics-card-top-up-admin",
+    () => cardTopUpAdmin(),
+    {
+      enabled: isEnable,
+      onSettled: (data) => {
+        setIsEnable(false);
+      },
+    }
+  );
+
+  const queryCardTopUpAdmin = () => {
+    setIsEnable(true);
+  };
+
+  return {
+    isLoadingCardTopUpAdmin: isLoading,
+    dataCardTopUpAdmin,
+    queryCardTopUpAdmin,
+  };
+};
+
+export const useQueryCardTopUpAdminTransactions = (
+  callback?: (data: any) => void
+) => {
+  const [dataCardTopUpAdminTransactions, setDataCardTopUpAdminTransactions] =
+    useState<{ [key: string]: any }[] | null>(null);
+
+  const [isLoading, setLoading] = useState<boolean>(false);
+
+  // const queryCardTopUpAdminTransactions = async (params: Record<string, any>) => {
+  const queryCardTopUpAdminTransactions = async () => {
+    setLoading(true);
+    try {
+      // const response = await cardTopUpAdmin(params);
+      const response = await cardTopUpAdmin();
+      setLoading(false);
+
+      if (response && response.success) {
+        setDataCardTopUpAdminTransactions(response.payload);
+        typeof callback === "function" && callback(response.payload);
+        return response.payload;
+      }
+    } catch (error) {
+      setLoading(false);
+    }
+  };
+
+  return {
+    isLoadingCardTopUpAdminTransactions: isLoading,
+    dataCardTopUpAdminTransactions,
+    queryCardTopUpAdminTransactions,
+  };
+};
+
+// Query Betting
+export const useQueryBettingAdmin = () => {
+  const [isEnable, setIsEnable] = useState<boolean>(false);
+
+  const { isLoading, data: dataBettingAdmin } = useQuery(
+    "statistics-betting-admin",
+    () => bettingAdmin(),
+    {
+      enabled: isEnable,
+      onSettled: (data) => {
+        setIsEnable(false);
+      },
+    }
+  );
+
+  const queryBettingAdmin = () => {
+    setIsEnable(true);
+  };
+
+  return {
+    isLoadingBettingAdmin: isLoading,
+    dataBettingAdmin,
+    queryBettingAdmin,
+  };
+};
+
+export const useQueryBettingAdminTransactions = (
+  callback?: (data: any) => void
+) => {
+  const [dataBettingAdminTransactions, setDataBettingAdminTransactions] =
+    useState<{ [key: string]: any }[] | null>(null);
+
+  const [isLoading, setLoading] = useState<boolean>(false);
+
+  // const queryBettingAdminTransactions = async (params: Record<string, any>) => {
+  const queryBettingAdminTransactions = async () => {
+    setLoading(true);
+    try {
+      // const response = await bettingAdmin(params);
+      const response = await bettingAdmin();
+      setLoading(false);
+
+      if (response && response.success) {
+        setDataBettingAdminTransactions(response.payload);
+        typeof callback === "function" && callback(response.payload);
+        return response.payload;
+      }
+    } catch (error) {
+      setLoading(false);
+    }
+  };
+
+  return {
+    isLoadingBettingAdminTransactions: isLoading,
+    dataBettingAdminTransactions,
+    queryBettingAdminTransactions,
+  };
+};
+
+// Query BankFunding
+export const useQueryBankFundingAdmin = () => {
+  const [isEnable, setIsEnable] = useState<boolean>(false);
+
+  const { isLoading, data: dataBankFundingAdmin } = useQuery(
+    "statistics-bank-funding-admin",
+    () => bankFundingAdmin(),
+    {
+      enabled: isEnable,
+      onSettled: (data) => {
+        setIsEnable(false);
+      },
+    }
+  );
+
+  const queryBankFundingAdmin = () => {
+    setIsEnable(true);
+  };
+
+  return {
+    isLoadingBankFundingAdmin: isLoading,
+    dataBankFundingAdmin,
+    queryBankFundingAdmin,
+  };
+};
+
+export const useQueryBankFundingAdminTransactions = (
+  callback?: (data: any) => void
+) => {
+  const [
+    dataBankFundingAdminTransactions,
+    setDataBankFundingAdminTransactions,
+  ] = useState<{ [key: string]: any }[] | null>(null);
+
+  const [isLoading, setLoading] = useState<boolean>(false);
+
+  // const queryBankFundingAdminTransactions = async (params: Record<string, any>) => {
+  const queryBankFundingAdminTransactions = async () => {
+    setLoading(true);
+    try {
+      // const response = await bankFundingAdmin(params);
+      const response = await bankFundingAdmin();
+      setLoading(false);
+
+      if (response && response.success) {
+        setDataBankFundingAdminTransactions(response.payload);
+        typeof callback === "function" && callback(response.payload);
+        return response.payload;
+      }
+    } catch (error) {
+      setLoading(false);
+    }
+  };
+
+  return {
+    isLoadingBankFundingAdminTransactions: isLoading,
+    dataBankFundingAdminTransactions,
+    queryBankFundingAdminTransactions,
+  };
+};
+
+// Query EPin
+export const useQueryEPinAdmin = () => {
+  const [isEnable, setIsEnable] = useState<boolean>(false);
+
+  const { isLoading, data: dataEPinAdmin } = useQuery(
+    "statistics-e-pin-admin",
+    () => ePinAdmin(),
+    {
+      enabled: isEnable,
+      onSettled: (data) => {
+        setIsEnable(false);
+      },
+    }
+  );
+
+  const queryEPinAdmin = () => {
+    setIsEnable(true);
+  };
+
+  return {
+    isLoadingEPinAdmin: isLoading,
+    dataEPinAdmin,
+    queryEPinAdmin,
+  };
+};
+
+export const useQueryEPinAdminTransactions = (
+  callback?: (data: any) => void
+) => {
+  const [dataEPinAdminTransactions, setDataEPinAdminTransactions] = useState<
+    { [key: string]: any }[] | null
+  >(null);
+
+  const [isLoading, setLoading] = useState<boolean>(false);
+
+  // const queryEPinAdminTransactions = async (params: Record<string, any>) => {
+  const queryEPinAdminTransactions = async () => {
+    setLoading(true);
+    try {
+      // const response = await ePinAdmin(params);
+      const response = await ePinAdmin();
+      setLoading(false);
+
+      if (response && response.success) {
+        setDataEPinAdminTransactions(response.payload);
+        typeof callback === "function" && callback(response.payload);
+        return response.payload;
+      }
+    } catch (error) {
+      setLoading(false);
+    }
+  };
+
+  return {
+    isLoadingEPinAdminTransactions: isLoading,
+    dataEPinAdminTransactions,
+    queryEPinAdminTransactions,
+  };
+};
+
+// Query Reversal
+export const useQueryReversalAdmin = () => {
+  const [isEnable, setIsEnable] = useState<boolean>(false);
+
+  const { isLoading, data: dataReversalAdmin } = useQuery(
+    "statistics-reversal-admin",
+    () => reversalAdmin(),
+    {
+      enabled: isEnable,
+      onSettled: (data) => {
+        setIsEnable(false);
+      },
+    }
+  );
+
+  const queryReversalAdmin = () => {
+    setIsEnable(true);
+  };
+
+  return {
+    isLoadingReversalAdmin: isLoading,
+    dataReversalAdmin,
+    queryReversalAdmin,
+  };
+};
+
+export const useQueryReversalAdminTransactions = (
+  callback?: (data: any) => void
+) => {
+  const [dataReversalAdminTransactions, setDataReversalAdminTransactions] =
+    useState<{ [key: string]: any }[] | null>(null);
+
+  const [isLoading, setLoading] = useState<boolean>(false);
+
+  // const queryReversalAdminTransactions = async (params: Record<string, any>) => {
+  const queryReversalAdminTransactions = async () => {
+    setLoading(true);
+    try {
+      // const response = await reversalAdmin(params);
+      const response = await reversalAdmin();
+      setLoading(false);
+
+      if (response && response.success) {
+        setDataReversalAdminTransactions(response.payload);
+        typeof callback === "function" && callback(response.payload);
+        return response.payload;
+      }
+    } catch (error) {
+      setLoading(false);
+    }
+  };
+
+  return {
+    isLoadingReversalAdminTransactions: isLoading,
+    dataReversalAdminTransactions,
+    queryReversalAdminTransactions,
+  };
+};
+
+// Query WalletTransfer
+export const useQueryWalletTransferAdmin = () => {
+  const [isEnable, setIsEnable] = useState<boolean>(false);
+
+  const { isLoading, data: dataWalletTransferAdmin } = useQuery(
+    "statistics-wallet-transfer-admin",
+    () => walletTransferAdmin(),
+    {
+      enabled: isEnable,
+      onSettled: (data) => {
+        setIsEnable(false);
+      },
+    }
+  );
+
+  const queryWalletTransferAdmin = () => {
+    setIsEnable(true);
+  };
+
+  return {
+    isLoadingWalletTransferAdmin: isLoading,
+    dataWalletTransferAdmin,
+    queryWalletTransferAdmin,
+  };
+};
+
+export const useQueryWalletTransferAdminTransactions = (
+  callback?: (data: any) => void
+) => {
+  const [
+    dataWalletTransferAdminTransactions,
+    setDataWalletTransferAdminTransactions,
+  ] = useState<{ [key: string]: any }[] | null>(null);
+
+  const [isLoading, setLoading] = useState<boolean>(false);
+
+  // const queryWalletTransferAdminTransactions = async (params: Record<string, any>) => {
+  const queryWalletTransferAdminTransactions = async () => {
+    setLoading(true);
+    try {
+      // const response = await walletTransferAdmin(params);
+      const response = await walletTransferAdmin();
+      setLoading(false);
+
+      if (response && response.success) {
+        setDataWalletTransferAdminTransactions(response.payload);
+        typeof callback === "function" && callback(response.payload);
+        return response.payload;
+      }
+    } catch (error) {
+      setLoading(false);
+    }
+  };
+
+  return {
+    isLoadingWalletTransferAdminTransactions: isLoading,
+    dataWalletTransferAdminTransactions,
+    queryWalletTransferAdminTransactions,
   };
 };

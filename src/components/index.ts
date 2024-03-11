@@ -107,3 +107,11 @@ export { default as CableTransactionsTable } from "./table/cable-transactions-ta
 export { default as InternetTransactionsTable } from "./table/internet-transactions-table";
 export { default as EducationTransactionsTable } from "./table/education-transactions-table";
 export { default as ElectricityTransactionsTable } from "./table/electricity-transactions-table";
+export { default as WithdrawalTransactionsTable } from "./table/withdrawal-transactions-table";
+export { default as AutoAirtimeConversionTransactionsTable } from "./table/auto-airtime-conversion-transactions-table";
+export { default as CardTopUpTransactionsTable } from "./table/card-topup-transactions-table";
+export { default as BettingTransactionsTable } from "./table/betting-transactions-table";
+export { default as BankFundingTransactionsTable } from "./table/bank-funding-transactions-table";
+export { default as ReversalTransactionsTable } from "./table/reversal-transactions-table";
+export { default as EPinTransactionsTable } from "./table/e-pin-admin-transactions-table";
+export { default as WalletTransferTransactionsTable } from "./table/wallet-transfer-transactions-table";

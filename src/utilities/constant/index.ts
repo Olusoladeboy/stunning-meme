@@ -144,7 +144,7 @@ export const ENDPOINTS = {
 	Staff: '/staff',
 	Settings: '/setting',
 	Manager: '/manager',
-	Bill: '/bill',
+	Bills: '/bills',
 	User: '/user',
 	DataNetwork: '/data-networks',
 	Airtime: '/airtime',
@@ -164,7 +164,11 @@ export const ENDPOINTS = {
 	Notification: '/notification',
 	AuditLogs: '/audit-logs',
 	ApiLogs: '/api-logs',
-	BillsAdmin: '/bills',
+	IPurchasedBill: '/bills',
+	Withdraw: '/withdraw',
+	EPin: 'epin',
+	Funding: '/funding',
+	Transfer: '/transfer',
 };
 
 export const FUND_WALLET_SERVICE = {
@@ -180,6 +184,12 @@ export const USERS_TAB = {
 	Suspended: 'Suspended',
 	Deleted: 'Deleted',
 	Deactivated: 'Deactivated',
+};
+
+export const JSON_STYLE = {
+	propertyStyle: { color: 'red' },
+	stringStyle: { color: 'green' },
+	numberStyle: { color: 'darkorange' },
 };
 
 export const TRANSACTIONS_TAB = {
@@ -245,19 +255,19 @@ export const DEVICE = {
 };
 
 export const SERVICES = {
-	WITHDRAWAL: 'WITHDRAWAL',
 	DATA_SUBSCRIPTION: 'DATA SUBSCRIPTION',
 	AIRTIME_TOP_UP: 'AIRTIME TOP UP',
 	AIRTIME_CONVERSION: 'AIRTIME CONVERSION',
 	AUTO_AIRTIME_CONVERSION: 'AIRTIME AUTO CONVERSION',
-	CARD_TOP_UP: 'CARD FUNDING',
 	CABLE: 'CABLE',
 	INTERNET: 'INTERNET',
 	EDUCATION: 'EDUCATION',
 	ELECTRICITY: 'ELECTRICITY',
 	BETTING: 'BETTING',
-	BANK_FUNDING: 'BANK FUNDING',
 	EPIN: 'EPIN',
+	WITHDRAWAL: 'WITHDRAWAL',
+	CARD_TOP_UP: 'CARD FUNDING',
+	// BANK_FUNDING: 'BANK FUNDING',
 	REVERSAL: 'REVERSAL',
 	WALLET_TRANSFER: 'WALLET TRANSFER',
 };

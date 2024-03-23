@@ -110,7 +110,7 @@ const TransactionsTable = ({ data, isLoading }: Props) => {
 																	: ''
 															}
 														/>
-														<Typography>
+														<Typography sx={{ whiteSpace: 'nowrap' }}>
 															{data?.user && extractUserName(data.user)}
 														</Typography>
 													</Box>

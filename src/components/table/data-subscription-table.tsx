@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import {
 	TableBody,
 	TableHead,
@@ -8,7 +8,6 @@ import {
 	Button,
 	styled,
 } from '@mui/material';
-import { green, grey, red } from '@mui/material/colors';
 import { useNavigate } from 'react-router-dom';
 import { useMutation, useQueryClient } from 'react-query';
 import { StyledTableCell, StyledTableRow } from './components';
@@ -22,6 +21,7 @@ import {
 	User,
 	LINKS,
 	checkAmount,
+	MAX_RECORDS,
 } from 'utilities';
 import TableLoader from '../loader/table-loader';
 import Empty from '../empty/table-empty';
@@ -30,6 +30,7 @@ import CustomTableCell from './components/custom-table-cell';
 import { updateConvertAirtimeStatus } from 'api';
 import Loader from '../loader';
 import { useAlert, useHandleError } from 'hooks';
+import TablePagination from 'components/pagination/table-pagination';
 
 interface UpdateStatusPayload {
 	id: string;
@@ -43,6 +44,10 @@ type Props = {
 	handleSearch?: (search: string) => void;
 	clearSearch?: () => void;
 	isDisplaySearchField?: boolean;
+	total?: number;
+	handleRefresh?: () => void;
+	page?: number;
+	handlePageChange?: (page: number) => void;
 };
 
 const DataSubscriptionTable = ({
@@ -52,6 +57,10 @@ const DataSubscriptionTable = ({
 	handleSearch,
 	clearSearch,
 	isDisplaySearchField = false,
+	total,
+	handleRefresh,
+	handlePageChange,
+	page,
 }: Props) => {
 	const theme = useTheme();
 	const styles = useStyles(theme);
@@ -59,6 +68,8 @@ const DataSubscriptionTable = ({
 	const alert = useAlert();
 	const queryClient = useQueryClient();
 	const navigate = useNavigate();
+
+	const maxRecordRef = useRef<number>(MAX_RECORDS);
 
 	const handleSortRecord = (field: string) => {
 		typeof handleSort !== 'undefined' && handleSort(field);
@@ -97,6 +108,11 @@ const DataSubscriptionTable = ({
 	};
 
 	const handleClickRow = (id: string) => {};
+
+	const handleChangeRowsPerPage = (value: number) => {
+		maxRecordRef.current = value;
+		typeof handleRefresh === 'function' && handleRefresh();
+	};
 
 	return (
 		<Container>
@@ -199,6 +215,29 @@ const DataSubscriptionTable = ({
 					</TableBody>
 				</Table>
 			</Box>
+			{!isLoading && parseInt(`${total}`) > maxRecordRef.current && (
+				<Box style={styles.paginationWrapper}>
+					<TablePagination
+						page={Number(`${page}`) - 1}
+						count={Number(total)}
+						onPageChange={(value) =>
+							typeof handlePageChange === 'function' &&
+							handlePageChange(value + 1)
+						}
+						rowsPerPage={maxRecordRef.current}
+						handleChangeRowsPerPage={handleChangeRowsPerPage}
+					/>
+					{/* <Pagination
+								sx={{}}
+								size={'large'}
+								variant={'outlined'}
+								shape={'rounded'}
+								page={page}
+								count={count}
+								onChange={(e, number) => handlePageChange(number)}
+							/> */}
+				</Box>
+			)}
 		</Container>
 	);
 };
@@ -214,16 +253,6 @@ const SearchContainer = styled(Box)(({ theme }) => ({
 	justifyContent: 'flex-end',
 	padding: '0px 15px',
 	marginBottom: '2rem',
-}));
-
-const ApproveButton = styled(Button)(({ theme }) => ({
-	color: grey['50'],
-	backgroundColor: `${green['600']} !important`,
-}));
-
-const DeclineButton = styled(Button)(({ theme }) => ({
-	color: grey['50'],
-	backgroundColor: `${red['600']} !important`,
 }));
 
 const useStyles = (theme: any) => ({
@@ -249,6 +278,11 @@ const useStyles = (theme: any) => ({
 	},
 	link: {
 		color: theme.palette.secondary.main,
+	},
+	paginationWrapper: {
+		display: 'flex',
+		justifyContent: 'flex-end',
+		paddingRight: '20px',
 	},
 });
 

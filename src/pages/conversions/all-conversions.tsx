@@ -75,6 +75,7 @@ const AllConversions = () => {
 		{
 			enabled: isLoad,
 			keepPreviousData: true,
+			refetchOnWindowFocus: false,
 			onSettled: (data, error) => {
 				setLoad(false);
 

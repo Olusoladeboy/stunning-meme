@@ -30,6 +30,7 @@ const useQueryHook = ({
 	const queryResponse = useQuery(query_key, queryFn, {
 		enabled: !!token || enabled,
 		keepPreviousData,
+		refetchOnWindowFocus: false,
 		onSettled: (data: any, error) => {
 			if (error) {
 				const res = handleError({ error });

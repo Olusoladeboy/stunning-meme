@@ -31,7 +31,6 @@ import Loader from '../loader';
 import { useAlert, useHandleError } from 'hooks';
 import { networks, updateNetwork } from 'api';
 
-
 const ConversionNetworkTable = () => {
 	const theme = useTheme();
 	const handleError = useHandleError();
@@ -52,6 +51,7 @@ const ConversionNetworkTable = () => {
 			}),
 		{
 			enabled: !!token,
+			refetchOnWindowFocus: false,
 			onSettled: (data, error) => {
 				if (error) {
 					const response = handleError({ error });

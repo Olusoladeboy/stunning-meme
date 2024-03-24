@@ -8,6 +8,7 @@ import {
 	styled,
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
+import moment from 'moment';
 import { useMutation, useQueryClient } from 'react-query';
 import { StyledTableCell, StyledTableRow } from './components';
 import {
@@ -142,6 +143,7 @@ const AutoConversionsTable = ({
 								style={styles.headTableCell}
 								label={'Number of Share'}
 							/>
+							<CustomTableCell style={styles.headTableCell} label={'Date'} />
 						</StyledTableRow>
 					</TableHead>
 					<TableBody
@@ -152,7 +154,7 @@ const AutoConversionsTable = ({
 						}}
 					>
 						{isLoading ? (
-							<TableLoader colSpan={7} />
+							<TableLoader colSpan={8} />
 						) : (
 							conversions && (
 								<>
@@ -201,12 +203,15 @@ const AutoConversionsTable = ({
 														<StyledTableCell style={styles.text}>
 															{conversion?.count}
 														</StyledTableCell>
+														<StyledTableCell style={styles.text}>
+															{moment(conversion?.createdAt).format('ll')}
+														</StyledTableCell>
 													</StyledTableRow>
 												);
 											}
 										)
 									) : (
-										<Empty colSpan={7} text={'No Airtime Convert'} />
+										<Empty colSpan={8} text={'No Airtime Convert'} />
 									)}
 								</>
 							)

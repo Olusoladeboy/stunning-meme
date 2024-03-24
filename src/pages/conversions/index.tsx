@@ -78,6 +78,7 @@ const Conversions = () => {
 		{
 			enabled: !!(token || isReload),
 			keepPreviousData: true,
+			refetchOnWindowFocus: false,
 			onSettled: (data, error) => {
 				setReload(false);
 				setReloading(false);

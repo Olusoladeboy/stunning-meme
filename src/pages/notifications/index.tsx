@@ -42,6 +42,7 @@ const Notifications = () => {
 			}),
 		{
 			enabled: isEnableQuery,
+			refetchOnWindowFocus: false,
 			onSettled: (data: any, error) => {
 				setEnableQuery(false);
 				if (error) {

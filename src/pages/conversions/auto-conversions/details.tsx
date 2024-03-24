@@ -45,6 +45,7 @@ const AutoConversionDetails = () => {
 				reference: id,
 			}),
 		{
+			refetchOnWindowFocus: false,
 			onSettled: (data, error) => {
 				if (error) {
 					const response = handleResponse({ error });

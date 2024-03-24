@@ -36,6 +36,7 @@ const DataTypes = () => {
 			}),
 		{
 			enabled: !!network,
+			refetchOnWindowFocus: false,
 		}
 	);
 

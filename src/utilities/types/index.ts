@@ -666,6 +666,7 @@ export interface IGroupAutoTransaction {
 	totalAmount: Amount;
 	totalReturnAmount: Amount;
 	transactions: IGroupTransaction[];
+	createdAt: string;
 }
 
 export interface Transaction {

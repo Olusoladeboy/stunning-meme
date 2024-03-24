@@ -23,6 +23,7 @@ const VerifyUser = ({ text = 'Verify user', buttonProps, user, id }: Props) => {
 
 	const { isLoading } = useQuery('', () => verifyUser(user?.id as string), {
 		enabled: !!(token && isVerifyUser),
+		refetchOnWindowFocus: false,
 		onSettled: (data, error) => {
 			setVerifyUser(false);
 			if (error) {

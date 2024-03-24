@@ -48,6 +48,7 @@ const DataNetworkTable = () => {
 			}),
 		{
 			enabled: !!token,
+			refetchOnWindowFocus: false,
 			onSettled: (data, error) => {
 				if (error) {
 					const response = handleError({ error });

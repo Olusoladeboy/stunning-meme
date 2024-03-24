@@ -100,6 +100,7 @@ const AllTransactions = () => {
 		{
 			retry: 2,
 			enabled: isLoad,
+			refetchOnWindowFocus: false,
 			onSettled: (data: any, error) => {
 				setLoad(false);
 				if (error) {

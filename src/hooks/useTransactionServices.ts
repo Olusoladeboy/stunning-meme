@@ -33,6 +33,7 @@ export const useQueryAirtimeNetwork = (queryKey?: string) => {
 		() => networks({ url: ENDPOINTS.AirtimeNetwork }),
 		{
 			enabled: isEnable,
+			refetchOnWindowFocus: false,
 			onSettled: (data) => {
 				setIsEnable(false);
 			},
@@ -57,6 +58,7 @@ export const useQueryDateNetwork = (queryKey?: string) => {
 		() => networks({ url: ENDPOINTS.DataNetwork }),
 		{
 			enabled: isEnable,
+			refetchOnWindowFocus: false,
 			onSettled: (data) => {
 				setIsEnable(false);
 			},
@@ -81,6 +83,7 @@ export const useQueryConvertAirtimeNetworks = (queryKey?: string) => {
 		() => networks({ url: ENDPOINTS.ConvertNetworks }),
 		{
 			enabled: isEnable,
+			refetchOnWindowFocus: false,
 			onSettled: (data) => {
 				setIsEnable(false);
 			},
@@ -173,6 +176,7 @@ export const useQueryDataTypes = () => {
 		() => dataTypes(params),
 		{
 			enabled: !!(isEnable && Object.keys(params).length > 0),
+			refetchOnWindowFocus: false,
 			onSettled: (data) => {
 				setIsEnable(false);
 			},
@@ -202,6 +206,7 @@ export const useQueryDataPlans = () => {
 		() => dataPlans(params),
 		{
 			enabled: !!(isEnable && Object.keys(params).length > 0),
+			refetchOnWindowFocus: false,
 			onSettled: (data) => {
 				setIsEnable(false);
 			},

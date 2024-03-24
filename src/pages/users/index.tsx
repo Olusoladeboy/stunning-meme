@@ -51,6 +51,7 @@ const Users = () => {
 			}),
 		{
 			// enabled: isLoad,
+			refetchOnWindowFocus: false,
 			onSettled: (data, error) => {
 				setLoad(false);
 				if (error) {

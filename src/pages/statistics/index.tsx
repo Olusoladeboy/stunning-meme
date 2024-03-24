@@ -33,6 +33,8 @@ import {
 	IEpin,
 	IFunding,
 	ITransfer,
+	STATISTIC_TAB,
+	getFilterDateRange,
 } from 'utilities';
 import {
 	usePageTitle,
@@ -57,6 +59,11 @@ const Statistics = () => {
 
 	const [total, setTotal] = useState(0);
 	const [currentPage, setCurrentPage] = useState(1);
+	const [selectedFilter, setSelectedFilter] = useState<string>(
+		STATISTIC_TAB.ALL_TIME
+	);
+
+	const filterUrlEntries = useRef<null | { [key: string]: any }>(null);
 
 	const queryValues = useRef<null | { [key: string]: any }>(null);
 
@@ -66,8 +73,6 @@ const Statistics = () => {
 	const [dataStatistics, setDataStatistics] = useState<null | TDataStatistics>(
 		null
 	);
-
-	console.log(dataStatistics);
 
 	const handleSetDataStatistics = (data: TDataStatistics) => {
 		setDataStatistics(data);
@@ -81,9 +86,10 @@ const Statistics = () => {
 		}
 	};
 
-	const resetSkipValue = (service: string) => {
+	const resetQueryValue = (service: string) => {
 		if (service !== queryValues?.current?.service) {
 			skipValue.current = 0;
+			filterUrlEntries.current = null;
 			setCurrentPage(1);
 		}
 	};
@@ -188,11 +194,16 @@ const Statistics = () => {
 			sort: '-createdAt',
 		};
 
-		resetSkipValue(values.service);
+		resetQueryValue(values.service);
 
 		queryValues.current = values;
 
 		if (skipValue.current > 0) payload.skip = skipValue.current;
+
+		// console.log(filterUrlEntries.current);
+
+		if (filterUrlEntries.current)
+			payload = { ...payload, ...filterUrlEntries.current };
 
 		if (values.service === SERVICES.DATA_SUBSCRIPTION) {
 			if (values.plan) payload.plan = values.plan;
@@ -272,6 +283,39 @@ const Statistics = () => {
 		switchHandleSubmit(queryValues?.current as any);
 	};
 
+	// Filters
+
+	const handleSelectFilter = (filter: string) => {
+		setSelectedFilter(filter);
+		let filterBy = '';
+		if (filter === STATISTIC_TAB.LAST_7_DAY) {
+			filterBy = getFilterDateRange(7);
+		}
+
+		if (filter === STATISTIC_TAB.LAST_30_DAYS) {
+			filterBy = getFilterDateRange(30);
+		}
+
+		if (filter === STATISTIC_TAB.TODAY) {
+			const today = new Date().toISOString();
+			filterBy = getFilterDateRange(1);
+		}
+
+		if (filter === STATISTIC_TAB.ALL_TIME) {
+			filterBy = '';
+			filterUrlEntries.current = null;
+		}
+
+		console.log(filterBy);
+
+		if (filterBy) {
+			const searchParams = new URLSearchParams(filterBy);
+			filterUrlEntries.current = Object.fromEntries(searchParams);
+		}
+
+		if (queryValues?.current) switchHandleSubmit(queryValues?.current as any);
+	};
+
 	return (
 		<Layout>
 			<RouteGuard
@@ -293,10 +337,17 @@ const Statistics = () => {
 						<SearchStatistics
 							switchHandleSubmit={switchHandleSubmit}
 							setDataStatistics={handleSetDataStatistics}
-							isLoading={isLoading}
+							isLoading={
+								isLoading &&
+								!filterUrlEntries.current &&
+								!(skipValue.current > 0)
+							}
 						/>
 
-						<StatisticTab />
+						<StatisticTab
+							selectedFilter={selectedFilter}
+							selectFilter={handleSelectFilter}
+						/>
 						<StatisticsContainer>
 							<StatisticsTotal name={'Total  Revenue'} figure={123000} />
 							<StatisticsTotal name={'Total  Transactions'} figure={123000} />

@@ -214,10 +214,10 @@ export const STATUS = {
 };
 
 export const STATISTIC_TAB = {
+	ALL_TIME: 'ALL TIME',
 	TODAY: 'TODAY',
 	LAST_7_DAY: 'LAST 7 DAYS',
 	LAST_30_DAYS: 'LAST 30 DAYS',
-	ALL_TIME: 'ALL TIME',
 };
 
 export const LOG_TAB = {

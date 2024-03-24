@@ -178,3 +178,16 @@ export const extractUserName = (user: User) => {
 
 	return 'No name available';
 };
+
+export const prevDate = (days: number) => {
+	const date = new Date();
+	return new Date(date.setDate(date.getDate() - days)).toISOString();
+};
+
+export const getFilterDateRange = (days: number) => {
+	const todayDate = new Date().toISOString();
+
+	const res = `createdAt>${prevDate(days)}&createdAt<${todayDate}`;
+
+	return res;
+};

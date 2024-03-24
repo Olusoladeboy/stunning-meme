@@ -5,10 +5,10 @@ import {
 	Table,
 	useTheme,
 	Box,
-	Button,
 	styled,
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
+import moment from 'moment';
 import { useMutation, useQueryClient } from 'react-query';
 import { StyledTableCell, StyledTableRow } from './components';
 import {
@@ -146,6 +146,7 @@ const DataSubscriptionTable = ({
 							<CustomTableCell label={'Data Type'} />
 							<CustomTableCell style={styles.headTableCell} label={'Number'} />
 							<CustomTableCell style={styles.headTableCell} label={'Amount'} />
+							<CustomTableCell style={styles.headTableCell} label={'Date'} />
 							<CustomTableCell style={styles.headTableCell} label={'Status'} />
 						</StyledTableRow>
 					</TableHead>
@@ -157,7 +158,7 @@ const DataSubscriptionTable = ({
 						}}
 					>
 						{isLoading ? (
-							<TableLoader colSpan={8} />
+							<TableLoader colSpan={9} />
 						) : (
 							subscriptions && (
 								<>
@@ -171,7 +172,12 @@ const DataSubscriptionTable = ({
 													<StyledTableCell style={styles.text}>
 														{subscription.reference}
 													</StyledTableCell>
-													<StyledTableCell style={styles.text}>
+													<StyledTableCell
+														sx={{
+															whiteSpace: 'nowrap',
+														}}
+														style={styles.text}
+													>
 														{subscription.user &&
 															extractUserName(subscription?.user as User)}
 													</StyledTableCell>
@@ -179,7 +185,12 @@ const DataSubscriptionTable = ({
 													<StyledTableCell style={styles.text}>
 														Network
 													</StyledTableCell>
-													<StyledTableCell style={styles.text}>
+													<StyledTableCell
+														sx={{
+															whiteSpace: 'nowrap',
+														}}
+														style={styles.text}
+													>
 														{subscription.plan &&
 															typeof subscription.plan === 'object' &&
 															subscription.plan.name}
@@ -200,14 +211,26 @@ const DataSubscriptionTable = ({
 															)}
 													</StyledTableCell>
 
+													<StyledTableCell
+														sx={{
+															whiteSpace: 'nowrap',
+														}}
+														style={styles.text}
+													>
+														{moment(subscription.createdAt).format('ll')}
+													</StyledTableCell>
+
 													<StyledTableCell style={styles.text}>
-														{subscription.status && subscription.status}
+														{subscription.status}
 													</StyledTableCell>
 												</StyledTableRow>
 											);
 										})
 									) : (
-										<Empty colSpan={8} text={'No Airtime Convert'} />
+										<Empty
+											colSpan={9}
+											text={'No available data subscription'}
+										/>
 									)}
 								</>
 							)

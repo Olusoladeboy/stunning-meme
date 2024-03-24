@@ -26,6 +26,7 @@ const UserTransactionStat = ({ user }: Props) => {
 		() => userTransactionStatistics(userId),
 		{
 			enabled: !!(token && user),
+			refetchOnWindowFocus: false,
 			onSettled: (data, error) => {
 				if (error) {
 					const response = handleError({ error });

@@ -8,6 +8,7 @@ import {
 	Button,
 	styled,
 } from '@mui/material';
+import moment from 'moment';
 import { green, grey, red } from '@mui/material/colors';
 import { useNavigate } from 'react-router-dom';
 import { useMutation, useQueryClient } from 'react-query';
@@ -118,6 +119,7 @@ const AirtimePurchaseTable = ({
 							<CustomTableCell style={styles.headTableCell} label={'Network'} />
 							<CustomTableCell style={styles.headTableCell} label={'Number'} />
 							<CustomTableCell style={styles.headTableCell} label={'Amount'} />
+							<CustomTableCell style={styles.headTableCell} label={'Date'} />
 							<CustomTableCell style={styles.headTableCell} label={'Status'} />
 						</StyledTableRow>
 					</TableHead>
@@ -129,7 +131,7 @@ const AirtimePurchaseTable = ({
 						}}
 					>
 						{isLoading ? (
-							<TableLoader colSpan={6} />
+							<TableLoader colSpan={7} />
 						) : (
 							transactions && (
 								<>
@@ -163,13 +165,16 @@ const AirtimePurchaseTable = ({
 													</StyledTableCell>
 
 													<StyledTableCell style={styles.text}>
+														{moment(transaction.createdAt).format('ll')}
+													</StyledTableCell>
+													<StyledTableCell style={styles.text}>
 														{transaction.status}
 													</StyledTableCell>
 												</StyledTableRow>
 											);
 										})
 									) : (
-										<Empty colSpan={6} text={'No Airtime Convert'} />
+										<Empty colSpan={7} text={'No Airtime Convert'} />
 									)}
 								</>
 							)

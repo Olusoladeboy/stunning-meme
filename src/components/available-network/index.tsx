@@ -33,6 +33,7 @@ const AvailableNetwork: React.FC<IAvailableNetwork> = ({ type = 'normal' }) => {
 			}),
 		{
 			enabled: !!token,
+			refetchOnWindowFocus: false,
 			onSettled: (data, error) => {
 				if (error) {
 					const response = handleError({ error });

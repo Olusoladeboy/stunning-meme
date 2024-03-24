@@ -46,6 +46,7 @@ const Message = () => {
 			}),
 		{
 			enabled: !!(token && params && params.id),
+			refetchOnWindowFocus: false,
 			onError: (error) => {
 				const response = handleError({ error });
 				if (response?.message)

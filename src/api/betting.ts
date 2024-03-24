@@ -1,8 +1,8 @@
-import apiRequest from "./apiRequest";
-import { BillsAdmin, DataResponse, ENDPOINTS } from "../utilities";
+import apiRequest from './apiRequest';
+import { IPurchasedBill, DataResponse, ENDPOINTS } from '../utilities';
 
-export const bettingAdmin = async (): Promise<DataResponse<BillsAdmin[]>> =>
-  apiRequest({
-    url: `${ENDPOINTS.BillsAdmin}?type=BETTING`,
-    method: "GET",
-  });
+export const bettingAdmin = async (): Promise<DataResponse<IPurchasedBill[]>> =>
+	apiRequest({
+		url: `${ENDPOINTS.IPurchasedBill}?type=BETTING`,
+		method: 'GET',
+	});

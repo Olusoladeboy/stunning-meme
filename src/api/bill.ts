@@ -1,10 +1,4 @@
-import {
-	API_ENDPOINTS,
-	Bundle,
-	DataResponse,
-	IBill,
-	Provider,
-} from 'utilities';
+import { Bundle, DataResponse, Provider, ENDPOINTS } from 'utilities';
 import apiRequest from './apiRequest';
 
 export const billProviders = async (
@@ -24,6 +18,15 @@ export const billBundles = async ({
 }): Promise<DataResponse<Bundle[]>> =>
 	apiRequest({
 		url: `${url}/packages`,
+		method: 'GET',
+		params,
+	});
+
+export const billTransactions = async (params: {
+	[key: string]: any;
+}): Promise<any> =>
+	apiRequest({
+		url: `${ENDPOINTS.Bills}`,
 		method: 'GET',
 		params,
 	});

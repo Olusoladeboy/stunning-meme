@@ -36,6 +36,7 @@ const ViewDataPlan = () => {
 			}),
 		{
 			enabled: !!dataType,
+			refetchOnWindowFocus: false,
 		}
 	);
 

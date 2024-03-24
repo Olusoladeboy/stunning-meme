@@ -8,6 +8,7 @@ import {
 	Button,
 	styled,
 } from '@mui/material';
+import moment from 'moment';
 import { green, grey, red } from '@mui/material/colors';
 import { useNavigate } from 'react-router-dom';
 import { useMutation, useQueryClient } from 'react-query';
@@ -162,6 +163,7 @@ const ConversionsTable = ({
 									label={'Number of Share'}
 								/>
 							)}
+							<CustomTableCell style={styles.headTableCell} label={'Date'} />
 							<CustomTableCell
 								onClick={() => handleSortRecord('status')}
 								style={styles.headTableCell}
@@ -177,7 +179,7 @@ const ConversionsTable = ({
 						}}
 					>
 						{isLoading ? (
-							<TableLoader colSpan={conversionType === 'auto' ? 8 : 7} />
+							<TableLoader colSpan={9} />
 						) : (
 							conversions && (
 								<>
@@ -223,6 +225,9 @@ const ConversionsTable = ({
 														</StyledTableCell>
 													)}
 													<StyledTableCell style={styles.text}>
+														{moment(conversion.createdAt).format('ll')}
+													</StyledTableCell>
+													<StyledTableCell style={styles.text}>
 														{/* {conversion.status} */}
 														{conversion.status === STATUS.APPROVED ? (
 															TransactionStatus.APPROVED
@@ -266,10 +271,7 @@ const ConversionsTable = ({
 											);
 										})
 									) : (
-										<Empty
-											colSpan={conversionType === 'auto' ? 8 : 7}
-											text={'No Airtime Convert'}
-										/>
+										<Empty colSpan={8} text={'No Airtime Convert'} />
 									)}
 								</>
 							)

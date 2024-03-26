@@ -20,10 +20,15 @@ const ReferralBonus = () => {
 	usePageTitle('Referral Bonus');
 	const [isDisplayForm, setDisplayForm] = useState<boolean>(false);
 
-	const { isLoading, data: dataSettings } = useQuery([QueryKeys.Settings], () =>
-		settings({
-			name: REFERRAL_BONUS,
-		})
+	const { isLoading, data: dataSettings } = useQuery(
+		[QueryKeys.Settings],
+		() =>
+			settings({
+				name: REFERRAL_BONUS,
+			}),
+		{
+			refetchOnWindowFocus: false,
+		}
 	);
 
 	return (

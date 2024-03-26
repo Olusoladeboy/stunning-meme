@@ -2,6 +2,7 @@ import React, { CSSProperties } from 'react';
 import Table from '@mui/material/Table';
 import { useMutation, useQueryClient } from 'react-query';
 import { useTheme, TableBody, TableHead, Box } from '@mui/material';
+import moment from 'moment';
 import { grey } from '@mui/material/colors';
 import {
 	SUCCESS_COLOR,
@@ -124,6 +125,7 @@ const NinVerificationTable = ({
 							<CustomTableCell label={'Last Name'} />
 							<CustomTableCell label={'Phone'} />
 							<CustomTableCell label={'NIN'} />
+							<CustomTableCell label={'Date of birth'} />
 							<CustomTableCell label={'Status'} />
 							<CustomTableCell label={'Action'} />
 						</TableRow>
@@ -137,7 +139,7 @@ const NinVerificationTable = ({
 							}}
 						>
 							{isLoading ? (
-								<Loader colSpan={6} />
+								<Loader colSpan={7} />
 							) : (
 								verifications && (
 									<>
@@ -153,8 +155,14 @@ const NinVerificationTable = ({
 													<TableCell style={styles.tableText}>
 														{row?.request?.phone}
 													</TableCell>
+
 													<TableCell style={styles.tableText}>
 														{row?.request?.payload}
+													</TableCell>
+
+													<TableCell style={styles.tableText}>
+														{row?.request?.dob &&
+															moment(row?.request.dob).format('ll')}
 													</TableCell>
 
 													<TableCell
@@ -201,7 +209,7 @@ const NinVerificationTable = ({
 											))
 										) : (
 											<TableRow>
-												<TableCell colSpan={6}>
+												<TableCell colSpan={7}>
 													<Empty text={'No NIN Verification record'} />
 												</TableCell>
 											</TableRow>

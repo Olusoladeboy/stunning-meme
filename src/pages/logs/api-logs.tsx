@@ -45,6 +45,7 @@ const ApiLogs = () => {
 				populate: 'user',
 			}),
 		{
+			refetchOnWindowFocus: false,
 			onSettled: (data: any, error) => {
 				setEnableQuery(false);
 				if (error) {

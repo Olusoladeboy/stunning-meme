@@ -53,6 +53,7 @@ const UserWalletSummary = ({ user }: Props) => {
 			}),
 		{
 			enabled: !!(token && user),
+			refetchOnWindowFocus: false,
 			onSettled: (data, error) => {
 				if (error) {
 					const response = handleError({ error });

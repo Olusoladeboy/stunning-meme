@@ -166,11 +166,28 @@ export const extractExactTransactionService = (transaction: Transaction) => {
 
 export const extractUserName = (user: User) => {
 	let name = '';
-	if (user.firstname) name += user.firstname;
-	if (user.lastname) name = name ? name + ` ${user.lastname}` : user.lastname;
+	if (Object.keys(user).length > 0) {
+		if (user?.firstname) name += user.firstname;
+		if (user?.lastname)
+			name = name ? name + ` ${user.lastname}` : user.lastname;
 
-	if (name) return name;
-	if (user.username) return user.username;
+		if (name) return name;
+
+		if (user?.username) return user.username;
+	}
 
 	return 'No name available';
+};
+
+export const prevDate = (days: number) => {
+	const date = new Date();
+	return new Date(date.setDate(date.getDate() - days)).toISOString();
+};
+
+export const getFilterDateRange = (days: number) => {
+	const todayDate = new Date().toISOString();
+
+	const res = `createdAt>${prevDate(days)}&createdAt<${todayDate}`;
+
+	return res;
 };

@@ -8,17 +8,17 @@ import {
 } from '@mui/material';
 import moment from 'moment';
 import { StyledTableCell, StyledTableRow } from './components';
-import { IPurchasedBill, formatNumberToCurrency } from 'utilities';
+import { ITransfer, extractUserName, formatNumberToCurrency } from 'utilities';
 import Empty from '../empty/table-empty';
 import CustomTableCell from './components/custom-table-cell';
 import TableLoader from 'components/loader/table-loader';
 
 type Props = {
-	data: IPurchasedBill[];
+	data: ITransfer[];
 	isLoading?: boolean;
 };
 
-const CableTransactionsTable = ({ data, isLoading }: Props) => {
+const WalletTransferTransactionsTable = ({ data, isLoading }: Props) => {
 	const theme = useTheme();
 	const styles = useStyles(theme);
 
@@ -40,15 +40,19 @@ const CableTransactionsTable = ({ data, isLoading }: Props) => {
 							/>
 							<CustomTableCell
 								style={styles.headTableCell}
-								label={'Card number'}
+								label={'User From'}
+							/>
+							<CustomTableCell style={styles.headTableCell} label={'User To'} />
+							<CustomTableCell style={styles.headTableCell} label={'Amount'} />
+							<CustomTableCell
+								style={styles.headTableCell}
+								label={'Balance Before'}
 							/>
 							<CustomTableCell
 								style={styles.headTableCell}
-								label={'Cable Provider'}
+								label={'Balance After'}
 							/>
-							<CustomTableCell style={styles.headTableCell} label={'Amount'} />
 							<CustomTableCell style={styles.headTableCell} label={'Date'} />
-
 							<CustomTableCell style={styles.headTableCell} label={'Status'} />
 						</StyledTableRow>
 					</TableHead>
@@ -71,25 +75,48 @@ const CableTransactionsTable = ({ data, isLoading }: Props) => {
 													{value.reference}
 												</StyledTableCell>
 												<StyledTableCell style={styles.text}>
-													{value.card_number}
+													{value.userFrom &&
+														typeof value.userFrom === 'object' &&
+														Object.keys(value.userFrom).length > 0 &&
+														extractUserName(value.userFrom)}
 												</StyledTableCell>
 												<StyledTableCell style={styles.text}>
-													{value.name}
+													{value.userTo &&
+														typeof value.userTo === 'object' &&
+														Object.keys(value.userTo).length > 0 &&
+														extractUserName(value.userTo)}
 												</StyledTableCell>
 												<StyledTableCell style={styles.text}>
 													{formatNumberToCurrency(value.amount)}
 												</StyledTableCell>
 												<StyledTableCell style={styles.text}>
-													{moment(value.createdAt).format('ll')}
+													{value.transactionFrom &&
+														typeof value.transactionFrom === 'object' &&
+														Object.keys(value.transactionFrom).length > 0 &&
+														formatNumberToCurrency(
+															value.transactionFrom.balanceBefore as string
+														)}
 												</StyledTableCell>
 
+												<StyledTableCell style={styles.text}>
+													{value.transactionFrom &&
+														typeof value.transactionFrom === 'object' &&
+														Object.keys(value.transactionFrom).length > 0 &&
+														formatNumberToCurrency(
+															value.transactionFrom.balanceAfter as string
+														)}
+												</StyledTableCell>
+
+												<StyledTableCell style={styles.text}>
+													{moment(value.createdAt).format('ll')}
+												</StyledTableCell>
 												<StyledTableCell style={styles.text}>
 													{value.status}
 												</StyledTableCell>
 											</StyledTableRow>
 										))
 									) : (
-										<Empty colSpan={7} text={'No Cable Information'} />
+										<Empty colSpan={7} text={'No available wallet transfer'} />
 									)}
 								</>
 							)
@@ -132,4 +159,4 @@ const useStyles = (theme: any) => ({
 	},
 });
 
-export default CableTransactionsTable;
+export default WalletTransferTransactionsTable;

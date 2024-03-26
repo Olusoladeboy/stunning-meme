@@ -8,7 +8,11 @@ import {
 } from '@mui/material';
 import moment from 'moment';
 import { StyledTableCell, StyledTableRow } from './components';
-import { IPurchasedBill, formatNumberToCurrency } from 'utilities';
+import {
+	IPurchasedBill,
+	extractUserName,
+	formatNumberToCurrency,
+} from 'utilities';
 import Empty from '../empty/table-empty';
 import CustomTableCell from './components/custom-table-cell';
 import TableLoader from 'components/loader/table-loader';
@@ -18,7 +22,7 @@ type Props = {
 	isLoading?: boolean;
 };
 
-const CableTransactionsTable = ({ data, isLoading }: Props) => {
+const BettingTransactionsTable = ({ data, isLoading }: Props) => {
 	const theme = useTheme();
 	const styles = useStyles(theme);
 
@@ -38,17 +42,10 @@ const CableTransactionsTable = ({ data, isLoading }: Props) => {
 								style={styles.headTableCell}
 								label={'Reference ID'}
 							/>
-							<CustomTableCell
-								style={styles.headTableCell}
-								label={'Card number'}
-							/>
-							<CustomTableCell
-								style={styles.headTableCell}
-								label={'Cable Provider'}
-							/>
+							<CustomTableCell style={styles.headTableCell} label={'User'} />
+							<CustomTableCell style={styles.headTableCell} label={'Product'} />
 							<CustomTableCell style={styles.headTableCell} label={'Amount'} />
 							<CustomTableCell style={styles.headTableCell} label={'Date'} />
-
 							<CustomTableCell style={styles.headTableCell} label={'Status'} />
 						</StyledTableRow>
 					</TableHead>
@@ -60,7 +57,7 @@ const CableTransactionsTable = ({ data, isLoading }: Props) => {
 						}}
 					>
 						{isLoading ? (
-							<TableLoader colSpan={7} />
+							<TableLoader colSpan={6} />
 						) : (
 							data && (
 								<>
@@ -71,8 +68,12 @@ const CableTransactionsTable = ({ data, isLoading }: Props) => {
 													{value.reference}
 												</StyledTableCell>
 												<StyledTableCell style={styles.text}>
-													{value.card_number}
+													{value.user &&
+														typeof value.user === 'object' &&
+														Object.keys(value.user).length > 0 &&
+														extractUserName(value.user)}
 												</StyledTableCell>
+
 												<StyledTableCell style={styles.text}>
 													{value.name}
 												</StyledTableCell>
@@ -80,16 +81,15 @@ const CableTransactionsTable = ({ data, isLoading }: Props) => {
 													{formatNumberToCurrency(value.amount)}
 												</StyledTableCell>
 												<StyledTableCell style={styles.text}>
-													{moment(value.createdAt).format('ll')}
+													{moment(value.createdAt).format('l')}
 												</StyledTableCell>
-
 												<StyledTableCell style={styles.text}>
 													{value.status}
 												</StyledTableCell>
 											</StyledTableRow>
 										))
 									) : (
-										<Empty colSpan={7} text={'No Cable Information'} />
+										<Empty colSpan={6} text={'No available Betting'} />
 									)}
 								</>
 							)
@@ -132,4 +132,4 @@ const useStyles = (theme: any) => ({
 	},
 });
 
-export default CableTransactionsTable;
+export default BettingTransactionsTable;

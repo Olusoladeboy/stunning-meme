@@ -9,6 +9,7 @@ const useLoadStatistics = () => {
 	const dispatch = useAppDispatch();
 	useQuery(QueryKeys.Statistics, () => statistic(), {
 		enabled: !!token,
+		refetchOnWindowFocus: false,
 		onSettled: (data, error) => {
 			if (error) {
 				dispatch(setLoadingStatistics(false));

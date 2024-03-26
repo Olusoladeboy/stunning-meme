@@ -1,15 +1,14 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import {
 	TableBody,
 	TableHead,
 	Table,
 	useTheme,
 	Box,
-	Button,
 	styled,
 } from '@mui/material';
-import { green, grey, red } from '@mui/material/colors';
 import { useNavigate } from 'react-router-dom';
+import moment from 'moment';
 import { useMutation, useQueryClient } from 'react-query';
 import { StyledTableCell, StyledTableRow } from './components';
 import {
@@ -22,6 +21,7 @@ import {
 	User,
 	LINKS,
 	checkAmount,
+	MAX_RECORDS,
 } from 'utilities';
 import TableLoader from '../loader/table-loader';
 import Empty from '../empty/table-empty';
@@ -30,6 +30,7 @@ import CustomTableCell from './components/custom-table-cell';
 import { updateConvertAirtimeStatus } from 'api';
 import Loader from '../loader';
 import { useAlert, useHandleError } from 'hooks';
+import TablePagination from 'components/pagination/table-pagination';
 
 interface UpdateStatusPayload {
 	id: string;
@@ -43,6 +44,10 @@ type Props = {
 	handleSearch?: (search: string) => void;
 	clearSearch?: () => void;
 	isDisplaySearchField?: boolean;
+	total?: number;
+	handleRefresh?: () => void;
+	page?: number;
+	handlePageChange?: (page: number) => void;
 };
 
 const DataSubscriptionTable = ({
@@ -52,6 +57,10 @@ const DataSubscriptionTable = ({
 	handleSearch,
 	clearSearch,
 	isDisplaySearchField = false,
+	total,
+	handleRefresh,
+	handlePageChange,
+	page,
 }: Props) => {
 	const theme = useTheme();
 	const styles = useStyles(theme);
@@ -59,6 +68,8 @@ const DataSubscriptionTable = ({
 	const alert = useAlert();
 	const queryClient = useQueryClient();
 	const navigate = useNavigate();
+
+	const maxRecordRef = useRef<number>(MAX_RECORDS);
 
 	const handleSortRecord = (field: string) => {
 		typeof handleSort !== 'undefined' && handleSort(field);
@@ -98,6 +109,11 @@ const DataSubscriptionTable = ({
 
 	const handleClickRow = (id: string) => {};
 
+	const handleChangeRowsPerPage = (value: number) => {
+		maxRecordRef.current = value;
+		typeof handleRefresh === 'function' && handleRefresh();
+	};
+
 	return (
 		<Container>
 			{isUpdatingStatus && <Loader />}
@@ -130,6 +146,7 @@ const DataSubscriptionTable = ({
 							<CustomTableCell label={'Data Type'} />
 							<CustomTableCell style={styles.headTableCell} label={'Number'} />
 							<CustomTableCell style={styles.headTableCell} label={'Amount'} />
+							<CustomTableCell style={styles.headTableCell} label={'Date'} />
 							<CustomTableCell style={styles.headTableCell} label={'Status'} />
 						</StyledTableRow>
 					</TableHead>
@@ -141,7 +158,7 @@ const DataSubscriptionTable = ({
 						}}
 					>
 						{isLoading ? (
-							<TableLoader colSpan={8} />
+							<TableLoader colSpan={9} />
 						) : (
 							subscriptions && (
 								<>
@@ -155,29 +172,52 @@ const DataSubscriptionTable = ({
 													<StyledTableCell style={styles.text}>
 														{subscription.reference}
 													</StyledTableCell>
-													<StyledTableCell style={styles.text}>
-														{extractUserName(subscription?.user as User)}
+													<StyledTableCell
+														sx={{
+															whiteSpace: 'nowrap',
+														}}
+														style={styles.text}
+													>
+														{subscription.user &&
+															extractUserName(subscription?.user as User)}
 													</StyledTableCell>
 
 													<StyledTableCell style={styles.text}>
 														Network
 													</StyledTableCell>
-													<StyledTableCell style={styles.text}>
-														{typeof subscription.plan === 'object' &&
+													<StyledTableCell
+														sx={{
+															whiteSpace: 'nowrap',
+														}}
+														style={styles.text}
+													>
+														{subscription.plan &&
+															typeof subscription.plan === 'object' &&
 															subscription.plan.name}
 													</StyledTableCell>
 													<StyledTableCell style={styles.text}>
-														{typeof subscription.dataType === 'object' &&
+														{subscription.dataType &&
+															typeof subscription.dataType === 'object' &&
 															subscription.dataType.name}
 													</StyledTableCell>
 													<StyledTableCell style={styles.text}>
-														{subscription.number}
+														{subscription.number && subscription.number}
 													</StyledTableCell>
 
 													<StyledTableCell style={styles.text}>
-														{formatNumberToCurrency(
-															checkAmount(subscription.amount)
-														)}
+														{subscription.amount &&
+															formatNumberToCurrency(
+																checkAmount(subscription.amount)
+															)}
+													</StyledTableCell>
+
+													<StyledTableCell
+														sx={{
+															whiteSpace: 'nowrap',
+														}}
+														style={styles.text}
+													>
+														{moment(subscription.createdAt).format('ll')}
 													</StyledTableCell>
 
 													<StyledTableCell style={styles.text}>
@@ -187,7 +227,10 @@ const DataSubscriptionTable = ({
 											);
 										})
 									) : (
-										<Empty colSpan={8} text={'No Airtime Convert'} />
+										<Empty
+											colSpan={9}
+											text={'No available data subscription'}
+										/>
 									)}
 								</>
 							)
@@ -195,6 +238,29 @@ const DataSubscriptionTable = ({
 					</TableBody>
 				</Table>
 			</Box>
+			{!isLoading && parseInt(`${total}`) > maxRecordRef.current && (
+				<Box style={styles.paginationWrapper}>
+					<TablePagination
+						page={Number(`${page}`) - 1}
+						count={Number(total)}
+						onPageChange={(value) =>
+							typeof handlePageChange === 'function' &&
+							handlePageChange(value + 1)
+						}
+						rowsPerPage={maxRecordRef.current}
+						handleChangeRowsPerPage={handleChangeRowsPerPage}
+					/>
+					{/* <Pagination
+								sx={{}}
+								size={'large'}
+								variant={'outlined'}
+								shape={'rounded'}
+								page={page}
+								count={count}
+								onChange={(e, number) => handlePageChange(number)}
+							/> */}
+				</Box>
+			)}
 		</Container>
 	);
 };
@@ -210,16 +276,6 @@ const SearchContainer = styled(Box)(({ theme }) => ({
 	justifyContent: 'flex-end',
 	padding: '0px 15px',
 	marginBottom: '2rem',
-}));
-
-const ApproveButton = styled(Button)(({ theme }) => ({
-	color: grey['50'],
-	backgroundColor: `${green['600']} !important`,
-}));
-
-const DeclineButton = styled(Button)(({ theme }) => ({
-	color: grey['50'],
-	backgroundColor: `${red['600']} !important`,
 }));
 
 const useStyles = (theme: any) => ({
@@ -245,6 +301,11 @@ const useStyles = (theme: any) => ({
 	},
 	link: {
 		color: theme.palette.secondary.main,
+	},
+	paginationWrapper: {
+		display: 'flex',
+		justifyContent: 'flex-end',
+		paddingRight: '20px',
 	},
 });
 

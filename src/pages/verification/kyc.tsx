@@ -18,6 +18,7 @@ const Kyc = () => {
 	);
 
 	useQuery(QueryKeys.KycLimit, kycs, {
+		refetchOnWindowFocus: false,
 		onSettled: (data, error) => {
 			if (error) {
 				const response = handleError({ error });

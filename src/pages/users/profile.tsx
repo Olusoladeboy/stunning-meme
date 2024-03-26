@@ -111,6 +111,7 @@ const Profile = () => {
 			}),
 		{
 			enabled: !!(token && id),
+			refetchOnWindowFocus: false,
 			onSettled: (data, error) => {
 				if (error) {
 					const response = handleError({ error });

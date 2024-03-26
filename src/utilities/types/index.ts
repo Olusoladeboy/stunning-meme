@@ -370,6 +370,7 @@ export interface IVerification {
 		lastname: string;
 		phone: string;
 		payload: string;
+		dob?: string
 	};
 	level: number;
 	payload: string;

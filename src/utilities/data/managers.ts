@@ -6,7 +6,7 @@ const MANAGERS = [
 		date: '30/03/22',
 		status: 'verified',
 		user: 1,
-		avatar: require('../../assets/images/user.png'),
+		avatar: require('assets/images/user.png'),
 		role: 'Admin',
 	},
 	{

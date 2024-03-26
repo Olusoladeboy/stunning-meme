@@ -1,30 +1,77 @@
 import React, { CSSProperties, useState } from 'react';
 import Table from '@mui/material/Table';
+import { useQueryClient } from 'react-query';
 import { useNavigate } from 'react-router-dom';
-import Box from '@mui/material/Box';
-import { Avatar, Typography, useTheme } from '@mui/material';
-import TableBody from '@mui/material/TableBody';
-import TableHead from '@mui/material/TableHead';
+import { Avatar, useTheme, TableBody, TableHead, Box } from '@mui/material';
 import { grey } from '@mui/material/colors';
-import { SUCCESS_COLOR, BOX_SHADOW } from '../../utilities/constant';
-import FilterIcon from '../icons/filter';
+import {
+	SUCCESS_COLOR,
+	BOX_SHADOW,
+	DANGER_COLOR,
+	LINKS,
+	User,
+	QueryKeys,
+	ErrorBoundaryGuard,
+	extractUserName,
+} from 'utilities';
 import {
 	StyledTableCell as TableCell,
 	StyledTableRow as TableRow,
 } from './components';
 import TableHeader from '../header/table-header';
-import REFERRALS from '../../utilities/data/referrals';
 import Empty from '../empty';
-import Pagination from '../pagination';
 import Button from '../button';
-import LINKS from '../../utilities/links';
+import CustomButton from '../button/custom-button';
+import Loader from '../loader/table-loader';
+import { useAlert, useHandleError } from 'hooks';
+import { verifyUser } from 'api';
+import CustomTableCell from './components/custom-table-cell';
 
-const VerificationTable = () => {
-	const [data] = useState<{ [key: string]: any }[] | null>(REFERRALS);
+type Props = {
+	users: User[] | null;
+	isLoading?: boolean;
+	clearSearch?(): void;
+	searchUser?(value: string): void;
+};
+
+const VerificationTable = ({
+	isLoading,
+	searchUser,
+	clearSearch,
+	users,
+}: Props) => {
 	const navigate = useNavigate();
-
+	const handleError = useHandleError();
 	const theme = useTheme();
 	const styles = useStyles(theme);
+
+	const [isVerifyingUser, setVerifyingUser] = useState<boolean>(false);
+
+	const queryClient = useQueryClient();
+	const setAlert = useAlert();
+	const [selectedUser, setSelectUser] = useState<null | User>(null);
+
+	const handleVerifyUser = async (id: string) => {
+		setVerifyingUser(true);
+		try {
+			const response = await verifyUser(id);
+			setVerifyingUser(false);
+			if (response && response.success) {
+				setAlert({ message: response.message, type: 'success' });
+				queryClient.invalidateQueries(QueryKeys.Users);
+				queryClient.invalidateQueries(QueryKeys.User);
+				queryClient.invalidateQueries(QueryKeys.Statistics);
+			}
+		} catch (error) {
+			setVerifyingUser(false);
+
+			const response = handleError({ error });
+			if (response?.message) {
+				setAlert({ message: response?.message, type: 'error' });
+			}
+		}
+	};
+
 	return (
 		<>
 			<Box style={styles.container} sx={{ overflow: 'auto' }}>
@@ -32,7 +79,12 @@ const VerificationTable = () => {
 					style={styles.tableHeader as CSSProperties}
 					sx={{ padding: '0px 1rem' }}
 				>
-					<TableHeader title={'Verification'} />
+					<TableHeader
+						title={'Verification'}
+						placeholder={'Search User by Email'}
+						clearSearch={clearSearch}
+						handleSearch={searchUser}
+					/>
 					<Box
 						sx={{
 							alignSelf: 'flex-end',
@@ -60,89 +112,101 @@ const VerificationTable = () => {
 						}}
 					>
 						<TableRow>
-							<TableCell />
-							<TableCell>
-								<Box style={styles.filterWrapper}>
-									<Typography variant={'body1'}> Name</Typography>
-									<FilterIcon />
-								</Box>
-							</TableCell>
-							<TableCell>
-								<Box style={styles.filterWrapper}>
-									<Typography variant={'body1'}>Email</Typography>
-									<FilterIcon />
-								</Box>
-							</TableCell>
-							<TableCell>
-								<Box style={styles.filterWrapper}>
-									<Typography variant={'body1'}>Tier level</Typography>
-									<FilterIcon />
-								</Box>
-							</TableCell>
-							<TableCell>
-								<Box style={styles.filterWrapper}>
-									<Typography variant={'body1'}>Status</Typography>
-									<FilterIcon />
-								</Box>
-							</TableCell>
-							<TableCell>Action</TableCell>
+							<CustomTableCell label={'Name'} />
+							<CustomTableCell label={'Email'} />
+							<CustomTableCell label={'Tier Level'} />
+							<CustomTableCell label={'Status'} />
+							<CustomTableCell label={'Action'} />
 						</TableRow>
 					</TableHead>
-					<TableBody
-						sx={{
-							'& tr': {
-								color: theme.palette.primary.main,
-							},
-						}}
-					>
-						{data && data.length > 0 ? (
-							data.map((row, key) => (
-								<TableRow key={key}>
-									<TableCell sx={{ maxWidth: '30px' }}>
-										<Avatar src={row.avatar} />
-									</TableCell>
-									<TableCell style={styles.tableText}>{row.name}</TableCell>
-									<TableCell style={styles.tableText}>{row.email}</TableCell>
-									<TableCell style={styles.tableText}>{row.email}</TableCell>
-									<TableCell style={styles.tableText}>
-										{row.number_of_referees}
-									</TableCell>
-									<TableCell sx={{ maxWidth: '140px' }}>
-										<Box style={styles.verifyPushWrapper}>
-											<Button size={'small'} style={styles.verifyBtn}>
-												Verify user
-											</Button>
-											<Button
-												onClick={() => navigate(LINKS.PushNotification)}
-												size={'small'}
-												style={styles.pushBtn}
-											>
-												Push notify
-											</Button>
-										</Box>
-									</TableCell>
-								</TableRow>
-							))
-						) : (
-							<TableRow>
-								<TableCell colSpan={6}>
-									<Empty text={'No users'} />
-								</TableCell>
-							</TableRow>
-						)}
-					</TableBody>
+					<ErrorBoundaryGuard>
+						<TableBody
+							sx={{
+								'& tr': {
+									color: theme.palette.primary.main,
+								},
+							}}
+						>
+							{isLoading ? (
+								<Loader colSpan={5} />
+							) : (
+								users && (
+									<>
+										{users.length > 0 ? (
+											users.map((row, key) => (
+												<TableRow key={key}>
+													<TableCell style={styles.tableText}>
+														<Box
+															sx={{
+																display: 'flex',
+																alignItems: 'center',
+																gap: '10px',
+															}}
+														>
+															<Avatar src={row.avatar} />
+															<span>{extractUserName(row)}</span>
+														</Box>
+													</TableCell>
+													<TableCell style={styles.tableText}>
+														{row.email}
+													</TableCell>
+													<TableCell style={styles.tableText}>
+														{row.kycLevel}
+													</TableCell>
+													<TableCell
+														style={{
+															...styles.tableText,
+															color: row.verified
+																? SUCCESS_COLOR
+																: DANGER_COLOR,
+														}}
+													>
+														{row.verified ? 'Verified' : 'Not Verified'}
+													</TableCell>
+													<TableCell sx={{ maxWidth: '180px' }}>
+														<Box style={styles.verifyPushWrapper}>
+															{!row.verified && (
+																<CustomButton
+																	loading={
+																		selectedUser &&
+																		selectedUser.id === row.id &&
+																		isVerifyingUser
+																			? true
+																			: false
+																	}
+																	onClick={() =>
+																		handleVerifyUser(row?.id as string)
+																	}
+																	style={styles.verifyBtn as CSSProperties}
+																	size={'small'}
+																>
+																	Verify user
+																</CustomButton>
+															)}
+															<Button
+																onClick={() => navigate(LINKS.PushNotification)}
+																size={'small'}
+																style={styles.pushBtn as CSSProperties}
+															>
+																Push notify
+															</Button>
+														</Box>
+													</TableCell>
+												</TableRow>
+											))
+										) : (
+											<TableRow>
+												<TableCell colSpan={5}>
+													<Empty text={'No users'} />
+												</TableCell>
+											</TableRow>
+										)}
+									</>
+								)
+							)}
+						</TableBody>
+					</ErrorBoundaryGuard>
 				</Table>
-				<Pagination
-					sx={{
-						display: 'flex',
-						justifyContent: 'flex-end',
-						marginTop: theme.spacing(4),
-						marginRight: '1rem',
-					}}
-					size={'large'}
-					shape={'rounded'}
-					variant={'outlined'}
-				/>
 			</Box>
 		</>
 	);
@@ -194,10 +258,18 @@ const useStyles = (theme: any) => ({
 	verifyBtn: {
 		color: SUCCESS_COLOR,
 		border: `1px solid ${SUCCESS_COLOR}`,
+		whiteSpace: 'nowrap',
 	},
 	pushBtn: {
 		color: theme.palette.secondary.main,
 		border: `1px solid ${theme.palette.secondary.main}`,
+		whiteSpace: 'nowrap',
+	},
+	button: {
+		color: theme.palette.secondary.main,
+		border: `1px solid ${theme.palette.secondary.main}`,
+		whiteSpace: 'nowrap',
+		padding: '4px 20px',
 	},
 });
 

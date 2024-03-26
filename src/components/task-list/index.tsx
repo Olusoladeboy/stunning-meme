@@ -3,7 +3,7 @@ import { Box, Typography, useTheme } from '@mui/material';
 import { grey } from '@mui/material/colors';
 import { AddCircle } from '@mui/icons-material';
 import Button from '../button';
-import { BOX_SHADOW, DANGER_COLOR } from '../../utilities/constant';
+import { BOX_SHADOW, DANGER_COLOR } from 'utilities';
 import TaskListTab from '../tabs/task-list';
 import List from './list';
 import { TODAY_LISTS, TOMORROW_LISTS } from './data';
@@ -42,7 +42,7 @@ const TaskList = () => {
 
 const useStyles = (theme: any) => ({
 	container: {
-		border: `1px solid ${theme.palette.secondary.main}`,
+		border: `0.5px solid ${theme.palette.secondary.main}`,
 		// padding: '1.5rem 1rem',
 		backgroundColor: grey[50],
 		borderRadius: theme.spacing(2),

@@ -1,103 +1,103 @@
-import React, { useState } from 'react';
-import Table from '@mui/material/Table';
-import Box from '@mui/material/Box';
-import { Avatar, Typography, useTheme } from '@mui/material';
-import TableBody from '@mui/material/TableBody';
-import TableHead from '@mui/material/TableHead';
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
+import moment from 'moment';
+import {
+	Avatar,
+	useTheme,
+	TableBody,
+	TableHead,
+	Table,
+	Box,
+	Typography,
+} from '@mui/material';
 import { grey } from '@mui/material/colors';
 import {
+	UserStatus,
+	User,
 	SUCCESS_COLOR,
 	DANGER_COLOR,
 	BOX_SHADOW,
-} from '../../utilities/constant';
-import { UserStatusTypes } from '../../utilities/types';
-import FilterIcon from '../icons/filter';
+	LINKS,
+	USERS_TAB,
+	extractUserName,
+} from 'utilities';
 import {
 	StyledTableCell as TableCell,
 	StyledTableRow as TableRow,
 } from './components';
 import TableHeader from '../header/table-header';
-import TransactionItem from '../transaction-item';
-import UserIcon from '../icons/user';
-import VerifiedUserIcon from '../icons/verified-user';
-import SuspendedUserIcon from '../icons/suspended-user';
-import DeletedUserIcon from '../icons/deleted-user';
-import UnverifiedUserIcon from '../icons/unverified-user';
-import USERS from '../../utilities/data/user';
 import Empty from '../empty';
-import Pagination from '../pagination';
+import TableLoader from '../loader/table-loader';
+import CustomTableCell from './components/custom-table-cell';
+import UsersTab from '../tabs/users-tab';
+import Checkbox from '../form-components/check-box';
 
-const UsersTable = () => {
-	const [data] = useState<{ [key: string]: any }[] | null>(USERS);
+type Props = {
+	isLoading?: boolean;
+	users?: User[] | null;
+	changeUserType?: (type?: string) => void;
+	currentTab?: string;
+	searchUser?: (value: string) => void;
+	clearSearch?: () => void;
+	isDisplayTab?: boolean;
+	changeSearchDeletedUser?: (state: boolean) => void;
+};
 
+const UsersTable = ({
+	isLoading,
+	users = null,
+	changeUserType,
+	currentTab = USERS_TAB.All,
+	searchUser,
+	clearSearch,
+	isDisplayTab = true,
+	changeSearchDeletedUser,
+}: Props) => {
+	const navigate = useNavigate();
 	const theme = useTheme();
 	const styles = useStyles(theme);
+
+	const handleClickRow = (user: User) => {
+		const isDeleted = user.deleted,
+			link = isDeleted
+				? `${LINKS.Users}/${user.id}?_deleted=true`
+				: `${LINKS.Users}/${user.id}`;
+
+		navigate(link);
+	};
+
+	const deletedCheckbox = (
+		<Box
+			sx={{
+				display: 'flex',
+				alignItems: 'center',
+				gap: '4px',
+				marginRight: '15px',
+			}}
+		>
+			<Checkbox
+				onChange={(e) => {
+					typeof changeSearchDeletedUser === 'function' &&
+						changeSearchDeletedUser(e.target.checked);
+				}}
+			/>
+			<Typography sx={{ whiteSpace: 'nowrap' }}>Search Deleted User</Typography>
+		</Box>
+	);
+
 	return (
 		<Box style={styles.container} sx={{ overflow: 'auto' }}>
-			<TableHeader sx={{ padding: '0px 1rem' }} title={'Users'} />
-			<Box
-				sx={{
-					display: 'grid',
-					gridTemplateColumns: 'repeat(5, 1fr)',
-					gap: theme.spacing(3),
-					padding: '0px 1rem',
-				}}
-			>
-				<TransactionItem
-					bgColor={SUCCESS_COLOR}
-					amount={'500'}
-					amountColor={grey[50]}
-					icon={<UserIcon color={grey[50]} />}
-				>
-					<Typography sx={{ color: grey[50] }} variant={'body1'}>
-						Total User
-					</Typography>
-				</TransactionItem>
-				<TransactionItem
-					isBorder
-					borderColor={SUCCESS_COLOR}
-					amountColor={SUCCESS_COLOR}
-					amount={'500'}
-					icon={<VerifiedUserIcon color={SUCCESS_COLOR} />}
-				>
-					<Typography variant={'body1'} style={styles.transactionItemText}>
-						Verified User
-					</Typography>
-				</TransactionItem>{' '}
-				<TransactionItem
-					isBorder
-					borderColor={SUCCESS_COLOR}
-					amountColor={SUCCESS_COLOR}
-					amount={'500'}
-					icon={<UnverifiedUserIcon color={SUCCESS_COLOR} />}
-				>
-					<Typography variant={'body1'} style={styles.transactionItemText}>
-						Unverified User
-					</Typography>
-				</TransactionItem>{' '}
-				<TransactionItem
-					isBorder
-					borderColor={SUCCESS_COLOR}
-					amountColor={SUCCESS_COLOR}
-					amount={'500'}
-					icon={<SuspendedUserIcon color={SUCCESS_COLOR} />}
-				>
-					<Typography variant={'body1'} style={styles.transactionItemText}>
-						Suspended User
-					</Typography>
-				</TransactionItem>{' '}
-				<TransactionItem
-					isBorder
-					borderColor={SUCCESS_COLOR}
-					amountColor={SUCCESS_COLOR}
-					amount={'500'}
-					icon={<DeletedUserIcon color={SUCCESS_COLOR} />}
-				>
-					<Typography variant={'body1'} style={styles.transactionItemText}>
-						Deleted User
-					</Typography>
-				</TransactionItem>
-			</Box>
+			<TableHeader
+				placeholder={'Search user with email/phone'}
+				sx={{ padding: '0px 1rem' }}
+				title={'Users'}
+				handleSearch={searchUser}
+				clearSearch={clearSearch}
+				deletedCheckbox={deletedCheckbox}
+			/>
+			{isDisplayTab && (
+				<UsersTab currentTab={currentTab} changeCurrentTab={changeUserType} />
+			)}
 			<Table sx={{ overflow: 'auto' }}>
 				<TableHead
 					sx={{
@@ -108,47 +108,11 @@ const UsersTable = () => {
 					}}
 				>
 					<TableRow>
-						<TableCell />
-						<TableCell>
-							<Box style={styles.filterWrapper}>
-								<Typography style={styles.tableHeaderText} variant={'body1'}>
-									Name
-								</Typography>
-								<FilterIcon />
-							</Box>
-						</TableCell>
-						<TableCell>
-							<Box style={styles.filterWrapper}>
-								<Typography style={styles.tableHeaderText} variant={'body1'}>
-									Email
-								</Typography>
-								<FilterIcon />
-							</Box>
-						</TableCell>
-						<TableCell>
-							<Box style={styles.filterWrapper}>
-								<Typography style={styles.tableHeaderText} variant={'body1'}>
-									Phone no.
-								</Typography>
-								<FilterIcon />
-							</Box>
-						</TableCell>
-						<TableCell>
-							<Box style={styles.filterWrapper}>
-								<Typography style={styles.tableHeaderText} variant={'body1'}>
-									Date
-								</Typography>
-								<FilterIcon />
-							</Box>
-						</TableCell>
-						<TableCell>
-							<Box style={styles.filterWrapper}>
-								<Typography style={styles.tableHeaderText} variant={'body1'}>
-									Status
-								</Typography>
-								<FilterIcon />
-							</Box>
-						</TableCell>
+						<CustomTableCell label={'Name'} isSortable />
+						<CustomTableCell label={'Email'} isSortable />
+						<CustomTableCell label={'Phone Number'} isSortable />
+						<CustomTableCell label={'Date'} />
+						<CustomTableCell label={'Status'} />
 					</TableRow>
 				</TableHead>
 				<TableBody
@@ -158,57 +122,59 @@ const UsersTable = () => {
 						},
 					}}
 				>
-					{data && data.length > 0 ? (
-						data.map((data, key) => (
-							<TableRow key={key}>
-								<TableCell>
-									<Avatar src={data.avatar} />
-								</TableCell>
-								<TableCell style={styles.tableText}>{data.name}</TableCell>
-								<TableCell style={styles.tableText}>{data.email}</TableCell>
+					{isLoading ? (
+						<TableLoader colSpan={5} />
+					) : users && users.length > 0 ? (
+						users.map((user: User, key: number) => (
+							<TableRow onClick={() => handleClickRow(user)} key={key}>
 								<TableCell style={styles.tableText}>
-									{data.phone_number}
+									<Box
+										sx={{
+											display: 'flex',
+											alignItems: 'center',
+											gap: '10px',
+										}}
+									>
+										<Avatar src={user.photoUrl as string} />
+										<span>{extractUserName(user as User)}</span>
+									</Box>
 								</TableCell>
-								<TableCell style={styles.tableText}>{data.date}</TableCell>
+								<TableCell style={styles.tableText}>{user.email}</TableCell>
+								<TableCell style={styles.tableText}>{user.phone}</TableCell>
+								<TableCell style={styles.tableText}>
+									{moment.utc(user.createdAt).format('l')}
+								</TableCell>
 
 								<TableCell
 									sx={{
 										textTransform: 'uppercase',
 										fontWeight: '600',
-										color:
-											data.status === UserStatusTypes.Verified
-												? SUCCESS_COLOR
-												: data.status === UserStatusTypes.Unverified
-												? DANGER_COLOR
-												: data.status === UserStatusTypes.Suspended
-												? grey[800]
-												: grey[500],
+										color: user.verified
+											? SUCCESS_COLOR
+											: user.verified === false
+											? DANGER_COLOR
+											: user.suspended
+											? grey[800]
+											: grey[500],
 									}}
 								>
-									{data.status}
+									{user.verified
+										? UserStatus.Verified
+										: user.suspended
+										? UserStatus.Suspended
+										: UserStatus.Unverified}
 								</TableCell>
 							</TableRow>
 						))
 					) : (
 						<TableRow>
-							<TableCell colSpan={6}>
+							<TableCell colSpan={5}>
 								<Empty text={'No users'} />
 							</TableCell>
 						</TableRow>
 					)}
 				</TableBody>
 			</Table>
-			<Pagination
-				sx={{
-					display: 'flex',
-					justifyContent: 'flex-end',
-					marginTop: theme.spacing(4),
-					marginRight: '1rem',
-				}}
-				size={'large'}
-				shape={'rounded'}
-				variant={'outlined'}
-			/>
 		</Box>
 	);
 };
@@ -218,7 +184,7 @@ const useStyles = (theme: any) => ({
 		display: 'grid',
 		gridTemplateColumn: '1fr',
 		gap: theme.spacing(4),
-		border: `1px solid ${theme.palette.secondary.main}`,
+		border: `0.5px solid ${theme.palette.secondary.main}`,
 		padding: '1.5rem 0px',
 		backgroundColor: grey[50],
 		borderRadius: theme.spacing(2),

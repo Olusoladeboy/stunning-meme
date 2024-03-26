@@ -1,19 +1,81 @@
 import React, { CSSProperties } from 'react';
 import { Box, Typography, useTheme } from '@mui/material';
-import UserAvatarWithDetails from '../user-avatar-with-details';
-import Button from '../button';
+import { useMutation, useQueryClient } from 'react-query';
 import { grey, red } from '@mui/material/colors';
+import UserAvatarWithDetails from '../avatar-with-details/manager';
+import Button from '../button';
+import { ManagerTypes, QueryKeys, User, ADMIN_ROLE } from 'utilities';
+import { deleteManager, deleteStaff } from 'api';
+import { useHandleError, useAlert } from 'hooks';
+import { useAppSelector } from 'store/hooks';
 
 type Props = {
-	details: { [key: string]: any };
+	managerDetail: User;
+	handleEdit?: () => void;
+	type?: ManagerTypes.Manager | ManagerTypes.Admin;
+	callback?: () => void;
 };
 
-const ManagerDetails = ({ details }: Props) => {
+const ManagerDetails = ({
+	managerDetail,
+	handleEdit,
+	type = ManagerTypes.Manager,
+	callback,
+}: Props) => {
+	const alert = useAlert();
+	const queryClient = useQueryClient();
+	const handleError = useHandleError();
 	const theme = useTheme();
 	const styles = useStyles(theme);
+	const { canCreateOrUpdateRecord } = useAppSelector(
+		(store) => store.authState
+	);
+
+	const { isLoading: isDeletingManager, mutate: mutateDeleteManager } =
+		useMutation(deleteManager, {
+			onSettled: (data, error) => {
+				if (error) {
+					const response = handleError({ error });
+					if (response?.message)
+						return alert({ message: response.message, type: 'error' });
+				}
+
+				alert({ message: 'Manager deleted successfully', type: 'success' });
+				queryClient.invalidateQueries(QueryKeys.Managers);
+				typeof callback !== 'undefined' && callback();
+			},
+		});
+
+	const { isLoading: isDeletingStaff, mutate: mutateDeleteStaff } = useMutation(
+		deleteStaff,
+		{
+			onSettled: (data, error) => {
+				if (error) {
+					const response = handleError({ error });
+					if (response?.message)
+						return alert({ message: response.message, type: 'error' });
+				}
+
+				alert({ message: 'Staff deleted successfully', type: 'success' });
+				queryClient.invalidateQueries(QueryKeys.Staffs);
+				typeof callback !== 'undefined' && callback();
+			},
+		}
+	);
+
+	const handleDelete = () => {
+		if (type === ManagerTypes.Manager) {
+			mutateDeleteManager(managerDetail.id as string);
+		}
+
+		if (type === ManagerTypes.Admin) {
+			mutateDeleteStaff(managerDetail.id as string);
+		}
+	};
+
 	return (
 		<Box>
-			<UserAvatarWithDetails details={details} />
+			<UserAvatarWithDetails user={managerDetail} />
 			<Box
 				sx={{
 					display: 'flex',
@@ -26,25 +88,41 @@ const ManagerDetails = ({ details }: Props) => {
 				<Box>
 					<Box sx={{ marginBottom: theme.spacing(3) }} style={styles.grid}>
 						<Typography variant={'body1'}>Total Users</Typography>
-						<Typography variant={'body1'}>{details.user}</Typography>
+						<Typography
+							variant={'body1'}
+						>{`${managerDetail.firstname} ${managerDetail.lastname}`}</Typography>
 					</Box>
 					<Box style={styles.grid}>
 						<Typography variant={'body1'}>Phone number</Typography>
-						<Typography variant={'body1'}>{details.phone_number}</Typography>
+						<Typography variant={'body1'}>{managerDetail.phone}</Typography>
 					</Box>
 				</Box>
-				<Box
-					sx={{
-						display: 'flex',
-						flexDirection: 'column',
-						gap: theme.spacing(3),
-					}}
-				>
-					<Button style={styles.editBtn as CSSProperties}>Edit profile</Button>
-					<Button style={styles.deleteBtn as CSSProperties}>
-						Delete Admin
-					</Button>
-				</Box>
+				{canCreateOrUpdateRecord &&
+					managerDetail?.role !== ADMIN_ROLE.SUPER_ADMIN && (
+						<Box
+							sx={{
+								display: 'flex',
+								flexDirection: 'column',
+								gap: theme.spacing(3),
+							}}
+						>
+							<Button
+								onClick={handleEdit}
+								style={styles.editBtn as CSSProperties}
+							>
+								Edit profile
+							</Button>
+							<Button
+								onClick={handleDelete}
+								loading={isDeletingManager || isDeletingStaff}
+								style={styles.deleteBtn as CSSProperties}
+							>
+								{type === ManagerTypes.Manager
+									? 'Delete Manager'
+									: 'Delete Admin'}
+							</Button>
+						</Box>
+					)}
 			</Box>
 		</Box>
 	);

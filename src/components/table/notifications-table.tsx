@@ -1,73 +1,54 @@
-import React, { CSSProperties, useState, MouseEvent } from 'react';
+import moment from 'moment';
+import React, { CSSProperties, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Table from '@mui/material/Table';
-import Box from '@mui/material/Box';
-import {
-	Typography,
-	useTheme,
-	List,
-	ListItemButton,
-	IconButton,
-	Popper,
-} from '@mui/material';
-import TableBody from '@mui/material/TableBody';
-import TableHead from '@mui/material/TableHead';
+import { useTheme, Table, TableBody, TableHead, Box } from '@mui/material';
 import { grey } from '@mui/material/colors';
-import { MoreHoriz } from '@mui/icons-material';
 import {
 	SUCCESS_COLOR,
 	BOX_SHADOW,
 	DANGER_COLOR,
-} from '../../utilities/constant';
+	LINKS,
+	Notification,
+	truncateText,
+} from 'utilities';
 import ModalWrapper from '../modal/Wrapper';
-import FilterIcon from '../icons/filter';
 import {
 	StyledTableCell as TableCell,
 	StyledTableRow as TableRow,
 } from './components';
-import TableHeader from '../header/table-header';
-import COUPONS from '../../utilities/data/coupons';
 import Empty from '../empty';
-import Pagination from '../pagination';
 import Button from '../button';
 import RegularAlert from '../modal/regular-modal';
-import LINKS from '../../utilities/links';
-import PushNotificationForm from '../forms/push-notification-form';
+import PushNotificationForm from '../forms/notification-form';
+import CustomTableCell from './components/custom-table-cell';
+import TableLoader from '../loader/table-loader';
+import { useAppSelector } from 'store/hooks';
 
-const NotificationsTable = () => {
-	const [data] = useState<{ [key: string]: any }[] | null>(COUPONS);
+interface Props {
+	notifications: Notification[] | null;
+	isLoading?: boolean;
+}
+
+const NotificationsTable: React.FC<Props> = ({ notifications, isLoading }) => {
 	const navigate = useNavigate();
 	const [isCreateReferral, setCreateReferral] = useState<boolean>(false);
+	const { canCreateOrUpdateRecord } = useAppSelector(
+		(store) => store.authState
+	);
 
 	const theme = useTheme();
 	const styles = useStyles(theme);
 
-	const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 	const [currentRow, setCurrentRow] = useState<null | { [key: string]: any }>(
 		null
 	);
 	const [alert, setAlert] = useState<{ [key: string]: any } | null>(null);
 
-	const handleClickAction = (event: MouseEvent<HTMLElement>) => {
-		setAnchorEl(
-			anchorEl && anchorEl === event.currentTarget ? null : event.currentTarget
-		);
-	};
-
-	const handleDelete = (data: { [key: string]: any }) => {
-		setAlert({
-			title: `Delete ${data.coupon_name}`,
-			btnText: 'Decline',
-			message: `Are you sure you want to delete ${data.coupon_name}`,
-			alertType: 'failed',
-		});
-	};
-
 	return (
 		<>
 			{isCreateReferral && (
 				<ModalWrapper
-					close={() => setCreateReferral(false)}
+					closeModal={() => setCreateReferral(false)}
 					title={'CREATE REFERRAL'}
 				>
 					<PushNotificationForm />
@@ -85,38 +66,31 @@ const NotificationsTable = () => {
 			)}
 			{currentRow && (
 				<ModalWrapper
-					close={() => setCurrentRow(null)}
+					closeModal={() => setCurrentRow(null)}
 					title={'EDIT Notification'}
 				>
-					<PushNotificationForm isEdit data={currentRow} />
+					<PushNotificationForm notification={currentRow} />
 				</ModalWrapper>
 			)}
 
 			<Box style={styles.container} sx={{ overflow: 'auto' }}>
-				<Box
-					style={styles.tableHeader as CSSProperties}
-					sx={{ padding: '0px 1rem' }}
-				>
-					<TableHeader backButtonText={'Notifications'} isDisplayBackButton />
+				{canCreateOrUpdateRecord && (
 					<Box
 						sx={{
-							alignSelf: 'flex-end',
+							justifyContent: 'flex-end',
 							display: 'flex',
-							alignItems: 'center',
-							gap: theme.spacing(3),
+							width: '100%',
+							paddingRight: ['15px', '30px'],
 						}}
 					>
-						<Button style={styles.btnOutline as CSSProperties}>
-							Email notification
-						</Button>
 						<Button
-							onClick={() => navigate(LINKS.PushNotification)}
+							onClick={() => navigate(LINKS.CreateNotification)}
 							style={styles.btnOutline as CSSProperties}
 						>
-							push notification
+							Create notification
 						</Button>
 					</Box>
-				</Box>
+				)}
 
 				<Table sx={{ overflow: 'auto' }}>
 					<TableHead
@@ -128,31 +102,10 @@ const NotificationsTable = () => {
 						}}
 					>
 						<TableRow>
-							<TableCell sx={{ paddingLeft: '30px' }}>
-								<Box style={styles.filterWrapper}>
-									<Typography style={styles.tableHeaderText} variant={'body1'}>
-										Message title
-									</Typography>
-									<FilterIcon />
-								</Box>
-							</TableCell>
-							<TableCell sx={{ paddingLeft: '30px' }}>
-								<Box style={styles.filterWrapper}>
-									<Typography style={styles.tableHeaderText} variant={'body1'}>
-										Message Body
-									</Typography>
-									<FilterIcon />
-								</Box>
-							</TableCell>
-							<TableCell>
-								<Box style={styles.filterWrapper}>
-									<Typography style={styles.tableHeaderText} variant={'body1'}>
-										Date sent
-									</Typography>
-									<FilterIcon />
-								</Box>
-							</TableCell>
-							<TableCell>Action</TableCell>
+							<CustomTableCell label={'Message'} />
+							<CustomTableCell label={'Body'} />
+							<CustomTableCell label={'Type'} />
+							<CustomTableCell label={'Create At'} />
 						</TableRow>
 					</TableHead>
 					<TableBody
@@ -162,70 +115,52 @@ const NotificationsTable = () => {
 							},
 						}}
 					>
-						{data && data.length > 0 ? (
-							data.map((row, key) => (
-								<TableRow key={key}>
-									<TableCell style={styles.tableText}>
-										{row.coupon_name}
-									</TableCell>
-									<TableCell style={styles.tableText}>
-										{row.coupon_name}
-									</TableCell>
-									<TableCell style={styles.tableText}>{row.status}</TableCell>
-									<TableCell>
-										<Box>
-											<IconButton
-												onClick={(event) => handleClickAction(event)}
-												size={'small'}
-											>
-												<MoreHoriz />
-											</IconButton>
-											<Popper open={Boolean(anchorEl)} anchorEl={anchorEl}>
-												<List style={styles.editDeleteWrapper}>
-													<ListItemButton
-														onClick={() => {
-															setAnchorEl(null);
-															setCurrentRow(row);
-														}}
-														style={styles.editBtn}
-													>
-														Edit
-													</ListItemButton>
-													<ListItemButton
-														onClick={() => {
-															setAnchorEl(null);
-															handleDelete(row);
-														}}
-														style={styles.deleteBtn}
-													>
-														delete
-													</ListItemButton>
-												</List>
-											</Popper>
-										</Box>
-									</TableCell>
-								</TableRow>
-							))
+						{isLoading ? (
+							<TableLoader colSpan={4} />
 						) : (
-							<TableRow>
-								<TableCell colSpan={6}>
-									<Empty text={'No users'} />
-								</TableCell>
-							</TableRow>
+							notifications && (
+								<>
+									{notifications.length > 0 ? (
+										notifications.map((notification: Notification) => (
+											<TableRow key={notification.id}>
+												<TableCell style={styles.tableText}>
+													{notification.subject}
+												</TableCell>
+												<TableCell style={styles.tableText}>
+													<div
+														style={{
+															fontSize: '13px',
+														}}
+														dangerouslySetInnerHTML={{
+															__html: truncateText(
+																notification.message as string,
+																50
+															),
+														}}
+													/>
+													{/* {truncateText(notification.message as string, 50)} */}
+												</TableCell>
+
+												<TableCell style={styles.tableText}>
+													{notification.type}
+												</TableCell>
+												<TableCell style={styles.tableText}>
+													{moment.utc(notification.createdAt).format('l')}
+												</TableCell>
+											</TableRow>
+										))
+									) : (
+										<TableRow>
+											<TableCell colSpan={4}>
+												<Empty text={'No Manager(s)'} />
+											</TableCell>
+										</TableRow>
+									)}
+								</>
+							)
 						)}
 					</TableBody>
 				</Table>
-				<Pagination
-					sx={{
-						display: 'flex',
-						justifyContent: 'flex-end',
-						marginTop: theme.spacing(4),
-						marginRight: '1rem',
-					}}
-					size={'large'}
-					shape={'rounded'}
-					variant={'outlined'}
-				/>
 			</Box>
 		</>
 	);
@@ -236,7 +171,7 @@ const useStyles = (theme: any) => ({
 		display: 'grid',
 		gridTemplateColumn: '1fr',
 		gap: theme.spacing(4),
-		border: `1px solid ${theme.palette.secondary.main}`,
+		border: `0.5px solid ${theme.palette.secondary.main}`,
 		padding: '1.5rem 0px',
 		backgroundColor: grey[50],
 		borderRadius: theme.spacing(2),

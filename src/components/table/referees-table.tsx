@@ -1,116 +1,66 @@
-import React, { CSSProperties, useState, MouseEvent } from 'react';
-import Table from '@mui/material/Table';
-import Box from '@mui/material/Box';
+import React, { useState, MouseEvent } from 'react';
 import {
-	Typography,
+	Table,
+	Box,
 	useTheme,
 	List,
 	ListItemButton,
 	IconButton,
 	Popper,
+	TableHead,
+	TableBody,
 } from '@mui/material';
-import TableBody from '@mui/material/TableBody';
-import TableHead from '@mui/material/TableHead';
+import { useNavigate } from 'react-router-dom';
 import { grey } from '@mui/material/colors';
-import { AddCircle, MoreHoriz } from '@mui/icons-material';
+import { MoreHoriz } from '@mui/icons-material';
 import {
 	SUCCESS_COLOR,
 	BOX_SHADOW,
 	DANGER_COLOR,
-} from '../../utilities/constant';
-import ModalWrapper from '../modal/Wrapper';
-import FilterIcon from '../icons/filter';
+	IReferral,
+	User,
+	LINKS,
+	extractUserName,
+} from 'utilities';
+import CustomTableCell from './components/custom-table-cell';
 import {
 	StyledTableCell as TableCell,
 	StyledTableRow as TableRow,
 } from './components';
-import TableHeader from '../header/table-header';
-import COUPONS from '../../utilities/data/coupons';
 import Empty from '../empty';
 import Pagination from '../pagination';
-import Button from '../button';
-import RegularAlert from '../modal/regular-modal';
-import ReferralForm from '../forms/referral-form';
+import TableLoader from '../loader/table-loader';
 
-const AllReferralsTable = () => {
-	const [data] = useState<{ [key: string]: any }[] | null>(COUPONS);
+interface Props {
+	data: IReferral[] | null;
+	isLoading?: boolean;
+}
 
-	const [isCreateReferral, setCreateReferral] = useState<boolean>(false);
-
+const RefereesTable: React.FC<Props> = ({ data, isLoading }) => {
 	const theme = useTheme();
 	const styles = useStyles(theme);
+	const navigate = useNavigate();
 
 	const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-	const [currentRow, setCurrentRow] = useState<null | { [key: string]: any }>(
-		null
-	);
-	const [alert, setAlert] = useState<{ [key: string]: any } | null>(null);
+	const [selectedUser, setSelectedUser] = useState<User | null>(null);
 
-	const handleClickAction = (event: MouseEvent<HTMLElement>) => {
+	const handleClickAction = (event: MouseEvent<HTMLElement>, user: User) => {
 		setAnchorEl(
 			anchorEl && anchorEl === event.currentTarget ? null : event.currentTarget
 		);
+		setSelectedUser(user);
 	};
 
-	const handleDelete = (data: { [key: string]: any }) => {
-		setAlert({
-			title: `Delete ${data.coupon_name}`,
-			btnText: 'Delete plan',
-			message: `Are you sure you want to delete ${data.coupon_name}`,
-			alertType: 'failed',
-		});
+	const closePopper = () => {
+		setAnchorEl(null);
+		setSelectedUser(null);
 	};
+
+	const viewUser = () => navigate(`${LINKS.Users}/${selectedUser?.id}`);
 
 	return (
 		<>
-			{isCreateReferral && (
-				<ModalWrapper
-					close={() => setCreateReferral(false)}
-					title={'CREATE REFERRAL'}
-				>
-					<ReferralForm />
-				</ModalWrapper>
-			)}
-			{alert && (
-				<RegularAlert
-					close={() => setAlert(null)}
-					width={'480px'}
-					title={alert.title}
-					btnText={alert.btnText}
-					message={alert.message}
-					alertType={alert.alertType}
-				/>
-			)}
-			{currentRow && (
-				<ModalWrapper close={() => setCurrentRow(null)} title={'EDIT COUPON'}>
-					<ReferralForm isEdit data={currentRow} />
-				</ModalWrapper>
-			)}
-
-			<Box style={styles.container} sx={{ overflow: 'auto' }}>
-				<Box
-					style={styles.tableHeader as CSSProperties}
-					sx={{ padding: '0px 1rem' }}
-				>
-					<TableHeader backButtonText={'View Referees'} isDisplayBackButton />
-					<Box
-						sx={{
-							alignSelf: 'flex-end',
-							display: 'flex',
-							alignItems: 'center',
-							gap: theme.spacing(3),
-						}}
-					>
-						<Button
-							onClick={() => setCreateReferral(true)}
-							startIcon={<AddCircle />}
-							style={styles.btnOutline as CSSProperties}
-						>
-							create referral
-						</Button>
-					</Box>
-				</Box>
-
+			<Box sx={{ overflow: 'auto' }}>
 				<Table sx={{ overflow: 'auto' }}>
 					<TableHead
 						sx={{
@@ -121,31 +71,10 @@ const AllReferralsTable = () => {
 						}}
 					>
 						<TableRow>
-							<TableCell sx={{ paddingLeft: '30px' }}>
-								<Box style={styles.filterWrapper}>
-									<Typography style={styles.tableHeaderText} variant={'body1'}>
-										Referees name
-									</Typography>
-									<FilterIcon />
-								</Box>
-							</TableCell>
-							<TableCell>
-								<Box style={styles.filterWrapper}>
-									<Typography style={styles.tableHeaderText} variant={'body1'}>
-										Email
-									</Typography>
-									<FilterIcon />
-								</Box>
-							</TableCell>
-							<TableCell>
-								<Box style={styles.filterWrapper}>
-									<Typography style={styles.tableHeaderText} variant={'body1'}>
-										Verification status
-									</Typography>
-									<FilterIcon />
-								</Box>
-							</TableCell>
-							<TableCell>Action</TableCell>
+							<CustomTableCell label={'Referees name'} />
+							<CustomTableCell label={'Email'} />
+							<CustomTableCell label={'Verification status'} />
+							<CustomTableCell label={'Action'} />
 						</TableRow>
 					</TableHead>
 					<TableBody
@@ -155,64 +84,79 @@ const AllReferralsTable = () => {
 							},
 						}}
 					>
-						{data && data.length > 0 ? (
-							data.map((row, key) => (
-								<TableRow key={key}>
-									<TableCell
-										sx={{ paddingLeft: '30px !important' }}
-										style={styles.tableText}
-									>
-										{row.coupon_name}
-									</TableCell>
-									<TableCell style={styles.tableText}>{row.type}</TableCell>
-									<TableCell style={styles.tableText}>{row.status}</TableCell>
-									<TableCell>
-										<Box>
-											<IconButton
-												onClick={(event) => handleClickAction(event)}
-												size={'small'}
-											>
-												<MoreHoriz />
-											</IconButton>
-											<Popper open={Boolean(anchorEl)} anchorEl={anchorEl}>
-												<List style={styles.editDeleteWrapper}>
-													<ListItemButton
-														onClick={() => {
-															setAnchorEl(null);
-														}}
-														style={styles.verifyBtn}
-													>
-														Verify
-													</ListItemButton>
-													<ListItemButton
-														onClick={() => {
-															setAnchorEl(null);
-															handleDelete(row);
-														}}
-														style={styles.deleteBtn}
-													>
-														Delete
-													</ListItemButton>
-													<ListItemButton
-														onClick={() => {
-															setAnchorEl(null);
-														}}
-														style={styles.pustNotifyBtn}
-													>
-														Push notification
-													</ListItemButton>
-												</List>
-											</Popper>
-										</Box>
-									</TableCell>
-								</TableRow>
-							))
+						{isLoading ? (
+							<TableLoader colSpan={4} />
 						) : (
-							<TableRow>
-								<TableCell colSpan={6}>
-									<Empty text={'No users'} />
-								</TableCell>
-							</TableRow>
+							data && (
+								<>
+									{data.length > 0 ? (
+										data.map((row: IReferral, key) => (
+											<TableRow key={key}>
+												<TableCell
+													sx={{ paddingLeft: '30px !important' }}
+													style={styles.tableText}
+												>
+													{extractUserName(row.user as User)}
+												</TableCell>
+												<TableCell style={styles.tableText}>
+													{row.user.email}
+												</TableCell>
+												<TableCell style={styles.tableText}>
+													{row.user.verified ? 'Verified' : 'Unverified'}
+												</TableCell>
+												<TableCell>
+													<Box>
+														<IconButton
+															onClick={(event) =>
+																handleClickAction(event, row.user)
+															}
+															size={'small'}
+														>
+															<MoreHoriz />
+														</IconButton>
+														<Popper
+															open={Boolean(anchorEl)}
+															anchorEl={anchorEl}
+														>
+															<List style={styles.editDeleteWrapper}>
+																{!row.user.verified && (
+																	<ListItemButton
+																		onClick={closePopper}
+																		style={styles.verifyBtn}
+																	>
+																		Verify
+																	</ListItemButton>
+																)}
+																{/* <ListItemButton
+																	onClick={closePopper}
+																	style={styles.deleteBtn}
+																>
+																	Delete
+																</ListItemButton> */}
+																<ListItemButton
+																	onClick={() => {
+																		closePopper();
+																		viewUser();
+																	}}
+																	style={styles.pustNotifyBtn}
+																>
+																	View User
+																</ListItemButton>
+															</List>
+														</Popper>
+													</Box>
+												</TableCell>
+											</TableRow>
+										))
+									) : (
+										<TableRow>
+											<TableCell colSpan={4}>
+												<Empty text={'No referees'} />
+											</TableCell>
+										</TableRow>
+									)}
+								</>
+							)
 						)}
 					</TableBody>
 				</Table>
@@ -237,7 +181,7 @@ const useStyles = (theme: any) => ({
 		display: 'grid',
 		gridTemplateColumn: '1fr',
 		gap: theme.spacing(4),
-		border: `1px solid ${theme.palette.secondary.main}`,
+		// border: `1px solid ${theme.palette.secondary.main}`,
 		padding: '1.5rem 0px',
 		backgroundColor: grey[50],
 		borderRadius: theme.spacing(2),
@@ -298,4 +242,4 @@ const useStyles = (theme: any) => ({
 	},
 });
 
-export default AllReferralsTable;
+export default RefereesTable;

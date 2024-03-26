@@ -1,22 +1,100 @@
 import React, { CSSProperties } from 'react';
-import { Box, useTheme } from '@mui/material';
+import { useQuery } from 'react-query';
+import { useNavigate } from 'react-router-dom';
+import { Box, useTheme, CircularProgress, Typography } from '@mui/material';
 import { grey } from '@mui/material/colors';
 import Button from '../button';
 import AvaliableNetworkItem from './available-network-item';
+import { QueryKey, API_ENDPOINTS, LINKS } from 'utilities';
+import { useAppSelector } from 'store/hooks';
+import { useAlert, useHandleError } from 'hooks';
+import { networks } from 'api';
 
-const AvailableNetwork = () => {
+interface IAvailableNetwork {
+	type?: 'normal' | 'auto';
+}
+
+const AvailableNetwork: React.FC<IAvailableNetwork> = ({ type = 'normal' }) => {
 	const theme = useTheme();
+	const handleError = useHandleError();
+	const setAlert = useAlert();
+	const navigate = useNavigate();
 	const styles = useStyles(theme);
+	const { token } = useAppSelector((store) => store.authState);
+
+	const { isLoading, data } = useQuery(
+		[QueryKey.ConvertNetwork, type],
+		() =>
+			networks({
+				url:
+					type === 'normal'
+						? API_ENDPOINTS.ConvertNetworks
+						: API_ENDPOINTS.AutoConvertNetwork,
+			}),
+		{
+			enabled: !!token,
+			refetchOnWindowFocus: false,
+			onSettled: (data, error) => {
+				if (error) {
+					const response = handleError({ error });
+					if (response?.message) {
+						setAlert({ message: response.message, type: 'error' });
+					}
+				}
+			},
+		}
+	);
+
+	const handleClick = () => {
+		if (data && data.payload.length > 0) {
+			navigate(
+				type === 'normal'
+					? LINKS.ConversionNetwork
+					: LINKS.AutoConversionNetwork
+			);
+		} else {
+			console.log('Add network');
+		}
+	};
+
 	return (
-		<Box style={styles.container}>
-			<Box style={styles.main}>
-				<AvaliableNetworkItem name={'MTN'} value={18} />
-				<AvaliableNetworkItem name={'Airtel'} value={18} />
-				<AvaliableNetworkItem name={'(9Mobile)'} value={18} />
-				<AvaliableNetworkItem name={'Glo'} value={18} />
-			</Box>
-			<Button style={styles.editBtn as CSSProperties}>Edit Network</Button>
-		</Box>
+		<>
+			{isLoading ? (
+				<Box style={styles.circularProgress as CSSProperties}>
+					<CircularProgress sx={{ color: theme.palette.secondary.main }} />
+					<Typography
+						sx={{ color: theme.palette.secondary.main }}
+						variant={'body2'}
+					>
+						Loading...
+					</Typography>
+				</Box>
+			) : (
+				<Box style={styles.container}>
+					{data && data.payload.length > 0 ? (
+						<Box style={styles.main}>
+							{data.payload.map(
+								(network: { [key: string]: any }, key: number) => (
+									<AvaliableNetworkItem
+										key={key}
+										name={network.name || ''}
+										rate={network.rate || ''}
+									/>
+								)
+							)}
+						</Box>
+					) : (
+						<Typography>No available network</Typography>
+					)}
+					<Button
+						onClick={() => handleClick()}
+						style={styles.editBtn as CSSProperties}
+					>
+						{data && data.payload.length > 0 ? 'View Networks' : 'Add network'}
+					</Button>
+				</Box>
+			)}
+		</>
 	);
 };
 
@@ -34,10 +112,10 @@ const useStyles = (theme: any) => ({
 	main: {
 		display: 'grid',
 		gridTemplateColumns: 'repeat(2, 1fr)',
-		alignItems: 'center',
+		// alignItems: 'center',
 		justifyContent: 'space-between',
 		rowGap: theme.spacing(3),
-		columnGap: theme.spacing(2),
+		columnGap: theme.spacing(3),
 	},
 	verticalLine: {
 		width: '3px',
@@ -52,6 +130,13 @@ const useStyles = (theme: any) => ({
 		fontSize: '12px',
 		textTransform: 'uppercase',
 		alignSelf: 'flex-end',
+	},
+	circularProgress: {
+		display: 'flex',
+		flexDirection: 'column',
+		alignItems: 'center',
+		justifyContent: 'center',
+		gap: '8px',
 	},
 });
 

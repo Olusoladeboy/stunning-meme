@@ -1,31 +1,33 @@
 import React, { CSSProperties } from 'react';
 import { Box, Avatar, Typography, useTheme } from '@mui/material';
+import { ManagerDetailsData, User } from 'utilities/types';
+
+interface ManagerDetails extends ManagerDetailsData {
+	// role?: string;
+	verifiedStatus?: boolean;
+}
 
 type Props = {
-	details?: { [key: string]: any };
+	user: User | null;
+	userType?: 'user' | 'manager';
 };
 
-const UserAvatarWithDetails = ({ details }: Props) => {
+const UserAvatarWithDetails = ({ user, userType = 'user' }: Props) => {
 	const theme = useTheme();
 	const styles = useStyles(theme);
 	return (
 		<Box style={styles.container}>
-			<Avatar src={(details && details.avatar) || ''} style={styles.avatar} />
+			<Avatar src={(user && user.avatar) || ''} style={styles.avatar} />
 			<Box style={styles.detailsWrapper as CSSProperties}>
-				<Typography style={styles.text} variant={'body1'}>
-					{details && details.name}
+				<Typography style={styles.nameText} variant={'body1'}>
+					{user && `${user?.firstname || ''} ${user?.lastname || ''}`}
 				</Typography>
 				<Typography style={styles.text} variant={'body1'}>
-					{details && details.email}
+					{user && user.email}
 				</Typography>
-				{details && details.verifiedStatev && (
+				{user && user.verified && (
 					<Typography style={styles.text} variant={'body1'}>
 						Verified Status
-					</Typography>
-				)}
-				{details && details.role && (
-					<Typography style={styles.text} variant={'body1'}>
-						{details.role}
 					</Typography>
 				)}
 			</Box>
@@ -47,6 +49,10 @@ const useStyles = (theme: any) => ({
 		display: 'flex',
 		flexDirection: 'column',
 		gap: theme.spacing(2),
+	},
+	nameText: {
+		fontSize: '18px',
+		fontWeight: '600',
 	},
 	text: {
 		fontWeight: '600',

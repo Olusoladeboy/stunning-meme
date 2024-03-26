@@ -1,26 +1,37 @@
-import React, { CSSProperties, useState } from 'react';
-import Table from '@mui/material/Table';
-import Box from '@mui/material/Box';
-import { Avatar, Typography, useTheme } from '@mui/material';
-import TableBody from '@mui/material/TableBody';
-import TableHead from '@mui/material/TableHead';
+import React, { CSSProperties } from 'react';
+import {
+	Avatar,
+	useTheme,
+	TableBody,
+	Box,
+	TableHead,
+	Table,
+} from '@mui/material';
 import { grey } from '@mui/material/colors';
-import { SUCCESS_COLOR, BOX_SHADOW } from '../../utilities/constant';
-import FilterIcon from '../icons/filter';
+import { SUCCESS_COLOR, BOX_SHADOW } from 'utilities/constant';
 import {
 	StyledTableCell as TableCell,
 	StyledTableRow as TableRow,
 } from './components';
 import TableHeader from '../header/table-header';
-import Empty from '../empty';
-import Pagination from '../pagination';
-import Button from '../button';
+import { User } from 'utilities/types';
+import Loader from '../loader/table-loader';
+import Empty from '../empty/table-empty';
+import UnsuspendUser from '../unsuspend-user';
+import CustomTableCell from './components/custom-table-cell';
+import { useAppSelector } from 'store/hooks';
 
-const SuspensionTable = () => {
-	const [data] = useState<{ [key: string]: any }[] | null>(null);
+type Props = {
+	users: User[] | null;
+	isLoading: boolean;
+};
 
+const SuspensionTable = ({ users, isLoading }: Props) => {
 	const theme = useTheme();
 	const styles = useStyles(theme);
+	const { canCreateOrUpdateRecord } = useAppSelector(
+		(store) => store.authState
+	);
 	return (
 		<>
 			<Box style={styles.container} sx={{ overflow: 'auto' }}>
@@ -41,28 +52,10 @@ const SuspensionTable = () => {
 						}}
 					>
 						<TableRow>
-							<TableCell />
-							<TableCell>
-								<Box style={styles.filterWrapper}>
-									<Typography variant={'body1'}>Name</Typography>
-									<FilterIcon />
-								</Box>
-							</TableCell>
-							<TableCell>
-								<Box style={styles.filterWrapper}>
-									<Typography variant={'body1'}>
-										Suspension/Deletion Note
-									</Typography>
-									<FilterIcon />
-								</Box>
-							</TableCell>
-							<TableCell>
-								<Box style={styles.filterWrapper}>
-									<Typography variant={'body1'}>Status</Typography>
-									<FilterIcon />
-								</Box>
-							</TableCell>
-							<TableCell>Action</TableCell>
+							<CustomTableCell label={'Name'} />
+							<CustomTableCell label={'Suspension/Deletion Note'} />
+							<CustomTableCell label={'Status'} />
+							{canCreateOrUpdateRecord && <CustomTableCell label={'Action'} />}
 						</TableRow>
 					</TableHead>
 					<TableBody
@@ -72,45 +65,58 @@ const SuspensionTable = () => {
 							},
 						}}
 					>
-						{data && data.length > 0 ? (
-							data.map((row, key) => (
-								<TableRow key={key}>
-									<TableCell sx={{ maxWidth: '30px' }}>
-										<Avatar src={row.avatar} />
-									</TableCell>
-									<TableCell>{row.name}</TableCell>
-									<TableCell>{row.email}</TableCell>
-									<TableCell>{row.number_of_referees}</TableCell>
-									<TableCell>
-										<Button
-											size={'small'}
-											style={styles.suspendBtn as CSSProperties}
-										>
-											unsuspend
-										</Button>
-									</TableCell>
-								</TableRow>
-							))
+						{isLoading ? (
+							<Loader colSpan={5} />
 						) : (
-							<TableRow>
-								<TableCell colSpan={6}>
-									<Empty text={'No suspension records'} />
-								</TableCell>
-							</TableRow>
+							users && (
+								<>
+									{users && users.length > 0 ? (
+										users.map((row, key) => (
+											<TableRow key={key}>
+												<TableCell>
+													<Box
+														sx={{
+															display: 'flex',
+															alignItems: 'center',
+															gap: '10px',
+														}}
+													>
+														<Avatar src={row.avatar} />
+														<span>
+															{row.firstname} {row.lastname}
+														</span>
+													</Box>
+												</TableCell>
+												<TableCell>{row.suspensionReason}</TableCell>
+												<TableCell>
+													{row.suspended
+														? 'Suspended'
+														: row.deleted
+														? 'Deleted'
+														: ''}
+												</TableCell>
+												{canCreateOrUpdateRecord && (
+													<TableCell>
+														<UnsuspendUser
+															user={row}
+															text={'unsuspend'}
+															buttonProps={{
+																size: 'small',
+																style: styles.suspendBtn as CSSProperties,
+															}}
+														/>
+													</TableCell>
+												)}
+											</TableRow>
+										))
+									) : (
+										<Empty colSpan={5} text={'No suspension records'} />
+									)}
+								</>
+							)
 						)}
 					</TableBody>
 				</Table>
-				<Pagination
-					sx={{
-						display: 'flex',
-						justifyContent: 'flex-end',
-						marginTop: theme.spacing(4),
-						marginRight: '1rem',
-					}}
-					size={'large'}
-					shape={'rounded'}
-					variant={'outlined'}
-				/>
 			</Box>
 		</>
 	);

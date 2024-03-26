@@ -5,7 +5,7 @@ const USERS = [
 		phone_number: '09092562991',
 		date: '30/03/22',
 		status: 'verified',
-		avatar: require('../../assets/images/user.png'),
+		avatar: require('assets/images/user.png'),
 	},
 	{
 		name: 'Bisoye Amadi',

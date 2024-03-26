@@ -1,14 +1,18 @@
 import React, { useState } from 'react';
 import { Box, useTheme } from '@mui/material';
 import { grey } from '@mui/material/colors';
-import Layout from '../../components/layout';
-import { BOX_SHADOW } from '../../utilities/constant';
-import BackButton from '../../components/back-button';
-import UploadImage from '../../components/form-components/upload-image';
-import ImagePreview from '../../components/image-preview';
-import PushNotificationForm from '../../components/forms/push-notification-form';
+import {
+	Layout,
+	PushNotificationForm,
+	ImagePreview,
+	UploadImage,
+} from 'components';
+import { BOX_SHADOW } from 'utilities/constant';
+import BackButton from 'components/back-button';
+import { usePageTitle } from 'hooks';
 
 const PushNotification = () => {
+	usePageTitle('Push Notification');
 	const theme = useTheme();
 	const styles = useStyles(theme);
 	const [file, setFile] = useState<any | null>(null);

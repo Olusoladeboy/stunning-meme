@@ -125,7 +125,6 @@ const NinVerificationTable = ({
 							<CustomTableCell label={'Last Name'} />
 							<CustomTableCell label={'Phone'} />
 							<CustomTableCell label={'NIN'} />
-							<CustomTableCell label={'Date of birth'} />
 							<CustomTableCell label={'Status'} />
 							<CustomTableCell label={'Action'} />
 						</TableRow>
@@ -139,7 +138,7 @@ const NinVerificationTable = ({
 							}}
 						>
 							{isLoading ? (
-								<Loader colSpan={7} />
+								<Loader colSpan={6} />
 							) : (
 								verifications && (
 									<>
@@ -158,11 +157,6 @@ const NinVerificationTable = ({
 
 													<TableCell style={styles.tableText}>
 														{row?.request?.payload}
-													</TableCell>
-
-													<TableCell style={styles.tableText}>
-														{row?.request?.dob &&
-															moment(row?.request.dob).format('ll')}
 													</TableCell>
 
 													<TableCell
@@ -209,7 +203,7 @@ const NinVerificationTable = ({
 											))
 										) : (
 											<TableRow>
-												<TableCell colSpan={7}>
+												<TableCell colSpan={6}>
 													<Empty text={'No NIN Verification record'} />
 												</TableCell>
 											</TableRow>

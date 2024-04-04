@@ -104,7 +104,7 @@ const TransactionsTab: React.FC<Props> = ({ currentTab, changeCurrentTab }) => {
 					>
 						Successful Transactions
 					</Typography>
-				</TransactionItem>{' '}
+				</TransactionItem>
 				<TransactionItem
 					isBorder
 					onClick={() => handleChangeTab(TRANSACTIONS_TAB.PENDING)}

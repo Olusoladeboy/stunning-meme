@@ -102,7 +102,7 @@ const TransactionsTab: React.FC<Props> = ({ currentTab, changeCurrentTab }) => {
 						}}
 						variant={'body1'}
 					>
-						Approved Transactions
+						Successful Transactions
 					</Typography>
 				</TransactionItem>{' '}
 				<TransactionItem

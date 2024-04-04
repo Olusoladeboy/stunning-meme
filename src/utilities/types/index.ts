@@ -336,25 +336,28 @@ export type SuspendUser = {
 };
 
 export type Statistics = {
-  total_transactions: number;
-  total_users: number;
-  total_conversions: number;
-  total_verified_users: number;
-  total_unverified_users: number;
-  total_deactivated_users: number;
-  total_deleted_users: number;
-  total_suspended_users: number;
-  total_airtime_converted: number;
-  total_auto_airtime_converted: number;
-  total_auto_airtime_conversions: number;
-  total_data_sold: number;
-  total_amount_withdrawn: number;
-  total_wallet_transfer: number;
-  total_wallet_transaction: {
-    credit: number;
-    debit: number;
-  };
-  total_wallet_balance: number;
+	total_transactions: number;
+	total_pending_transactions: number;
+	total_successful_transactions: number;
+	total_failed_transactions: number;
+	total_users: number;
+	total_conversions: number;
+	total_verified_users: number;
+	total_unverified_users: number;
+	total_deactivated_users: number;
+	total_deleted_users: number;
+	total_suspended_users: number;
+	total_airtime_converted: number;
+	total_auto_airtime_converted: number;
+	total_auto_airtime_conversions: number;
+	total_data_sold: number;
+	total_amount_withdrawn: number;
+	total_wallet_transfer: number;
+	total_wallet_transaction: {
+		credit: number;
+		debit: number;
+	};
+	total_wallet_balance: number;
 };
 
 export interface Amount {
@@ -362,24 +365,24 @@ export interface Amount {
 }
 
 export interface IVerification {
-  status: string;
-  user: User;
-  request: {
-    type: string;
-    firstname: string;
-    lastname: string;
-    phone: string;
-    payload: string;
-    dob?: string;
-  };
-  level: number;
-  payload: string;
-  type: string;
-  channel: string;
-  code: string;
-  createdAt: string;
-  updatedAt: string;
-  id: string;
+	status: string;
+	user: User;
+	request: {
+		type: string;
+		firstname: string;
+		lastname: string;
+		phone: string;
+		payload: string;
+		dob?: string;
+	};
+	level: number;
+	payload: string;
+	type: string;
+	channel: string;
+	code: string;
+	createdAt: string;
+	updatedAt: string;
+	id: string;
 }
 
 export interface Coupon {

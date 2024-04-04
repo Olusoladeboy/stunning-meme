@@ -337,6 +337,9 @@ export type SuspendUser = {
 
 export type Statistics = {
 	total_transactions: number;
+	total_pending_transactions: number;
+	total_successful_transactions: number;
+	total_failed_transactions: number;
 	total_users: number;
 	total_conversions: number;
 	total_verified_users: number;
@@ -370,7 +373,7 @@ export interface IVerification {
 		lastname: string;
 		phone: string;
 		payload: string;
-		dob?: string
+		dob?: string;
 	};
 	level: number;
 	payload: string;

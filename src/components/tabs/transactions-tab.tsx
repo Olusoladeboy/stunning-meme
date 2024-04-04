@@ -30,7 +30,7 @@ const TransactionsTab: React.FC<Props> = ({ currentTab, changeCurrentTab }) => {
 			<Box
 				sx={{
 					display: 'grid',
-					gridTemplateColumns: 'repeat(5, 1fr)',
+					gridTemplateColumns: 'repeat(4, 1fr)',
 					gap: (theme) => theme.spacing(3),
 					overflow: 'auto',
 				}}
@@ -82,7 +82,7 @@ const TransactionsTab: React.FC<Props> = ({ currentTab, changeCurrentTab }) => {
 							? grey[50]
 							: SECOUNDARY_COLOR
 					}
-					amount={statistics ? statistics.total_transactions : '0'}
+					amount={statistics ? statistics.total_successful_transactions : '0'}
 					icon={
 						<ApprovedIcon
 							color={
@@ -119,7 +119,7 @@ const TransactionsTab: React.FC<Props> = ({ currentTab, changeCurrentTab }) => {
 							? grey[50]
 							: SECOUNDARY_COLOR
 					}
-					amount={statistics ? statistics.total_transactions : '0'}
+					amount={statistics ? statistics.total_pending_transactions : '0'}
 					icon={
 						<PendingIcon
 							color={
@@ -154,7 +154,7 @@ const TransactionsTab: React.FC<Props> = ({ currentTab, changeCurrentTab }) => {
 					amountColor={
 						currentTab === TRANSACTIONS_TAB.FAILED ? grey[50] : SECOUNDARY_COLOR
 					}
-					amount={statistics ? statistics.total_suspended_users : '0'}
+					amount={statistics?.total_failed_transactions || '0'}
 					icon={
 						<SuspensionIcon
 							color={
@@ -174,7 +174,7 @@ const TransactionsTab: React.FC<Props> = ({ currentTab, changeCurrentTab }) => {
 						}}
 						variant={'body1'}
 					>
-						Declined Transactions
+						Failed Transactions
 					</Typography>
 				</TransactionItem>
 			</Box>

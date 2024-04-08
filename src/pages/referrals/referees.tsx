@@ -41,6 +41,7 @@ const Referees = () => {
 			}),
 		{
 			enabled: !!token,
+			refetchOnWindowFocus: false,
 			onSettled: (data: any, error) => {
 				if (error) {
 					const response = handleError({ error });

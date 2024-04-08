@@ -127,10 +127,20 @@ const TransactionsTable = ({ data, isLoading }: Props) => {
 													{data.reference}
 												</StyledTableCell>
 
-												<StyledTableCell style={styles.text}>
+												<StyledTableCell
+													sx={{
+														whiteSpace: 'nowrap',
+													}}
+													style={styles.text}
+												>
 													{moment.utc(data.createdAt).format('ll')}
 												</StyledTableCell>
-												<StyledTableCell style={styles.text}>
+												<StyledTableCell
+													sx={{
+														whiteSpace: 'nowrap',
+													}}
+													style={styles.text}
+												>
 													{moment.utc(data.createdAt).format('LT')}
 												</StyledTableCell>
 												<StyledTableCell>

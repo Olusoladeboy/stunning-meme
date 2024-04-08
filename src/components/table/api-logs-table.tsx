@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { Table, TableBody, TableHead, useTheme, Box } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 import moment from 'moment';
 import { grey } from '@mui/material/colors';
 import JsonFormatter from 'react-json-formatter';
-import { IApiLog, extractUserName } from 'utilities';
+import { IApiLog, LINKS, extractUserName } from 'utilities';
 import {
 	StyledTableCell as TableCell,
 	StyledTableRow as TableRow,
@@ -21,6 +22,7 @@ interface Props {
 
 const ApiLogsTable: React.FC<Props> = ({ data, isLoading }) => {
 	const theme = useTheme();
+	const navigate = useNavigate();
 
 	const jsonStyle = {
 		propertyStyle: { color: 'red' },
@@ -34,6 +36,13 @@ const ApiLogsTable: React.FC<Props> = ({ data, isLoading }) => {
 		const jsonObj = log.api_log;
 
 		setJsonData(JSON.stringify(jsonObj));
+	};
+
+	const handleViewProfile = (log: IApiLog) => {
+		const id = typeof log.user === 'object' && log.user.id;
+		const link = `${LINKS.Users}/${id}`;
+
+		navigate(link);
 	};
 
 	return (
@@ -67,6 +76,8 @@ const ApiLogsTable: React.FC<Props> = ({ data, isLoading }) => {
 						<CustomTableCell label={'User Name'} />
 						<CustomTableCell label={'User Email'} />
 						<CustomTableCell label={'Date'} />
+						<CustomTableCell label={'Time'} />
+						<CustomTableCell label={'Profile'} />
 						<CustomTableCell label={'View'} />
 					</TableRow>
 				</TableHead>
@@ -78,13 +89,13 @@ const ApiLogsTable: React.FC<Props> = ({ data, isLoading }) => {
 					}}
 				>
 					{isLoading ? (
-						<TableLoader colSpan={4} />
+						<TableLoader colSpan={6} />
 					) : (
 						data && (
 							<>
 								{data.length > 0 ? (
 									data.map((row: IApiLog) => (
-										<TableRow onClick={() => handleViewLog(row)} key={row.id}>
+										<TableRow key={row.id}>
 											<TableCell>{row.reference}</TableCell>
 											<TableCell>
 												{typeof row.user === 'object' &&
@@ -97,6 +108,14 @@ const ApiLogsTable: React.FC<Props> = ({ data, isLoading }) => {
 												{moment.utc(row.createdAt).format('l')}
 											</TableCell>
 											<TableCell>
+												{moment.utc(row.createdAt).format('LT')}
+											</TableCell>
+											<TableCell>
+												<Button onClick={() => handleViewProfile(row)}>
+													View profile
+												</Button>
+											</TableCell>
+											<TableCell>
 												<Button onClick={() => handleViewLog(row)}>
 													View log
 												</Button>
@@ -105,7 +124,7 @@ const ApiLogsTable: React.FC<Props> = ({ data, isLoading }) => {
 									))
 								) : (
 									<TableRow>
-										<TableCell colSpan={4}>
+										<TableCell colSpan={6}>
 											<Empty text={'No api log(s)'} />
 										</TableCell>
 									</TableRow>

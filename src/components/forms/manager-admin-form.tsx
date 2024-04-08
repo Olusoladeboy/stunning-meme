@@ -1,4 +1,4 @@
-import React, { CSSProperties, useEffect, useState } from 'react';
+import React, { CSSProperties } from 'react';
 import { Box, useTheme, Typography, MenuItem } from '@mui/material';
 import { useFormik } from 'formik';
 import { useMutation, useQueryClient } from 'react-query';
@@ -32,13 +32,9 @@ const ManagerAdminForm = ({ type, callback, managerDetails }: Props) => {
 	const styles = useStyles(theme);
 	const queryClient = useQueryClient();
 
-	const [isEdit, setEdit] = useState<boolean>(false);
-
-	useEffect(() => {
-		if (managerDetails && Object.values(managerDetails).length > 0) {
-			setEdit(true);
-		}
-	}, [managerDetails]);
+	const isEdit = Boolean(
+		managerDetails && Object.values(managerDetails).length > 0
+	);
 
 	const initialValues: User = {
 		firstname: '',
@@ -186,7 +182,9 @@ const ManagerAdminForm = ({ type, callback, managerDetails }: Props) => {
 					gap: theme.spacing(4),
 				}}
 			>
-				<UploadUserAvatar managerId={managerDetails?.id as string} />
+				{isEdit && (
+					<UploadUserAvatar managerId={managerDetails?.id as string} />
+				)}
 				<Box
 					sx={{
 						display: 'grid',

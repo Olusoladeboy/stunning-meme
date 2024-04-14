@@ -48,6 +48,10 @@ const WithdrawalTransactionsTable = ({ data, isLoading }: Props) => {
 								label={'Withdrawal Channel'}
 							/>
 							<CustomTableCell style={styles.headTableCell} label={'Amount'} />
+							<CustomTableCell
+								style={styles.headTableCell}
+								label={'Account Number'}
+							/>
 							<CustomTableCell style={styles.headTableCell} label={'Type'} />
 							<CustomTableCell style={styles.headTableCell} label={'Date'} />
 							<CustomTableCell style={styles.headTableCell} label={'Status'} />
@@ -61,7 +65,7 @@ const WithdrawalTransactionsTable = ({ data, isLoading }: Props) => {
 						}}
 					>
 						{isLoading ? (
-							<TableLoader colSpan={7} />
+							<TableLoader colSpan={8} />
 						) : (
 							data && (
 								<>
@@ -81,6 +85,9 @@ const WithdrawalTransactionsTable = ({ data, isLoading }: Props) => {
 													{value.withdrawalChannel}
 												</StyledTableCell>
 												<StyledTableCell style={styles.text}>
+													{value.accountNumber}
+												</StyledTableCell>
+												<StyledTableCell style={styles.text}>
 													{formatNumberToCurrency(value.amount)}
 												</StyledTableCell>
 												<StyledTableCell style={styles.text}>
@@ -95,7 +102,7 @@ const WithdrawalTransactionsTable = ({ data, isLoading }: Props) => {
 											</StyledTableRow>
 										))
 									) : (
-										<Empty colSpan={7} text={'No available Withdrawal'} />
+										<Empty colSpan={8} text={'No available Withdrawal'} />
 									)}
 								</>
 							)

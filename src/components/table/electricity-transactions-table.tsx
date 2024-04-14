@@ -77,11 +77,11 @@ const ElectricityTransactionsTable = ({ data, isLoading }: Props) => {
 									style={styles.headTableCell}
 									label={'Service provider'}
 								/>
+								<CustomTableCell style={styles.headTableCell} label={'User'} />
 								<CustomTableCell
 									style={styles.headTableCell}
 									label={'Amount'}
 								/>
-								<CustomTableCell style={styles.headTableCell} label={'User'} />
 								<CustomTableCell style={styles.headTableCell} label={'Data'} />
 
 								<CustomTableCell
@@ -113,14 +113,15 @@ const ElectricityTransactionsTable = ({ data, isLoading }: Props) => {
 														{value.name.replace(/_/g, ' ')}
 													</StyledTableCell>
 													<StyledTableCell style={styles.text}>
-														{formatNumberToCurrency(value.amount)}
-													</StyledTableCell>
-													<StyledTableCell style={styles.text}>
 														{value.user &&
 															typeof value.user === 'object' &&
 															Object.keys(value.user).length > 0 &&
 															extractUserName(value.user)}
 													</StyledTableCell>
+													<StyledTableCell style={styles.text}>
+														{formatNumberToCurrency(value.amount)}
+													</StyledTableCell>
+
 													<StyledTableCell style={styles.text}>
 														{moment(value.createdAt).format('ll')}
 													</StyledTableCell>

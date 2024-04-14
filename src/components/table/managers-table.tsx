@@ -182,7 +182,9 @@ const ManagersTable = ({
 													{moment.utc(data.createdAt).format('l')}
 												</TableCell>
 
-												<TableCell style={styles.tableText}>{0}</TableCell>
+												<TableCell style={styles.tableText}>
+													{data?.users}
+												</TableCell>
 											</TableRow>
 										))
 									) : (

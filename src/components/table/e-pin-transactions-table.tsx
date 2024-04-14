@@ -34,8 +34,8 @@ const EPinTransactionsTable = ({ data, isLoading }: Props) => {
 						}}
 					>
 						<StyledTableRow>
-							<CustomTableCell style={styles.headTableCell} label={'Name'} />
 							<CustomTableCell style={styles.headTableCell} label={'Service'} />
+							<CustomTableCell style={styles.headTableCell} label={'User'} />
 							<CustomTableCell style={styles.headTableCell} label={'Network'} />
 							<CustomTableCell style={styles.headTableCell} label={'Pin'} />
 							<CustomTableCell style={styles.headTableCell} label={'Amount'} />
@@ -59,14 +59,15 @@ const EPinTransactionsTable = ({ data, isLoading }: Props) => {
 										data.map((value) => (
 											<StyledTableRow key={value.id}>
 												<StyledTableCell style={styles.text}>
+													{value.service}
+												</StyledTableCell>
+												<StyledTableCell style={styles.text}>
 													{value.user &&
 														typeof value.user === 'object' &&
 														Object.keys(value.user).length > 0 &&
 														extractUserName(value.user)}
 												</StyledTableCell>
-												<StyledTableCell style={styles.text}>
-													{value.service}
-												</StyledTableCell>
+
 												<StyledTableCell style={styles.text}>
 													{value.pin_data &&
 														value.pin_data.network &&

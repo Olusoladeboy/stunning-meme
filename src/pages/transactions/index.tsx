@@ -143,6 +143,7 @@ const AllTransactions = () => {
 	};
 
 	const switchUserType = (type?: string) => {
+		setTransactionService('');
 		switch (type) {
 			case TRANSACTIONS_TAB.ALL:
 				setCurrentTab(TRANSACTIONS_TAB.ALL);

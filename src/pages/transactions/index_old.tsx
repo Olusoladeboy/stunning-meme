@@ -1,321 +1,481 @@
-import React, {
-	useState,
-	useEffect,
-	CSSProperties,
-	MouseEvent,
-	useRef,
-} from 'react';
-import queryString from 'query-string';
-import {
-	Box,
-	Button,
-	ClickAwayListener,
-	List,
-	ListItemButton,
-	Popper,
-	useTheme,
-} from '@mui/material';
-import { useQuery } from 'react-query';
-import { useNavigate, useLocation } from 'react-router-dom';
+import React, { useState, useRef } from 'react';
+import { Box, Typography, styled } from '@mui/material';
 import { grey } from '@mui/material/colors';
 import {
+	DataSubscriptionTable,
 	Layout,
-	TransactionsTable,
-	Pagination,
-	TableHeader,
-	TransactionsTab,
-	TransactionMainBalance,
+	SearchStatistics,
+	StatisticTab,
+	StatisticsTotal,
+	AirtimePurchaseTable,
+	ConversionsTable,
+	CableTransactionsTable,
+	InternetTransactionsTable,
+	EducationTransactionsTable,
+	ElectricityTransactionsTable,
+	WalletTransferTransactionsTable,
+	WithdrawalTransactionsTable,
+	AutoAirtimeConversionTransactionsTable,
+	CardTopUpTransactionsTable,
+	BettingTransactionsTable,
+	EPinTransactionsTable,
+	ReversalTransactionsTable,
 	TablePagination,
+	TransactionMainBalance,
+	TransactionsTab,
 } from 'components';
 import {
 	BOX_SHADOW,
-	QueryKeys,
-	MAX_RECORDS,
-	LINKS,
-	TRANSACTIONS_TAB,
-	TRANSACTION_SERVICE,
+	RouteGuard,
+	ADMIN_ROLE,
+	SERVICES,
+	Metadata,
+	IPurchasedBill,
+	IWithdrawal,
+	IEpin,
+	IFunding,
+	ITransfer,
+	STATISTIC_TAB,
+	getFilterDateRange,
 } from 'utilities';
-import { allTransactions } from 'api';
 import {
-	useHandleError,
-	useAlert,
-	useSearchTransaction,
 	usePageTitle,
+	useQueryAirtimeTransactions,
+	useQueryWalletWithdrawals,
+	useQueryConvertAirtimes,
+	useQueryAutoConvertAirtimes,
+	useQueryDataSubscriptions,
+	useQueryBillTransactions,
+	useQueryEPinTransactions,
+	useQueryWalletFundings,
+	useQueryWalletTransfers,
 } from 'hooks';
-import { ArrowDropDown } from '@mui/icons-material';
 import { useAppSelector } from 'store/hooks';
 
-const AllTransactions = () => {
-	usePageTitle('All Transactions');
-	const theme = useTheme();
-	const handleError = useHandleError();
-	const styles = useStyles(theme);
-	const alert = useAlert();
-	const navigate = useNavigate();
-	const [count, setCount] = useState<number>(1);
-	const location = useLocation();
-	const query = queryString.parse(location.search);
-	const [page, setPage] = useState<number>(Number(query?.page) || 1);
-	const [total, setTotal] = useState<number>(0);
-	const maxRecordRef = useRef<number>(MAX_RECORDS);
+type TDataStatistics = {
+	service: string;
+	data: { [key: string]: any }[] | null;
+};
 
+const Statistics = () => {
+	usePageTitle('Statistics');
+
+	const [total, setTotal] = useState(0);
+	const [currentPage, setCurrentPage] = useState(1);
 	const { canViewStatistics } = useAppSelector((store) => store.authState);
+	const [selectedFilter, setSelectedFilter] = useState<string>(
+		STATISTIC_TAB.ALL_TIME
+	);
 
-	const [serviceAnchorEl, setServiceAnchorEl] = useState<null | HTMLElement>(
+	const filterUrlEntries = useRef<null | { [key: string]: any }>(null);
+
+	const queryValues = useRef<null | { [key: string]: any }>(null);
+
+	const maxRecordRef = useRef<number>(20);
+	const skipValue = useRef<number>(0);
+
+	const [dataStatistics, setDataStatistics] = useState<null | TDataStatistics>(
 		null
 	);
-	const [transactionService, setTransactionService] = useState<string>('');
-	const { isSearching, searchTransaction, clearSearch, search } =
-		useSearchTransaction();
-	const [isLoad, setLoad] = useState<boolean>(false);
-	const [currentTab, setCurrentTab] = useState(TRANSACTIONS_TAB.ALL);
-	const [transactionStatus, setTransactionStatus] = useState<string>('');
 
-	const handleServiceClick = (e: MouseEvent<HTMLElement>) => {
-		setServiceAnchorEl(serviceAnchorEl ? null : e.currentTarget);
+	const handleSetDataStatistics = (data: TDataStatistics) => {
+		setDataStatistics(data);
 	};
 
-	useEffect(
-		() => {
-			setLoad(true);
-			// if (query && query.page) {
-			// 	setPage(parseInt(query.page as string));
-			// }
-		},
-		// eslint-disable-next-line
-		[]
-	);
+	const handleSetTotal = (metadata: Metadata) => {
+		if (metadata?.total) {
+			const total = metadata?.total;
 
-	useEffect(
-		() => {
-			if (query && query.page) {
-				setPage(parseInt(query.page as string));
-			}
-		},
-		// eslint-disable-next-line
-		[query]
-	);
-
-	const { isLoading, data, refetch } = useQuery(
-		[QueryKeys.Transactions, query.page, transactionService, transactionStatus],
-		() =>
-			allTransactions({
-				params: {
-					sort: '-createdAt',
-					limit: maxRecordRef.current,
-					skip: (page - 1) * maxRecordRef.current,
-					service: transactionService,
-					status: transactionStatus,
-					populate: 'network,plan,dataType',
-				},
-			}),
-		{
-			retry: 2,
-			enabled: isLoad,
-			refetchOnWindowFocus: false,
-			onSettled: (data: any, error) => {
-				setLoad(false);
-				if (error) {
-					const response = handleError({ error });
-					if (response?.message) {
-						alert({ message: response.message, type: 'error' });
-					}
-				}
-				if (data && data.success) {
-					const total = data.metadata.total;
-					setTotal(data.metadata.total);
-					const count = Math.ceil(total / maxRecordRef.current);
-					setCount(count);
-				}
-			},
+			setTotal(total);
 		}
-	);
-
-	const handlePageChange = (page: number) => {
-		if (page !== 1) {
-			setPage(page);
-			navigate(`${LINKS.Transactions}?page=${page}`);
-		} else {
-			navigate(LINKS.Transactions);
-			setPage(page);
-		}
-		setLoad(true);
 	};
 
-	const switchUserType = (type?: string) => {
-		switch (type) {
-			case TRANSACTIONS_TAB.ALL:
-				setCurrentTab(TRANSACTIONS_TAB.ALL);
-				setTransactionStatus('');
-				setTransactionService('');
-				break;
-
-			case TRANSACTIONS_TAB.SUCCESSFUL:
-				setCurrentTab(TRANSACTIONS_TAB.SUCCESSFUL);
-				setTransactionStatus(TRANSACTIONS_TAB.SUCCESSFUL);
-				break;
-			case TRANSACTIONS_TAB.PENDING:
-				setCurrentTab(TRANSACTIONS_TAB.PENDING);
-				setTransactionStatus(TRANSACTIONS_TAB.PENDING);
-				break;
-			case TRANSACTIONS_TAB.FAILED:
-				setCurrentTab(TRANSACTIONS_TAB.FAILED);
-				setTransactionStatus(TRANSACTIONS_TAB.FAILED);
-				break;
-
-			default:
-				setCurrentTab(TRANSACTIONS_TAB.ALL);
-				setTransactionStatus('');
-				break;
+	const resetQueryValue = (service: string) => {
+		if (service !== queryValues?.current?.service) {
+			skipValue.current = 0;
+			filterUrlEntries.current = null;
+			setCurrentPage(1);
 		}
-		setLoad(true);
 	};
 
-	const handleFilter = (transactionService: string) => {
-		setServiceAnchorEl(null);
-		if (transactionService === 'ALL SERVICES') {
-			setTransactionService('');
-		} else {
-			setTransactionService(transactionService);
+	const { isLoadingDataSubscriptions, queryDataSubscriptions } =
+		useQueryDataSubscriptions((data, metadata) => {
+			handleSetTotal(metadata as Metadata);
+
+			setDataStatistics({
+				service: SERVICES.DATA_SUBSCRIPTION,
+				data,
+			});
+		});
+
+	const { queryAirtimeTransactions, isLoadingAirtimeTransactions } =
+		useQueryAirtimeTransactions((data, metadata) => {
+			handleSetTotal(metadata as Metadata);
+			setDataStatistics({
+				service: SERVICES.AIRTIME_TOP_UP,
+				data,
+			});
+		});
+
+	const { queryConvertAirtimes, isLoadingConvertAirtime } =
+		useQueryConvertAirtimes((data, metadata) => {
+			handleSetTotal(metadata as Metadata);
+			setDataStatistics({
+				service: SERVICES.AIRTIME_CONVERSION,
+				data,
+			});
+		});
+
+	const { queryAutoConvertAirtimes, isLoadingAutoConvertAirtime } =
+		useQueryAutoConvertAirtimes((data, metadata) => {
+			handleSetTotal(metadata as Metadata);
+			setDataStatistics({
+				service: SERVICES.AUTO_AIRTIME_CONVERSION,
+				data,
+			});
+		});
+
+	const { isLoadingBillTransactions, queryBillTransactions } =
+		useQueryBillTransactions(({ data, service, metadata }) => {
+			handleSetTotal(metadata as Metadata);
+			setDataStatistics({
+				service,
+				data,
+			});
+		});
+
+	const { isLoadingWalletWithdrawals, queryWalletWithdrawals } =
+		useQueryWalletWithdrawals((data, metadata) => {
+			handleSetTotal(metadata as Metadata);
+			setDataStatistics({
+				service: SERVICES.WITHDRAWAL,
+				data,
+			});
+		});
+
+	const { isLoadingEPinTransactions, queryEPinTransactions } =
+		useQueryEPinTransactions((data, metadata) => {
+			handleSetTotal(metadata as Metadata);
+			setDataStatistics({
+				service: SERVICES.EPIN,
+				data,
+			});
+		});
+
+	const { isLoadingWalletFundings, queryWalletFundings } =
+		useQueryWalletFundings((data, metadata) => {
+			handleSetTotal(metadata as Metadata);
+			setDataStatistics({
+				service: SERVICES.CARD_TOP_UP,
+				data,
+			});
+		});
+
+	const { isLoadingWalletTransfers, queryWalletTransfers } =
+		useQueryWalletTransfers((data, metadata) => {
+			handleSetTotal(metadata as Metadata);
+			setDataStatistics({
+				service: SERVICES.WALLET_TRANSFER,
+				data,
+			});
+		});
+
+	const isLoading =
+		isLoadingDataSubscriptions ||
+		isLoadingAirtimeTransactions ||
+		isLoadingConvertAirtime ||
+		isLoadingAutoConvertAirtime ||
+		isLoadingBillTransactions ||
+		isLoadingWalletWithdrawals ||
+		isLoadingEPinTransactions ||
+		isLoadingWalletFundings ||
+		isLoadingWalletTransfers;
+
+	const switchHandleSubmit = async (values: Record<string, any>) => {
+		let payload: { [key: string]: any } = {
+			populate: 'user,plan,dataType,network',
+			limit: maxRecordRef.current,
+			sort: '-createdAt',
+		};
+
+		resetQueryValue(values.service);
+
+		queryValues.current = values;
+
+		if (skipValue.current > 0) payload.skip = skipValue.current;
+
+		// console.log(filterUrlEntries.current);
+
+		if (filterUrlEntries.current)
+			payload = { ...payload, ...filterUrlEntries.current };
+
+		if (values.service === SERVICES.DATA_SUBSCRIPTION) {
+			if (values.plan) payload.plan = values.plan;
+			if (values.type) payload.dataType = values.type;
+			queryDataSubscriptions(payload);
+			return;
 		}
 
-		setLoad(true);
-	};
+		if (values.service === SERVICES.AIRTIME_TOP_UP) {
+			if (values.provider) payload.network = values.provider;
+			queryAirtimeTransactions(payload);
+			return;
+		}
 
-	const statusFilter = (
-		<ClickAwayListener onClickAway={() => setServiceAnchorEl(null)}>
-			<Box>
-				<Button
-					style={styles.button as CSSProperties}
-					onClick={(e) => handleServiceClick(e)}
-					variant={'outlined'}
-					endIcon={<ArrowDropDown />}
-				>
-					Filter by Service
-				</Button>
-				<Popper
-					sx={{ zIndex: theme.zIndex.modal }}
-					open={Boolean(serviceAnchorEl)}
-					anchorEl={serviceAnchorEl}
-				>
-					<List
-						sx={{
-							'& .MuiListItemButton-root': {
-								textTransform: 'capitalize',
-							},
-							'& .MuiListItemButton-root:hover': {
-								backgroundColor: theme.palette.primary.main,
-								color: grey[50],
-							},
-						}}
-						style={styles.list}
-					>
-						{Object.values({
-							ALL_SERVICES: 'ALL SERVICES',
-							...TRANSACTION_SERVICE,
-						}).map((value) => (
-							<ListItemButton
-								sx={{
-									textTransform: 'capitalize',
-								}}
-								onClick={() => handleFilter(value)}
-								key={value}
-							>
-								{value}
-							</ListItemButton>
-						))}
-					</List>
-				</Popper>
-			</Box>
-		</ClickAwayListener>
-	);
+		if (values.service === SERVICES.AIRTIME_CONVERSION) {
+			if (values.provider) payload.network = values.provider;
+			queryConvertAirtimes(payload);
+			return;
+		}
+
+		if (values.service === SERVICES.AUTO_AIRTIME_CONVERSION) {
+			if (values.provider) payload.network = values.provider;
+			queryAutoConvertAirtimes(payload);
+			return;
+		}
+
+		if (values.service === SERVICES.WITHDRAWAL) {
+			payload.populate = 'user';
+			queryWalletWithdrawals(payload);
+			return;
+		}
+
+		if (values.service === SERVICES.CARD_TOP_UP) {
+			payload.populate = 'user';
+			queryWalletFundings(payload);
+			return;
+		}
+
+		if (values.service === SERVICES.WALLET_TRANSFER) {
+			payload.populate = 'userTo,userFrom,transactionFrom';
+			queryWalletTransfers(payload);
+			return;
+		}
+
+		if (values.service === SERVICES.EPIN) {
+			payload.populate = 'user,pin_data.network';
+			queryEPinTransactions(payload);
+			return;
+		}
+
+		if (
+			values.service === SERVICES.CABLE ||
+			values.service === SERVICES.INTERNET ||
+			values.service === SERVICES.ELECTRICITY ||
+			values.service === SERVICES.EDUCATION ||
+			values.service === SERVICES.BETTING
+		) {
+			payload.type = values.service;
+			if (values.provider) payload.name = values.provider;
+
+			await queryBillTransactions(payload);
+			return;
+		}
+	};
 
 	const handleChangeRowsPerPage = (value: number) => {
 		maxRecordRef.current = value;
-		refetch();
+
+		switchHandleSubmit(queryValues?.current as any);
+	};
+
+	const handlePageChange = (page: number) => {
+		setCurrentPage(page);
+
+		skipValue.current = (page - 1) * maxRecordRef.current;
+
+		switchHandleSubmit(queryValues?.current as any);
+	};
+
+	// Filters
+
+	const handleSelectFilter = (filter: string) => {
+		setSelectedFilter(filter);
+		let filterBy = '';
+		if (filter === STATISTIC_TAB.LAST_7_DAY) {
+			filterBy = getFilterDateRange(7);
+		}
+
+		if (filter === STATISTIC_TAB.LAST_30_DAYS) {
+			filterBy = getFilterDateRange(30);
+		}
+
+		if (filter === STATISTIC_TAB.TODAY) {
+			const today = new Date().toISOString();
+			filterBy = getFilterDateRange(1);
+		}
+
+		if (filter === STATISTIC_TAB.ALL_TIME) {
+			filterBy = '';
+			filterUrlEntries.current = null;
+		}
+
+		console.log(filterBy);
+
+		if (filterBy) {
+			const searchParams = new URLSearchParams(filterBy);
+			filterUrlEntries.current = Object.fromEntries(searchParams);
+		}
+
+		if (queryValues?.current) switchHandleSubmit(queryValues?.current as any);
 	};
 
 	return (
 		<Layout>
-			<Box style={styles.container}>
-				<Box
-					sx={{
-						padding: { xs: '0px 15px', md: '0px 2rem' },
-						display: 'grid',
-						gap: '2rem',
-					}}
-				>
-					<TableHeader
-						searchPlaceholder={'Search transaction by reference'}
-						title={'Transactions'}
-						handleSearch={searchTransaction}
-						clearSearch={clearSearch}
-						statusFilter={statusFilter}
-					/>
-					{canViewStatistics && <TransactionMainBalance />}
-					<TransactionsTab
-						currentTab={currentTab}
-						changeCurrentTab={switchUserType}
-					/>
-				</Box>
+			<RouteGuard
+				roles={[
+					ADMIN_ROLE.SUPER_ADMIN,
+					ADMIN_ROLE.ADMIN,
+					ADMIN_ROLE.OPERATIONS,
+				]}
+			>
+				<Container>
+					<Box
+						sx={{
+							padding: ['1.5rem'],
+							display: 'grid',
+							gap: (theme) => theme.spacing(4),
+						}}
+					>
+						<Title variant={'h5'}>Transactions</Title>
+						{canViewStatistics && <TransactionMainBalance />}
+						<TransactionsTab
+						// currentTab={currentTab}
+						// changeCurrentTab={switchUserType}
+						/>
+						<SearchStatistics
+							switchHandleSubmit={switchHandleSubmit}
+							setDataStatistics={handleSetDataStatistics}
+							isLoading={
+								isLoading &&
+								!filterUrlEntries.current &&
+								!(skipValue.current > 0)
+							}
+						/>
 
-				<TransactionsTable
-					isLoading={isLoading || isSearching}
-					data={search && search.length > 0 ? search : data && data.payload}
-				/>
-				{!Boolean(search && search.length > 0) &&
-					!isSearching &&
-					!isLoading &&
-					total > maxRecordRef.current && (
-						<Box style={styles.paginationWrapper}>
+						<StatisticTab
+							selectedFilter={selectedFilter}
+							selectFilter={handleSelectFilter}
+						/>
+					</Box>
+					{dataStatistics && (
+						<>
+							{dataStatistics.service === SERVICES.DATA_SUBSCRIPTION && (
+								<DataSubscriptionTable
+									isLoading={isLoadingDataSubscriptions}
+									subscriptions={dataStatistics.data as any}
+								/>
+							)}
+							{dataStatistics.service === SERVICES.AIRTIME_TOP_UP && (
+								<AirtimePurchaseTable
+									transactions={dataStatistics.data as any}
+								/>
+							)}
+							{dataStatistics.service === SERVICES.AIRTIME_CONVERSION && (
+								<ConversionsTable conversions={dataStatistics.data as any} />
+							)}
+							{dataStatistics.service === SERVICES.CABLE && (
+								<CableTransactionsTable
+									isLoading={isLoadingBillTransactions}
+									data={dataStatistics.data as any}
+								/>
+							)}
+							{dataStatistics.service === SERVICES.INTERNET && (
+								<InternetTransactionsTable
+									isLoading={isLoadingBillTransactions}
+									data={dataStatistics.data as any}
+								/>
+							)}
+							{dataStatistics.service === SERVICES.EDUCATION && (
+								<EducationTransactionsTable
+									data={dataStatistics.data as IPurchasedBill[]}
+									isLoading={isLoading}
+								/>
+							)}
+							{dataStatistics.service === SERVICES.ELECTRICITY && (
+								<ElectricityTransactionsTable
+									data={dataStatistics.data as IPurchasedBill[]}
+									isLoading={isLoadingBillTransactions}
+								/>
+							)}
+							{dataStatistics.service === SERVICES.WITHDRAWAL && (
+								<WithdrawalTransactionsTable
+									data={dataStatistics.data as IWithdrawal[]}
+									isLoading={isLoading}
+								/>
+							)}
+							{dataStatistics.service === SERVICES.AUTO_AIRTIME_CONVERSION && (
+								<AutoAirtimeConversionTransactionsTable
+									data={dataStatistics.data as any}
+								/>
+							)}
+							{dataStatistics.service === SERVICES.CARD_TOP_UP && (
+								<CardTopUpTransactionsTable
+									data={dataStatistics.data as IFunding[]}
+									isLoading={isLoading}
+								/>
+							)}
+							{dataStatistics.service === SERVICES.BETTING && (
+								<BettingTransactionsTable
+									data={dataStatistics.data as IPurchasedBill[]}
+									isLoading={isLoading}
+								/>
+							)}
+
+							{dataStatistics.service === SERVICES.REVERSAL && (
+								<ReversalTransactionsTable data={dataStatistics.data as any} />
+							)}
+							{dataStatistics.service === SERVICES.EPIN && (
+								<EPinTransactionsTable
+									data={dataStatistics.data as IEpin[]}
+									isLoading={isLoading}
+								/>
+							)}
+							{dataStatistics.service === SERVICES.WALLET_TRANSFER && (
+								<WalletTransferTransactionsTable
+									data={dataStatistics.data as ITransfer[]}
+									isLoading={isLoading}
+								/>
+							)}
+						</>
+					)}
+
+					{!isLoading && total > maxRecordRef.current && (
+						<Box>
 							<TablePagination
-								page={page - 1}
+								page={currentPage - 1}
 								count={Number(total)}
 								onPageChange={(value) => handlePageChange(value + 1)}
 								rowsPerPage={maxRecordRef.current}
 								handleChangeRowsPerPage={handleChangeRowsPerPage}
 							/>
-							{/* <Pagination
-								sx={{}}
-								size={'large'}
-								variant={'outlined'}
-								shape={'rounded'}
-								page={page}
-								count={count}
-								onChange={(e, number) => handlePageChange(number)}
-							/> */}
 						</Box>
 					)}
-			</Box>
+				</Container>
+			</RouteGuard>
 		</Layout>
 	);
 };
 
-const useStyles = (theme: any) => ({
-	container: {
-		display: 'grid',
-		gridTemplateColumn: '1fr',
-		gap: theme.spacing(4),
-		border: `0.5px solid ${theme.palette.secondary.main}`,
-		padding: '1.5rem 0px',
-		backgroundColor: grey[50],
-		borderRadius: theme.spacing(2),
-		boxShadow: BOX_SHADOW,
-	},
-	paginationWrapper: {
-		display: 'flex',
-		justifyContent: 'flex-end',
-		paddingRight: '20px',
-	},
-	button: {
-		whiteSpace: 'nowrap',
-	},
-	list: {
-		border: `1px solid ${theme.palette.primary.main}`,
-		borderRadius: theme.spacing(1),
-		backgroundColor: theme.palette.background.paper,
-		marginTop: theme.spacing(2),
-	},
-});
+export default Statistics;
 
-export default AllTransactions;
+const StatisticsContainer = styled(Box)(({ theme }) => ({
+	display: 'grid',
+	gridTemplateColumns: 'repeat(3, 1fr)',
+	gap: theme.spacing(3),
+}));
+
+const Container = styled(Box)(({ theme }) => ({
+	display: 'grid',
+	gridTemplateColumn: '1fr',
+	gap: theme.spacing(4),
+	border: `0.5px solid ${theme.palette.secondary.main}`,
+	padding: '1.5rem 0px',
+	backgroundColor: grey[50],
+	borderRadius: theme.spacing(2),
+	boxShadow: BOX_SHADOW,
+}));
+
+const Title = styled(Typography)(({ theme }) => ({
+	fontWeight: 'bold',
+}));

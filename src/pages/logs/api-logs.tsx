@@ -82,38 +82,37 @@ const ApiLogs = () => {
 
 	return (
 		<Layout>
-			<RouteGuard roles={[ADMIN_ROLE.SUPER_ADMIN, ADMIN_ROLE.OPERATIONS]}>
-				<TableHeader
-					sx={{ marginBottom: '2rem', marginTop: '20px' }}
-					title={'Api Logs'}
-					searchPlaceholder={'Search records by reference'}
-					handleSearch={searchApiLog}
-					clearSearch={clearSearch}
-				/>
+			<TableHeader
+				sx={{ marginBottom: '2rem', marginTop: '20px' }}
+				title={'Api Logs'}
+				searchPlaceholder={'Search records by reference'}
+				handleSearch={searchApiLog}
+				clearSearch={clearSearch}
+			/>
 
-				<ApiLogsTable
-					isLoading={isLoading || isSearchingApiLog}
-					data={apiLog ? apiLog : data && data.payload}
-				/>
+			<ApiLogsTable
+				isLoading={isLoading || isSearchingApiLog}
+				data={apiLog ? apiLog : data && data.payload}
+			/>
 
-				{!isSearchingApiLog &&
-					!isLoading &&
-					!apiLog &&
-					totalRef.current > maxRecordRef.current && (
-						<Box
-							sx={{
-								marginLeft: ['15px', '30px'],
-								marginTop: ['30px'],
-							}}
-						>
-							<TablePagination
-								page={pageRef.current}
-								count={Number(totalRef.current)}
-								onPageChange={handlePageChange}
-								rowsPerPage={maxRecordRef.current}
-								handleChangeRowsPerPage={handleChangeRowsPerPage}
-							/>
-							{/* <Pagination
+			{!isSearchingApiLog &&
+				!isLoading &&
+				!apiLog &&
+				totalRef.current > maxRecordRef.current && (
+					<Box
+						sx={{
+							marginLeft: ['15px', '30px'],
+							marginTop: ['30px'],
+						}}
+					>
+						<TablePagination
+							page={pageRef.current}
+							count={Number(totalRef.current)}
+							onPageChange={handlePageChange}
+							rowsPerPage={maxRecordRef.current}
+							handleChangeRowsPerPage={handleChangeRowsPerPage}
+						/>
+						{/* <Pagination
 							sx={{}}
 							size={'large'}
 							variant={'outlined'}
@@ -122,9 +121,8 @@ const ApiLogs = () => {
 							count={count}
 							onChange={(e, number) => handlePageChange(number)}
 						/> */}
-						</Box>
-					)}
-			</RouteGuard>
+					</Box>
+				)}
 		</Layout>
 	);
 };

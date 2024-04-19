@@ -30,6 +30,7 @@ import CustomTableCell from './components/custom-table-cell';
 import { updateConvertAirtimeStatus } from 'api';
 import Loader from '../loader';
 import { useAlert, useHandleError } from 'hooks';
+import { useAppSelector } from 'store/hooks';
 
 interface UpdateStatusPayload {
 	id: string;
@@ -62,6 +63,10 @@ const ConversionsTable = ({
 	const queryClient = useQueryClient();
 	const navigate = useNavigate();
 
+	const canCreateOrUpdateRecord = useAppSelector(
+		(store) => store.authState.canCreateOrUpdateRecord
+	);
+
 	const handleSortRecord = (field: string) => {
 		typeof handleSort !== 'undefined' && handleSort(field);
 	};
@@ -92,6 +97,14 @@ const ConversionsTable = ({
 	);
 
 	const handleUpdateStatus = ({ status, id }: UpdateStatusPayload) => {
+		if (!canCreateOrUpdateRecord) {
+			alert({
+				message: 'You can not perform this operation',
+				type: 'info',
+			});
+
+			return;
+		}
 		mutate({
 			id,
 			data: { status },

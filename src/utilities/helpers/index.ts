@@ -191,3 +191,15 @@ export const getFilterDateRange = (days: number) => {
 
 	return res;
 };
+
+export const capitalize = (text: string) => {
+	if (!text) return text;
+
+	const splitString = text.split(' ');
+	return splitString
+		.map(
+			(value) =>
+				`${value.charAt(0).toUpperCase()}${value.substring(1).toLowerCase()}`
+		)
+		.join(' ');
+};

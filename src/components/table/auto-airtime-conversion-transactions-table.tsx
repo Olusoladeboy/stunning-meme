@@ -7,15 +7,22 @@ import {
 	styled,
 } from '@mui/material';
 import { StyledTableCell, StyledTableRow } from './components';
-import { IPurchasedBill } from 'utilities';
+import {
+	Transaction,
+	checkAmount,
+	formatNumberToCurrency,
+	extractUserName,
+} from 'utilities';
 import Empty from '../empty/table-empty';
 import CustomTableCell from './components/custom-table-cell';
+import TableLoader from 'components/loader/table-loader';
 
 type Props = {
-	data: IPurchasedBill[];
+	data: Transaction[];
+	isLoading?: boolean;
 };
 
-const AutoAirtimeConversionTransactionsTable = ({ data }: Props) => {
+const AutoAirtimeConversionTransactionsTable = ({ data, isLoading }: Props) => {
 	const theme = useTheme();
 	const styles = useStyles(theme);
 
@@ -35,10 +42,15 @@ const AutoAirtimeConversionTransactionsTable = ({ data }: Props) => {
 								style={styles.headTableCell}
 								label={'Reference ID'}
 							/>
-							<CustomTableCell style={styles.headTableCell} label={'Name'} />
+							<CustomTableCell style={styles.headTableCell} label={'User'} />
+							<CustomTableCell style={styles.headTableCell} label={'Network'} />
+							<CustomTableCell style={styles.headTableCell} label={'Phone'} />
 							<CustomTableCell style={styles.headTableCell} label={'Amount'} />
-							<CustomTableCell style={styles.headTableCell} label={'Type'} />
-							<CustomTableCell style={styles.headTableCell} label={'Service'} />
+							<CustomTableCell
+								style={styles.headTableCell}
+								label={'Return Amount'}
+							/>
+
 							<CustomTableCell style={styles.headTableCell} label={'Status'} />
 						</StyledTableRow>
 					</TableHead>
@@ -49,38 +61,49 @@ const AutoAirtimeConversionTransactionsTable = ({ data }: Props) => {
 							},
 						}}
 					>
-						{data && (
-							<>
-								{data.length > 0 ? (
-									data.map((datum) => (
-										<StyledTableRow key={datum.reference}>
-											<StyledTableCell style={styles.text}>
-												{datum.reference}
-											</StyledTableCell>
-											<StyledTableCell style={styles.text}>
-												{datum.name}
-											</StyledTableCell>
-											<StyledTableCell style={styles.text}>
-												{datum.amount}
-											</StyledTableCell>
-											<StyledTableCell style={styles.text}>
-												{datum.type}
-											</StyledTableCell>
-											<StyledTableCell style={styles.text}>
-												{datum.service}
-											</StyledTableCell>
-											<StyledTableCell style={styles.text}>
-												{datum.status}
-											</StyledTableCell>
-										</StyledTableRow>
-									))
-								) : (
-									<Empty
-										colSpan={8}
-										text={'No Auto Airtime Conversion Information'}
-									/>
-								)}
-							</>
+						{isLoading ? (
+							<TableLoader colSpan={7} />
+						) : (
+							data && (
+								<>
+									{data.length > 0 ? (
+										data.map((value) => (
+											<StyledTableRow key={value.reference}>
+												<StyledTableCell style={styles.text}>
+													{value.reference}
+												</StyledTableCell>
+												<StyledTableCell style={styles.text}>
+													{extractUserName(value.user)}
+												</StyledTableCell>
+												<StyledTableCell style={styles.text}>
+													{typeof value.network === 'object' &&
+														value.network?.name}
+												</StyledTableCell>
+												<StyledTableCell style={styles.text}>
+													{value.phone_number}
+												</StyledTableCell>
+												<StyledTableCell style={styles.text}>
+													{formatNumberToCurrency(checkAmount(value.amount))}
+												</StyledTableCell>
+												<StyledTableCell style={styles.text}>
+													{formatNumberToCurrency(
+														checkAmount(value.return_amount)
+													)}
+												</StyledTableCell>
+
+												<StyledTableCell style={styles.text}>
+													{value.status}
+												</StyledTableCell>
+											</StyledTableRow>
+										))
+									) : (
+										<Empty
+											colSpan={7}
+											text={'No Auto Airtime Conversion Information'}
+										/>
+									)}
+								</>
+							)
 						)}
 					</TableBody>
 				</Table>

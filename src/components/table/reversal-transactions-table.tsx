@@ -10,12 +10,14 @@ import { StyledTableCell, StyledTableRow } from './components';
 import { IPurchasedBill } from 'utilities';
 import Empty from '../empty/table-empty';
 import CustomTableCell from './components/custom-table-cell';
+import TableLoader from 'components/loader/table-loader';
 
 type Props = {
 	data: IPurchasedBill[];
+	isLoading?: boolean;
 };
 
-const ReversalTransactionsTable = ({ data }: Props) => {
+const ReversalTransactionsTable = ({ data, isLoading }: Props) => {
 	const theme = useTheme();
 	const styles = useStyles(theme);
 
@@ -49,35 +51,39 @@ const ReversalTransactionsTable = ({ data }: Props) => {
 							},
 						}}
 					>
-						{data && (
-							<>
-								{data.length > 0 ? (
-									data.map((datum) => (
-										<StyledTableRow key={datum.reference}>
-											<StyledTableCell style={styles.text}>
-												{datum.reference}
-											</StyledTableCell>
-											<StyledTableCell style={styles.text}>
-												{datum.name}
-											</StyledTableCell>
-											<StyledTableCell style={styles.text}>
-												{datum.amount}
-											</StyledTableCell>
-											<StyledTableCell style={styles.text}>
-												{datum.type}
-											</StyledTableCell>
-											<StyledTableCell style={styles.text}>
-												{datum.service}
-											</StyledTableCell>
-											<StyledTableCell style={styles.text}>
-												{datum.status}
-											</StyledTableCell>
-										</StyledTableRow>
-									))
-								) : (
-									<Empty colSpan={8} text={'No Reversal Information'} />
-								)}
-							</>
+						{isLoading ? (
+							<TableLoader colSpan={6} />
+						) : (
+							data && (
+								<>
+									{data.length > 0 ? (
+										data.map((datum) => (
+											<StyledTableRow key={datum.reference}>
+												<StyledTableCell style={styles.text}>
+													{datum.reference}
+												</StyledTableCell>
+												<StyledTableCell style={styles.text}>
+													{datum.name}
+												</StyledTableCell>
+												<StyledTableCell style={styles.text}>
+													{datum.amount}
+												</StyledTableCell>
+												<StyledTableCell style={styles.text}>
+													{datum.type}
+												</StyledTableCell>
+												<StyledTableCell style={styles.text}>
+													{datum.service}
+												</StyledTableCell>
+												<StyledTableCell style={styles.text}>
+													{datum.status}
+												</StyledTableCell>
+											</StyledTableRow>
+										))
+									) : (
+										<Empty colSpan={8} text={'No Reversal Information'} />
+									)}
+								</>
+							)
 						)}
 					</TableBody>
 				</Table>

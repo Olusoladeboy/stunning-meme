@@ -11,14 +11,21 @@ import {
 import JsonFormatter from 'react-json-formatter';
 import moment from 'moment';
 import { StyledTableCell, StyledTableRow } from './components';
-import { IPurchasedBill, extractUserName, JSON_STYLE } from 'utilities';
+import {
+	extractUserName,
+	JSON_STYLE,
+	Transaction,
+	checkAmount,
+	formatNumberToCurrency,
+} from 'utilities';
 import Empty from '../empty/table-empty';
 import CustomTableCell from './components/custom-table-cell';
 import TableLoader from 'components/loader/table-loader';
 import ModalWrapper from 'components/modal/Wrapper';
+import TransactionDetailsModal from 'components/modal/transaction-details-modal';
 
 type Props = {
-	data: IPurchasedBill[];
+	data: Transaction[];
 	isLoading?: boolean;
 };
 
@@ -28,8 +35,14 @@ const EducationTransactionsTable = ({ data, isLoading }: Props) => {
 
 	const [jsonData, setJsonData] = useState<string>('');
 
-	const handleViewPin = (bill: IPurchasedBill) => {
-		console.log(bill);
+	const [selectedTransaction, setSelectedTransaction] =
+		useState<null | Transaction>(null);
+
+	const handleClickRow = (value: Transaction) => {
+		setSelectedTransaction(value);
+	};
+
+	const handleViewPin = (bill: Transaction) => {
 		const jsonObj = bill.pins;
 		setJsonData(JSON.stringify(jsonObj));
 	};
@@ -55,6 +68,13 @@ const EducationTransactionsTable = ({ data, isLoading }: Props) => {
 				</ModalWrapper>
 			)}
 			<Container>
+				{selectedTransaction && (
+					<TransactionDetailsModal
+						closeModal={() => setSelectedTransaction(null)}
+						transaction={selectedTransaction as any}
+						isDisplayButtons
+					/>
+				)}
 				<Box sx={{ overflow: 'auto' }}>
 					<Table sx={{ overflow: 'auto' }}>
 						<TableHead
@@ -100,7 +120,10 @@ const EducationTransactionsTable = ({ data, isLoading }: Props) => {
 									<>
 										{data.length > 0 ? (
 											data.map((value) => (
-												<StyledTableRow key={value.reference}>
+												<StyledTableRow
+													onClick={() => handleClickRow(value)}
+													key={value.reference}
+												>
 													<StyledTableCell style={styles.text}>
 														{value.reference}
 													</StyledTableCell>
@@ -114,7 +137,7 @@ const EducationTransactionsTable = ({ data, isLoading }: Props) => {
 														{value.name}
 													</StyledTableCell>
 													<StyledTableCell style={styles.text}>
-														{value.amount}
+														{formatNumberToCurrency(checkAmount(value.amount))}
 													</StyledTableCell>
 													<StyledTableCell style={styles.text}>
 														{moment(value.createdAt).format('ll')}
@@ -124,7 +147,12 @@ const EducationTransactionsTable = ({ data, isLoading }: Props) => {
 														{value.status}
 													</StyledTableCell>
 													<StyledTableCell style={styles.text}>
-														<Button onClick={() => handleViewPin(value)}>
+														<Button
+															onClick={(e) => {
+																e.stopPropagation();
+																handleViewPin(value);
+															}}
+														>
 															View Pins
 														</Button>
 													</StyledTableCell>

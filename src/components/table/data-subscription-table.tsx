@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import {
 	TableBody,
 	TableHead,
@@ -7,19 +7,15 @@ import {
 	Box,
 	styled,
 } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
 import moment from 'moment';
 import { useMutation, useQueryClient } from 'react-query';
 import { StyledTableCell, StyledTableRow } from './components';
 import {
 	Transaction,
-	TransactionStatus,
 	formatNumberToCurrency,
-	STATUS,
 	QueryKeys,
 	extractUserName,
 	User,
-	LINKS,
 	checkAmount,
 	MAX_RECORDS,
 } from 'utilities';
@@ -31,11 +27,7 @@ import { updateConvertAirtimeStatus } from 'api';
 import Loader from '../loader';
 import { useAlert, useHandleError } from 'hooks';
 import TablePagination from 'components/pagination/table-pagination';
-
-interface UpdateStatusPayload {
-	id: string;
-	status: string;
-}
+import TransactionDetailsModal from 'components/modal/transaction-details-modal';
 
 type Props = {
 	subscriptions: Transaction[] | null;
@@ -67,18 +59,16 @@ const DataSubscriptionTable = ({
 	const handleError = useHandleError();
 	const alert = useAlert();
 	const queryClient = useQueryClient();
-	const navigate = useNavigate();
+
+	const [selectedTransaction, setSelectedTransaction] =
+		useState<null | Transaction>(null);
 
 	const maxRecordRef = useRef<number>(MAX_RECORDS);
-
-	const handleSortRecord = (field: string) => {
-		typeof handleSort !== 'undefined' && handleSort(field);
-	};
 
 	/* 
 		Mutation
 	*/
-	const { isLoading: isUpdatingStatus, mutate } = useMutation(
+	const { isLoading: isUpdatingStatus } = useMutation(
 		updateConvertAirtimeStatus,
 		{
 			onSettled: (data, error) => {
@@ -100,22 +90,24 @@ const DataSubscriptionTable = ({
 		}
 	);
 
-	const handleUpdateStatus = ({ status, id }: UpdateStatusPayload) => {
-		mutate({
-			id,
-			data: { status },
-		});
-	};
-
-	const handleClickRow = (id: string) => {};
-
 	const handleChangeRowsPerPage = (value: number) => {
 		maxRecordRef.current = value;
 		typeof handleRefresh === 'function' && handleRefresh();
 	};
 
+	const handleClickRow = (value: Transaction) => {
+		setSelectedTransaction(value);
+	};
+
 	return (
 		<Container>
+			{selectedTransaction && (
+				<TransactionDetailsModal
+					closeModal={() => setSelectedTransaction(null)}
+					transaction={selectedTransaction as any}
+					isDisplayButtons
+				/>
+			)}
 			{isUpdatingStatus && <Loader />}
 			{isDisplaySearchField && (
 				<SearchContainer>
@@ -166,7 +158,7 @@ const DataSubscriptionTable = ({
 										subscriptions.map((subscription, key: number) => {
 											return (
 												<StyledTableRow
-													onClick={() => handleClickRow(subscription.id)}
+													onClick={() => handleClickRow(subscription)}
 													key={subscription.id}
 												>
 													<StyledTableCell style={styles.text}>

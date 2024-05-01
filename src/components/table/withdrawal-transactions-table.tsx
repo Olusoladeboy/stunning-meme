@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import {
 	TableBody,
 	TableHead,
@@ -16,6 +17,7 @@ import {
 import Empty from '../empty/table-empty';
 import CustomTableCell from './components/custom-table-cell';
 import TableLoader from 'components/loader/table-loader';
+import TransactionDetailsModal from 'components/modal/transaction-details-modal';
 
 type Props = {
 	data: IWithdrawal[];
@@ -25,9 +27,23 @@ type Props = {
 const WithdrawalTransactionsTable = ({ data, isLoading }: Props) => {
 	const theme = useTheme();
 	const styles = useStyles(theme);
+	const [selectedTransaction, setSelectedTransaction] =
+		useState<null | IWithdrawal>(null);
+
+	const handleClickRow = (value: IWithdrawal) => {
+		console.log(value);
+		setSelectedTransaction(value);
+	};
 
 	return (
 		<Container>
+			{selectedTransaction && (
+				<TransactionDetailsModal
+					closeModal={() => setSelectedTransaction(null)}
+					transaction={selectedTransaction as any}
+					isDisplayButtons
+				/>
+			)}
 			<Box sx={{ overflow: 'auto' }}>
 				<Table sx={{ overflow: 'auto' }}>
 					<TableHead
@@ -71,7 +87,10 @@ const WithdrawalTransactionsTable = ({ data, isLoading }: Props) => {
 								<>
 									{data.length > 0 ? (
 										data.map((value) => (
-											<StyledTableRow key={value.reference}>
+											<StyledTableRow
+												onClick={() => handleClickRow(value)}
+												key={value.reference}
+											>
 												<StyledTableCell style={styles.text}>
 													{value.reference}
 												</StyledTableCell>

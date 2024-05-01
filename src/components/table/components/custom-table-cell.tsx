@@ -4,7 +4,7 @@ import FilterIcon from '../../icons/filter';
 import { StyledTableCell } from '.';
 
 interface Props extends BoxProps {
-	label: string;
+	label?: string;
 	isSortable?: boolean;
 }
 

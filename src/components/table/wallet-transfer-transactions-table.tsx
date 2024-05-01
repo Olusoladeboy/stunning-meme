@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import {
 	TableBody,
 	TableHead,
@@ -8,13 +9,19 @@ import {
 } from '@mui/material';
 import moment from 'moment';
 import { StyledTableCell, StyledTableRow } from './components';
-import { ITransfer, extractUserName, formatNumberToCurrency } from 'utilities';
+import {
+	Transaction,
+	checkAmount,
+	extractUserName,
+	formatNumberToCurrency,
+} from 'utilities';
 import Empty from '../empty/table-empty';
 import CustomTableCell from './components/custom-table-cell';
 import TableLoader from 'components/loader/table-loader';
+import TransactionDetailsModal from 'components/modal/transaction-details-modal';
 
 type Props = {
-	data: ITransfer[];
+	data: Transaction[];
 	isLoading?: boolean;
 };
 
@@ -22,8 +29,22 @@ const WalletTransferTransactionsTable = ({ data, isLoading }: Props) => {
 	const theme = useTheme();
 	const styles = useStyles(theme);
 
+	const [selectedTransaction, setSelectedTransaction] =
+		useState<null | Transaction>(null);
+
+	const handleClickRow = (value: Transaction) => {
+		setSelectedTransaction(value);
+	};
+
 	return (
 		<Container>
+			{selectedTransaction && (
+				<TransactionDetailsModal
+					closeModal={() => setSelectedTransaction(null)}
+					transaction={selectedTransaction as any}
+					isDisplayButtons
+				/>
+			)}
 			<Box sx={{ overflow: 'auto' }}>
 				<Table sx={{ overflow: 'auto' }}>
 					<TableHead
@@ -70,7 +91,10 @@ const WalletTransferTransactionsTable = ({ data, isLoading }: Props) => {
 								<>
 									{data.length > 0 ? (
 										data.map((value) => (
-											<StyledTableRow key={value.reference}>
+											<StyledTableRow
+												onClick={() => handleClickRow(value)}
+												key={value.reference}
+											>
 												<StyledTableCell style={styles.text}>
 													{value.reference}
 												</StyledTableCell>
@@ -87,14 +111,14 @@ const WalletTransferTransactionsTable = ({ data, isLoading }: Props) => {
 														extractUserName(value.userTo)}
 												</StyledTableCell>
 												<StyledTableCell style={styles.text}>
-													{formatNumberToCurrency(value.amount)}
+													{formatNumberToCurrency(checkAmount(value.amount))}
 												</StyledTableCell>
 												<StyledTableCell style={styles.text}>
 													{value.transactionFrom &&
 														typeof value.transactionFrom === 'object' &&
 														Object.keys(value.transactionFrom).length > 0 &&
 														formatNumberToCurrency(
-															value.transactionFrom.balanceBefore as string
+															checkAmount(value.transactionFrom.balanceBefore)
 														)}
 												</StyledTableCell>
 
@@ -103,7 +127,7 @@ const WalletTransferTransactionsTable = ({ data, isLoading }: Props) => {
 														typeof value.transactionFrom === 'object' &&
 														Object.keys(value.transactionFrom).length > 0 &&
 														formatNumberToCurrency(
-															value.transactionFrom.balanceAfter as string
+															checkAmount(value.transactionFrom.balanceAfter)
 														)}
 												</StyledTableCell>
 

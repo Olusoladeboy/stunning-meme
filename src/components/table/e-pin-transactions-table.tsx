@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import {
 	TableBody,
 	TableHead,
@@ -5,16 +6,25 @@ import {
 	useTheme,
 	Box,
 	styled,
+	Button,
 } from '@mui/material';
 import moment from 'moment';
 import { StyledTableCell, StyledTableRow } from './components';
-import { IEpin, extractUserName, formatNumberToCurrency } from 'utilities';
+import {
+	JSON_STYLE,
+	Transaction,
+	extractUserName,
+	formatNumberToCurrency,
+} from 'utilities';
+import JsonFormatter from 'react-json-formatter';
 import Empty from '../empty/table-empty';
 import CustomTableCell from './components/custom-table-cell';
 import TableLoader from 'components/loader/table-loader';
+import TransactionDetailsModal from 'components/modal/transaction-details-modal';
+import ModalWrapper from 'components/modal/Wrapper';
 
 type Props = {
-	data: IEpin[];
+	data: Transaction[];
 	isLoading?: boolean;
 };
 
@@ -22,8 +32,48 @@ const EPinTransactionsTable = ({ data, isLoading }: Props) => {
 	const theme = useTheme();
 	const styles = useStyles(theme);
 
+	const [jsonData, setJsonData] = useState<string>('');
+
+	const [selectedTransaction, setSelectedTransaction] =
+		useState<null | Transaction>(null);
+
+	const handleClickRow = (value: Transaction) => {
+		console.log(value);
+		setSelectedTransaction(value);
+	};
+
+	const handleViewToken = (transaction: Transaction) => {
+		const jsonObj = transaction.pin_data;
+		setJsonData(JSON.stringify(jsonObj));
+	};
+
 	return (
 		<Container>
+			{jsonData && (
+				<ModalWrapper
+					title={'Pin Data'}
+					hasCloseButton={true}
+					closeModal={() => setJsonData('')}
+				>
+					<Box
+						sx={{
+							overflow: 'auto',
+							maxWidth: '540px',
+							width: '100%',
+							alignSelf: 'flex-start',
+						}}
+					>
+						<JsonFormatter json={jsonData} tabWith={4} jsonStyle={JSON_STYLE} />
+					</Box>
+				</ModalWrapper>
+			)}
+			{selectedTransaction && (
+				<TransactionDetailsModal
+					closeModal={() => setSelectedTransaction(null)}
+					transaction={selectedTransaction as any}
+					isDisplayButtons
+				/>
+			)}
 			<Box sx={{ overflow: 'auto' }}>
 				<Table sx={{ overflow: 'auto' }}>
 					<TableHead
@@ -41,6 +91,7 @@ const EPinTransactionsTable = ({ data, isLoading }: Props) => {
 							<CustomTableCell style={styles.headTableCell} label={'Amount'} />
 							<CustomTableCell style={styles.headTableCell} label={'Date'} />
 							<CustomTableCell style={styles.headTableCell} label={'Status'} />
+							<CustomTableCell style={styles.headTableCell} label={''} />
 						</StyledTableRow>
 					</TableHead>
 					<TableBody
@@ -51,13 +102,16 @@ const EPinTransactionsTable = ({ data, isLoading }: Props) => {
 						}}
 					>
 						{isLoading ? (
-							<TableLoader colSpan={7} />
+							<TableLoader colSpan={8} />
 						) : (
 							data && (
 								<>
 									{data.length > 0 ? (
 										data.map((value) => (
-											<StyledTableRow key={value.id}>
+											<StyledTableRow
+												onClick={() => handleClickRow(value)}
+												key={value.id}
+											>
 												<StyledTableCell style={styles.text}>
 													{value.service}
 												</StyledTableCell>
@@ -92,10 +146,20 @@ const EPinTransactionsTable = ({ data, isLoading }: Props) => {
 												<StyledTableCell style={styles.text}>
 													{value.status}
 												</StyledTableCell>
+												<StyledTableCell>
+													<Button
+														onClick={(e) => {
+															e.stopPropagation();
+															handleViewToken(value);
+														}}
+													>
+														View Pin Data
+													</Button>
+												</StyledTableCell>
 											</StyledTableRow>
 										))
 									) : (
-										<Empty colSpan={7} text={'No available EPin'} />
+										<Empty colSpan={8} text={'No available EPin'} />
 									)}
 								</>
 							)

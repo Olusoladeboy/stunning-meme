@@ -10,12 +10,14 @@ import TransactionDetails from '../transaction-details';
 interface Props extends IModal {
 	transaction: Transaction;
 	isDisplayButtons?: boolean;
+	title?: string;
 }
 
 const TransactionDetailsModal: React.FC<Props> = ({
 	closeModal,
 	transaction,
 	isDisplayButtons = false,
+	title = 'Transaction Details',
 }) => {
 	const navigate = useNavigate();
 
@@ -29,7 +31,7 @@ const TransactionDetailsModal: React.FC<Props> = ({
 				sx={{ marginBottom: '2rem', fontSize: ['24px', '28px'] }}
 				variant={'h4'}
 			>
-				Transaction Details
+				{title}
 			</Typography>
 			<TransactionDetails transaction={transaction} />
 

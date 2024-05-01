@@ -6,7 +6,6 @@ import {
 	Layout,
 	SearchStatistics,
 	StatisticTab,
-	StatisticsTotal,
 	AirtimePurchaseTable,
 	ConversionsTable,
 	CableTransactionsTable,
@@ -33,10 +32,10 @@ import {
 	IPurchasedBill,
 	IWithdrawal,
 	IEpin,
-	IFunding,
 	ITransfer,
 	STATISTIC_TAB,
 	getFilterDateRange,
+	Transaction,
 } from 'utilities';
 import {
 	usePageTitle,
@@ -388,13 +387,13 @@ const Statistics = () => {
 							)}
 							{dataStatistics.service === SERVICES.EDUCATION && (
 								<EducationTransactionsTable
-									data={dataStatistics.data as IPurchasedBill[]}
+									data={dataStatistics.data as Transaction[]}
 									isLoading={isLoading}
 								/>
 							)}
 							{dataStatistics.service === SERVICES.ELECTRICITY && (
 								<ElectricityTransactionsTable
-									data={dataStatistics.data as IPurchasedBill[]}
+									data={dataStatistics.data as Transaction[]}
 									isLoading={isLoadingBillTransactions}
 								/>
 							)}
@@ -411,7 +410,7 @@ const Statistics = () => {
 							)}
 							{dataStatistics.service === SERVICES.CARD_TOP_UP && (
 								<CardTopUpTransactionsTable
-									data={dataStatistics.data as IFunding[]}
+									data={dataStatistics.data as Transaction[]}
 									isLoading={isLoading}
 								/>
 							)}
@@ -427,13 +426,13 @@ const Statistics = () => {
 							)}
 							{dataStatistics.service === SERVICES.EPIN && (
 								<EPinTransactionsTable
-									data={dataStatistics.data as IEpin[]}
+									data={dataStatistics.data as Transaction[]}
 									isLoading={isLoading}
 								/>
 							)}
 							{dataStatistics.service === SERVICES.WALLET_TRANSFER && (
 								<WalletTransferTransactionsTable
-									data={dataStatistics.data as ITransfer[]}
+									data={dataStatistics.data as Transaction[]}
 									isLoading={isLoading}
 								/>
 							)}

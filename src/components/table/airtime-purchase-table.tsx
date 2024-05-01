@@ -1,16 +1,13 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
 	TableBody,
 	TableHead,
 	Table,
 	useTheme,
 	Box,
-	Button,
 	styled,
 } from '@mui/material';
 import moment from 'moment';
-import { green, grey, red } from '@mui/material/colors';
-import { useNavigate } from 'react-router-dom';
 import { useMutation, useQueryClient } from 'react-query';
 import { StyledTableCell, StyledTableRow } from './components';
 import {
@@ -28,11 +25,7 @@ import CustomTableCell from './components/custom-table-cell';
 import { updateConvertAirtimeStatus } from 'api';
 import Loader from '../loader';
 import { useAlert, useHandleError } from 'hooks';
-
-interface UpdateStatusPayload {
-	id: string;
-	status: string;
-}
+import TransactionDetailsModal from 'components/modal/transaction-details-modal';
 
 type Props = {
 	transactions: Transaction[] | null;
@@ -56,16 +49,14 @@ const AirtimePurchaseTable = ({
 	const handleError = useHandleError();
 	const alert = useAlert();
 	const queryClient = useQueryClient();
-	const navigate = useNavigate();
 
-	const handleSortRecord = (field: string) => {
-		typeof handleSort !== 'undefined' && handleSort(field);
-	};
+	const [selectedTransaction, setSelectedTransaction] =
+		useState<null | Transaction>(null);
 
 	/* 
 		Mutation
 	*/
-	const { isLoading: isUpdatingStatus, mutate } = useMutation(
+	const { isLoading: isUpdatingStatus } = useMutation(
 		updateConvertAirtimeStatus,
 		{
 			onSettled: (data, error) => {
@@ -87,10 +78,20 @@ const AirtimePurchaseTable = ({
 		}
 	);
 
-	const handleClickRow = (id: string) => {};
+	const handleClickRow = (value: Transaction) => {
+		console.log(value);
+		setSelectedTransaction(value);
+	};
 
 	return (
 		<Container>
+			{selectedTransaction && (
+				<TransactionDetailsModal
+					closeModal={() => setSelectedTransaction(null)}
+					transaction={selectedTransaction as any}
+					isDisplayButtons
+				/>
+			)}
 			{isUpdatingStatus && <Loader />}
 			{isDisplaySearchField && (
 				<SearchContainer>
@@ -139,7 +140,7 @@ const AirtimePurchaseTable = ({
 										transactions.map((transaction, key: number) => {
 											return (
 												<StyledTableRow
-													onClick={() => handleClickRow(transaction.id)}
+													onClick={() => handleClickRow(transaction)}
 													key={transaction.id}
 												>
 													<StyledTableCell style={styles.text}>
@@ -197,16 +198,6 @@ const SearchContainer = styled(Box)(({ theme }) => ({
 	justifyContent: 'flex-end',
 	padding: '0px 15px',
 	marginBottom: '2rem',
-}));
-
-const ApproveButton = styled(Button)(({ theme }) => ({
-	color: grey['50'],
-	backgroundColor: `${green['600']} !important`,
-}));
-
-const DeclineButton = styled(Button)(({ theme }) => ({
-	color: grey['50'],
-	backgroundColor: `${red['600']} !important`,
 }));
 
 const useStyles = (theme: any) => ({

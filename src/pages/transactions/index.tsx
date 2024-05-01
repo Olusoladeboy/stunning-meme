@@ -22,7 +22,6 @@ import {
 	ElectricityTransactionsTable,
 	WalletTransferTransactionsTable,
 	WithdrawalTransactionsTable,
-	AutoAirtimeConversionTransactionsTable,
 	CardTopUpTransactionsTable,
 	BettingTransactionsTable,
 	EPinTransactionsTable,
@@ -31,6 +30,7 @@ import {
 	TableHeader,
 	TransactionMainBalance,
 	TransactionsTab,
+	AutoConversionsTable,
 } from 'components';
 import {
 	BOX_SHADOW,
@@ -40,11 +40,10 @@ import {
 	Metadata,
 	IPurchasedBill,
 	IWithdrawal,
-	IEpin,
-	IFunding,
-	ITransfer,
 	TRANSACTION_SERVICE,
 	capitalize,
+	IGroupAutoTransaction,
+	Transaction,
 } from 'utilities';
 import {
 	usePageTitle,
@@ -444,7 +443,7 @@ const Statistics = () => {
 							{dataStatistics.service === SERVICES.CABLE && (
 								<CableTransactionsTable
 									isLoading={isLoadingBillTransactions}
-									data={dataStatistics.data as any}
+									data={dataStatistics.data as Transaction[]}
 								/>
 							)}
 							{dataStatistics.service === SERVICES.INTERNET && (
@@ -455,13 +454,13 @@ const Statistics = () => {
 							)}
 							{dataStatistics.service === SERVICES.EDUCATION && (
 								<EducationTransactionsTable
-									data={dataStatistics.data as IPurchasedBill[]}
+									data={dataStatistics.data as Transaction[]}
 									isLoading={isLoading}
 								/>
 							)}
 							{dataStatistics.service === SERVICES.ELECTRICITY && (
 								<ElectricityTransactionsTable
-									data={dataStatistics.data as IPurchasedBill[]}
+									data={dataStatistics.data as Transaction[]}
 									isLoading={isLoadingBillTransactions}
 								/>
 							)}
@@ -472,14 +471,14 @@ const Statistics = () => {
 								/>
 							)}
 							{dataStatistics.service === SERVICES.AUTO_AIRTIME_CONVERSION && (
-								<AutoAirtimeConversionTransactionsTable
-									data={dataStatistics.data as any}
+								<AutoConversionsTable
+									conversions={dataStatistics.data as IGroupAutoTransaction[]}
 									isLoading={isLoading}
 								/>
 							)}
 							{dataStatistics.service === SERVICES.CARD_TOP_UP && (
 								<CardTopUpTransactionsTable
-									data={dataStatistics.data as IFunding[]}
+									data={dataStatistics.data as Transaction[]}
 									isLoading={isLoading}
 								/>
 							)}
@@ -498,13 +497,13 @@ const Statistics = () => {
 							)}
 							{dataStatistics.service === SERVICES.EPIN && (
 								<EPinTransactionsTable
-									data={dataStatistics.data as IEpin[]}
+									data={dataStatistics.data as Transaction[]}
 									isLoading={isLoading}
 								/>
 							)}
 							{dataStatistics.service === SERVICES.WALLET_TRANSFER && (
 								<WalletTransferTransactionsTable
-									data={dataStatistics.data as ITransfer[]}
+									data={dataStatistics.data as Transaction[]}
 									isLoading={isLoading}
 								/>
 							)}

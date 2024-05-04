@@ -394,135 +394,127 @@ const Statistics = () => {
 
 	return (
 		<Layout>
-			<RouteGuard
-				roles={[
-					ADMIN_ROLE.SUPER_ADMIN,
-					ADMIN_ROLE.ADMIN,
-					ADMIN_ROLE.OPERATIONS,
-				]}
-			>
-				<Container>
-					<Box
-						sx={{
-							padding: { xs: '0px 15px', md: '0px 2rem' },
-							display: 'grid',
-							gap: '2rem',
-						}}
-					>
-						<TableHeader
-							searchPlaceholder={'Search transaction by reference'}
-							title={'Transactions'}
-							statusFilter={statusFilter}
-							handleSearch={handleSearch}
-							clearSearch={clearSearch}
-						/>
-						{canViewStatistics && <TransactionMainBalance />}
-						<TransactionsTab />
-					</Box>
+			<Container>
+				<Box
+					sx={{
+						padding: { xs: '0px 15px', md: '0px 2rem' },
+						display: 'grid',
+						gap: '2rem',
+					}}
+				>
+					<TableHeader
+						searchPlaceholder={'Search transaction by reference'}
+						title={'Transactions'}
+						statusFilter={statusFilter}
+						handleSearch={handleSearch}
+						clearSearch={clearSearch}
+					/>
+					{canViewStatistics && <TransactionMainBalance />}
+					<TransactionsTab />
+				</Box>
 
-					{dataStatistics && (
-						<>
-							{dataStatistics.service === SERVICES.DATA_SUBSCRIPTION && (
-								<DataSubscriptionTable
-									isLoading={isLoadingDataSubscriptions}
-									subscriptions={dataStatistics.data as any}
-								/>
-							)}
-							{dataStatistics.service === SERVICES.AIRTIME_TOP_UP && (
-								<AirtimePurchaseTable
-									transactions={dataStatistics.data as any}
-									isLoading={isLoading}
-								/>
-							)}
-							{dataStatistics.service === SERVICES.AIRTIME_CONVERSION && (
-								<ConversionsTable
-									conversions={dataStatistics.data as any}
-									isLoading={isLoading}
-								/>
-							)}
-							{dataStatistics.service === SERVICES.CABLE && (
-								<CableTransactionsTable
-									isLoading={isLoadingBillTransactions}
-									data={dataStatistics.data as Transaction[]}
-								/>
-							)}
-							{dataStatistics.service === SERVICES.INTERNET && (
-								<InternetTransactionsTable
-									isLoading={isLoadingBillTransactions}
-									data={dataStatistics.data as any}
-								/>
-							)}
-							{dataStatistics.service === SERVICES.EDUCATION && (
-								<EducationTransactionsTable
-									data={dataStatistics.data as Transaction[]}
-									isLoading={isLoading}
-								/>
-							)}
-							{dataStatistics.service === SERVICES.ELECTRICITY && (
-								<ElectricityTransactionsTable
-									data={dataStatistics.data as Transaction[]}
-									isLoading={isLoadingBillTransactions}
-								/>
-							)}
-							{dataStatistics.service === SERVICES.WITHDRAWAL && (
-								<WithdrawalTransactionsTable
-									data={dataStatistics.data as IWithdrawal[]}
-									isLoading={isLoading}
-								/>
-							)}
-							{dataStatistics.service === SERVICES.AUTO_AIRTIME_CONVERSION && (
-								<AutoConversionsTable
-									conversions={dataStatistics.data as IGroupAutoTransaction[]}
-									isLoading={isLoading}
-								/>
-							)}
-							{dataStatistics.service === SERVICES.CARD_TOP_UP && (
-								<CardTopUpTransactionsTable
-									data={dataStatistics.data as Transaction[]}
-									isLoading={isLoading}
-								/>
-							)}
-							{dataStatistics.service === SERVICES.BETTING && (
-								<BettingTransactionsTable
-									data={dataStatistics.data as IPurchasedBill[]}
-									isLoading={isLoading}
-								/>
-							)}
-
-							{dataStatistics.service === SERVICES.REVERSAL && (
-								<ReversalTransactionsTable
-									data={dataStatistics.data as any}
-									isLoading={isLoading}
-								/>
-							)}
-							{dataStatistics.service === SERVICES.EPIN && (
-								<EPinTransactionsTable
-									data={dataStatistics.data as Transaction[]}
-									isLoading={isLoading}
-								/>
-							)}
-							{dataStatistics.service === SERVICES.WALLET_TRANSFER && (
-								<WalletTransferTransactionsTable
-									data={dataStatistics.data as Transaction[]}
-									isLoading={isLoading}
-								/>
-							)}
-						</>
-					)}
-
-					{!isLoading && total > maxRecordRef.current && (
-						<Box>
-							<TablePagination
-								page={currentPage - 1}
-								count={Number(total)}
-								onPageChange={(value) => handlePageChange(value + 1)}
-								rowsPerPage={maxRecordRef.current}
-								handleChangeRowsPerPage={handleChangeRowsPerPage}
+				{dataStatistics && (
+					<>
+						{dataStatistics.service === SERVICES.DATA_SUBSCRIPTION && (
+							<DataSubscriptionTable
+								isLoading={isLoadingDataSubscriptions}
+								subscriptions={dataStatistics.data as any}
 							/>
-						</Box>
-					)}
-				</Container>
-			</RouteGuard>
+						)}
+						{dataStatistics.service === SERVICES.AIRTIME_TOP_UP && (
+							<AirtimePurchaseTable
+								transactions={dataStatistics.data as any}
+								isLoading={isLoading}
+							/>
+						)}
+						{dataStatistics.service === SERVICES.AIRTIME_CONVERSION && (
+							<ConversionsTable
+								conversions={dataStatistics.data as any}
+								isLoading={isLoading}
+							/>
+						)}
+						{dataStatistics.service === SERVICES.CABLE && (
+							<CableTransactionsTable
+								isLoading={isLoadingBillTransactions}
+								data={dataStatistics.data as Transaction[]}
+							/>
+						)}
+						{dataStatistics.service === SERVICES.INTERNET && (
+							<InternetTransactionsTable
+								isLoading={isLoadingBillTransactions}
+								data={dataStatistics.data as any}
+							/>
+						)}
+						{dataStatistics.service === SERVICES.EDUCATION && (
+							<EducationTransactionsTable
+								data={dataStatistics.data as Transaction[]}
+								isLoading={isLoading}
+							/>
+						)}
+						{dataStatistics.service === SERVICES.ELECTRICITY && (
+							<ElectricityTransactionsTable
+								data={dataStatistics.data as Transaction[]}
+								isLoading={isLoadingBillTransactions}
+							/>
+						)}
+						{dataStatistics.service === SERVICES.WITHDRAWAL && (
+							<WithdrawalTransactionsTable
+								data={dataStatistics.data as IWithdrawal[]}
+								isLoading={isLoading}
+							/>
+						)}
+						{dataStatistics.service === SERVICES.AUTO_AIRTIME_CONVERSION && (
+							<AutoConversionsTable
+								conversions={dataStatistics.data as IGroupAutoTransaction[]}
+								isLoading={isLoading}
+							/>
+						)}
+						{dataStatistics.service === SERVICES.CARD_TOP_UP && (
+							<CardTopUpTransactionsTable
+								data={dataStatistics.data as Transaction[]}
+								isLoading={isLoading}
+							/>
+						)}
+						{dataStatistics.service === SERVICES.BETTING && (
+							<BettingTransactionsTable
+								data={dataStatistics.data as IPurchasedBill[]}
+								isLoading={isLoading}
+							/>
+						)}
+
+						{dataStatistics.service === SERVICES.REVERSAL && (
+							<ReversalTransactionsTable
+								data={dataStatistics.data as any}
+								isLoading={isLoading}
+							/>
+						)}
+						{dataStatistics.service === SERVICES.EPIN && (
+							<EPinTransactionsTable
+								data={dataStatistics.data as Transaction[]}
+								isLoading={isLoading}
+							/>
+						)}
+						{dataStatistics.service === SERVICES.WALLET_TRANSFER && (
+							<WalletTransferTransactionsTable
+								data={dataStatistics.data as Transaction[]}
+								isLoading={isLoading}
+							/>
+						)}
+					</>
+				)}
+
+				{!isLoading && total > maxRecordRef.current && (
+					<Box>
+						<TablePagination
+							page={currentPage - 1}
+							count={Number(total)}
+							onPageChange={(value) => handlePageChange(value + 1)}
+							rowsPerPage={maxRecordRef.current}
+							handleChangeRowsPerPage={handleChangeRowsPerPage}
+						/>
+					</Box>
+				)}
+			</Container>
 		</Layout>
 	);
 };

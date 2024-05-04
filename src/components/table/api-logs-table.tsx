@@ -89,7 +89,7 @@ const ApiLogsTable: React.FC<Props> = ({ data, isLoading }) => {
 					}}
 				>
 					{isLoading ? (
-						<TableLoader colSpan={6} />
+						<TableLoader colSpan={7} />
 					) : (
 						data && (
 							<>
@@ -124,7 +124,7 @@ const ApiLogsTable: React.FC<Props> = ({ data, isLoading }) => {
 									))
 								) : (
 									<TableRow>
-										<TableCell colSpan={6}>
+										<TableCell colSpan={7}>
 											<Empty text={'No api log(s)'} />
 										</TableCell>
 									</TableRow>

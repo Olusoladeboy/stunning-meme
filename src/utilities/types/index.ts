@@ -552,7 +552,7 @@ export type User = {
 };
 
 export interface PinData {
-	network?: string;
+	network?: INetwork | string;
 	amount?: number;
 	plan?: string;
 	service_type?: string;
@@ -560,11 +560,19 @@ export interface PinData {
 	price?: number;
 	monthsPaidFor?: number;
 	numberOfPins?: number;
+	name?: string;
 }
 
 export interface EducationPin {
 	serialNumber: string;
 	pin: string;
+}
+
+export interface IPin {
+	pin: string;
+	expiresOn: string;
+	instructions: any;
+	serialNumber: string;
 }
 
 export interface ElectricityToken {
@@ -709,7 +717,7 @@ export interface Transaction {
 	updatedAt: Date;
 	pin_data?: PinData;
 	pin?: string;
-	pins?: EducationPin[];
+	pins?: IPin[];
 	transaction: INestedTransaction;
 	electricity_token?: ElectricityToken;
 	withdrawalChannel?: string;
@@ -719,6 +727,9 @@ export interface Transaction {
 	sentTo: string | User;
 	declinedBy: string | User;
 	declinedDate: Date;
+	bankCode?: string;
+	withdrawalTransactionCharge?: string;
+	externalReference?: string;
 }
 
 export interface IReferral {
@@ -827,13 +838,6 @@ export interface IApiLog {
 	createdAt: string;
 	updatedAt: string;
 	id: string;
-}
-
-export interface IPin {
-	pin: string;
-	expiresOn: any;
-	instructions: any;
-	serialNumber: string;
 }
 
 export interface IPurchasedBill {

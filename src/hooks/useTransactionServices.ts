@@ -16,11 +16,11 @@ import {
 	dataPlans,
 	airtimeTransactions,
 	convertAirtimes,
-	autoConvertAirtimes,
 	walletWithdrawal,
 	ePinTransactions,
 	walletFunding,
 	walletTransfers,
+	autoConvertAirtimeGroups,
 } from 'api';
 import { cableTransactions } from 'api/cable';
 import { billBundles, billProviders, billTransactions } from 'api/bill';
@@ -144,7 +144,7 @@ export const useQueryAutoConvertAirtimes = (
 	const queryAutoConvertAirtimes = async (params: Record<string, any>) => {
 		setLoading(true);
 		try {
-			const response = await autoConvertAirtimes({ params });
+			const response = await autoConvertAirtimeGroups(params);
 			setLoading(false);
 
 			if (response && response.success) {
@@ -278,7 +278,8 @@ export const useQueryAirtimeTransactions = (
 
 			if (response && response.success) {
 				setDataAirtimeTransactions(response.payload);
-				typeof callback === 'function' && callback(response.payload);
+				const metadata = response.metadata;
+				typeof callback === 'function' && callback(response.payload, metadata);
 				return response.payload;
 			}
 		} catch (error) {

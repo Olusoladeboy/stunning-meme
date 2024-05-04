@@ -12,18 +12,20 @@ import moment from 'moment';
 import JsonFormatter from 'react-json-formatter';
 import { StyledTableCell, StyledTableRow } from './components';
 import {
-	IPurchasedBill,
+	checkAmount,
 	extractUserName,
 	formatNumberToCurrency,
 	JSON_STYLE,
+	Transaction,
 } from 'utilities';
 import Empty from '../empty/table-empty';
 import CustomTableCell from './components/custom-table-cell';
 import TableLoader from 'components/loader/table-loader';
 import ModalWrapper from 'components/modal/Wrapper';
+import TransactionDetailsModal from 'components/modal/transaction-details-modal';
 
 type Props = {
-	data: IPurchasedBill[];
+	data: Transaction[];
 	isLoading?: boolean;
 };
 
@@ -33,7 +35,14 @@ const ElectricityTransactionsTable = ({ data, isLoading }: Props) => {
 
 	const [jsonData, setJsonData] = useState<string>('');
 
-	const handleViewToken = (bill: IPurchasedBill) => {
+	const [selectedTransaction, setSelectedTransaction] =
+		useState<null | Transaction>(null);
+
+	const handleClickRow = (value: Transaction) => {
+		setSelectedTransaction(value);
+	};
+
+	const handleViewToken = (bill: Transaction) => {
 		const jsonObj = bill.electricity_token;
 		setJsonData(JSON.stringify(jsonObj));
 	};
@@ -59,6 +68,13 @@ const ElectricityTransactionsTable = ({ data, isLoading }: Props) => {
 				</ModalWrapper>
 			)}
 			<Container>
+				{selectedTransaction && (
+					<TransactionDetailsModal
+						closeModal={() => setSelectedTransaction(null)}
+						transaction={selectedTransaction as any}
+						isDisplayButtons
+					/>
+				)}
 				<Box sx={{ overflow: 'auto' }}>
 					<Table sx={{ overflow: 'auto' }}>
 						<TableHead
@@ -105,7 +121,10 @@ const ElectricityTransactionsTable = ({ data, isLoading }: Props) => {
 									<>
 										{data.length > 0 ? (
 											data.map((value) => (
-												<StyledTableRow key={value.reference}>
+												<StyledTableRow
+													onClick={() => handleClickRow(value)}
+													key={value.reference}
+												>
 													<StyledTableCell style={styles.text}>
 														{value.reference}
 													</StyledTableCell>
@@ -119,7 +138,7 @@ const ElectricityTransactionsTable = ({ data, isLoading }: Props) => {
 															extractUserName(value.user)}
 													</StyledTableCell>
 													<StyledTableCell style={styles.text}>
-														{formatNumberToCurrency(value.amount)}
+														{formatNumberToCurrency(checkAmount(value.amount))}
 													</StyledTableCell>
 
 													<StyledTableCell style={styles.text}>
@@ -129,7 +148,12 @@ const ElectricityTransactionsTable = ({ data, isLoading }: Props) => {
 														{value.status}
 													</StyledTableCell>
 													<StyledTableCell style={styles.text}>
-														<Button onClick={() => handleViewToken(value)}>
+														<Button
+															onClick={(e) => {
+																e.stopPropagation();
+																handleViewToken(value);
+															}}
+														>
 															View token
 														</Button>
 													</StyledTableCell>

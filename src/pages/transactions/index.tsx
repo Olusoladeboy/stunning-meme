@@ -1,12 +1,19 @@
-import React, { useState, useRef } from 'react';
-import { Box, Typography, styled } from '@mui/material';
+import React, { useState, useRef, MouseEvent, CSSProperties } from 'react';
+import {
+	Box,
+	Button,
+	ClickAwayListener,
+	List,
+	ListItemButton,
+	Popper,
+	styled,
+	useTheme,
+} from '@mui/material';
 import { grey } from '@mui/material/colors';
+import { ArrowDropDown } from '@mui/icons-material';
 import {
 	DataSubscriptionTable,
 	Layout,
-	SearchStatistics,
-	StatisticTab,
-	StatisticsTotal,
 	AirtimePurchaseTable,
 	ConversionsTable,
 	CableTransactionsTable,
@@ -15,14 +22,15 @@ import {
 	ElectricityTransactionsTable,
 	WalletTransferTransactionsTable,
 	WithdrawalTransactionsTable,
-	AutoAirtimeConversionTransactionsTable,
 	CardTopUpTransactionsTable,
 	BettingTransactionsTable,
 	EPinTransactionsTable,
 	ReversalTransactionsTable,
 	TablePagination,
+	TableHeader,
 	TransactionMainBalance,
 	TransactionsTab,
+	AutoConversionsTable,
 } from 'components';
 import {
 	BOX_SHADOW,
@@ -32,11 +40,10 @@ import {
 	Metadata,
 	IPurchasedBill,
 	IWithdrawal,
-	IEpin,
-	IFunding,
-	ITransfer,
-	STATISTIC_TAB,
-	getFilterDateRange,
+	TRANSACTION_SERVICE,
+	capitalize,
+	IGroupAutoTransaction,
+	Transaction,
 } from 'utilities';
 import {
 	usePageTitle,
@@ -49,6 +56,7 @@ import {
 	useQueryEPinTransactions,
 	useQueryWalletFundings,
 	useQueryWalletTransfers,
+	useAlert,
 } from 'hooks';
 import { useAppSelector } from 'store/hooks';
 
@@ -58,16 +66,24 @@ type TDataStatistics = {
 };
 
 const Statistics = () => {
-	usePageTitle('Statistics');
+	usePageTitle('Transactions');
+
+	const alert = useAlert();
+	const theme = useTheme();
+	const styles = useStyles(theme);
+
+	const canViewStatistics = useAppSelector(
+		(store) => store.authState?.canViewStatistics
+	);
 
 	const [total, setTotal] = useState(0);
 	const [currentPage, setCurrentPage] = useState(1);
-	const { canViewStatistics } = useAppSelector((store) => store.authState);
-	const [selectedFilter, setSelectedFilter] = useState<string>(
-		STATISTIC_TAB.ALL_TIME
-	);
+	const [selectedService, setSelectedService] = useState<string>('');
 
 	const filterUrlEntries = useRef<null | { [key: string]: any }>(null);
+	const [serviceAnchorEl, setServiceAnchorEl] = useState<null | HTMLElement>(
+		null
+	);
 
 	const queryValues = useRef<null | { [key: string]: any }>(null);
 
@@ -78,8 +94,8 @@ const Statistics = () => {
 		null
 	);
 
-	const handleSetDataStatistics = (data: TDataStatistics) => {
-		setDataStatistics(data);
+	const handleServiceClick = (e: MouseEvent<HTMLElement>) => {
+		setServiceAnchorEl(serviceAnchorEl ? null : e.currentTarget);
 	};
 
 	const handleSetTotal = (metadata: Metadata) => {
@@ -110,6 +126,7 @@ const Statistics = () => {
 
 	const { queryAirtimeTransactions, isLoadingAirtimeTransactions } =
 		useQueryAirtimeTransactions((data, metadata) => {
+			console.log('META_DATA::', metadata);
 			handleSetTotal(metadata as Metadata);
 			setDataStatistics({
 				service: SERVICES.AIRTIME_TOP_UP,
@@ -203,6 +220,7 @@ const Statistics = () => {
 		queryValues.current = values;
 
 		if (skipValue.current > 0) payload.skip = skipValue.current;
+		if (values.reference) payload.reference = values.reference;
 
 		// console.log(filterUrlEntries.current);
 
@@ -289,181 +307,219 @@ const Statistics = () => {
 
 	// Filters
 
-	const handleSelectFilter = (filter: string) => {
-		setSelectedFilter(filter);
-		let filterBy = '';
-		if (filter === STATISTIC_TAB.LAST_7_DAY) {
-			filterBy = getFilterDateRange(7);
-		}
+	const handleSelectFilter = (service: string) => {
+		setServiceAnchorEl(null);
+		setSelectedService(service);
 
-		if (filter === STATISTIC_TAB.LAST_30_DAYS) {
-			filterBy = getFilterDateRange(30);
-		}
-
-		if (filter === STATISTIC_TAB.TODAY) {
-			const today = new Date().toISOString();
-			filterBy = getFilterDateRange(1);
-		}
-
-		if (filter === STATISTIC_TAB.ALL_TIME) {
-			filterBy = '';
-			filterUrlEntries.current = null;
-		}
-
-		console.log(filterBy);
-
-		if (filterBy) {
-			const searchParams = new URLSearchParams(filterBy);
-			filterUrlEntries.current = Object.fromEntries(searchParams);
-		}
-
-		if (queryValues?.current) switchHandleSubmit(queryValues?.current as any);
+		switchHandleSubmit({
+			service,
+		});
 	};
+
+	const handleSearch = (reference: string) => {
+		if (!selectedService) {
+			alert({
+				message: 'Select a service type',
+				type: 'info',
+			});
+			return;
+		}
+
+		if (!reference) {
+			alert({
+				message: 'Enter transaction reference',
+				type: 'info',
+			});
+			return;
+		}
+
+		const payload = {
+			service: selectedService,
+			reference,
+		};
+
+		switchHandleSubmit(payload);
+	};
+
+	const clearSearch = () => {
+		switchHandleSubmit({
+			service: selectedService,
+		});
+	};
+
+	const statusFilter = (
+		<ClickAwayListener onClickAway={() => setServiceAnchorEl(null)}>
+			<Box>
+				<Button
+					size='large'
+					style={styles.button as CSSProperties}
+					onClick={(e) => handleServiceClick(e)}
+					variant={'outlined'}
+					endIcon={<ArrowDropDown />}
+				>
+					{selectedService
+						? `${capitalize(selectedService)}`
+						: 'Filter by Service'}
+				</Button>
+				<Popper
+					sx={{ zIndex: theme.zIndex.modal }}
+					open={Boolean(serviceAnchorEl)}
+					anchorEl={serviceAnchorEl}
+				>
+					<List
+						sx={{
+							'& .MuiListItemButton-root': {
+								textTransform: 'capitalize',
+							},
+							'& .MuiListItemButton-root:hover': {
+								backgroundColor: theme.palette.primary.main,
+								color: grey[50],
+							},
+						}}
+						style={styles.list}
+					>
+						{Object.values(TRANSACTION_SERVICE).map((value) => (
+							<ListItemButton
+								onClick={() => handleSelectFilter(value)}
+								key={value}
+							>
+								{capitalize(value)}
+							</ListItemButton>
+						))}
+					</List>
+				</Popper>
+			</Box>
+		</ClickAwayListener>
+	);
 
 	return (
 		<Layout>
-			<RouteGuard
-				roles={[
-					ADMIN_ROLE.SUPER_ADMIN,
-					ADMIN_ROLE.ADMIN,
-					ADMIN_ROLE.OPERATIONS,
-				]}
-			>
-				<Container>
-					<Box
-						sx={{
-							padding: ['1.5rem'],
-							display: 'grid',
-							gap: (theme) => theme.spacing(4),
-						}}
-					>
-						<Title variant={'h5'}>Transactions</Title>
-						{canViewStatistics && <TransactionMainBalance />}
-						<TransactionsTab
-						// currentTab={currentTab}
-						// changeCurrentTab={switchUserType}
-						/>
-						<SearchStatistics
-							switchHandleSubmit={switchHandleSubmit}
-							setDataStatistics={handleSetDataStatistics}
-							isLoading={
-								isLoading &&
-								!filterUrlEntries.current &&
-								!(skipValue.current > 0)
-							}
-						/>
+			<Container>
+				<Box
+					sx={{
+						padding: { xs: '0px 15px', md: '0px 2rem' },
+						display: 'grid',
+						gap: '2rem',
+					}}
+				>
+					<TableHeader
+						searchPlaceholder={'Search transaction by reference'}
+						title={'Transactions'}
+						statusFilter={statusFilter}
+						handleSearch={handleSearch}
+						clearSearch={clearSearch}
+					/>
+					{canViewStatistics && <TransactionMainBalance />}
+					<TransactionsTab />
+				</Box>
 
-						<StatisticTab
-							selectedFilter={selectedFilter}
-							selectFilter={handleSelectFilter}
+				{dataStatistics && (
+					<>
+						{dataStatistics.service === SERVICES.DATA_SUBSCRIPTION && (
+							<DataSubscriptionTable
+								isLoading={isLoadingDataSubscriptions}
+								subscriptions={dataStatistics.data as any}
+							/>
+						)}
+						{dataStatistics.service === SERVICES.AIRTIME_TOP_UP && (
+							<AirtimePurchaseTable
+								transactions={dataStatistics.data as any}
+								isLoading={isLoading}
+							/>
+						)}
+						{dataStatistics.service === SERVICES.AIRTIME_CONVERSION && (
+							<ConversionsTable
+								conversions={dataStatistics.data as any}
+								isLoading={isLoading}
+							/>
+						)}
+						{dataStatistics.service === SERVICES.CABLE && (
+							<CableTransactionsTable
+								isLoading={isLoadingBillTransactions}
+								data={dataStatistics.data as Transaction[]}
+							/>
+						)}
+						{dataStatistics.service === SERVICES.INTERNET && (
+							<InternetTransactionsTable
+								isLoading={isLoadingBillTransactions}
+								data={dataStatistics.data as any}
+							/>
+						)}
+						{dataStatistics.service === SERVICES.EDUCATION && (
+							<EducationTransactionsTable
+								data={dataStatistics.data as Transaction[]}
+								isLoading={isLoading}
+							/>
+						)}
+						{dataStatistics.service === SERVICES.ELECTRICITY && (
+							<ElectricityTransactionsTable
+								data={dataStatistics.data as Transaction[]}
+								isLoading={isLoadingBillTransactions}
+							/>
+						)}
+						{dataStatistics.service === SERVICES.WITHDRAWAL && (
+							<WithdrawalTransactionsTable
+								data={dataStatistics.data as IWithdrawal[]}
+								isLoading={isLoading}
+							/>
+						)}
+						{dataStatistics.service === SERVICES.AUTO_AIRTIME_CONVERSION && (
+							<AutoConversionsTable
+								conversions={dataStatistics.data as IGroupAutoTransaction[]}
+								isLoading={isLoading}
+							/>
+						)}
+						{dataStatistics.service === SERVICES.CARD_TOP_UP && (
+							<CardTopUpTransactionsTable
+								data={dataStatistics.data as Transaction[]}
+								isLoading={isLoading}
+							/>
+						)}
+						{dataStatistics.service === SERVICES.BETTING && (
+							<BettingTransactionsTable
+								data={dataStatistics.data as IPurchasedBill[]}
+								isLoading={isLoading}
+							/>
+						)}
+
+						{dataStatistics.service === SERVICES.REVERSAL && (
+							<ReversalTransactionsTable
+								data={dataStatistics.data as any}
+								isLoading={isLoading}
+							/>
+						)}
+						{dataStatistics.service === SERVICES.EPIN && (
+							<EPinTransactionsTable
+								data={dataStatistics.data as Transaction[]}
+								isLoading={isLoading}
+							/>
+						)}
+						{dataStatistics.service === SERVICES.WALLET_TRANSFER && (
+							<WalletTransferTransactionsTable
+								data={dataStatistics.data as Transaction[]}
+								isLoading={isLoading}
+							/>
+						)}
+					</>
+				)}
+
+				{!isLoading && total > maxRecordRef.current && (
+					<Box>
+						<TablePagination
+							page={currentPage - 1}
+							count={Number(total)}
+							onPageChange={(value) => handlePageChange(value + 1)}
+							rowsPerPage={maxRecordRef.current}
+							handleChangeRowsPerPage={handleChangeRowsPerPage}
 						/>
 					</Box>
-					{dataStatistics && (
-						<>
-							{dataStatistics.service === SERVICES.DATA_SUBSCRIPTION && (
-								<DataSubscriptionTable
-									isLoading={isLoadingDataSubscriptions}
-									subscriptions={dataStatistics.data as any}
-								/>
-							)}
-							{dataStatistics.service === SERVICES.AIRTIME_TOP_UP && (
-								<AirtimePurchaseTable
-									transactions={dataStatistics.data as any}
-								/>
-							)}
-							{dataStatistics.service === SERVICES.AIRTIME_CONVERSION && (
-								<ConversionsTable conversions={dataStatistics.data as any} />
-							)}
-							{dataStatistics.service === SERVICES.CABLE && (
-								<CableTransactionsTable
-									isLoading={isLoadingBillTransactions}
-									data={dataStatistics.data as any}
-								/>
-							)}
-							{dataStatistics.service === SERVICES.INTERNET && (
-								<InternetTransactionsTable
-									isLoading={isLoadingBillTransactions}
-									data={dataStatistics.data as any}
-								/>
-							)}
-							{dataStatistics.service === SERVICES.EDUCATION && (
-								<EducationTransactionsTable
-									data={dataStatistics.data as IPurchasedBill[]}
-									isLoading={isLoading}
-								/>
-							)}
-							{dataStatistics.service === SERVICES.ELECTRICITY && (
-								<ElectricityTransactionsTable
-									data={dataStatistics.data as IPurchasedBill[]}
-									isLoading={isLoadingBillTransactions}
-								/>
-							)}
-							{dataStatistics.service === SERVICES.WITHDRAWAL && (
-								<WithdrawalTransactionsTable
-									data={dataStatistics.data as IWithdrawal[]}
-									isLoading={isLoading}
-								/>
-							)}
-							{dataStatistics.service === SERVICES.AUTO_AIRTIME_CONVERSION && (
-								<AutoAirtimeConversionTransactionsTable
-									data={dataStatistics.data as any}
-								/>
-							)}
-							{dataStatistics.service === SERVICES.CARD_TOP_UP && (
-								<CardTopUpTransactionsTable
-									data={dataStatistics.data as IFunding[]}
-									isLoading={isLoading}
-								/>
-							)}
-							{dataStatistics.service === SERVICES.BETTING && (
-								<BettingTransactionsTable
-									data={dataStatistics.data as IPurchasedBill[]}
-									isLoading={isLoading}
-								/>
-							)}
-
-							{dataStatistics.service === SERVICES.REVERSAL && (
-								<ReversalTransactionsTable data={dataStatistics.data as any} />
-							)}
-							{dataStatistics.service === SERVICES.EPIN && (
-								<EPinTransactionsTable
-									data={dataStatistics.data as IEpin[]}
-									isLoading={isLoading}
-								/>
-							)}
-							{dataStatistics.service === SERVICES.WALLET_TRANSFER && (
-								<WalletTransferTransactionsTable
-									data={dataStatistics.data as ITransfer[]}
-									isLoading={isLoading}
-								/>
-							)}
-						</>
-					)}
-
-					{!isLoading && total > maxRecordRef.current && (
-						<Box>
-							<TablePagination
-								page={currentPage - 1}
-								count={Number(total)}
-								onPageChange={(value) => handlePageChange(value + 1)}
-								rowsPerPage={maxRecordRef.current}
-								handleChangeRowsPerPage={handleChangeRowsPerPage}
-							/>
-						</Box>
-					)}
-				</Container>
-			</RouteGuard>
+				)}
+			</Container>
 		</Layout>
 	);
 };
 
 export default Statistics;
-
-const StatisticsContainer = styled(Box)(({ theme }) => ({
-	display: 'grid',
-	gridTemplateColumns: 'repeat(3, 1fr)',
-	gap: theme.spacing(3),
-}));
 
 const Container = styled(Box)(({ theme }) => ({
 	display: 'grid',
@@ -476,6 +532,29 @@ const Container = styled(Box)(({ theme }) => ({
 	boxShadow: BOX_SHADOW,
 }));
 
-const Title = styled(Typography)(({ theme }) => ({
-	fontWeight: 'bold',
-}));
+const useStyles = (theme: any) => ({
+	container: {
+		display: 'grid',
+		gridTemplateColumn: '1fr',
+		gap: theme.spacing(4),
+		border: `0.5px solid ${theme.palette.secondary.main}`,
+		padding: '1.5rem 0px',
+		backgroundColor: grey[50],
+		borderRadius: theme.spacing(2),
+		boxShadow: BOX_SHADOW,
+	},
+	paginationWrapper: {
+		display: 'flex',
+		justifyContent: 'flex-end',
+		paddingRight: '20px',
+	},
+	button: {
+		whiteSpace: 'nowrap',
+	},
+	list: {
+		border: `1px solid ${theme.palette.primary.main}`,
+		borderRadius: theme.spacing(1),
+		backgroundColor: theme.palette.background.paper,
+		marginTop: theme.spacing(2),
+	},
+});

@@ -10,6 +10,7 @@ import {
 import moment from 'moment';
 import { StyledTableCell, StyledTableRow } from './components';
 import {
+	Amount,
 	Transaction,
 	checkAmount,
 	extractUserName,
@@ -25,7 +26,7 @@ type Props = {
 	isLoading?: boolean;
 };
 
-const WalletTransferTransactionsTable = ({ data, isLoading }: Props) => {
+const CreditDebitTable = ({ data, isLoading }: Props) => {
 	const theme = useTheme();
 	const styles = useStyles(theme);
 
@@ -59,11 +60,8 @@ const WalletTransferTransactionsTable = ({ data, isLoading }: Props) => {
 								style={styles.headTableCell}
 								label={'Reference ID'}
 							/>
-							<CustomTableCell
-								style={styles.headTableCell}
-								label={'User From'}
-							/>
-							<CustomTableCell style={styles.headTableCell} label={'User To'} />
+
+							<CustomTableCell style={styles.headTableCell} label={'User'} />
 							<CustomTableCell style={styles.headTableCell} label={'Amount'} />
 							<CustomTableCell
 								style={styles.headTableCell}
@@ -85,7 +83,7 @@ const WalletTransferTransactionsTable = ({ data, isLoading }: Props) => {
 						}}
 					>
 						{isLoading ? (
-							<TableLoader colSpan={8} />
+							<TableLoader colSpan={7} />
 						) : (
 							data && (
 								<>
@@ -98,37 +96,26 @@ const WalletTransferTransactionsTable = ({ data, isLoading }: Props) => {
 												<StyledTableCell style={styles.text}>
 													{value.reference}
 												</StyledTableCell>
+
 												<StyledTableCell style={styles.text}>
-													{value.userFrom &&
-														typeof value.userFrom === 'object' &&
-														Object.keys(value.userFrom).length > 0 &&
-														extractUserName(value.userFrom)}
-												</StyledTableCell>
-												<StyledTableCell style={styles.text}>
-													{value.userTo &&
-														typeof value.userTo === 'object' &&
-														Object.keys(value.userTo).length > 0 &&
-														extractUserName(value.userTo)}
+													{value.user &&
+														typeof value.user === 'object' &&
+														Object.keys(value.user).length > 0 &&
+														extractUserName(value.user)}
 												</StyledTableCell>
 												<StyledTableCell style={styles.text}>
 													{formatNumberToCurrency(checkAmount(value.amount))}
 												</StyledTableCell>
 												<StyledTableCell style={styles.text}>
-													{value.transactionFrom &&
-														typeof value.transactionFrom === 'object' &&
-														Object.keys(value.transactionFrom).length > 0 &&
-														formatNumberToCurrency(
-															checkAmount(value.transactionFrom.balanceBefore)
-														)}
+													{formatNumberToCurrency(
+														checkAmount(value.balanceBefore as string | Amount)
+													)}
 												</StyledTableCell>
 
 												<StyledTableCell style={styles.text}>
-													{value.transactionFrom &&
-														typeof value.transactionFrom === 'object' &&
-														Object.keys(value.transactionFrom).length > 0 &&
-														formatNumberToCurrency(
-															checkAmount(value.transactionFrom.balanceAfter)
-														)}
+													{formatNumberToCurrency(
+														checkAmount(value.balanceAfter as string | Amount)
+													)}
 												</StyledTableCell>
 
 												<StyledTableCell style={styles.text}>
@@ -140,7 +127,7 @@ const WalletTransferTransactionsTable = ({ data, isLoading }: Props) => {
 											</StyledTableRow>
 										))
 									) : (
-										<Empty colSpan={8} text={'No available wallet transfer'} />
+										<Empty colSpan={8} text={'No transactions'} />
 									)}
 								</>
 							)
@@ -183,4 +170,4 @@ const useStyles = (theme: any) => ({
 	},
 });
 
-export default WalletTransferTransactionsTable;
+export default CreditDebitTable;

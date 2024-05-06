@@ -161,7 +161,7 @@ const Statistics = () => {
 		useQueryWalletFundings((data, metadata) => {
 			handleSetTotal(metadata as Metadata);
 			setDataStatistics({
-				service: SERVICES.CARD_TOP_UP,
+				service: SERVICES.CARD_FUNDING,
 				data,
 			});
 		});
@@ -235,7 +235,7 @@ const Statistics = () => {
 			return;
 		}
 
-		if (values.service === SERVICES.CARD_TOP_UP) {
+		if (values.service === SERVICES.CARD_FUNDING) {
 			payload.populate = 'user';
 			queryWalletFundings(payload);
 			return;
@@ -296,7 +296,6 @@ const Statistics = () => {
 		}
 
 		if (filter === STATISTIC_TAB.TODAY) {
-			const today = new Date().toISOString();
 			filterBy = getFilterDateRange(1);
 		}
 
@@ -304,8 +303,6 @@ const Statistics = () => {
 			filterBy = '';
 			filterUrlEntries.current = null;
 		}
-
-		console.log(filterBy);
 
 		if (filterBy) {
 			const searchParams = new URLSearchParams(filterBy);
@@ -404,7 +401,7 @@ const Statistics = () => {
 									data={dataStatistics.data as any}
 								/>
 							)}
-							{dataStatistics.service === SERVICES.CARD_TOP_UP && (
+							{dataStatistics.service === SERVICES.CARD_FUNDING && (
 								<CardTopUpTransactionsTable
 									data={dataStatistics.data as Transaction[]}
 									isLoading={isLoading}

@@ -163,14 +163,14 @@ const SearchStatistics = ({
 	// 		return;
 	// 	}
 
-	// 	// if (values.service === SERVICES.CARD_TOP_UP) {
+	// 	// if (values.service === SERVICES.CARD_FUNDING) {
 	// 	//   if (values.provider && values.provider !== SELECT_PROVIDER)
 	// 	//     payload.provider = values.provider;
 	// 	//   queryCardTopUpAdminTransactions(payload);
 	// 	//   return;
 	// 	// }
 
-	// 	if (values.service === SERVICES.CARD_TOP_UP) {
+	// 	if (values.service === SERVICES.CARD_FUNDING) {
 	// 		queryCardTopUpAdminTransactions();
 	// 		return;
 	// 	}

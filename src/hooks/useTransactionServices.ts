@@ -21,10 +21,58 @@ import {
 	walletFunding,
 	walletTransfers,
 	autoConvertAirtimeGroups,
+	transactions,
 } from 'api';
 import { cableTransactions } from 'api/cable';
 import { billBundles, billProviders, billTransactions } from 'api/bill';
 
+// Transaction Query Hook
+export const useQueryTransactions = (
+	callback?: ({
+		data,
+		metadata,
+		service,
+	}: {
+		data: any;
+		metadata?: Metadata;
+		service?: string;
+	}) => void
+) => {
+	const [dataTransactions, setDataTransactions] = useState<
+		{ [key: string]: any }[] | null
+	>(null);
+	const [isLoading, setLoading] = useState<boolean>(false);
+
+	const queryTransactions = async (params: Record<string, any>) => {
+		setLoading(true);
+		try {
+			const response = await transactions(params);
+			setLoading(false);
+
+			if (response && response.success) {
+				setDataTransactions(response.payload);
+				typeof callback === 'function' &&
+					callback({
+						data: response.payload,
+						metadata: response?.metadata,
+						service: params.type || params.service,
+					});
+				return response.payload;
+			}
+		} catch (error) {
+			console.log(error);
+			setLoading(false);
+		}
+	};
+
+	return {
+		isLoadingTransactions: isLoading,
+		transactions: dataTransactions,
+		queryTransactions,
+	};
+};
+
+// Airtime Network Query Hook
 export const useQueryAirtimeNetwork = (queryKey?: string) => {
 	const [isEnable, setIsEnable] = useState<boolean>(false);
 
@@ -568,6 +616,39 @@ export const useQueryWalletTransfers = (
 	};
 };
 
+// Wallet Bank Funding hooks
+export const useQueryBankFunding = (
+	callback?: (data: any, metadata?: Metadata) => void
+) => {
+	const [dataWalletTransfers, setDataWalletTransfers] = useState<
+		ITransfer[] | null
+	>(null);
+
+	const [isLoading, setLoading] = useState<boolean>(false);
+	const queryWalletTransfers = async (params: Record<string, any>) => {
+		setLoading(true);
+		try {
+			const response = await walletTransfers(params);
+			setLoading(false);
+
+			if (response && response.success) {
+				setDataWalletTransfers(response.payload);
+				typeof callback === 'function' &&
+					callback(response.payload, response?.metadata);
+				// return response.payload;
+			}
+		} catch (error) {
+			setLoading(false);
+		}
+	};
+
+	return {
+		isLoadingWalletTransfers: isLoading,
+		walletTransfers: dataWalletTransfers,
+		queryWalletTransfers,
+	};
+};
+
 // Epin Transaction Hooks
 
 export const useQueryEPinTransactions = (
@@ -600,5 +681,37 @@ export const useQueryEPinTransactions = (
 		isLoadingEPinTransactions: isLoading,
 		walletWithdrawal: dataEPinTransactions,
 		queryEPinTransactions,
+	};
+};
+
+// Refund Query
+export const useQueryRefunds = (
+	callback?: (data: any, metadata?: Metadata) => void
+) => {
+	const [dataRefunds, setDataRefunds] = useState<IEpin[] | null>(null);
+
+	const [isLoading, setLoading] = useState<boolean>(false);
+
+	// const query = async (params: Record<string, any>) => {
+	const queryRefunds = async (params: Record<string, any>) => {
+		setLoading(true);
+		try {
+			const response = await ePinTransactions(params);
+			setLoading(false);
+
+			if (response && response.success) {
+				setDataRefunds(response.payload);
+				typeof callback === 'function' &&
+					callback(response.payload, response?.metadata);
+			}
+		} catch (error) {
+			setLoading(false);
+		}
+	};
+
+	return {
+		isLoadingRefunds: isLoading,
+		refunds: dataRefunds,
+		queryRefunds,
 	};
 };

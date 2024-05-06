@@ -161,6 +161,7 @@ const AutoConversionsTable = ({
 									{conversions.length > 0 ? (
 										conversions.map(
 											(conversion: IGroupAutoTransaction, key: number) => {
+												const createdAt = conversion.transactions[0].createdAt;
 												return (
 													<StyledTableRow
 														onClick={() =>
@@ -204,7 +205,7 @@ const AutoConversionsTable = ({
 															{conversion?.count}
 														</StyledTableCell>
 														<StyledTableCell style={styles.text}>
-															{moment(conversion?.createdAt).format('ll')}
+															{moment(createdAt).format('ll')}
 														</StyledTableCell>
 													</StyledTableRow>
 												);

@@ -31,11 +31,10 @@ import {
 	TransactionMainBalance,
 	TransactionsTab,
 	AutoConversionsTable,
+	CreditDebitTable,
 } from 'components';
 import {
 	BOX_SHADOW,
-	RouteGuard,
-	ADMIN_ROLE,
 	SERVICES,
 	Metadata,
 	IPurchasedBill,
@@ -56,6 +55,7 @@ import {
 	useQueryEPinTransactions,
 	useQueryWalletFundings,
 	useQueryWalletTransfers,
+	useQueryTransactions,
 	useAlert,
 } from 'hooks';
 import { useAppSelector } from 'store/hooks';
@@ -65,7 +65,7 @@ type TDataStatistics = {
 	data: { [key: string]: any }[] | null;
 };
 
-const Statistics = () => {
+const Transactions = () => {
 	usePageTitle('Transactions');
 
 	const alert = useAlert();
@@ -99,11 +99,8 @@ const Statistics = () => {
 	};
 
 	const handleSetTotal = (metadata: Metadata) => {
-		if (metadata?.total) {
-			const total = metadata?.total;
-
-			setTotal(total);
-		}
+		const total = parseInt(`${metadata?.total}`);
+		setTotal(total);
 	};
 
 	const resetQueryValue = (service: string) => {
@@ -183,7 +180,7 @@ const Statistics = () => {
 		useQueryWalletFundings((data, metadata) => {
 			handleSetTotal(metadata as Metadata);
 			setDataStatistics({
-				service: SERVICES.CARD_TOP_UP,
+				service: SERVICES.CARD_FUNDING,
 				data,
 			});
 		});
@@ -197,6 +194,16 @@ const Statistics = () => {
 			});
 		});
 
+	const { isLoadingTransactions, queryTransactions } = useQueryTransactions(
+		({ data, metadata, service }) => {
+			handleSetTotal(metadata as Metadata);
+			setDataStatistics({
+				data,
+				service: service as string,
+			});
+		}
+	);
+
 	const isLoading =
 		isLoadingDataSubscriptions ||
 		isLoadingAirtimeTransactions ||
@@ -206,7 +213,8 @@ const Statistics = () => {
 		isLoadingWalletWithdrawals ||
 		isLoadingEPinTransactions ||
 		isLoadingWalletFundings ||
-		isLoadingWalletTransfers;
+		isLoadingWalletTransfers ||
+		isLoadingTransactions;
 
 	const switchHandleSubmit = async (values: Record<string, any>) => {
 		let payload: { [key: string]: any } = {
@@ -228,6 +236,7 @@ const Statistics = () => {
 			payload = { ...payload, ...filterUrlEntries.current };
 
 		if (values.service === SERVICES.DATA_SUBSCRIPTION) {
+			payload.populate = 'user,plan,plan.network,dataType,network';
 			if (values.plan) payload.plan = values.plan;
 			if (values.type) payload.dataType = values.type;
 			queryDataSubscriptions(payload);
@@ -258,7 +267,7 @@ const Statistics = () => {
 			return;
 		}
 
-		if (values.service === SERVICES.CARD_TOP_UP) {
+		if (values.service === SERVICES.CARD_FUNDING) {
 			payload.populate = 'user';
 			queryWalletFundings(payload);
 			return;
@@ -273,6 +282,18 @@ const Statistics = () => {
 		if (values.service === SERVICES.EPIN) {
 			payload.populate = 'user,pin_data.network';
 			queryEPinTransactions(payload);
+			return;
+		}
+
+		if (
+			values.service === SERVICES.CREDIT ||
+			values.service === SERVICES.DEBIT ||
+			values.service === SERVICES.REFUND ||
+			values.service === SERVICES.REVERSAL
+		) {
+			payload.service = values.service;
+			payload.populate = 'user';
+			queryTransactions(payload);
 			return;
 		}
 
@@ -357,12 +378,18 @@ const Statistics = () => {
 					variant={'outlined'}
 					endIcon={<ArrowDropDown />}
 				>
-					{selectedService
-						? `${capitalize(selectedService)}`
-						: 'Filter by Service'}
+					{selectedService ? (
+						<>
+							{selectedService === SERVICES.CARD_FUNDING
+								? 'Card/Bank funding'
+								: `${capitalize(selectedService)}`}
+						</>
+					) : (
+						'Filter by Service'
+					)}
 				</Button>
 				<Popper
-					sx={{ zIndex: theme.zIndex.modal }}
+					// sx={{ zIndex: theme.zIndex.tooltip }}
 					open={Boolean(serviceAnchorEl)}
 					anchorEl={serviceAnchorEl}
 				>
@@ -378,12 +405,14 @@ const Statistics = () => {
 						}}
 						style={styles.list}
 					>
-						{Object.values(TRANSACTION_SERVICE).map((value) => (
+						{Object.values(SERVICES).map((value) => (
 							<ListItemButton
 								onClick={() => handleSelectFilter(value)}
 								key={value}
 							>
-								{capitalize(value)}
+								{value === SERVICES.CARD_FUNDING
+									? 'Card/Bank Funding'
+									: capitalize(value)}
 							</ListItemButton>
 						))}
 					</List>
@@ -413,94 +442,95 @@ const Statistics = () => {
 					<TransactionsTab />
 				</Box>
 
-				{dataStatistics && (
-					<>
-						{dataStatistics.service === SERVICES.DATA_SUBSCRIPTION && (
-							<DataSubscriptionTable
-								isLoading={isLoadingDataSubscriptions}
-								subscriptions={dataStatistics.data as any}
-							/>
-						)}
-						{dataStatistics.service === SERVICES.AIRTIME_TOP_UP && (
-							<AirtimePurchaseTable
-								transactions={dataStatistics.data as any}
-								isLoading={isLoading}
-							/>
-						)}
-						{dataStatistics.service === SERVICES.AIRTIME_CONVERSION && (
-							<ConversionsTable
-								conversions={dataStatistics.data as any}
-								isLoading={isLoading}
-							/>
-						)}
-						{dataStatistics.service === SERVICES.CABLE && (
-							<CableTransactionsTable
-								isLoading={isLoadingBillTransactions}
-								data={dataStatistics.data as Transaction[]}
-							/>
-						)}
-						{dataStatistics.service === SERVICES.INTERNET && (
-							<InternetTransactionsTable
-								isLoading={isLoadingBillTransactions}
-								data={dataStatistics.data as any}
-							/>
-						)}
-						{dataStatistics.service === SERVICES.EDUCATION && (
-							<EducationTransactionsTable
-								data={dataStatistics.data as Transaction[]}
-								isLoading={isLoading}
-							/>
-						)}
-						{dataStatistics.service === SERVICES.ELECTRICITY && (
-							<ElectricityTransactionsTable
-								data={dataStatistics.data as Transaction[]}
-								isLoading={isLoadingBillTransactions}
-							/>
-						)}
-						{dataStatistics.service === SERVICES.WITHDRAWAL && (
-							<WithdrawalTransactionsTable
-								data={dataStatistics.data as IWithdrawal[]}
-								isLoading={isLoading}
-							/>
-						)}
-						{dataStatistics.service === SERVICES.AUTO_AIRTIME_CONVERSION && (
-							<AutoConversionsTable
-								conversions={dataStatistics.data as IGroupAutoTransaction[]}
-								isLoading={isLoading}
-							/>
-						)}
-						{dataStatistics.service === SERVICES.CARD_TOP_UP && (
-							<CardTopUpTransactionsTable
-								data={dataStatistics.data as Transaction[]}
-								isLoading={isLoading}
-							/>
-						)}
-						{dataStatistics.service === SERVICES.BETTING && (
-							<BettingTransactionsTable
-								data={dataStatistics.data as IPurchasedBill[]}
-								isLoading={isLoading}
-							/>
-						)}
+				{dataStatistics?.service === SERVICES.DATA_SUBSCRIPTION && (
+					<DataSubscriptionTable
+						isLoading={isLoadingDataSubscriptions}
+						subscriptions={dataStatistics?.data as any}
+					/>
+				)}
+				{dataStatistics?.service === SERVICES.AIRTIME_TOP_UP && (
+					<AirtimePurchaseTable
+						transactions={dataStatistics?.data as any}
+						isLoading={isLoading}
+					/>
+				)}
+				{dataStatistics?.service === SERVICES.AIRTIME_CONVERSION && (
+					<ConversionsTable
+						conversions={dataStatistics?.data as any}
+						isLoading={isLoading}
+					/>
+				)}
+				{dataStatistics?.service === SERVICES.CABLE && (
+					<CableTransactionsTable
+						isLoading={isLoadingBillTransactions}
+						data={dataStatistics?.data as Transaction[]}
+					/>
+				)}
+				{dataStatistics?.service === SERVICES.INTERNET && (
+					<InternetTransactionsTable
+						isLoading={isLoadingBillTransactions}
+						data={dataStatistics?.data as any}
+					/>
+				)}
+				{dataStatistics?.service === SERVICES.EDUCATION && (
+					<EducationTransactionsTable
+						data={dataStatistics?.data as Transaction[]}
+						isLoading={isLoading}
+					/>
+				)}
+				{dataStatistics?.service === SERVICES.ELECTRICITY && (
+					<ElectricityTransactionsTable
+						data={dataStatistics?.data as Transaction[]}
+						isLoading={isLoadingBillTransactions}
+					/>
+				)}
+				{dataStatistics?.service === SERVICES.WITHDRAWAL && (
+					<WithdrawalTransactionsTable
+						data={dataStatistics?.data as IWithdrawal[]}
+						isLoading={isLoading}
+					/>
+				)}
+				{dataStatistics?.service === SERVICES.AUTO_AIRTIME_CONVERSION && (
+					<AutoConversionsTable
+						conversions={dataStatistics?.data as IGroupAutoTransaction[]}
+						isLoading={isLoading}
+					/>
+				)}
+				{dataStatistics?.service === SERVICES.CARD_FUNDING && (
+					<CardTopUpTransactionsTable
+						data={dataStatistics?.data as Transaction[]}
+						isLoading={isLoading}
+					/>
+				)}
+				{dataStatistics?.service === SERVICES.BETTING && (
+					<BettingTransactionsTable
+						data={dataStatistics?.data as IPurchasedBill[]}
+						isLoading={isLoading}
+					/>
+				)}
 
-						{dataStatistics.service === SERVICES.REVERSAL && (
-							<ReversalTransactionsTable
-								data={dataStatistics.data as any}
-								isLoading={isLoading}
-							/>
-						)}
-						{dataStatistics.service === SERVICES.EPIN && (
-							<EPinTransactionsTable
-								data={dataStatistics.data as Transaction[]}
-								isLoading={isLoading}
-							/>
-						)}
-						{dataStatistics.service === SERVICES.WALLET_TRANSFER && (
-							<WalletTransferTransactionsTable
-								data={dataStatistics.data as Transaction[]}
-								isLoading={isLoading}
-							/>
-						)}
-					</>
+				{dataStatistics?.service === SERVICES.EPIN && (
+					<EPinTransactionsTable
+						data={dataStatistics?.data as Transaction[]}
+						isLoading={isLoading}
+					/>
+				)}
+				{dataStatistics?.service === SERVICES.WALLET_TRANSFER && (
+					<WalletTransferTransactionsTable
+						data={dataStatistics?.data as Transaction[]}
+						isLoading={isLoading}
+					/>
+				)}
+				{[
+					SERVICES.CREDIT,
+					SERVICES.DEBIT,
+					SERVICES.REFUND,
+					SERVICES.REVERSAL,
+				].includes(`${dataStatistics?.service}`) && (
+					<CreditDebitTable
+						data={dataStatistics?.data as Transaction[]}
+						isLoading={isLoading}
+					/>
 				)}
 
 				{!isLoading && total > maxRecordRef.current && (
@@ -519,7 +549,7 @@ const Statistics = () => {
 	);
 };
 
-export default Statistics;
+export default Transactions;
 
 const Container = styled(Box)(({ theme }) => ({
 	display: 'grid',
@@ -550,6 +580,7 @@ const useStyles = (theme: any) => ({
 	},
 	button: {
 		whiteSpace: 'nowrap',
+		minWidth: '160px',
 	},
 	list: {
 		border: `1px solid ${theme.palette.primary.main}`,

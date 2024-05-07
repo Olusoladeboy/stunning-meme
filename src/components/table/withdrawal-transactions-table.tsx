@@ -63,11 +63,11 @@ const WithdrawalTransactionsTable = ({ data, isLoading }: Props) => {
 								style={styles.headTableCell}
 								label={'Withdrawal Channel'}
 							/>
-							<CustomTableCell style={styles.headTableCell} label={'Amount'} />
 							<CustomTableCell
 								style={styles.headTableCell}
 								label={'Account Number'}
 							/>
+							<CustomTableCell style={styles.headTableCell} label={'Amount'} />
 							<CustomTableCell style={styles.headTableCell} label={'Type'} />
 							<CustomTableCell style={styles.headTableCell} label={'Date'} />
 							<CustomTableCell style={styles.headTableCell} label={'Status'} />

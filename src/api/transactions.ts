@@ -20,10 +20,8 @@ export const allTransactions = async ({
 		params,
 	});
 
-export const transactions = async ({
-	params,
-}: {
-	params?: { [key: string]: any };
+export const transactions = async (params?: {
+	[key: string]: any;
 }): Promise<any> =>
 	apiRequest({
 		method: 'GET',
@@ -65,6 +63,15 @@ export const walletFunding = async (params?: {
 export const walletTransfers = async (params?: {
 	[key: string]: any;
 }): Promise<DataResponse<ITransfer[]>> =>
+	apiRequest({
+		method: 'GET',
+		url: `${ENDPOINTS.Transfer}`,
+		params,
+	});
+
+export const bankFundings = async (params?: {
+	[key: string]: any;
+}): Promise<DataResponse<Transaction[]>> =>
 	apiRequest({
 		method: 'GET',
 		url: `${ENDPOINTS.Transfer}`,

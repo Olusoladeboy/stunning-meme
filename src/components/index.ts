@@ -115,3 +115,4 @@ export { default as BankFundingTransactionsTable } from './table/bank-funding-tr
 export { default as ReversalTransactionsTable } from './table/reversal-transactions-table';
 export { default as EPinTransactionsTable } from './table/e-pin-transactions-table';
 export { default as WalletTransferTransactionsTable } from './table/wallet-transfer-transactions-table';
+export { default as CreditDebitTable } from './table/credit-debit-table';

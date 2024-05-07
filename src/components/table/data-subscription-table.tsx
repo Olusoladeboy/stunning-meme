@@ -175,7 +175,10 @@ const DataSubscriptionTable = ({
 													</StyledTableCell>
 
 													<StyledTableCell style={styles.text}>
-														Network
+														{typeof subscription?.plan === 'object' &&
+															subscription?.plan?.network &&
+															typeof subscription?.plan?.network === 'object' &&
+															subscription?.plan?.network?.name}
 													</StyledTableCell>
 													<StyledTableCell
 														sx={{

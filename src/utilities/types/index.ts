@@ -709,7 +709,10 @@ export interface Transaction {
 	userFrom?: User;
 	transactionTo?: INestedTransaction;
 	transactionFrom?: INestedTransaction;
+	transactions?: IGroupTransaction[];
 	amount: string | Amount;
+	totalAmount?: string | Amount;
+	totalReturnAmount: string | Amount;
 	balanceBefore?: string | Amount;
 	balanceAfter?: string | Amount;
 	name: string;

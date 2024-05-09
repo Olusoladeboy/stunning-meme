@@ -72,7 +72,12 @@ const AutoAirtimeConversionTransactionsTable = ({ data, isLoading }: Props) => {
 												<StyledTableCell style={styles.text}>
 													{value.reference}
 												</StyledTableCell>
-												<StyledTableCell style={styles.text}>
+												<StyledTableCell
+													sx={{
+														whiteSpace: 'no-wrap',
+													}}
+													style={styles.text}
+												>
 													{extractUserName(value.user)}
 												</StyledTableCell>
 												<StyledTableCell style={styles.text}>

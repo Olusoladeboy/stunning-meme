@@ -167,6 +167,7 @@ const Conversions = () => {
 						handleSort={handleSort}
 						handleSearch={searchConversion}
 						clearSearch={clearSearch}
+						isDisplayApprovedDeclinedButton
 					/>
 
 					{!search && total > MAX_RECORDS && !isReloading && (

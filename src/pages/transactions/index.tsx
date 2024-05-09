@@ -462,6 +462,9 @@ const Transactions = () => {
 						<ConversionsTable
 							conversions={dataStatistics?.data as any}
 							isLoading={isLoading}
+							handleRefetch={() =>
+								switchHandleSubmit(queryValues?.current as any)
+							}
 						/>
 					)}
 					{dataStatistics?.service === SERVICES.CABLE && (
@@ -498,6 +501,7 @@ const Transactions = () => {
 						<AutoConversionsTable
 							conversions={dataStatistics?.data as IGroupAutoTransaction[]}
 							isLoading={isLoading}
+							isDisplayPopupTransactionDetails
 						/>
 					)}
 					{dataStatistics?.service === SERVICES.CARD_FUNDING && (

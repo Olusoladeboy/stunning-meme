@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
 	TableBody,
 	TableHead,
@@ -17,6 +17,8 @@ import {
 	LINKS,
 	IGroupAutoTransaction,
 	extractUserName,
+	Transaction,
+	TRANSACTION_SERVICE,
 } from 'utilities';
 import TableLoader from '../loader/table-loader';
 import Empty from '../empty/table-empty';
@@ -25,6 +27,7 @@ import CustomTableCell from './components/custom-table-cell';
 import { updateConvertAirtimeStatus } from 'api';
 import Loader from '../loader';
 import { useAlert, useHandleError } from 'hooks';
+import TransactionDetailsModal from 'components/modal/transaction-details-modal';
 
 type Props = {
 	conversions: IGroupAutoTransaction[] | null;
@@ -33,6 +36,7 @@ type Props = {
 	handleSearch?: (search: string) => void;
 	clearSearch?: () => void;
 	isDisplaySearchField?: boolean;
+	isDisplayPopupTransactionDetails?: boolean;
 };
 
 const AutoConversionsTable = ({
@@ -42,6 +46,7 @@ const AutoConversionsTable = ({
 	handleSearch,
 	clearSearch,
 	isDisplaySearchField = false,
+	isDisplayPopupTransactionDetails = false,
 }: Props) => {
 	const theme = useTheme();
 	const styles = useStyles(theme);
@@ -49,6 +54,9 @@ const AutoConversionsTable = ({
 	const alert = useAlert();
 	const queryClient = useQueryClient();
 	const navigate = useNavigate();
+
+	const [selectedTransaction, setSelectedTransaction] =
+		useState<null | Transaction>(null);
 
 	const handleSortRecord = (field: string) => {
 		typeof handleSort !== 'undefined' && handleSort(field);
@@ -79,158 +87,175 @@ const AutoConversionsTable = ({
 		}
 	);
 
-	const handleClickRow = (id: string) => {
-		navigate(`${LINKS.AutoConversions}/${id}`);
+	const handleClickRow = (transaction: IGroupAutoTransaction) => {
+		if (isDisplayPopupTransactionDetails) {
+			console.log(transaction);
+			setSelectedTransaction(transaction as any);
+
+			return;
+		}
+
+		const transactionId = transaction?.transactions[0].reference;
+		navigate(`${LINKS.AutoConversions}/${transactionId}`);
 	};
 
 	return (
-		<Container>
-			{isUpdatingStatus && <Loader />}
-			{isDisplaySearchField && (
-				<SearchContainer>
-					<SearchInput
-						sx={{ maxWidth: '400px', width: '100%' }}
-						placeholder='Search conversion with phone or reference ID...'
-						handleSearch={handleSearch}
-						clearSearch={clearSearch}
-						fullWidth
-					/>
-				</SearchContainer>
+		<>
+			{selectedTransaction && (
+				<TransactionDetailsModal
+					closeModal={() => setSelectedTransaction(null)}
+					transaction={selectedTransaction as any}
+					isDisplayButtons
+					transactionType={TRANSACTION_SERVICE.AUTO_AIRTIME_CONVERSION}
+				/>
 			)}
-			<Box sx={{ overflow: 'auto' }}>
-				<Table sx={{ overflow: 'auto' }}>
-					<TableHead
-						sx={{
-							'& tr': {
-								// backgroundColor: LIGHT_GRAY,
-								color: theme.palette.primary.main,
-							},
-						}}
-					>
-						<StyledTableRow>
-							<CustomTableCell
-								onClick={() => handleSortRecord('user')}
-								label={'User'}
-								isSortable
-							/>
-							<CustomTableCell
-								onClick={() => handleSortRecord('id')}
-								label={'Order ID'}
-							/>
-							<CustomTableCell
-								onClick={() => handleSortRecord('network')}
-								style={styles.headTableCell}
-								label={'Network'}
-							/>
-							<CustomTableCell
-								onClick={() => handleSortRecord('number')}
-								style={styles.headTableCell}
-								label={'Number'}
-							/>
+			<Container>
+				{isUpdatingStatus && <Loader />}
+				{isDisplaySearchField && (
+					<SearchContainer>
+						<SearchInput
+							sx={{ maxWidth: '400px', width: '100%' }}
+							placeholder='Search conversion with phone or reference ID...'
+							handleSearch={handleSearch}
+							clearSearch={clearSearch}
+							fullWidth
+						/>
+					</SearchContainer>
+				)}
+				<Box sx={{ overflow: 'auto' }}>
+					<Table sx={{ overflow: 'auto' }}>
+						<TableHead
+							sx={{
+								'& tr': {
+									// backgroundColor: LIGHT_GRAY,
+									color: theme.palette.primary.main,
+								},
+							}}
+						>
+							<StyledTableRow>
+								<CustomTableCell
+									onClick={() => handleSortRecord('user')}
+									label={'User'}
+									isSortable
+								/>
+								<CustomTableCell
+									onClick={() => handleSortRecord('id')}
+									label={'Order ID'}
+								/>
+								<CustomTableCell
+									onClick={() => handleSortRecord('network')}
+									style={styles.headTableCell}
+									label={'Network'}
+								/>
+								<CustomTableCell
+									onClick={() => handleSortRecord('number')}
+									style={styles.headTableCell}
+									label={'Number'}
+								/>
 
-							<CustomTableCell
-								onClick={() => handleSortRecord('amount')}
-								style={styles.headTableCell}
-								label={'Total Amount'}
-							/>
-							<CustomTableCell
-								onClick={() => handleSortRecord('return_amount')}
-								style={styles.headTableCell}
-								label={'Total Return Amount'}
-							/>
+								<CustomTableCell
+									onClick={() => handleSortRecord('amount')}
+									style={styles.headTableCell}
+									label={'Total Amount'}
+								/>
+								<CustomTableCell
+									onClick={() => handleSortRecord('return_amount')}
+									style={styles.headTableCell}
+									label={'Total Return Amount'}
+								/>
 
-							<CustomTableCell
-								style={styles.headTableCell}
-								label={'Number of Share'}
-							/>
-							<CustomTableCell style={styles.headTableCell} label={'Date'} />
-						</StyledTableRow>
-					</TableHead>
-					<TableBody
-						sx={{
-							'& tr': {
-								color: theme.palette.primary.main,
-							},
-						}}
-					>
-						{isLoading ? (
-							<TableLoader colSpan={8} />
-						) : (
-							conversions && (
-								<>
-									{conversions.length > 0 ? (
-										conversions.map(
-											(conversion: IGroupAutoTransaction, key: number) => {
-												const createdAt = conversion.transactions[0].createdAt;
-												return (
-													<StyledTableRow
-														onClick={() =>
-															handleClickRow(
-																conversion?.transactions[0].reference
-															)
-														}
-														key={conversion.id}
-													>
-														<StyledTableCell
-															sx={{
-																whiteSpace: 'nowrap',
-															}}
-															style={styles.text}
+								<CustomTableCell
+									style={styles.headTableCell}
+									label={'Number of Share'}
+								/>
+								<CustomTableCell style={styles.headTableCell} label={'Date'} />
+							</StyledTableRow>
+						</TableHead>
+						<TableBody
+							sx={{
+								'& tr': {
+									color: theme.palette.primary.main,
+								},
+							}}
+						>
+							{isLoading ? (
+								<TableLoader colSpan={8} />
+							) : (
+								conversions && (
+									<>
+										{conversions.length > 0 ? (
+											conversions.map(
+												(conversion: IGroupAutoTransaction, key: number) => {
+													const createdAt =
+														conversion.transactions[0].createdAt;
+													return (
+														<StyledTableRow
+															onClick={() => handleClickRow(conversion)}
+															key={conversion.id}
 														>
-															{extractUserName(conversion?.user)}
-														</StyledTableCell>
-														<StyledTableCell style={styles.text}>
-															{conversion.id}
-														</StyledTableCell>
-														<StyledTableCell style={styles.text}>
-															{(conversion.network &&
-																typeof conversion.network === 'object' &&
-																conversion.network?.name) ||
-																'No Network name'}
-														</StyledTableCell>
-														<StyledTableCell style={styles.text}>
-															{conversion.phone_number}
-														</StyledTableCell>
-														<StyledTableCell style={styles.text}>
-															{formatNumberToCurrency(
-																typeof conversion.totalAmount === 'object'
-																	? conversion.totalAmount.$numberDecimal
-																	: conversion.totalAmount
-															)}
-														</StyledTableCell>
-														<StyledTableCell style={styles.text}>
-															{formatNumberToCurrency(
-																typeof conversion.totalReturnAmount === 'object'
-																	? conversion.totalReturnAmount.$numberDecimal
-																	: conversion.totalReturnAmount
-															)}
-														</StyledTableCell>
+															<StyledTableCell
+																sx={{
+																	whiteSpace: 'nowrap',
+																}}
+																style={styles.text}
+															>
+																{extractUserName(conversion?.user)}
+															</StyledTableCell>
+															<StyledTableCell style={styles.text}>
+																{conversion.id}
+															</StyledTableCell>
+															<StyledTableCell style={styles.text}>
+																{(conversion.network &&
+																	typeof conversion.network === 'object' &&
+																	conversion.network?.name) ||
+																	'No Network name'}
+															</StyledTableCell>
+															<StyledTableCell style={styles.text}>
+																{conversion.phone_number}
+															</StyledTableCell>
+															<StyledTableCell style={styles.text}>
+																{formatNumberToCurrency(
+																	typeof conversion.totalAmount === 'object'
+																		? conversion.totalAmount.$numberDecimal
+																		: conversion.totalAmount
+																)}
+															</StyledTableCell>
+															<StyledTableCell style={styles.text}>
+																{formatNumberToCurrency(
+																	typeof conversion.totalReturnAmount ===
+																		'object'
+																		? conversion.totalReturnAmount
+																				.$numberDecimal
+																		: conversion.totalReturnAmount
+																)}
+															</StyledTableCell>
 
-														<StyledTableCell style={styles.text}>
-															{conversion?.count}
-														</StyledTableCell>
-														<StyledTableCell
-															sx={{
-																whiteSpace: 'nowrap !important',
-															}}
-															style={styles.text}
-														>
-															{moment(createdAt).format('ll')}
-														</StyledTableCell>
-													</StyledTableRow>
-												);
-											}
-										)
-									) : (
-										<Empty colSpan={8} text={'No Airtime Convert'} />
-									)}
-								</>
-							)
-						)}
-					</TableBody>
-				</Table>
-			</Box>
-		</Container>
+															<StyledTableCell style={styles.text}>
+																{conversion?.count}
+															</StyledTableCell>
+															<StyledTableCell
+																sx={{
+																	whiteSpace: 'nowrap !important',
+																}}
+																style={styles.text}
+															>
+																{moment(createdAt).format('ll')}
+															</StyledTableCell>
+														</StyledTableRow>
+													);
+												}
+											)
+										) : (
+											<Empty colSpan={8} text={'No Airtime Convert'} />
+										)}
+									</>
+								)
+							)}
+						</TableBody>
+					</Table>
+				</Box>
+			</Container>
+		</>
 	);
 };
 

@@ -171,7 +171,12 @@ const AutoConversionsTable = ({
 														}
 														key={conversion.id}
 													>
-														<StyledTableCell style={styles.text}>
+														<StyledTableCell
+															sx={{
+																whiteSpace: 'nowrap',
+															}}
+															style={styles.text}
+														>
 															{extractUserName(conversion?.user)}
 														</StyledTableCell>
 														<StyledTableCell style={styles.text}>
@@ -204,7 +209,12 @@ const AutoConversionsTable = ({
 														<StyledTableCell style={styles.text}>
 															{conversion?.count}
 														</StyledTableCell>
-														<StyledTableCell style={styles.text}>
+														<StyledTableCell
+															sx={{
+																whiteSpace: 'nowrap !important',
+															}}
+															style={styles.text}
+														>
 															{moment(createdAt).format('ll')}
 														</StyledTableCell>
 													</StyledTableRow>

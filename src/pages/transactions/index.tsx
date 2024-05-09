@@ -441,86 +441,92 @@ const Transactions = () => {
 					{canViewStatistics && <TransactionMainBalance />}
 					<TransactionsTab />
 				</Box>
+				<Box
+					sx={{
+						overflow: 'auto',
+					}}
+				>
+					{dataStatistics?.service === SERVICES.DATA_SUBSCRIPTION && (
+						<DataSubscriptionTable
+							isLoading={isLoadingDataSubscriptions}
+							subscriptions={dataStatistics?.data as any}
+						/>
+					)}
+					{dataStatistics?.service === SERVICES.AIRTIME_TOP_UP && (
+						<AirtimePurchaseTable
+							transactions={dataStatistics?.data as any}
+							isLoading={isLoading}
+						/>
+					)}
+					{dataStatistics?.service === SERVICES.AIRTIME_CONVERSION && (
+						<ConversionsTable
+							conversions={dataStatistics?.data as any}
+							isLoading={isLoading}
+						/>
+					)}
+					{dataStatistics?.service === SERVICES.CABLE && (
+						<CableTransactionsTable
+							isLoading={isLoadingBillTransactions}
+							data={dataStatistics?.data as Transaction[]}
+						/>
+					)}
+					{dataStatistics?.service === SERVICES.INTERNET && (
+						<InternetTransactionsTable
+							isLoading={isLoadingBillTransactions}
+							data={dataStatistics?.data as any}
+						/>
+					)}
+					{dataStatistics?.service === SERVICES.EDUCATION && (
+						<EducationTransactionsTable
+							data={dataStatistics?.data as Transaction[]}
+							isLoading={isLoading}
+						/>
+					)}
+					{dataStatistics?.service === SERVICES.ELECTRICITY && (
+						<ElectricityTransactionsTable
+							data={dataStatistics?.data as Transaction[]}
+							isLoading={isLoadingBillTransactions}
+						/>
+					)}
+					{dataStatistics?.service === SERVICES.WITHDRAWAL && (
+						<WithdrawalTransactionsTable
+							data={dataStatistics?.data as IWithdrawal[]}
+							isLoading={isLoading}
+						/>
+					)}
+					{dataStatistics?.service === SERVICES.AUTO_AIRTIME_CONVERSION && (
+						<AutoConversionsTable
+							conversions={dataStatistics?.data as IGroupAutoTransaction[]}
+							isLoading={isLoading}
+						/>
+					)}
+					{dataStatistics?.service === SERVICES.CARD_FUNDING && (
+						<CardTopUpTransactionsTable
+							data={dataStatistics?.data as Transaction[]}
+							isLoading={isLoading}
+						/>
+					)}
+					{dataStatistics?.service === SERVICES.BETTING && (
+						<BettingTransactionsTable
+							data={dataStatistics?.data as IPurchasedBill[]}
+							isLoading={isLoading}
+						/>
+					)}
 
-				{dataStatistics?.service === SERVICES.DATA_SUBSCRIPTION && (
-					<DataSubscriptionTable
-						isLoading={isLoadingDataSubscriptions}
-						subscriptions={dataStatistics?.data as any}
-					/>
-				)}
-				{dataStatistics?.service === SERVICES.AIRTIME_TOP_UP && (
-					<AirtimePurchaseTable
-						transactions={dataStatistics?.data as any}
-						isLoading={isLoading}
-					/>
-				)}
-				{dataStatistics?.service === SERVICES.AIRTIME_CONVERSION && (
-					<ConversionsTable
-						conversions={dataStatistics?.data as any}
-						isLoading={isLoading}
-					/>
-				)}
-				{dataStatistics?.service === SERVICES.CABLE && (
-					<CableTransactionsTable
-						isLoading={isLoadingBillTransactions}
-						data={dataStatistics?.data as Transaction[]}
-					/>
-				)}
-				{dataStatistics?.service === SERVICES.INTERNET && (
-					<InternetTransactionsTable
-						isLoading={isLoadingBillTransactions}
-						data={dataStatistics?.data as any}
-					/>
-				)}
-				{dataStatistics?.service === SERVICES.EDUCATION && (
-					<EducationTransactionsTable
-						data={dataStatistics?.data as Transaction[]}
-						isLoading={isLoading}
-					/>
-				)}
-				{dataStatistics?.service === SERVICES.ELECTRICITY && (
-					<ElectricityTransactionsTable
-						data={dataStatistics?.data as Transaction[]}
-						isLoading={isLoadingBillTransactions}
-					/>
-				)}
-				{dataStatistics?.service === SERVICES.WITHDRAWAL && (
-					<WithdrawalTransactionsTable
-						data={dataStatistics?.data as IWithdrawal[]}
-						isLoading={isLoading}
-					/>
-				)}
-				{dataStatistics?.service === SERVICES.AUTO_AIRTIME_CONVERSION && (
-					<AutoConversionsTable
-						conversions={dataStatistics?.data as IGroupAutoTransaction[]}
-						isLoading={isLoading}
-					/>
-				)}
-				{dataStatistics?.service === SERVICES.CARD_FUNDING && (
-					<CardTopUpTransactionsTable
-						data={dataStatistics?.data as Transaction[]}
-						isLoading={isLoading}
-					/>
-				)}
-				{dataStatistics?.service === SERVICES.BETTING && (
-					<BettingTransactionsTable
-						data={dataStatistics?.data as IPurchasedBill[]}
-						isLoading={isLoading}
-					/>
-				)}
+					{dataStatistics?.service === SERVICES.EPIN && (
+						<EPinTransactionsTable
+							data={dataStatistics?.data as Transaction[]}
+							isLoading={isLoading}
+						/>
+					)}
+					{dataStatistics?.service === SERVICES.WALLET_TRANSFER && (
+						<WalletTransferTransactionsTable
+							data={dataStatistics?.data as Transaction[]}
+							isLoading={isLoading}
+						/>
+					)}
+				</Box>
 
-				{dataStatistics?.service === SERVICES.EPIN && (
-					<EPinTransactionsTable
-						data={dataStatistics?.data as Transaction[]}
-						isLoading={isLoading}
-					/>
-				)}
-				{dataStatistics?.service === SERVICES.WALLET_TRANSFER && (
-					<WalletTransferTransactionsTable
-						data={dataStatistics?.data as Transaction[]}
-						isLoading={isLoading}
-					/>
-				)}
 				{[
 					SERVICES.CREDIT,
 					SERVICES.DEBIT,

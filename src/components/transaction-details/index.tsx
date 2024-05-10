@@ -14,16 +14,23 @@ import {
 	User,
 	LINKS,
 	SECOUNDARY_COLOR,
+	TRANSACTION_SERVICE,
+	Amount,
 } from 'utilities';
 import TransactionItem from './transaction-item';
 import { useSearchCoupon } from 'hooks';
 import Button from 'components/button';
+import { grey } from '@mui/material/colors';
 
 interface Props {
 	transaction: Transaction | null;
+	transactionType?: string;
 }
 
-const TransactionDetails: React.FC<Props> = ({ transaction }) => {
+const TransactionDetails: React.FC<Props> = ({
+	transaction,
+	transactionType,
+}) => {
 	const { searchCoupon } = useSearchCoupon();
 	const navigate = useNavigate();
 
@@ -48,6 +55,104 @@ const TransactionDetails: React.FC<Props> = ({ transaction }) => {
 		const viewUser = (id: string) => {
 			navigate(`${LINKS.Users}/${id}`);
 		};
+
+		const isAutoConvert =
+			TRANSACTION_SERVICE.AUTO_AIRTIME_CONVERSION === transactionType;
+
+		const autoAirtimeConvert = isAutoConvert && (
+			<>
+				<Box
+					sx={{
+						marginTop: '16px',
+						display: 'grid',
+						gap: '10px',
+						gridTemplateColumns: 'repeat(2, 1fr)',
+					}}
+				>
+					<TransactionItem
+						label={'Total Amount'}
+						value={formatNumberToCurrency(
+							typeof transaction?.totalAmount === 'object'
+								? transaction.totalAmount.$numberDecimal
+								: ''
+						)}
+					/>
+					<TransactionItem
+						label={'Total Return Amount'}
+						value={formatNumberToCurrency(
+							typeof transaction?.totalReturnAmount === 'object'
+								? transaction.totalReturnAmount.$numberDecimal
+								: ''
+						)}
+					/>
+				</Box>
+				{transaction?.transactions && (
+					<Box>
+						<Typography
+							sx={{
+								fontWeight: 'bold',
+								marginTop: '16px !important',
+								marginBottom: '8px !important',
+							}}
+						>
+							Transaction Breakdown
+						</Typography>
+						<Box
+							sx={{
+								display: 'grid',
+								gap: '8px',
+							}}
+						>
+							{Array.isArray(transaction?.transactions) &&
+								transaction?.transactions.map((value) => (
+									<Box
+										sx={{
+											border: `1px solid ${grey['300']}`,
+											padding: '8px 15px',
+											borderRadius: '8px',
+											display: 'grid',
+											gap: '8px',
+										}}
+										key={value.id}
+									>
+										<Typography>Status: {value.status}</Typography>
+										<Box
+											sx={{
+												display: 'flex',
+												alignItems: 'center',
+												justifyContent: 'space-between',
+											}}
+										>
+											<Typography>
+												Amount:{' '}
+												{formatNumberToCurrency(
+													checkAmount(value?.amount as string | Amount)
+												)}
+											</Typography>
+											<Typography>
+												Return Amount:{' '}
+												{formatNumberToCurrency(
+													checkAmount(value?.returnAmount as string | Amount)
+												)}
+											</Typography>
+										</Box>
+										<Typography
+											sx={{
+												span: {
+													fontSize: '12px',
+												},
+											}}
+										>
+											Network Response: <br />
+											<span>{value.networkResponse}</span>
+										</Typography>
+									</Box>
+								))}
+						</Box>
+					</Box>
+				)}
+			</>
+		);
 
 		return (
 			<Box>
@@ -84,6 +189,13 @@ const TransactionDetails: React.FC<Props> = ({ transaction }) => {
 								value={transaction.plan.network.name as string}
 							/>
 						)}
+
+					{transaction.network && typeof transaction.network === 'object' && (
+						<TransactionItem
+							label={'Network'}
+							value={transaction.network.name as string}
+						/>
+					)}
 					{transaction.reference && (
 						<TransactionItem
 							label={'Reference'}
@@ -224,6 +336,8 @@ const TransactionDetails: React.FC<Props> = ({ transaction }) => {
 						<TransactionItem label={'Status'} value={transaction.status} />
 					)}
 				</Container>
+
+				{autoAirtimeConvert}
 			</Box>
 		);
 	}

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
 	TableBody,
 	TableHead,
@@ -10,7 +10,6 @@ import {
 } from '@mui/material';
 import moment from 'moment';
 import { green, grey, red } from '@mui/material/colors';
-import { useNavigate } from 'react-router-dom';
 import { useMutation, useQueryClient } from 'react-query';
 import { StyledTableCell, StyledTableRow } from './components';
 import {
@@ -21,7 +20,6 @@ import {
 	QueryKeys,
 	extractUserName,
 	User,
-	LINKS,
 } from 'utilities';
 import TableLoader from '../loader/table-loader';
 import Empty from '../empty/table-empty';
@@ -31,6 +29,7 @@ import { updateConvertAirtimeStatus } from 'api';
 import Loader from '../loader';
 import { useAlert, useHandleError } from 'hooks';
 import { useAppSelector } from 'store/hooks';
+import TransactionDetailsModal from 'components/modal/transaction-details-modal';
 
 interface UpdateStatusPayload {
 	id: string;
@@ -45,6 +44,9 @@ type Props = {
 	clearSearch?: () => void;
 	isDisplaySearchField?: boolean;
 	conversionType?: 'auto' | 'default';
+	handleRefetch?: () => void;
+	isDisplayApprovedDeclinedButton?: boolean;
+	isDisplayTransactionDetails?: boolean;
 };
 
 const ConversionsTable = ({
@@ -55,17 +57,22 @@ const ConversionsTable = ({
 	clearSearch,
 	isDisplaySearchField = false,
 	conversionType,
+	handleRefetch,
+	isDisplayApprovedDeclinedButton = false,
+	isDisplayTransactionDetails = false,
 }: Props) => {
 	const theme = useTheme();
 	const styles = useStyles(theme);
 	const handleError = useHandleError();
 	const alert = useAlert();
 	const queryClient = useQueryClient();
-	const navigate = useNavigate();
 
 	const canCreateOrUpdateRecord = useAppSelector(
 		(store) => store.authState.canCreateOrUpdateRecord
 	);
+
+	const [selectedTransaction, setSelectedTransaction] =
+		useState<null | Transaction>(null);
 
 	const handleSortRecord = (field: string) => {
 		typeof handleSort !== 'undefined' && handleSort(field);
@@ -87,6 +94,7 @@ const ConversionsTable = ({
 				if (data && data.success) {
 					queryClient.invalidateQueries([QueryKeys.ConvertAirtime]);
 					queryClient.invalidateQueries([QueryKeys.RecentConvertAirtime]);
+					typeof handleRefetch === 'function' && handleRefetch();
 					alert({
 						message: 'Airtime convert status updated successfully!!',
 						type: 'success',
@@ -111,188 +119,206 @@ const ConversionsTable = ({
 		});
 	};
 
-	const handleClickRow = (id: string) => {
-		if (conversionType === 'auto') navigate(`${LINKS.AutoConversions}/${id}`);
+	const handleClickRow = (transaction: Transaction) => {
+		// if (conversionType === 'auto') navigate(`${LINKS.AutoConversions}/${id}`);
+		setSelectedTransaction(transaction);
 	};
 
 	return (
-		<Container>
-			{isUpdatingStatus && <Loader />}
-			{isDisplaySearchField && (
-				<SearchContainer>
-					<SearchInput
-						sx={{ maxWidth: '400px', width: '100%' }}
-						placeholder='Search conversion with phone or reference ID...'
-						handleSearch={handleSearch}
-						clearSearch={clearSearch}
-						fullWidth
-					/>
-				</SearchContainer>
+		<>
+			{selectedTransaction && (
+				<TransactionDetailsModal
+					closeModal={() => setSelectedTransaction(null)}
+					transaction={selectedTransaction as any}
+					isDisplayButtons
+				/>
 			)}
-			<Box sx={{ overflow: 'auto' }}>
-				<Table sx={{ overflow: 'auto' }}>
-					<TableHead
-						sx={{
-							'& tr': {
-								// backgroundColor: LIGHT_GRAY,
-								color: theme.palette.primary.main,
-							},
-						}}
-					>
-						<StyledTableRow>
-							<CustomTableCell
-								onClick={() => handleSortRecord('user')}
-								label={'User'}
-								isSortable
-							/>
-							<CustomTableCell
-								onClick={() => handleSortRecord('id')}
-								label={'Order ID'}
-							/>
-							<CustomTableCell
-								onClick={() => handleSortRecord('network')}
-								style={styles.headTableCell}
-								label={'Network'}
-							/>
-							<CustomTableCell
-								onClick={() => handleSortRecord('number')}
-								style={styles.headTableCell}
-								label={'Number'}
-							/>
-
-							<CustomTableCell
-								onClick={() => handleSortRecord('amount')}
-								style={styles.headTableCell}
-								label={'Income'}
-							/>
-							<CustomTableCell
-								onClick={() => handleSortRecord('return_amount')}
-								style={styles.headTableCell}
-								label={'Return'}
-							/>
-							{conversionType === 'auto' && (
+			<Container>
+				{isUpdatingStatus && <Loader />}
+				{isDisplaySearchField && (
+					<SearchContainer>
+						<SearchInput
+							sx={{ maxWidth: '400px', width: '100%' }}
+							placeholder='Search conversion with phone or reference ID...'
+							handleSearch={handleSearch}
+							clearSearch={clearSearch}
+							fullWidth
+						/>
+					</SearchContainer>
+				)}
+				<Box sx={{ overflow: 'auto' }}>
+					<Table sx={{ overflow: 'auto' }}>
+						<TableHead
+							sx={{
+								'& tr': {
+									// backgroundColor: LIGHT_GRAY,
+									color: theme.palette.primary.main,
+								},
+							}}
+						>
+							<StyledTableRow>
 								<CustomTableCell
-									style={styles.headTableCell}
-									label={'Number of Share'}
+									onClick={() => handleSortRecord('user')}
+									label={'User'}
+									isSortable
 								/>
+								<CustomTableCell
+									onClick={() => handleSortRecord('id')}
+									label={'Order ID'}
+								/>
+								<CustomTableCell
+									onClick={() => handleSortRecord('network')}
+									style={styles.headTableCell}
+									label={'Network'}
+								/>
+								<CustomTableCell
+									onClick={() => handleSortRecord('number')}
+									style={styles.headTableCell}
+									label={'Number'}
+								/>
+
+								<CustomTableCell
+									onClick={() => handleSortRecord('amount')}
+									style={styles.headTableCell}
+									label={'Income'}
+								/>
+								<CustomTableCell
+									onClick={() => handleSortRecord('return_amount')}
+									style={styles.headTableCell}
+									label={'Return'}
+								/>
+								{conversionType === 'auto' && (
+									<CustomTableCell
+										style={styles.headTableCell}
+										label={'Number of Share'}
+									/>
+								)}
+								<CustomTableCell style={styles.headTableCell} label={'Date'} />
+								<CustomTableCell
+									onClick={() => handleSortRecord('status')}
+									style={styles.headTableCell}
+									label={'Status'}
+								/>
+							</StyledTableRow>
+						</TableHead>
+						<TableBody
+							sx={{
+								'& tr': {
+									color: theme.palette.primary.main,
+								},
+							}}
+						>
+							{isLoading ? (
+								<TableLoader colSpan={9} />
+							) : (
+								conversions && (
+									<>
+										{conversions.length > 0 ? (
+											conversions.map(
+												(conversion: Transaction, key: number) => {
+													return (
+														<StyledTableRow
+															onClick={() => {
+																if (isDisplayTransactionDetails)
+																	handleClickRow(conversion);
+															}}
+															key={conversion.id}
+														>
+															<StyledTableCell style={styles.text}>
+																{extractUserName(conversion?.user as User)}
+															</StyledTableCell>
+															<StyledTableCell style={styles.text}>
+																{conversion.reference}
+															</StyledTableCell>
+															<StyledTableCell style={styles.text}>
+																{(conversion.network &&
+																	typeof conversion.network === 'object' &&
+																	conversion.network?.name) ||
+																	'No Network name'}
+															</StyledTableCell>
+															<StyledTableCell style={styles.text}>
+																{conversion.phone_number}
+															</StyledTableCell>
+															<StyledTableCell style={styles.text}>
+																{formatNumberToCurrency(
+																	typeof conversion.amount === 'object'
+																		? conversion.amount.$numberDecimal
+																		: conversion.amount
+																)}
+															</StyledTableCell>
+															<StyledTableCell style={styles.text}>
+																{formatNumberToCurrency(
+																	typeof conversion.return_amount === 'object'
+																		? conversion.return_amount.$numberDecimal
+																		: conversion.return_amount
+																)}
+															</StyledTableCell>
+															{conversionType === 'auto' && (
+																<StyledTableCell style={styles.text}>
+																	{conversion?.noOfRetries}
+																</StyledTableCell>
+															)}
+															<StyledTableCell style={styles.text}>
+																{moment(conversion.createdAt).format('ll')}
+															</StyledTableCell>
+															<StyledTableCell style={styles.text}>
+																{/* {conversion.status} */}
+																{conversion.status === STATUS.APPROVED ? (
+																	TransactionStatus.APPROVED
+																) : conversion.status === STATUS.DECLINED ? (
+																	STATUS.DECLINED
+																) : isDisplayApprovedDeclinedButton ? (
+																	<Box
+																		sx={{
+																			display: 'flex',
+																			gap: theme.spacing(2),
+																		}}
+																	>
+																		<ApproveButton
+																			onClick={(e) => {
+																				e.stopPropagation();
+																				handleUpdateStatus({
+																					id: conversion.id,
+																					status: STATUS.APPROVED,
+																				});
+																			}}
+																			size={'small'}
+																		>
+																			Approve
+																		</ApproveButton>
+																		<DeclineButton
+																			onClick={(e) => {
+																				e.stopPropagation();
+
+																				handleUpdateStatus({
+																					id: conversion.id,
+																					status: STATUS.DECLINED,
+																				});
+																			}}
+																			size={'small'}
+																		>
+																			Decline
+																		</DeclineButton>
+																	</Box>
+																) : (
+																	'PENDING'
+																)}
+															</StyledTableCell>
+														</StyledTableRow>
+													);
+												}
+											)
+										) : (
+											<Empty colSpan={8} text={'No Airtime Convert'} />
+										)}
+									</>
+								)
 							)}
-							<CustomTableCell style={styles.headTableCell} label={'Date'} />
-							<CustomTableCell
-								onClick={() => handleSortRecord('status')}
-								style={styles.headTableCell}
-								label={'Status'}
-							/>
-						</StyledTableRow>
-					</TableHead>
-					<TableBody
-						sx={{
-							'& tr': {
-								color: theme.palette.primary.main,
-							},
-						}}
-					>
-						{isLoading ? (
-							<TableLoader colSpan={9} />
-						) : (
-							conversions && (
-								<>
-									{conversions.length > 0 ? (
-										conversions.map((conversion: Transaction, key: number) => {
-											return (
-												<StyledTableRow
-													onClick={() => handleClickRow(conversion.id)}
-													key={conversion.id}
-												>
-													<StyledTableCell style={styles.text}>
-														{extractUserName(conversion?.user as User)}
-													</StyledTableCell>
-													<StyledTableCell style={styles.text}>
-														{conversion.reference}
-													</StyledTableCell>
-													<StyledTableCell style={styles.text}>
-														{(conversion.network &&
-															typeof conversion.network === 'object' &&
-															conversion.network?.name) ||
-															'No Network name'}
-													</StyledTableCell>
-													<StyledTableCell style={styles.text}>
-														{conversion.phone_number}
-													</StyledTableCell>
-													<StyledTableCell style={styles.text}>
-														{formatNumberToCurrency(
-															typeof conversion.amount === 'object'
-																? conversion.amount.$numberDecimal
-																: conversion.amount
-														)}
-													</StyledTableCell>
-													<StyledTableCell style={styles.text}>
-														{formatNumberToCurrency(
-															typeof conversion.return_amount === 'object'
-																? conversion.return_amount.$numberDecimal
-																: conversion.return_amount
-														)}
-													</StyledTableCell>
-													{conversionType === 'auto' && (
-														<StyledTableCell style={styles.text}>
-															{conversion?.noOfRetries}
-														</StyledTableCell>
-													)}
-													<StyledTableCell style={styles.text}>
-														{moment(conversion.createdAt).format('ll')}
-													</StyledTableCell>
-													<StyledTableCell style={styles.text}>
-														{/* {conversion.status} */}
-														{conversion.status === STATUS.APPROVED ? (
-															TransactionStatus.APPROVED
-														) : conversion.status === STATUS.DECLINED ? (
-															STATUS.DECLINED
-														) : conversionType === 'auto' ? (
-															conversion.status
-														) : (
-															<Box
-																sx={{
-																	display: 'flex',
-																	gap: theme.spacing(2),
-																}}
-															>
-																<ApproveButton
-																	onClick={() =>
-																		handleUpdateStatus({
-																			id: conversion.id,
-																			status: STATUS.APPROVED,
-																		})
-																	}
-																	size={'small'}
-																>
-																	Approve
-																</ApproveButton>
-																<DeclineButton
-																	onClick={() =>
-																		handleUpdateStatus({
-																			id: conversion.id,
-																			status: STATUS.DECLINED,
-																		})
-																	}
-																	size={'small'}
-																>
-																	Decline
-																</DeclineButton>
-															</Box>
-														)}
-													</StyledTableCell>
-												</StyledTableRow>
-											);
-										})
-									) : (
-										<Empty colSpan={8} text={'No Airtime Convert'} />
-									)}
-								</>
-							)
-						)}
-					</TableBody>
-				</Table>
-			</Box>
-		</Container>
+						</TableBody>
+					</Table>
+				</Box>
+			</Container>
+		</>
 	);
 };
 

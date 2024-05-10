@@ -11,6 +11,7 @@ interface Props extends IModal {
 	transaction: Transaction;
 	isDisplayButtons?: boolean;
 	title?: string;
+	transactionType?: string;
 }
 
 const TransactionDetailsModal: React.FC<Props> = ({
@@ -18,6 +19,7 @@ const TransactionDetailsModal: React.FC<Props> = ({
 	transaction,
 	isDisplayButtons = false,
 	title = 'Transaction Details',
+	transactionType,
 }) => {
 	const navigate = useNavigate();
 
@@ -33,7 +35,10 @@ const TransactionDetailsModal: React.FC<Props> = ({
 			>
 				{title}
 			</Typography>
-			<TransactionDetails transaction={transaction} />
+			<TransactionDetails
+				transaction={transaction}
+				transactionType={transactionType}
+			/>
 
 			{isDisplayButtons && (
 				<ButtonWrapper>

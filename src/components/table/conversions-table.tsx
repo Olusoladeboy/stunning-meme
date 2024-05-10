@@ -10,7 +10,6 @@ import {
 } from '@mui/material';
 import moment from 'moment';
 import { green, grey, red } from '@mui/material/colors';
-import { useNavigate } from 'react-router-dom';
 import { useMutation, useQueryClient } from 'react-query';
 import { StyledTableCell, StyledTableRow } from './components';
 import {
@@ -21,7 +20,6 @@ import {
 	QueryKeys,
 	extractUserName,
 	User,
-	LINKS,
 } from 'utilities';
 import TableLoader from '../loader/table-loader';
 import Empty from '../empty/table-empty';
@@ -48,6 +46,7 @@ type Props = {
 	conversionType?: 'auto' | 'default';
 	handleRefetch?: () => void;
 	isDisplayApprovedDeclinedButton?: boolean;
+	isDisplayTransactionDetails?: boolean;
 };
 
 const ConversionsTable = ({
@@ -60,13 +59,13 @@ const ConversionsTable = ({
 	conversionType,
 	handleRefetch,
 	isDisplayApprovedDeclinedButton = false,
+	isDisplayTransactionDetails = false,
 }: Props) => {
 	const theme = useTheme();
 	const styles = useStyles(theme);
 	const handleError = useHandleError();
 	const alert = useAlert();
 	const queryClient = useQueryClient();
-	const navigate = useNavigate();
 
 	const canCreateOrUpdateRecord = useAppSelector(
 		(store) => store.authState.canCreateOrUpdateRecord
@@ -219,7 +218,10 @@ const ConversionsTable = ({
 												(conversion: Transaction, key: number) => {
 													return (
 														<StyledTableRow
-															onClick={() => handleClickRow(conversion)}
+															onClick={() => {
+																if (isDisplayTransactionDetails)
+																	handleClickRow(conversion);
+															}}
 															key={conversion.id}
 														>
 															<StyledTableCell style={styles.text}>

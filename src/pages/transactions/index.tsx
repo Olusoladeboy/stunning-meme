@@ -25,7 +25,6 @@ import {
 	CardTopUpTransactionsTable,
 	BettingTransactionsTable,
 	EPinTransactionsTable,
-	ReversalTransactionsTable,
 	TablePagination,
 	TableHeader,
 	TransactionMainBalance,
@@ -39,7 +38,6 @@ import {
 	Metadata,
 	IPurchasedBill,
 	IWithdrawal,
-	TRANSACTION_SERVICE,
 	capitalize,
 	IGroupAutoTransaction,
 	Transaction,
@@ -462,6 +460,7 @@ const Transactions = () => {
 						<ConversionsTable
 							conversions={dataStatistics?.data as any}
 							isLoading={isLoading}
+							isDisplayTransactionDetails
 							handleRefetch={() =>
 								switchHandleSubmit(queryValues?.current as any)
 							}

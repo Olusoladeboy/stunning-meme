@@ -31,20 +31,24 @@ const TransactionDetails: React.FC<Props> = ({
 	transaction,
 	transactionType,
 }) => {
-	const { searchCoupon } = useSearchCoupon();
+	// const { searchCoupon } = useSearchCoupon();
 	const navigate = useNavigate();
 
-	useEffect(() => {
-		if (
-			transaction &&
-			transaction.transaction &&
-			transaction.transaction.discount_code
-		) {
-			const code = transaction.transaction.discount_code;
-			searchCoupon(code.toString());
-		}
-		// () => clearSearch();
-	}, [transaction, searchCoupon]);
+	// useEffect(
+	// 	() => {
+	// 		if (
+	// 			transaction &&
+	// 			transaction.transaction &&
+	// 			transaction.transaction.discount_code
+	// 		) {
+	// 			const code = transaction.transaction.discount_code;
+	// 			searchCoupon(code.toString());
+	// 		}
+	// 		// () => clearSearch();
+	// 	},
+	// 	// eslint-disable-next-line
+	// 	[transaction]
+	// );
 
 	if (transaction) {
 		const service = extractExactTransactionService(transaction as Transaction);

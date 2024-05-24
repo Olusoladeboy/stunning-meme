@@ -517,6 +517,25 @@ const DrawerList = () => {
 					}
 				/>
 
+				<ListItemButton
+					name={'Ad Banner'}
+					link={LINKS.AdBanner}
+					isActive={
+						getActiveLink({ name: 'ad-banners', currentPath: pathname })
+							.isActive
+					}
+					icon={
+						<CheckIcon
+							color={
+								getActiveLink({ name: 'ad-banners', currentPath: pathname })
+									.isActive
+									? activeColor
+									: initialColor
+							}
+						/>
+					}
+				/>
+
 				<MuiListItemButton
 					onClick={handleLogout}
 					style={{

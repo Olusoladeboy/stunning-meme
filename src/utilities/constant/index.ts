@@ -23,6 +23,7 @@ export const PRIVILEGE_MESSAGE =
 export const QueryKeys = {
 	LoginUserDetails: '@Query:Login_user_details',
 	Managers: '@Query:All_manager',
+	AdBanner: '@Query:AdBanner',
 	Referrals: '@Query:Referrals',
 	Referees: '@Query:Referees',
 	Settings: '@Query:Settings',
@@ -121,6 +122,7 @@ export const LINKS = {
 	Message: '/support-ticket/message',
 	Messages: '/messages',
 	Statistics: '/statistics',
+	AdBanner: '/ad-banners',
 };
 
 export const DRAWER_LINKS = {
@@ -169,6 +171,7 @@ export const ENDPOINTS = {
 	EPin: 'epin',
 	Funding: '/funding',
 	Transfer: '/transfer',
+	Adverts: '/adverts',
 };
 
 export const FUND_WALLET_SERVICE = {

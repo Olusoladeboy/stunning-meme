@@ -931,3 +931,14 @@ export type AuditFilter = {
 	action: string;
 	date: string;
 };
+
+export interface IAdBanner {
+	isActive: boolean;
+	url: string;
+	service: string;
+	createdBy: string;
+	imageUrl: string;
+	createdAt: string;
+	updatedAt: string;
+	id: string;
+}

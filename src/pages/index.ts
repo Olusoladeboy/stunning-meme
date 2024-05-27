@@ -32,3 +32,4 @@ export { default as AllConversions } from './conversions/all-conversions';
 export { default as CreateNotification } from './notifications/create-notification';
 export { default as ChangePassword } from './auth/change-password';
 export { default as NinVerification } from './verification/nin-verification';
+export { default as AdBanner } from './ad-banner';

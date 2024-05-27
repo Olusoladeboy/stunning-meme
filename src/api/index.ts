@@ -16,3 +16,4 @@ export * from './notification';
 export * from './audit-log';
 export * from './verification';
 export * from './airtime';
+export * from './ad-banner';

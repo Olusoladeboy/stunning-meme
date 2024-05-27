@@ -34,6 +34,7 @@ import {
 	ApiLogs,
 	NinVerification,
 	AutoConversionDetails,
+	AdBanner,
 } from '../pages';
 
 const Router = () => {
@@ -117,6 +118,7 @@ const Router = () => {
 			<Route path={'suspension'} element={<Suspension />} />
 			<Route path={'audit-logs'} element={<AuditLogs />} />
 			<Route path={'api-logs'} element={<ApiLogs />} />
+			<Route path={'ad-banners'} element={<AdBanner />} />
 		</Routes>
 	);
 };

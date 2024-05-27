@@ -116,3 +116,4 @@ export { default as ReversalTransactionsTable } from './table/reversal-transacti
 export { default as EPinTransactionsTable } from './table/e-pin-transactions-table';
 export { default as WalletTransferTransactionsTable } from './table/wallet-transfer-transactions-table';
 export { default as CreditDebitTable } from './table/credit-debit-table';
+export { default as AdBannerTable } from './table/ad-banner-table';

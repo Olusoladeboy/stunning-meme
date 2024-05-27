@@ -935,6 +935,7 @@ export type AuditFilter = {
 export interface IAdBanner {
 	isActive: boolean;
 	url: string;
+	service: string;
 	createdBy: string;
 	imageUrl: string;
 	createdAt: string;

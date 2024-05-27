@@ -11,7 +11,7 @@ import {
 import { grey } from '@mui/material/colors';
 import { AddCircle } from '@mui/icons-material';
 import moment from 'moment';
-import { SUCCESS_COLOR, BOX_SHADOW, ManagerTypes, IAdBanner } from 'utilities';
+import { SUCCESS_COLOR, BOX_SHADOW, IAdBanner } from 'utilities';
 import ModalWrapper from '../modal/Wrapper';
 import {
 	StyledTableCell as TableCell,
@@ -58,11 +58,7 @@ const AdBannerTable = ({ data, isLoading }: Props) => {
 				</ModalWrapper>
 			)}
 			{selectedBanner && isViewBanner && (
-				<ModalWrapper
-					hasCloseButton
-					closeModal={closeModal}
-					title={'View Banner'}
-				>
+				<ModalWrapper hasCloseButton closeModal={closeModal} title={'Banner'}>
 					<Box
 						sx={{
 							marginBottom: '20px',
@@ -108,6 +104,7 @@ const AdBannerTable = ({ data, isLoading }: Props) => {
 						<TableRow>
 							<CustomTableCell label={'Image'} />
 							<CustomTableCell label={'Url'} />
+							<CustomTableCell label={'Service'} />
 							<CustomTableCell label={'Status'} />
 							<CustomTableCell label={'Created'} />
 						</TableRow>
@@ -136,6 +133,10 @@ const AdBannerTable = ({ data, isLoading }: Props) => {
 
 												<TableCell style={styles.tableText}>
 													{data.url}
+												</TableCell>
+
+												<TableCell style={styles.tableText}>
+													{data.service}
 												</TableCell>
 
 												<TableCell style={styles.tableText}>

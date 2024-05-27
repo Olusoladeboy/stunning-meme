@@ -108,6 +108,7 @@ const AdBannerForm = ({ callback }: Props) => {
 		const formData = new FormData();
 		formData.append('file-upload', file);
 		formData.append('url', link);
+		formData.append('service', service);
 
 		setLoading(true);
 

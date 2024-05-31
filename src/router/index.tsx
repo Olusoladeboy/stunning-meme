@@ -35,6 +35,7 @@ import {
 	NinVerification,
 	AutoConversionDetails,
 	AdBanner,
+	LienTransactions,
 } from '../pages';
 
 const Router = () => {
@@ -93,6 +94,7 @@ const Router = () => {
 				element={<Network pageType={NetworkPage.AIRTIME_NETWORK} />}
 			/>
 			<Route path={'statistics'} element={<Statistics />} />
+			<Route path={'liens'} element={<LienTransactions />} />
 
 			<Route path={'coupons'} element={<Coupons />} />
 			<Route path={'dispute'}>

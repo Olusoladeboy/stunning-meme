@@ -4,6 +4,7 @@ import React, {
 	useState,
 	useRef,
 	useCallback,
+	useEffect,
 } from 'react';
 import {
 	Box,
@@ -12,22 +13,24 @@ import {
 	MenuItem,
 	FormHelperText,
 } from '@mui/material';
+import { useMutation, useQueryClient } from 'react-query';
 import * as yup from 'yup';
 import axios from 'axios';
 import { useFormik } from 'formik';
 import { grey, red } from '@mui/material/colors';
-import { useQueryClient } from 'react-query';
 import Button from '../button/custom-button';
-import { QueryKeys, validationSchema, ENDPOINTS } from 'utilities';
+import { QueryKeys, validationSchema, ENDPOINTS, IAdBanner } from 'utilities';
 import Select from '../form-components/select';
 import { useAlert, useHandleError } from 'hooks';
 import { useAppSelector } from 'store/hooks';
+import { updateBanner } from 'api';
 
 const SELECT_SERVICES = 'Select service';
 const baseUrl = process.env.REACT_APP_API_URI as string;
 
 type Props = {
 	callback?: () => void;
+	adBanner?: IAdBanner | null;
 };
 
 export const SERVICES = {
@@ -73,7 +76,37 @@ const mapServiceToLink = (service: string) => {
 	return link;
 };
 
-const AdBannerForm = ({ callback }: Props) => {
+const updateBannerController = async ({
+	formData,
+	token,
+	id,
+}: {
+	formData: any;
+	token: string;
+	id: string;
+}) => {
+	return await axios.put(`${baseUrl}${ENDPOINTS.Adverts}/${id}`, formData, {
+		headers: {
+			Authorization: `Bearer ${token}`,
+		},
+	});
+};
+
+const createBannerController = async ({
+	formData,
+	token,
+}: {
+	formData: any;
+	token: string;
+}) => {
+	return await axios.post(`${baseUrl}${ENDPOINTS.Adverts}`, formData, {
+		headers: {
+			Authorization: `Bearer ${token}`,
+		},
+	});
+};
+
+const AdBannerForm = ({ callback, adBanner }: Props) => {
 	const theme = useTheme();
 	const alert = useAlert();
 	const handleError = useHandleError();
@@ -82,6 +115,8 @@ const AdBannerForm = ({ callback }: Props) => {
 	const [isLoading, setLoading] = useState<boolean>(false);
 	const [file, setFile] = useState<any>(null);
 	const [previewImage, setPreviewImage] = useState<string>('');
+
+	const isEdit = Boolean(adBanner && Object.keys(adBanner).length > 0);
 
 	const inputEl = useRef<HTMLInputElement>(null);
 
@@ -100,28 +135,35 @@ const AdBannerForm = ({ callback }: Props) => {
 			.required(SELECT_SERVICES),
 	});
 
-	const onSubmit = async (values: typeof initialValues) => {
-		const service = values.service;
+	const { isLoading: isUpdating, mutate } = useMutation(updateBanner, {
+		onError: (error) => {
+			const errorResponse = handleError({ error });
+			if (errorResponse?.message)
+				alert({ message: errorResponse.message, type: 'error' });
+		},
+		onSuccess: (data) => {
+			typeof callback === 'function' && callback();
+			queryClient.invalidateQueries([QueryKeys.AdBanner]);
+		},
+	});
 
-		const link = mapServiceToLink(service);
-
-		const formData = new FormData();
-		formData.append('file-upload', file);
-		formData.append('url', link);
-		formData.append('service', service);
-
-		setLoading(true);
-
+	const adBannerService = async (formData: any) => {
 		try {
-			const res = await axios.post(
-				`${baseUrl}/${ENDPOINTS.Adverts}`,
-				formData,
-				{
-					headers: {
-						Authorization: `Bearer ${token}`,
-					},
-				}
-			);
+			let res;
+
+			if (isEdit) {
+				res = await updateBannerController({
+					formData,
+					token: token as string,
+					id: `${adBanner?.id}`,
+				});
+			} else {
+				res = await createBannerController({
+					formData,
+					token: token as string,
+				});
+			}
+
 			const data = res.data;
 			if (data && data.success) {
 				queryClient.invalidateQueries(QueryKeys.AdBanner);
@@ -138,6 +180,37 @@ const AdBannerForm = ({ callback }: Props) => {
 				alert({ message: res.message, type: 'error' });
 			}
 		}
+	};
+
+	const onSubmit = async (values: typeof initialValues) => {
+		const service = values.service;
+
+		const link = mapServiceToLink(service);
+
+		const formData = new FormData();
+		formData.append('file-upload', file);
+		formData.append('url', link);
+		formData.append('service', service);
+
+		setLoading(true);
+
+		if (isEdit) {
+			if (file) {
+				adBannerService(formData);
+			} else {
+				mutate({
+					id: `${adBanner?.id}`,
+					payload: {
+						service,
+						url: link,
+					},
+				});
+			}
+
+			return;
+		}
+
+		adBannerService(formData);
 	};
 
 	const {
@@ -185,6 +258,15 @@ const AdBannerForm = ({ callback }: Props) => {
 			};
 		}
 	};
+
+	// Update Initial Values
+	useEffect(() => {
+		if (adBanner && Object.keys(adBanner).length > 0) {
+			const { imageUrl, service } = adBanner;
+			setFieldValue('service', service);
+			setPreviewImage(imageUrl);
+		}
+	}, [adBanner, setFieldValue]);
 
 	return (
 		<Box style={styles.form as CSSProperties} component={'form'}>
@@ -279,7 +361,7 @@ const AdBannerForm = ({ callback }: Props) => {
 				)}
 			</Box>
 			<Button
-				loading={isLoading}
+				loading={isLoading || isUpdating}
 				onClick={(e: React.FormEvent<HTMLButtonElement>) => {
 					e.preventDefault();
 					handleSubmit();

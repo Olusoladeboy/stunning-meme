@@ -942,3 +942,12 @@ export interface IAdBanner {
 	updatedAt: string;
 	id: string;
 }
+
+export interface IWallet {
+	id: string;
+	balance: string;
+	user: string;
+	createdAt: string;
+	updatedAt: string;
+	lien: Amount;
+}

@@ -1,4 +1,5 @@
 import React, { CSSProperties, useState } from 'react';
+import { useMutation, useQueryClient } from 'react-query';
 import {
 	Table,
 	TableHead,
@@ -7,11 +8,12 @@ import {
 	Typography,
 	useTheme,
 	Box,
+	styled,
 } from '@mui/material';
-import { grey } from '@mui/material/colors';
+import { grey, red } from '@mui/material/colors';
 import { AddCircle } from '@mui/icons-material';
 import moment from 'moment';
-import { SUCCESS_COLOR, BOX_SHADOW, IAdBanner } from 'utilities';
+import { SUCCESS_COLOR, BOX_SHADOW, IAdBanner, QueryKeys } from 'utilities';
 import ModalWrapper from '../modal/Wrapper';
 import {
 	StyledTableCell as TableCell,
@@ -22,6 +24,9 @@ import Button from '../button';
 import AdBannerForm from '../forms/ad-banner-form';
 import TableLoader from '../loader/table-loader';
 import CustomTableCell from './components/custom-table-cell';
+import { deleteBanner, updateBanner } from 'api';
+import { useHandleError, useAlert } from 'hooks';
+import Loader from 'components/loader';
 
 type Props = {
 	data: IAdBanner[] | null | undefined;
@@ -29,11 +34,15 @@ type Props = {
 };
 
 const AdBannerTable = ({ data, isLoading }: Props) => {
+	const queryClient = useQueryClient();
+	const handleError = useHandleError();
+	const alert = useAlert();
 	const theme = useTheme();
 	const styles = useStyles(theme);
 
 	const [selectedBanner, setSelectedBanner] = useState<IAdBanner | null>(null);
 	const [isViewBanner, setViewBanner] = useState<boolean>(false);
+
 	const [isDisplayForm, setDisplayForm] = useState<boolean>(false);
 
 	const handleViewBanner = (data: IAdBanner) => {
@@ -44,17 +53,59 @@ const AdBannerTable = ({ data, isLoading }: Props) => {
 	const closeModal = () => {
 		setSelectedBanner(null);
 		setDisplayForm(false);
+		setViewBanner(false);
+	};
+
+	// Delete Mutation
+	const { isLoading: isDeleting, mutate: handleMutateDelete } = useMutation(
+		deleteBanner,
+		{
+			onSuccess: () => {
+				queryClient.invalidateQueries([QueryKeys.AdBanner]);
+			},
+			onError: (error) => {
+				const errorResponse = handleError({ error });
+				if (errorResponse && errorResponse.message)
+					alert({ message: errorResponse.message, type: 'error' });
+			},
+		}
+	);
+
+	// Update Ad-banner
+	const { isLoading: isUpdating, mutate: handleMutateUpdate } = useMutation(
+		updateBanner,
+		{
+			onError: (error) => {
+				const errorResponse = handleError({ error });
+				if (errorResponse?.message)
+					alert({ message: errorResponse.message, type: 'error' });
+			},
+			onSuccess: (data) => {
+				queryClient.invalidateQueries([QueryKeys.AdBanner]);
+			},
+		}
+	);
+
+	const handleUpdataBanner = (adBanner: IAdBanner) => {
+		const isActive = !adBanner.isActive;
+		handleMutateUpdate({
+			id: adBanner?.id,
+			payload: {
+				isActive,
+			},
+		});
 	};
 
 	return (
 		<>
+			{(isDeleting || isUpdating) && <Loader />}
 			{isDisplayForm && (
 				<ModalWrapper
 					title={'Create Banner'}
 					hasCloseButton
 					closeModal={closeModal}
 				>
-					<AdBannerForm callback={closeModal} />
+					<AdBannerForm adBanner={selectedBanner} callback={closeModal} />
 				</ModalWrapper>
 			)}
 			{selectedBanner && isViewBanner && (
@@ -107,6 +158,7 @@ const AdBannerTable = ({ data, isLoading }: Props) => {
 							<CustomTableCell label={'Service'} />
 							<CustomTableCell label={'Status'} />
 							<CustomTableCell label={'Created'} />
+							<CustomTableCell label={'Actions'} />
 						</TableRow>
 					</TableHead>
 					<TableBody
@@ -117,7 +169,7 @@ const AdBannerTable = ({ data, isLoading }: Props) => {
 						}}
 					>
 						{isLoading ? (
-							<TableLoader colSpan={4} />
+							<TableLoader colSpan={6} />
 						) : (
 							data && (
 								<>
@@ -146,11 +198,42 @@ const AdBannerTable = ({ data, isLoading }: Props) => {
 												<TableCell style={styles.tableText}>
 													{data?.isActive ? 'Active' : 'No Active'}
 												</TableCell>
+												<TableCell sx={{ display: 'flex', gap: '15px' }}>
+													<CustomButton
+														onClick={(e) => {
+															e.stopPropagation();
+															handleUpdataBanner(data);
+														}}
+														bgColor={theme.palette.primary.main}
+													>
+														{data.isActive ? 'Deactivate' : 'Activate'}
+													</CustomButton>
+													<CustomButton
+														onClick={(e) => {
+															e.stopPropagation();
+															setSelectedBanner(data);
+															setDisplayForm(true);
+														}}
+														bgColor={theme.palette.primary.main}
+													>
+														Edit
+													</CustomButton>
+													<CustomButton
+														onClick={(e) => {
+															e.stopPropagation();
+															handleMutateDelete(data.id);
+														}}
+														sx={{ color: red['600'] }}
+														bgColor={red['600']}
+													>
+														Delete
+													</CustomButton>
+												</TableCell>
 											</TableRow>
 										))
 									) : (
 										<TableRow>
-											<TableCell colSpan={5}>
+											<TableCell colSpan={6}>
 												<Empty text={'No ad-banner(s)'} />
 											</TableCell>
 										</TableRow>
@@ -175,6 +258,13 @@ const AdBannerTable = ({ data, isLoading }: Props) => {
 		</>
 	);
 };
+
+const CustomButton = styled(Button)<{
+	bgColor?: string;
+}>(({ theme, bgColor, color }) => ({
+	border: `1px solid ${bgColor || theme.palette.primary.main}`,
+	padding: '6px 15px',
+}));
 
 const useStyles = (theme: any) => ({
 	container: {

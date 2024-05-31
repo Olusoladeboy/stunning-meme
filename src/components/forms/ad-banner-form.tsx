@@ -135,6 +135,13 @@ const AdBannerForm = ({ callback, adBanner }: Props) => {
 			.required(SELECT_SERVICES),
 	});
 
+	const updateValidationSchema = yup.object().shape({
+		service: yup
+			.string()
+			.notOneOf([SELECT_SERVICES], SELECT_SERVICES)
+			.required(SELECT_SERVICES),
+	});
+
 	const { isLoading: isUpdating, mutate } = useMutation(updateBanner, {
 		onError: (error) => {
 			const errorResponse = handleError({ error });
@@ -223,7 +230,7 @@ const AdBannerForm = ({ callback, adBanner }: Props) => {
 		setFieldValue,
 	} = useFormik({
 		initialValues,
-		validationSchema,
+		validationSchema: isEdit ? updateValidationSchema : validationSchema,
 		onSubmit,
 	});
 

@@ -29,6 +29,15 @@ export const transactions = async (params?: {
 		params,
 	});
 
+export const lienTransactions = async (params?: {
+	[key: string]: any;
+}): Promise<any> =>
+	apiRequest({
+		method: 'GET',
+		url: `${ENDPOINTS.Transaction}/lien`,
+		params,
+	});
+
 export const transactUser = async ({
 	data,
 	id,

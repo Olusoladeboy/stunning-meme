@@ -117,3 +117,5 @@ export { default as EPinTransactionsTable } from './table/e-pin-transactions-tab
 export { default as WalletTransferTransactionsTable } from './table/wallet-transfer-transactions-table';
 export { default as CreditDebitTable } from './table/credit-debit-table';
 export { default as AdBannerTable } from './table/ad-banner-table';
+export { default as UserLien } from './user-lien';
+export { default as LienTransactionsTable } from './table/lien-transaction-table';

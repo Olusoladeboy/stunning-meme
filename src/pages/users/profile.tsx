@@ -30,7 +30,7 @@ const Profile = () => {
 	const styles = useStyles(theme);
 
 	const { id } = useParams();
-	console.log(id);
+
 	const location = useLocation();
 	const { token } = useAppSelector((store) => store.authState);
 	const [user, setUser] = useState<null | User>(null);
@@ -112,10 +112,9 @@ const Profile = () => {
 				},
 			}),
 		{
-			enabled: !!id,
+			enabled: !!(id && token),
 			refetchOnWindowFocus: false,
 			onSettled: (data, error) => {
-				console.log(data);
 				if (error) {
 					const response = handleError({ error });
 					if (response?.message)

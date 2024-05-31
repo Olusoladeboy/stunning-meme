@@ -1,27 +1,25 @@
 import React, { CSSProperties, useState } from 'react';
 import { Box, Typography, useTheme } from '@mui/material';
 import { grey } from '@mui/material/colors';
-import { formatNumberToCurrency, IWallet, User } from 'utilities';
+import { formatNumberToCurrency, User, IWallet, checkAmount } from 'utilities';
 import Button from '../button';
 import ModalWrapper from '../modal/Wrapper';
-import EditWalletForm from '../forms/edit-wallet-form';
 import { useAppSelector } from 'store/hooks';
+import LienForm from 'components/forms/lien-form';
 
 type Props = {
 	user: User | null;
 	wallet: IWallet;
 };
 
-const UserWallet = ({ user, wallet }: Props) => {
+const UserLien = ({ user, wallet }: Props) => {
 	const theme = useTheme();
 	const styles = useStyles(theme);
-
 	const [isEditWallet, setEditWallet] = useState<boolean>(false);
+	const amount = wallet?.lien;
 	const { canCreateOrUpdateRecord } = useAppSelector(
 		(store) => store.authState
 	);
-
-	const amount = wallet?.balance || 0;
 
 	return (
 		<>
@@ -30,27 +28,27 @@ const UserWallet = ({ user, wallet }: Props) => {
 					title={
 						<Box>
 							<Typography sx={{ textTransform: 'uppercase' }} variant={'h6'}>
-								current wallet balance
+								Current Lien balance
 							</Typography>
 							<Typography variant={'h4'}>
-								{formatNumberToCurrency(amount)}
+								{formatNumberToCurrency(amount ? checkAmount(amount) : 0)}
 							</Typography>
 						</Box>
 					}
 					hasCloseButton
 					closeModal={() => setEditWallet(false)}
 				>
-					<EditWalletForm user={user} close={() => setEditWallet(false)} />
+					<LienForm user={user} close={() => setEditWallet(false)} />
 				</ModalWrapper>
 			)}
 			<Box style={styles.container}>
 				<Typography>
-					User Wallet <br />
+					User Lien <br />
 					Balance
 				</Typography>
 				<Box style={styles.balanceBtnContainer}>
 					<Typography variant={'h4'}>
-						{formatNumberToCurrency(amount)}
+						{formatNumberToCurrency(amount ? checkAmount(amount) : 0)}
 					</Typography>
 					{canCreateOrUpdateRecord && (
 						<Button
@@ -58,7 +56,7 @@ const UserWallet = ({ user, wallet }: Props) => {
 							variant={'outlined'}
 							style={styles.editBtn as CSSProperties}
 						>
-							Edit wallet
+							Edit Lien
 						</Button>
 					)}
 				</Box>
@@ -87,4 +85,4 @@ const useStyles = (theme: any) => ({
 	},
 });
 
-export default UserWallet;
+export default UserLien;

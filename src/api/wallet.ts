@@ -1,13 +1,26 @@
 import apiRequest from './apiRequest';
-import { ENDPOINTS } from '../utilities';
+import { DataResponse, ENDPOINTS, IWallet } from '../utilities';
 
 export const walletAccount = async ({
 	params,
 }: {
 	params?: { [key: string]: any };
-}): Promise<any> =>
+}): Promise<DataResponse<IWallet>> =>
 	apiRequest({
 		method: 'GET',
 		url: ENDPOINTS.Wallet,
 		params,
+	});
+
+export const updateLien = async ({
+	id,
+	data,
+}: {
+	id: string;
+	data: { lien: string };
+}): Promise<any> =>
+	apiRequest({
+		method: 'PUT',
+		url: `${ENDPOINTS.Wallet}/lien/${id}`,
+		data,
 	});

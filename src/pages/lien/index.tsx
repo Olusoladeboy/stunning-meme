@@ -40,15 +40,15 @@ const LienTransactions = () => {
 		useSearchTransaction();
 	const [isEnableQuery, setEnableQuery] = useState<boolean>(false);
 
-	useEffect(
-		() => {
-			if (query && query.page) {
-				setPage(parseInt(query.page as string));
-			}
-		},
-		// eslint-disable-next-line
-		[query]
-	);
+	// useEffect(
+	// 	() => {
+	// 		if (query && query.page) {
+	// 			setPage(parseInt(query.page as string));
+	// 		}
+	// 	},
+	// 	// eslint-disable-next-line
+	// 	[query]
+	// );
 
 	const { isLoading, data, refetch } = useQuery(
 		[QueryKeys.LienTransactions, query.page],

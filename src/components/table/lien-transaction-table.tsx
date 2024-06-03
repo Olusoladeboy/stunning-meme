@@ -8,17 +8,13 @@ import {
 	TableBody,
 	TableHead,
 } from '@mui/material';
-import { Check, Close, AccessTime } from '@mui/icons-material';
 import moment from 'moment';
 import {
 	LIGHT_GRAY,
-	SUCCESS_COLOR,
-	PENDING_COLOR,
-	DANGER_COLOR,
 	formatNumberToCurrency,
 	Transaction,
-	TransactionStatus,
 	extractUserName,
+	checkAmount,
 } from 'utilities';
 import { StyledTableCell, StyledTableRow } from './components';
 import Empty from '../empty/table-empty';
@@ -29,16 +25,6 @@ import CustomTableCell from './components/custom-table-cell';
 type Props = {
 	data: Transaction[] | null;
 	isLoading?: boolean;
-};
-
-const setColor = (status: string) => {
-	if (status === TransactionStatus.SUCCESSFUL || status === 'APPROVED') {
-		return SUCCESS_COLOR;
-	} else if (status === TransactionStatus.PENDING) {
-		return PENDING_COLOR;
-	} else {
-		return DANGER_COLOR;
-	}
 };
 
 const LienTransactionsTable = ({ data, isLoading }: Props) => {
@@ -69,12 +55,11 @@ const LienTransactionsTable = ({ data, isLoading }: Props) => {
 						<StyledTableRow>
 							<CustomTableCell label={'User'} />
 							<CustomTableCell label={'Email'} />
-							<CustomTableCell label={'Transaction'} />
 							<CustomTableCell label={'Reference'} />
-							<CustomTableCell label={'Date'} />
 							<CustomTableCell label={'Lien Before'} />
 							<CustomTableCell label={'Lien After'} />
 							<CustomTableCell label={'Amount'} />
+							<CustomTableCell label={'Date'} />
 						</StyledTableRow>
 					</TableHead>
 					<TableBody
@@ -117,17 +102,26 @@ const LienTransactionsTable = ({ data, isLoading }: Props) => {
 													</Box>
 												</StyledTableCell>
 												<StyledTableCell style={styles.text}>
-													{data.transaction
-														? data.transaction.service
-														: data.service
-														? data.service
-														: data.type}
+													{data.type}
 												</StyledTableCell>
 
 												<StyledTableCell style={styles.text}>
 													{data.reference}
 												</StyledTableCell>
+												<StyledTableCell style={styles.text}>
+													{checkAmount(data.lienBefore as string)}
+												</StyledTableCell>
+												<StyledTableCell style={styles.text}>
+													{checkAmount(data.lienAfter as string)}
+												</StyledTableCell>
 
+												<StyledTableCell style={styles.text}>
+													{formatNumberToCurrency(
+														typeof data.amount !== 'string'
+															? data.amount.$numberDecimal
+															: data.amount
+													)}
+												</StyledTableCell>
 												<StyledTableCell
 													sx={{
 														whiteSpace: 'nowrap',
@@ -135,66 +129,6 @@ const LienTransactionsTable = ({ data, isLoading }: Props) => {
 													style={styles.text}
 												>
 													{moment.utc(data.createdAt).format('ll')}
-												</StyledTableCell>
-												<StyledTableCell
-													sx={{
-														whiteSpace: 'nowrap',
-													}}
-													style={styles.text}
-												>
-													{moment.utc(data.createdAt).format('LT')}
-												</StyledTableCell>
-												<StyledTableCell>
-													<Box
-														sx={{
-															display: 'flex',
-															color: setColor(data.status),
-															alignItems: 'center',
-															gap: theme.spacing(2),
-														}}
-													>
-														<Box
-															sx={{
-																padding: '5px',
-																position: 'relative',
-																height: '20px',
-																width: '20px',
-																display: 'flex',
-																alignItems: 'center',
-																justifyContent: 'center',
-																svg: {
-																	fontSize: '14px',
-																},
-															}}
-														>
-															{data.status === TransactionStatus.SUCCESSFUL ? (
-																<Check />
-															) : data.status === TransactionStatus.PENDING ? (
-																<AccessTime />
-															) : (
-																<Close />
-															)}
-															<Box
-																sx={{
-																	backgroundColor: setColor(data.status),
-																	height: '100%',
-																	width: '100%',
-																	position: 'absolute',
-																	zIndex: '0',
-																	opacity: '0.15',
-																	borderRadius: '50%',
-																}}
-															/>
-														</Box>
-														{data.status}
-													</Box>
-												</StyledTableCell>
-												<StyledTableCell style={styles.text}>
-													{formatNumberToCurrency(
-														typeof data.amount !== 'string'
-															? data.amount.$numberDecimal
-															: data.amount
-													)}
 												</StyledTableCell>
 											</StyledTableRow>
 										))

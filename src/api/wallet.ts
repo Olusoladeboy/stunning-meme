@@ -17,7 +17,7 @@ export const updateLien = async ({
 	data,
 }: {
 	id: string;
-	data: { lien: string };
+	data: { lien: string; type: string };
 }): Promise<any> =>
 	apiRequest({
 		method: 'PUT',

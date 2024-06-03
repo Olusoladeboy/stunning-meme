@@ -1,6 +1,6 @@
 import React, { CSSProperties, useState } from 'react';
 import { Box, Typography, useTheme } from '@mui/material';
-import { useMutation, useQueryClient } from 'react-query';
+import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { useNavigate } from 'react-router-dom';
 import { grey } from '@mui/material/colors';
 import moment from 'moment';
@@ -11,10 +11,11 @@ import EditProfileForm from '../forms/profile-form';
 import UserAvatarWithDetails from '../avatar-with-details';
 import { User, SUCCESS_COLOR, QueryKeys, extractUserName } from 'utilities';
 import VerifyUser from '../verify-user';
-import { restoreDeletedAccount } from 'api';
+import { restoreDeletedAccount, walletAccount } from 'api';
 import { useHandleError, useAlert } from 'hooks';
 import Loader from 'components/loader';
-import UserWallet from 'components/user-wallet';
+import { UserWallet, UserLien } from 'components';
+import { useAppSelector } from 'store/hooks';
 
 type Props = {
 	user: User | null;
@@ -26,6 +27,8 @@ const UserProfile = ({ user }: Props) => {
 	const handleError = useHandleError();
 	const queryClient = useQueryClient();
 	const theme = useTheme();
+
+	const token = useAppSelector((store) => store.authState.token);
 
 	const styles = useStyles(theme);
 	const [isEditProfile, setEditProfile] = useState<boolean>(false);
@@ -61,6 +64,34 @@ const UserProfile = ({ user }: Props) => {
 			},
 		});
 
+	const { data: dataWallet } = useQuery(
+		[QueryKeys.UserWallet, user?.id],
+		() =>
+			walletAccount({
+				params: {
+					user: user?.id,
+				},
+			}),
+		{
+			enabled: !!(token && user),
+			refetchOnWindowFocus: false,
+			onSettled: (data, error) => {
+				if (error) {
+					const response = handleError({ error });
+					if (response?.message) {
+						alert({ message: response.message, type: 'error' });
+					}
+				}
+			},
+		}
+	);
+
+	const wallet =
+		dataWallet &&
+		dataWallet.payload &&
+		Array.isArray(dataWallet.payload) &&
+		dataWallet.payload[0];
+
 	const handleRestoreAccount = () => mutateRestoreAccount(user?.id as string);
 
 	return (
@@ -70,14 +101,16 @@ const UserProfile = ({ user }: Props) => {
 				<Box
 					sx={{
 						display: 'grid',
+						gap: ['1rem', '20px'],
 						gridTemplateColumns: {
 							xs: '1fr',
-							md: 'repeat(2, 1fr)',
+							md: 'repeat(3, 1fr)',
 						},
 					}}
 				>
 					<UserAvatarWithDetails user={user} />
-					<UserWallet user={user} />
+					<UserLien wallet={wallet} user={user} />
+					<UserWallet wallet={wallet} user={user} />
 				</Box>
 				<Box sx={{ marginTop: theme.spacing(5) }}>
 					{isEditProfile && (
@@ -129,7 +162,7 @@ const UserProfile = ({ user }: Props) => {
 											gap: theme.spacing(4),
 										}}
 									>
-										<Typography>UNVERIFIED</Typography>
+										<Typography>Unverified</Typography>
 										<VerifyUser
 											buttonProps={{ style: styles.verifyButton }}
 											user={user}

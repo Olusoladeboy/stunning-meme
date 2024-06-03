@@ -60,6 +60,8 @@ export const QueryKeys = {
 	ApiLogs: '@Query:ApiLogs',
 	AutoAirtimeConvertGroup: '@Query:AutoAirtimeConvertGroup',
 	UserTransactionStatistics: '@Query:UserTransactionStatistics',
+	UserLien: '@Query:UserLien',
+	LienTransactions: '@Query:LienTransactions',
 };
 
 export const StorageKeys = {
@@ -123,6 +125,7 @@ export const LINKS = {
 	Messages: '/messages',
 	Statistics: '/statistics',
 	AdBanner: '/ad-banners',
+	Liens: '/liens',
 };
 
 export const DRAWER_LINKS = {

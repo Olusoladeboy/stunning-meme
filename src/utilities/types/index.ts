@@ -715,6 +715,8 @@ export interface Transaction {
 	totalReturnAmount: string | Amount;
 	balanceBefore?: string | Amount;
 	balanceAfter?: string | Amount;
+	lienBefore?: string | Amount;
+	lienAfter?: string | Amount;
 	name: string;
 	createdAt: Date;
 	updatedAt: Date;
@@ -941,4 +943,13 @@ export interface IAdBanner {
 	createdAt: string;
 	updatedAt: string;
 	id: string;
+}
+
+export interface IWallet {
+	id: string;
+	balance: string;
+	user: string;
+	createdAt: string;
+	updatedAt: string;
+	lien: Amount;
 }

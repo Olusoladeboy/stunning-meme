@@ -15,6 +15,7 @@ import {
 	Transaction,
 	extractUserName,
 	checkAmount,
+	Amount,
 } from 'utilities';
 import { StyledTableCell, StyledTableRow } from './components';
 import Empty from '../empty/table-empty';
@@ -109,17 +110,19 @@ const LienTransactionsTable = ({ data, isLoading }: Props) => {
 													{data.reference}
 												</StyledTableCell>
 												<StyledTableCell style={styles.text}>
-													{checkAmount(data.lienBefore as string)}
+													{formatNumberToCurrency(
+														checkAmount(data.lienBefore as string)
+													)}
 												</StyledTableCell>
 												<StyledTableCell style={styles.text}>
-													{checkAmount(data.lienAfter as string)}
+													{formatNumberToCurrency(
+														checkAmount(data.lienAfter as string)
+													)}
 												</StyledTableCell>
 
 												<StyledTableCell style={styles.text}>
 													{formatNumberToCurrency(
-														typeof data.amount !== 'string'
-															? data.amount.$numberDecimal
-															: data.amount
+														checkAmount(data.amount as string | Amount)
 													)}
 												</StyledTableCell>
 												<StyledTableCell

@@ -715,6 +715,8 @@ export interface Transaction {
 	totalReturnAmount: string | Amount;
 	balanceBefore?: string | Amount;
 	balanceAfter?: string | Amount;
+	lienBefore?: string | Amount;
+	lienAfter?: string | Amount;
 	name: string;
 	createdAt: Date;
 	updatedAt: Date;

@@ -1,4 +1,4 @@
-import React, { CSSProperties, SyntheticEvent, useState } from 'react';
+import React, { CSSProperties, SyntheticEvent } from 'react';
 import {
 	Box,
 	useTheme,
@@ -17,7 +17,7 @@ import { User, QueryKeys } from 'utilities';
 import { useAlert, useHandleError } from 'hooks';
 import { updateLien } from 'api';
 
-export const LIEN_SERVICE = {
+export const LIEN_TYPE = {
 	CREDIT: 'CREDIT',
 	DEBIT: 'DEBIT',
 };
@@ -28,11 +28,11 @@ type Props = {
 };
 
 interface InitialValues {
-	type?: string;
-	amount?: string;
+	type: string;
+	lien: string;
 }
 
-const SELECT_CONDITION = 'Select condition';
+const SELECT_TYPE = 'Select lien type';
 
 const LienForm = ({ user, close }: Props) => {
 	const theme = useTheme();
@@ -42,11 +42,11 @@ const LienForm = ({ user, close }: Props) => {
 	const setAlert = useAlert();
 
 	const validationSchema = yup.object().shape({
-		// type: yup
-		// 	.string()
-		// 	.notOneOf([SELECT_CONDITION], 'Select Conditon')
-		// 	.required('Select Condition'),
-		amount: yup.number().required('Specify amount'),
+		type: yup
+			.string()
+			.notOneOf([SELECT_TYPE], SELECT_TYPE)
+			.required(SELECT_TYPE),
+		lien: yup.number().required('Specify Amount'),
 	});
 
 	const { isLoading, mutate } = useMutation(updateLien, {
@@ -68,8 +68,8 @@ const LienForm = ({ user, close }: Props) => {
 	});
 
 	const initialValues: InitialValues = {
-		type: SELECT_CONDITION,
-		amount: '',
+		type: SELECT_TYPE,
+		lien: '',
 	};
 
 	const {
@@ -84,46 +84,49 @@ const LienForm = ({ user, close }: Props) => {
 		initialValues,
 		validationSchema,
 		onSubmit: (values) => {
+			const data = {
+				lien: values.lien as string,
+				type: values.type as string,
+			};
+
 			mutate({
 				id: user?.id as string,
-				data: {
-					lien: values.amount as string,
-				},
+				data,
 			});
 		},
 	});
 
-	const { amount, type } = values;
+	const { lien, type } = values;
 
 	return (
 		<Box style={styles.form as CSSProperties} component={'form'}>
-			<Box>
+			{/* <Box>
 				<Typography variant={'body1'} style={styles.label}>
 					Amount
 				</Typography>
 				<TextInput
 					fullWidth
 					placeholder={'Amount'}
-					error={errors && touched.amount && errors.amount ? true : false}
-					helperText={errors && touched.amount && errors.amount}
+					error={errors && touched.lien && errors.lien ? true : false}
+					helperText={errors && touched.lien && errors.lien}
 					type={'number'}
-					value={amount}
-					onChange={handleChange('amount')}
+					value={lien}
+					onChange={handleChange('lien')}
 				/>
-			</Box>
-			{/* <Box
+			</Box> */}
+			<Box
 				sx={{
 					display: 'grid',
 					gridTemplateColumns: {
 						xs: '1fr',
-						md: type === SELECT_CONDITION ? '1fr' : '3fr 7fr',
+						md: type === SELECT_TYPE ? '1fr' : '3fr 7fr',
 					},
 					gap: theme.spacing(3),
 				}}
 			>
 				<Box>
 					<Typography variant={'body1'} style={styles.label}>
-						Service
+						Lien Type
 					</Typography>
 					<Select
 						fullWidth
@@ -136,17 +139,17 @@ const LienForm = ({ user, close }: Props) => {
 							setFieldValue('type', value);
 						}}
 					>
-						<MenuItem disabled value={SELECT_CONDITION}>
-							{SELECT_CONDITION}
+						<MenuItem disabled value={SELECT_TYPE}>
+							{SELECT_TYPE}
 						</MenuItem>
-						{Object.values(LIEN_SERVICE).map((value) => (
+						{Object.values(LIEN_TYPE).map((value) => (
 							<MenuItem key={value} value={value}>
 								{value}
 							</MenuItem>
 						))}
 					</Select>
 				</Box>
-				{type !== SELECT_CONDITION && (
+				{type !== SELECT_TYPE && (
 					<Box>
 						<Typography variant={'body1'} style={styles.label}>
 							Amount
@@ -154,15 +157,15 @@ const LienForm = ({ user, close }: Props) => {
 						<TextInput
 							fullWidth
 							placeholder={'Amount'}
-							error={errors && touched.amount && errors.amount ? true : false}
-							helperText={errors && touched.amount && errors.amount}
+							error={errors && touched.lien && errors.lien ? true : false}
+							helperText={errors && touched.lien && errors.lien}
 							type={'number'}
-							value={amount}
-							onChange={handleChange('amount')}
+							value={lien}
+							onChange={handleChange('lien')}
 						/>
 					</Box>
 				)}
-			</Box> */}
+			</Box>
 
 			<Button
 				loading={isLoading}

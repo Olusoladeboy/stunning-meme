@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useRef } from 'react';
 import queryString from 'query-string';
 import { Box, useTheme } from '@mui/material';
 import { useQuery } from 'react-query';

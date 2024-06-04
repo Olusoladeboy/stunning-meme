@@ -33,6 +33,7 @@ const LienTransactionsTable = ({ data, isLoading }: Props) => {
 	const styles = useStyles(theme);
 	const [selectedTransaction, setSelectedTransaction] =
 		useState<Transaction | null>(null);
+
 	return (
 		<>
 			{selectedTransaction && (

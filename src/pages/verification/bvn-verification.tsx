@@ -78,7 +78,7 @@ const BvnVerification = () => {
 	};
 	return (
 		<Layout>
-			<RouteGuard roles={[ADMIN_ROLE.SUPER_ADMIN]}>
+			<RouteGuard roles={[ADMIN_ROLE.SUPER_ADMIN, ADMIN_ROLE.OPERATIONS]}>
 				<Box>
 					<BvnVerificationTable
 						clearSearch={clearSearch}

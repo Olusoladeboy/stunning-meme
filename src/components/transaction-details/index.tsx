@@ -247,7 +247,11 @@ const TransactionDetails: React.FC<Props> = ({
 					{transaction.data_unit && (
 						<TransactionItem
 							label={'Data Unit'}
-							value={transaction.data_unit.$numberDecimal}
+							value={
+								typeof transaction.data_unit === 'object'
+									? transaction.data_unit.$numberDecimal
+									: transaction.data_unit
+							}
 						/>
 					)}
 					{transaction.electricity_token && (

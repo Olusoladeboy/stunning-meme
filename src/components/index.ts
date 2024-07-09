@@ -119,3 +119,4 @@ export { default as CreditDebitTable } from './table/credit-debit-table';
 export { default as AdBannerTable } from './table/ad-banner-table';
 export { default as UserLien } from './user-lien';
 export { default as LienTransactionsTable } from './table/lien-transaction-table';
+export { default as RTransactionTable } from './table/r-transaction-table';

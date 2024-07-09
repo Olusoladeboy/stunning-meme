@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Box, styled, Typography } from '@mui/material';
 import moment from 'moment';
 import { useNavigate } from 'react-router-dom';
@@ -16,6 +16,8 @@ import {
 	SECOUNDARY_COLOR,
 	TRANSACTION_SERVICE,
 	Amount,
+	LIGHT_GRAY,
+	capitalize,
 } from 'utilities';
 import TransactionItem from './transaction-item';
 import { useSearchCoupon } from 'hooks';
@@ -26,6 +28,56 @@ interface Props {
 	transaction: Transaction | null;
 	transactionType?: string;
 }
+
+interface IPin {
+	pin?: {
+		number: string;
+		serial: string;
+		instructions: string;
+	};
+}
+
+const Pin = ({ pin }: IPin) => {
+	const MAX_VALUE_LENGTH = 30;
+	if (pin) {
+		return (
+			<Box
+				sx={{
+					display: 'grid',
+					gap: '4px',
+					gridColumn: '1/3',
+				}}
+			>
+				<Typography sx={{ fontWeight: 'bold' }} variant='body2'>
+					Pin Details
+				</Typography>
+				{Object.keys(pin).map((pinKey, i) => {
+					const value = (pin as any)[pinKey];
+					const hasLargerValueLength = value.length > MAX_VALUE_LENGTH;
+					return (
+						<Box
+							sx={{
+								display: 'flex',
+								alignItems: hasLargerValueLength ? 'flex-start' : 'center',
+								justifyContent: 'space-between',
+								gap: hasLargerValueLength ? '6' : '15px',
+								backgroundColor: LIGHT_GRAY,
+								padding: '6px 10px',
+								flexDirection: hasLargerValueLength ? 'column' : 'row',
+							}}
+							key={pinKey}
+						>
+							<Typography>{capitalize(pinKey)}</Typography>
+							<Typography>{value || `No available ${pinKey}`}</Typography>
+						</Box>
+					);
+				})}
+			</Box>
+		);
+	}
+
+	return null;
+};
 
 const TransactionDetails: React.FC<Props> = ({
 	transaction,
@@ -161,9 +213,27 @@ const TransactionDetails: React.FC<Props> = ({
 		return (
 			<Box>
 				<Container>
+					{transaction.reference && (
+						<TransactionItem
+							label={'Reference'}
+							value={transaction.reference}
+						/>
+					)}
 					{service && <TransactionItem label={'Service'} value={service} />}
 					{type && (
 						<TransactionItem label={'Type'} value={type.replace(/_/g, ' ')} />
+					)}
+					{transaction.createdAt && (
+						<TransactionItem
+							label={'Date'}
+							value={moment.utc(transaction.createdAt).format('l')}
+						/>
+					)}
+					{transaction.createdAt && (
+						<TransactionItem
+							label={'Time'}
+							value={moment.utc(transaction.createdAt).format('LT')}
+						/>
 					)}
 					{transaction.card_number && (
 						<TransactionItem
@@ -198,12 +268,6 @@ const TransactionDetails: React.FC<Props> = ({
 						<TransactionItem
 							label={'Network'}
 							value={transaction.network.name as string}
-						/>
-					)}
-					{transaction.reference && (
-						<TransactionItem
-							label={'Reference'}
-							value={transaction.reference}
 						/>
 					)}
 
@@ -286,19 +350,6 @@ const TransactionDetails: React.FC<Props> = ({
 							value={transaction.paymentGateway}
 						/>
 					)}
-
-					{transaction.pin_data && transaction.pin_data.service_type && (
-						<TransactionItem
-							label={'Service Provider'}
-							value={cleanString(transaction.pin_data.service_type as string)}
-						/>
-					)}
-					{transaction.summary && (
-						<TransactionItem label={'Reason'} value={transaction.summary} />
-					)}
-					{transaction.pin && (
-						<TransactionItem label={'Pin'} value={transaction.pin} />
-					)}
 					{transaction.amount && (
 						<TransactionItem
 							label={'Amount'}
@@ -319,6 +370,23 @@ const TransactionDetails: React.FC<Props> = ({
 						/>
 					)}
 
+					{transaction.pin_data && transaction.pin_data.service_type && (
+						<TransactionItem
+							label={'Service Provider'}
+							value={cleanString(transaction.pin_data.service_type as string)}
+						/>
+					)}
+					{transaction.summary && (
+						<TransactionItem label={'Reason'} value={transaction.summary} />
+					)}
+					{transaction.pin && typeof transaction.pin === 'string' && (
+						<TransactionItem label={'Pin'} value={transaction.pin} />
+					)}
+
+					{transaction.pin && typeof transaction.pin === 'object' && (
+						<Pin pin={transaction.pin as any} />
+					)}
+
 					{transaction.number && (
 						<TransactionItem label={'Phone'} value={transaction.number} />
 					)}
@@ -328,18 +396,7 @@ const TransactionDetails: React.FC<Props> = ({
 					{transaction.sentTo && typeof transaction.sentTo === 'string' && (
 						<TransactionItem label={'Sent To'} value={transaction.sentTo} />
 					)}
-					{transaction.createdAt && (
-						<TransactionItem
-							label={'Date'}
-							value={moment.utc(transaction.createdAt).format('l')}
-						/>
-					)}
-					{transaction.createdAt && (
-						<TransactionItem
-							label={'Time'}
-							value={moment.utc(transaction.createdAt).format('LT')}
-						/>
-					)}
+
 					{transaction.status && (
 						<TransactionItem label={'Status'} value={transaction.status} />
 					)}

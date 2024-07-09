@@ -8,6 +8,7 @@ import {
 	IEpin,
 	IFunding,
 	ITransfer,
+	Transaction,
 } from 'utilities';
 import {
 	dataSubscriptions,
@@ -22,6 +23,10 @@ import {
 	walletTransfers,
 	autoConvertAirtimeGroups,
 	transactions,
+	giftCardTransactions,
+	voucherTransactions,
+	internationalDataSubscriptions,
+	internationalAirtimeTransactions,
 } from 'api';
 import { cableTransactions } from 'api/cable';
 import { billBundles, billProviders, billTransactions } from 'api/bill';
@@ -713,5 +718,140 @@ export const useQueryRefunds = (
 		isLoadingRefunds: isLoading,
 		refunds: dataRefunds,
 		queryRefunds,
+	};
+};
+
+export const useQueryVoucherTransactions = (
+	callback?: (data: any, metadata?: Metadata) => void
+) => {
+	const [dataVoucherTransactions, setDataVoucherTransactions] = useState<
+		Transaction[] | null
+	>(null);
+
+	const [isLoading, setLoading] = useState<boolean>(false);
+
+	// const query = async (params: Record<string, any>) => {
+	const queryVoucherTransactions = async (params: Record<string, any>) => {
+		setLoading(true);
+		try {
+			const response = await voucherTransactions(params);
+			setLoading(false);
+
+			if (response && response.success) {
+				setDataVoucherTransactions(response.payload as Transaction[]);
+				typeof callback === 'function' &&
+					callback(response.payload, response?.metadata);
+			}
+		} catch (error) {
+			setLoading(false);
+		}
+	};
+
+	return {
+		isLoadingVoucherTransactions: isLoading,
+		voucherTransactions: dataVoucherTransactions,
+		queryVoucherTransactions,
+	};
+};
+
+export const useQueryGiftCardTransactions = (
+	callback?: (data: any, metadata?: Metadata) => void
+) => {
+	const [dataGiftCardTransactions, setGiftCardTransactions] = useState<
+		{ [key: string]: any }[] | null
+	>(null);
+
+	const [isLoading, setLoading] = useState<boolean>(false);
+
+	const queryGiftCardTransactions = async (params: Record<string, any>) => {
+		setLoading(true);
+		try {
+			const response = await giftCardTransactions(params);
+			setLoading(false);
+
+			if (response && response.success) {
+				setGiftCardTransactions(response.payload);
+				const metadata = response.metadata;
+				typeof callback === 'function' && callback(response.payload, metadata);
+				return response.payload;
+			}
+		} catch (error) {
+			setLoading(false);
+		}
+	};
+
+	return {
+		isLoadingGiftCardTransactions: isLoading,
+		dataGiftCardTransactions: dataGiftCardTransactions,
+		queryGiftCardTransactions,
+	};
+};
+
+// Query International Airtime Transactiion
+export const useQueryInternationalAirtimeTransactions = (
+	callback?: (data: any, metadata?: Metadata) => void
+) => {
+	const [dataAirtimeTransactions, setDataAirtimeTransactions] = useState<
+		{ [key: string]: any }[] | null
+	>(null);
+
+	const [isLoading, setLoading] = useState<boolean>(false);
+
+	const queryInterAirtimeTransactions = async (params: Record<string, any>) => {
+		setLoading(true);
+		try {
+			const response = await internationalAirtimeTransactions(params);
+			setLoading(false);
+
+			if (response && response.success) {
+				setDataAirtimeTransactions(response.payload);
+				const metadata = response.metadata;
+				typeof callback === 'function' && callback(response.payload, metadata);
+				return response.payload;
+			}
+		} catch (error) {
+			setLoading(false);
+		}
+	};
+
+	return {
+		isLoadingInterAirtimeTransactions: isLoading,
+		dataInterAirtimeTransactions: dataAirtimeTransactions,
+		queryInterAirtimeTransactions,
+	};
+};
+
+// Query IInternational Data Transaction
+export const useQueryInternationalDataTransactions = (
+	callback?: (data: any, metadata?: Metadata) => void
+) => {
+	const [dataResponse, setDataResponse] = useState<
+		{ [key: string]: any }[] | null
+	>(null);
+
+	const [isLoading, setLoading] = useState<boolean>(false);
+
+	const queryInterDataTransactions = async (params: Record<string, any>) => {
+		setLoading(true);
+		try {
+			const response = await internationalDataSubscriptions(params);
+
+			if (response && response.success) {
+				setDataResponse(response.payload);
+				const metadata = response.metadata;
+				typeof callback === 'function' && callback(response.payload, metadata);
+				return response.payload;
+			}
+		} catch (error) {
+			console.log(error);
+		} finally {
+			setLoading(false);
+		}
+	};
+
+	return {
+		isLoadingInterDataTransactions: isLoading,
+		dataInterDataTransactions: dataResponse,
+		queryInterDataTransactions,
 	};
 };

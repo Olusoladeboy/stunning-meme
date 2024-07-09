@@ -9,3 +9,12 @@ export const airtimeTransactions = async (params: {
 		method: 'GET',
 		params,
 	});
+
+export const internationalAirtimeTransactions = async (params: {
+	[key: string]: any;
+}): Promise<DataResponse<Transaction[]>> =>
+	apiRequest({
+		url: ENDPOINTS.InternationalAirtime,
+		method: 'GET',
+		params,
+	});

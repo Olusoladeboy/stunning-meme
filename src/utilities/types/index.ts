@@ -698,6 +698,8 @@ export interface Transaction {
 				$numberDecimal: string;
 		  };
 	service: string;
+	operator?: string;
+	product?: string;
 	number: string;
 	noOfRetries: string;
 	createdBy: string;
@@ -723,7 +725,7 @@ export interface Transaction {
 	createdAt: Date;
 	updatedAt: Date;
 	pin_data?: PinData;
-	pin?: string;
+	pin?: string | { [key: string]: any };
 	pins?: IPin[];
 	transaction: INestedTransaction;
 	electricity_token?: ElectricityToken;

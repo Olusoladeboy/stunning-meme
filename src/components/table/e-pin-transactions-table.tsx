@@ -130,7 +130,7 @@ const EPinTransactionsTable = ({ data, isLoading }: Props) => {
 														value.pin_data.network.name}
 												</StyledTableCell>
 												<StyledTableCell style={styles.text}>
-													{value.pin}
+													{typeof value.pin === 'string' && value.pin}
 												</StyledTableCell>
 												<StyledTableCell style={styles.text}>
 													{formatNumberToCurrency(

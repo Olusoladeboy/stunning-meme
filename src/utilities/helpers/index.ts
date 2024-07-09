@@ -166,7 +166,7 @@ export const extractExactTransactionService = (transaction: Transaction) => {
 
 export const extractUserName = (user: User) => {
 	let name = '';
-	if (Object.keys(user).length > 0) {
+	if (user && Object.keys(user).length > 0) {
 		if (user?.firstname) name += user.firstname;
 		if (user?.lastname)
 			name = name ? name + ` ${user.lastname}` : user.lastname;

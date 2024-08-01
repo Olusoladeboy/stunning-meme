@@ -120,3 +120,4 @@ export { default as AdBannerTable } from './table/ad-banner-table';
 export { default as UserLien } from './user-lien';
 export { default as LienTransactionsTable } from './table/lien-transaction-table';
 export { default as RTransactionTable } from './table/r-transaction-table';
+export { default as GiftcardESimTransactionTable } from './table/giftcard-esim-trans-table';

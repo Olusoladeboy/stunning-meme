@@ -28,8 +28,13 @@ const WalletOverview = () => {
 					/>
 					<ListItem
 						description={'Total Airtime Converted'}
-						value={statistics ? statistics.total_conversions : ''}
-						isAmount={false}
+						value={statistics ? statistics.total_airtime_converted : ''}
+						isAmount={true}
+					/>
+					<ListItem
+						description={'Total Auto Airtime Converted'}
+						value={statistics ? statistics.total_auto_airtime_converted : ''}
+						isAmount={true}
 					/>
 					<ListItem
 						description={'Total Amount Withdrawn'}

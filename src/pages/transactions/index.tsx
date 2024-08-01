@@ -32,6 +32,7 @@ import {
 	AutoConversionsTable,
 	CreditDebitTable,
 	RTransactionTable,
+	GiftcardESimTransactionTable,
 } from 'components';
 import {
 	BOX_SHADOW,
@@ -56,10 +57,10 @@ import {
 	useQueryWalletTransfers,
 	useQueryTransactions,
 	useAlert,
-	useQueryVoucherTransactions,
 	useQueryGiftCardTransactions,
 	useQueryInternationalAirtimeTransactions,
 	useQueryInternationalDataTransactions,
+	useQueryESimTransactions,
 } from 'hooks';
 import { useAppSelector } from 'store/hooks';
 
@@ -206,11 +207,11 @@ const Transactions = () => {
 		}
 	);
 
-	const { isLoadingVoucherTransactions, queryVoucherTransactions } =
-		useQueryVoucherTransactions((data, metadata) => {
+	const { isLoadingESimTransactions, queryESimTransactions } =
+		useQueryESimTransactions((data, metadata) => {
 			handleSetTotal(metadata as Metadata);
 			setDataTransaction({
-				service: SERVICES.EVOUCHER,
+				service: SERVICES.ESIM,
 				data,
 			});
 		});
@@ -255,7 +256,7 @@ const Transactions = () => {
 		isLoadingWalletFundings ||
 		isLoadingWalletTransfers ||
 		isLoadingTransactions ||
-		isLoadingVoucherTransactions ||
+		isLoadingESimTransactions ||
 		isLoadingGiftCardTransactions ||
 		isLoadingInterDataTransactions ||
 		isLoadingInterAirtimeTransactions;
@@ -347,9 +348,8 @@ const Transactions = () => {
 			return;
 		}
 
-		if (values.service === SERVICES.EVOUCHER) {
-			payload.populate = 'user';
-			queryVoucherTransactions(payload);
+		if (values.service === SERVICES.ESIM) {
+			queryESimTransactions(payload);
 			return;
 		}
 
@@ -549,19 +549,22 @@ const Transactions = () => {
 							}
 						/>
 					)}
-
 					{(dataTransactions?.service ===
 						SERVICES.INTERNATIONAL_AIRTIME_TOP_UP ||
 						dataTransactions?.service ===
-							SERVICES.INTERNATIONAL_DATA_SUBSCRIPTION ||
-						dataTransactions?.service === SERVICES.EVOUCHER ||
-						dataTransactions?.service === SERVICES.GIFT_CARD) && (
+							SERVICES.INTERNATIONAL_DATA_SUBSCRIPTION) && (
 						<RTransactionTable
 							isLoading={isLoadingTransactions}
 							data={dataTransactions?.data as Transaction[]}
 						/>
 					)}
-
+					{(dataTransactions?.service === SERVICES.ESIM ||
+						dataTransactions?.service === SERVICES.GIFT_CARD) && (
+						<GiftcardESimTransactionTable
+							isLoading={isLoadingTransactions}
+							data={dataTransactions?.data as Transaction[]}
+						/>
+					)}
 					{dataTransactions?.service === SERVICES.CABLE && (
 						<CableTransactionsTable
 							isLoading={isLoadingBillTransactions}
@@ -611,7 +614,6 @@ const Transactions = () => {
 							isLoading={isLoading}
 						/>
 					)}
-
 					{dataTransactions?.service === SERVICES.EPIN && (
 						<EPinTransactionsTable
 							data={dataTransactions?.data as Transaction[]}

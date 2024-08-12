@@ -27,6 +27,7 @@ import {
 	voucherTransactions,
 	internationalDataSubscriptions,
 	internationalAirtimeTransactions,
+	eSimTransactions,
 } from 'api';
 import { cableTransactions } from 'api/cable';
 import { billBundles, billProviders, billTransactions } from 'api/bill';
@@ -853,5 +854,40 @@ export const useQueryInternationalDataTransactions = (
 		isLoadingInterDataTransactions: isLoading,
 		dataInterDataTransactions: dataResponse,
 		queryInterDataTransactions,
+	};
+};
+
+// Query ESim Transaction
+export const useQueryESimTransactions = (
+	callback?: (data: any, metadata?: Metadata) => void
+) => {
+	const [dataResponse, setDataResponse] = useState<
+		{ [key: string]: any }[] | null
+	>(null);
+
+	const [isLoading, setLoading] = useState<boolean>(false);
+
+	const queryESimTransactions = async (params: Record<string, any>) => {
+		setLoading(true);
+		try {
+			const response = await eSimTransactions(params);
+
+			if (response && response.success) {
+				setDataResponse(response.payload);
+				const metadata = response.metadata;
+				typeof callback === 'function' && callback(response.payload, metadata);
+				return response.payload;
+			}
+		} catch (error) {
+			console.log(error);
+		} finally {
+			setLoading(false);
+		}
+	};
+
+	return {
+		isLoadingESimTransactions: isLoading,
+		dataESimTransactions: dataResponse,
+		queryESimTransactions,
 	};
 };

@@ -179,6 +179,7 @@ export const ENDPOINTS = {
 	InternationalData: 'international-data',
 	EVouchers: '/e-vouchers',
 	GiftCard: '/gift-cards',
+	ESim: 'esim',
 };
 
 export const FUND_WALLET_SERVICE = {
@@ -285,8 +286,8 @@ export const SERVICES = {
 	REFUND: 'REFUND',
 	INTERNATIONAL_DATA_SUBSCRIPTION: 'INTERNATIONAL DATA SUBSCRIPTION',
 	INTERNATIONAL_AIRTIME_TOP_UP: 'INTERNATIONAL AIRTIME TOP UP',
-	EVOUCHER: 'EVOUCHER',
 	GIFT_CARD: 'GIFT_CARD',
+	ESIM: 'ESIM',
 };
 
 export const VERIFICATION_STATUS = {

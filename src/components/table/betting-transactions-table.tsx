@@ -10,12 +10,15 @@ import moment from 'moment';
 import { StyledTableCell, StyledTableRow } from './components';
 import {
 	IPurchasedBill,
+	Transaction,
 	extractUserName,
 	formatNumberToCurrency,
 } from 'utilities';
 import Empty from '../empty/table-empty';
 import CustomTableCell from './components/custom-table-cell';
 import TableLoader from 'components/loader/table-loader';
+import { useState } from 'react';
+import TransactionDetailsModal from 'components/modal/transaction-details-modal';
 
 type Props = {
 	data: IPurchasedBill[];
@@ -25,9 +28,22 @@ type Props = {
 const BettingTransactionsTable = ({ data, isLoading }: Props) => {
 	const theme = useTheme();
 	const styles = useStyles(theme);
+	const [selectedTransaction, setSelectedTransaction] =
+		useState<null | Transaction>(null);
+
+	const handleClickRow = (value: Transaction) => {
+		setSelectedTransaction(value);
+	};
 
 	return (
 		<Container>
+			{selectedTransaction && (
+				<TransactionDetailsModal
+					closeModal={() => setSelectedTransaction(null)}
+					transaction={selectedTransaction as any}
+					isDisplayButtons
+				/>
+			)}
 			<Box sx={{ overflow: 'auto' }}>
 				<Table sx={{ overflow: 'auto' }}>
 					<TableHead
@@ -63,7 +79,10 @@ const BettingTransactionsTable = ({ data, isLoading }: Props) => {
 								<>
 									{data.length > 0 ? (
 										data.map((value) => (
-											<StyledTableRow key={value.reference}>
+											<StyledTableRow
+												onClick={() => handleClickRow(value as any)}
+												key={value.reference}
+											>
 												<StyledTableCell style={styles.text}>
 													{value.reference}
 												</StyledTableCell>

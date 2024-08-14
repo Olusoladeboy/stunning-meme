@@ -17,3 +17,6 @@ export * from './audit-log';
 export * from './verification';
 export * from './airtime';
 export * from './ad-banner';
+export * from './gift-card';
+export * from './e-voucher';
+export * from './e-sim';

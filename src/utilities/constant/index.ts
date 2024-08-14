@@ -175,6 +175,11 @@ export const ENDPOINTS = {
 	Funding: '/funding',
 	Transfer: '/transfer',
 	Adverts: '/adverts',
+	InternationalAirtime: 'international-airtime',
+	InternationalData: 'international-data',
+	EVouchers: '/e-vouchers',
+	GiftCard: '/gift-cards',
+	ESim: 'esim',
 };
 
 export const FUND_WALLET_SERVICE = {
@@ -239,6 +244,7 @@ export const DATA_SOURCE = {
 	AYINLAKCONNECT: 'AYINLAKCONNECT',
 	OGDAMS: 'OGDAMS',
 	SMEPLUG: 'SMEPLUG',
+	AFFATECH: 'AFFATECH',
 };
 
 export const NOTIFICATION_TYPE = {
@@ -278,6 +284,10 @@ export const SERVICES = {
 	CREDIT: 'CREDIT',
 	DEBIT: 'DEBIT',
 	REFUND: 'REFUND',
+	INTERNATIONAL_DATA_SUBSCRIPTION: 'INTERNATIONAL DATA SUBSCRIPTION',
+	INTERNATIONAL_AIRTIME_TOP_UP: 'INTERNATIONAL AIRTIME TOP UP',
+	GIFT_CARD: 'GIFT_CARD',
+	ESIM: 'ESIM',
 };
 
 export const VERIFICATION_STATUS = {

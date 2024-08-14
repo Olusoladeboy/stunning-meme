@@ -5,6 +5,7 @@ import {
 	DataResponse,
 	DataType,
 	DataPlan,
+	Transaction,
 } from '../utilities';
 
 export const dataPlans = async (params: {
@@ -76,4 +77,13 @@ export const updateDataPlan = async ({
 		method: 'PUT',
 		url: `${ENDPOINTS.DataPlans}/${id}`,
 		data,
+	});
+
+export const internationalDataSubscriptions = async (params: {
+	[key: string]: any;
+}): Promise<DataResponse<Transaction[]>> =>
+	apiRequest({
+		url: ENDPOINTS.InternationalData,
+		method: 'GET',
+		params,
 	});

@@ -19,7 +19,14 @@ import axios from 'axios';
 import { useFormik } from 'formik';
 import { grey, red } from '@mui/material/colors';
 import Button from '../button/custom-button';
-import { QueryKeys, validationSchema, ENDPOINTS, IAdBanner } from 'utilities';
+import {
+	QueryKeys,
+	validationSchema,
+	ENDPOINTS,
+	IAdBanner,
+	removeSpecialChar,
+	capitalize,
+} from 'utilities';
 import Select from '../form-components/select';
 import { useAlert, useHandleError } from 'hooks';
 import { useAppSelector } from 'store/hooks';
@@ -47,6 +54,10 @@ export const SERVICES = {
 	WITHDRAWAL: 'WITHDRAWAL',
 	CARD_FUNDING: 'CARD FUNDING',
 	WALLET_TRANSFER: 'WALLET TRANSFER',
+	INTERNATIONAL_DATA_SUBSCRIPTION: 'INTERNATIONAL DATA SUBSCRIPTION',
+	INTERNATIONAL_AIRTIME_TOP_UP: 'INTERNATIONAL AIRTIME TOP UP',
+	GIFT_CARD: 'GIFT_CARD',
+	ESIM: 'ESIM',
 };
 
 export const LINKS = {
@@ -220,19 +231,12 @@ const AdBannerForm = ({ callback, adBanner }: Props) => {
 		adBannerService(formData);
 	};
 
-	const {
-		values,
-		handleSubmit,
-		handleChange,
-		errors,
-		touched,
-		resetForm,
-		setFieldValue,
-	} = useFormik({
-		initialValues,
-		validationSchema: isEdit ? updateValidationSchema : validationSchema,
-		onSubmit,
-	});
+	const { values, handleSubmit, handleChange, errors, touched, setFieldValue } =
+		useFormik({
+			initialValues,
+			validationSchema: isEdit ? updateValidationSchema : validationSchema,
+			onSubmit,
+		});
 
 	const { service } = values;
 
@@ -357,7 +361,7 @@ const AdBannerForm = ({ callback, adBanner }: Props) => {
 					<MenuItem value={SELECT_SERVICES}>{SELECT_SERVICES}</MenuItem>
 					{Object.values(SERVICES).map((value) => (
 						<MenuItem value={value} key={value}>
-							{value}
+							{capitalize(removeSpecialChar(value))}
 						</MenuItem>
 					))}
 				</Select>

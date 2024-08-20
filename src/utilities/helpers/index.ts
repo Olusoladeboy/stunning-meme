@@ -203,3 +203,8 @@ export const capitalize = (text: string) => {
 		)
 		.join(' ');
 };
+
+export const removeSpecialChar = (text: string) => {
+	if (!text) return text;
+	return text.replace(/[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/g, ' ');
+};

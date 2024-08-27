@@ -21,7 +21,6 @@ import { grey, red } from '@mui/material/colors';
 import Button from '../button/custom-button';
 import {
 	QueryKeys,
-	validationSchema,
 	ENDPOINTS,
 	IAdBanner,
 	removeSpecialChar,
@@ -74,6 +73,12 @@ export const LINKS = {
 	WITHDRAWAL: 'https://airtimeflip.com/withdrawal',
 	CARD_FUNDING: 'https://airtimeflip.com/card-funding',
 	WALLET_TRANSFER: 'https://airtimeflip.com/wallet-transfer',
+	INTERNATIONAL_DATA_SUBSCRIPTION:
+		'https://airtimeflip.com/international-data-purchase',
+	INTERNATIONAL_AIRTIME_TOP_UP:
+		'https://airtimeflip.com/international-airtime-top-up',
+	GIFT_CARD: 'https://airtimeflip.com/gift-card',
+	ESIM: 'https://airtimeflip.com/esim',
 };
 
 const mapServiceToLink = (service: string) => {

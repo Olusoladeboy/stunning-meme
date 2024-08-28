@@ -95,6 +95,7 @@ export const LINKS = {
 	Managers: '/managers',
 	Transactions: '/transactions',
 	AllTransactions: '/transactions/all',
+	WithdrawalRequestTransactions: '/withdrawal-request',
 	Conversions: '/conversions',
 	AllConversions: '/conversions/all',
 	AutoConversions: '/auto-conversions',

@@ -3,7 +3,12 @@ import { Box, styled, MenuItem } from '@mui/material';
 import { useFormik } from 'formik';
 import Button from '../button';
 import Select from '../form-components/select';
-import { SECOUNDARY_COLOR, SERVICES } from 'utilities';
+import {
+	capitalize,
+	removeSpecialChar,
+	SECOUNDARY_COLOR,
+	SERVICES,
+} from 'utilities';
 import {
 	useQueryAirtimeNetwork,
 	useQueryDateNetwork,
@@ -359,7 +364,7 @@ const SearchStatistics = ({
 					</MenuItem>
 					{Object.values(SERVICES).map((service) => (
 						<MenuItem key={service} value={service}>
-							{service}
+							{capitalize(removeSpecialChar(service))}
 						</MenuItem>
 					))}
 				</Select>

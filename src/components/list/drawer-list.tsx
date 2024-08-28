@@ -269,6 +269,26 @@ const DrawerList = () => {
 					}
 				/>
 				<ListItemButton
+					name={'Withdrawal Request'}
+					link={LINKS.WithdrawalRequestTransactions}
+					isActive={
+						getActiveLink({ name: 'withdrawal-request', currentPath: pathname })
+							.isActive
+					}
+					icon={
+						<TransactionIcon
+							color={
+								getActiveLink({
+									name: 'withdrawal-request',
+									currentPath: pathname,
+								}).isActive
+									? activeColor
+									: initialColor
+							}
+						/>
+					}
+				/>
+				<ListItemButton
 					name={'Conversions'}
 					link={LINKS.Conversions}
 					isActive={

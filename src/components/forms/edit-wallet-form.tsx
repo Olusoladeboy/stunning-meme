@@ -54,8 +54,12 @@ const EditWalletForm = ({ user, close }: Props) => {
 	//Search Transaction Hooks
 	const { search, searchTransaction, isSearching, clearSearch } =
 		useSearchTransaction(() =>
-			setAlert({ message: 'Tansaction reference confirm', type: 'info' })
+			setAlert({ message: 'Transaction reference confirm', type: 'info' })
 		);
+
+	const foundTransaction = Boolean(
+		search && Array.isArray(search) && search.length > 0
+	);
 
 	const refundValidationSchema = yup.object().shape({
 		type: yup
@@ -170,6 +174,32 @@ const EditWalletForm = ({ user, close }: Props) => {
 		searchTransaction(reference as string);
 	};
 
+	const handleEditWallet = () => {
+		if (type === FUND_WALLET_SERVICE.REFUND) {
+			if (foundTransaction) {
+				handleSubmit();
+				return;
+			}
+
+			if (!reference) {
+				setAlert({
+					message: 'Enter a transaction reference',
+					type: 'info',
+				});
+
+				return;
+			}
+
+			handleSearchTransaction();
+		} else {
+			handleSubmit();
+		}
+	};
+
+	const isDisplayConfirmTransactionText = Boolean(
+		type === FUND_WALLET_SERVICE.REFUND && !foundTransaction
+	);
+
 	return (
 		<Box style={styles.form as CSSProperties} component={'form'}>
 			<Box
@@ -229,7 +259,12 @@ const EditWalletForm = ({ user, close }: Props) => {
 									}
 									helperText={errors && touched.reference && errors.reference}
 									value={reference}
-									onChange={handleChange('reference')}
+									onChange={(e) => {
+										const value = e.target.value;
+										clearSearch();
+										setFieldValue('reference', value);
+										// handleChange('reference')
+									}}
 									InputProps={{
 										endAdornment: (
 											<InputAdornment position='end'>
@@ -244,6 +279,12 @@ const EditWalletForm = ({ user, close }: Props) => {
 																gap: '3px',
 															}}
 														>
+															{/* <Button
+																onClick={handleSearchTransaction}
+																size={'small'}
+															>
+																Confirm
+															</Button> */}
 															<IconButton
 																sx={{
 																	color: red['600'],
@@ -252,13 +293,6 @@ const EditWalletForm = ({ user, close }: Props) => {
 																size={'small'}
 															>
 																<Close />
-															</IconButton>
-
-															<IconButton
-																onClick={handleSearchTransaction}
-																size={'small'}
-															>
-																<Search />
 															</IconButton>
 														</Box>
 													)
@@ -309,16 +343,16 @@ const EditWalletForm = ({ user, close }: Props) => {
 			<Box style={styles.btnWrapper}>
 				{!isTransact && (
 					<CustomButton
-						loading={isLoading}
+						loading={isLoading || isSearching}
 						onClick={(e: React.FormEvent<HTMLButtonElement>) => {
 							e.preventDefault();
-							handleSubmit();
+							handleEditWallet();
 						}}
 						variant={'outlined'}
 						size={'large'}
 						style={styles.btnOutline}
 					>
-						Update
+						{isDisplayConfirmTransactionText ? 'Confirm Transaction' : 'Update'}
 					</CustomButton>
 				)}
 				<Button

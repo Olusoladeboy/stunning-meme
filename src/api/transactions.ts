@@ -60,6 +60,21 @@ export const walletWithdrawal = async (params?: {
 		params,
 	});
 
+export const updateWalletWithdrawal = async ({
+	data,
+	id,
+}: {
+	data?: {
+		[key: string]: any;
+	};
+	id: string;
+}): Promise<DataResponse<IWithdrawal[]>> =>
+	apiRequest({
+		method: 'PUT',
+		url: `${ENDPOINTS.Withdraw}/${id}`,
+		data,
+	});
+
 export const walletFunding = async (params?: {
 	[key: string]: any;
 }): Promise<DataResponse<IFunding[]>> =>

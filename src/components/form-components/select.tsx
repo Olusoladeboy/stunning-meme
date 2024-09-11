@@ -1,15 +1,26 @@
 import React from 'react';
-import { Select as MuiSelect, Typography, Box } from '@mui/material';
+import {
+	Select as MuiSelect,
+	Typography,
+	Box,
+	SelectProps,
+} from '@mui/material';
 import { grey } from '@mui/material/colors';
 import { red } from '@mui/material/colors';
 import { ThemeModeType } from 'utilities';
 import { useAppSelector } from 'store/hooks';
 
-interface Props {
+// interface Props extends SelectProps {
+// 	isLoading?: boolean;
+// 	helpertext?: string | null | undefined | false;
+// 	[key: string]: any;
+// }
+
+type Props = {
 	isLoading?: boolean;
 	helpertext?: string | null | undefined | false;
 	[key: string]: any;
-}
+} & SelectProps;
 
 const Select = (props: Props) => {
 	const { mode } = useAppSelector((store) => store.theme);

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, styled, MenuItem } from '@mui/material';
+import { Box, styled, MenuItem, SelectChangeEvent } from '@mui/material';
 import { useFormik } from 'formik';
 import Button from '../button';
 import Select from '../form-components/select';
@@ -353,7 +353,7 @@ const SearchStatistics = ({
 					fullWidth
 					error={touched.service && Boolean(errors.service)}
 					helpertext={touched.service && errors.service}
-					onChange={(e) => {
+					onChange={(e: SelectChangeEvent<unknown>) => {
 						const value = e.target.value as string;
 						setFieldValue('service', value);
 						switchService(value);
@@ -408,7 +408,9 @@ const SearchStatistics = ({
 						<Select
 							fullWidth
 							value={provider}
-							onChange={(e) => handleSelectProvider(e.target.value as string)}
+							onChange={(e: SelectChangeEvent<unknown>) =>
+								handleSelectProvider(e.target.value as string)
+							}
 						>
 							<MenuItem disabled value={SELECT_PROVIDER}>
 								{isLoadingDataNetwork
@@ -431,7 +433,9 @@ const SearchStatistics = ({
 							disabled={Boolean(provider === SELECT_PROVIDER)}
 							fullWidth
 							value={type}
-							onChange={(e) => handleSelectType(e.target.value as string)}
+							onChange={(e: SelectChangeEvent<unknown>) =>
+								handleSelectType(e.target.value as string)
+							}
 						>
 							<MenuItem disabled value={SELECT_TYPE}>
 								{isLoadingDataTypes
@@ -453,7 +457,9 @@ const SearchStatistics = ({
 							disabled={Boolean(type === SELECT_TYPE)}
 							fullWidth
 							value={plan}
-							onChange={(e) => setFieldValue('plan', e.target.value as string)}
+							onChange={(e: SelectChangeEvent<unknown>) =>
+								setFieldValue('plan', e.target.value as string)
+							}
 						>
 							<MenuItem disabled value={SELECT_PLAN}>
 								{isLoadingDataPlans
@@ -511,7 +517,7 @@ const SearchStatistics = ({
 							error={touched.provider && Boolean(errors.provider)}
 							helpertext={touched.provider && errors.provider}
 							value={provider}
-							onChange={(e) => {
+							onChange={(e: SelectChangeEvent<unknown>) => {
 								const value = e.target.value;
 								handleSelectProvider(`${value}`);
 							}}

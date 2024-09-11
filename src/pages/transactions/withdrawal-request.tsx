@@ -6,19 +6,18 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { grey } from '@mui/material/colors';
 import {
 	Layout,
-	TransactionsTable,
 	TableHeader,
 	TablePagination,
+	WithdrawalTransactionsTable,
 } from 'components';
-import { BOX_SHADOW, QueryKeys, MAX_RECORDS, LINKS } from 'utilities';
-import { allTransactions } from 'api';
+import { BOX_SHADOW, MAX_RECORDS, LINKS } from 'utilities';
+import { walletWithdrawal } from 'api';
 import {
 	useHandleError,
 	useAlert,
 	useSearchTransaction,
 	usePageTitle,
 } from 'hooks';
-import { ArrowDropDown } from '@mui/icons-material';
 import { useAppSelector } from 'store/hooks';
 
 const WithdrawalRequestTransactions = () => {
@@ -39,7 +38,6 @@ const WithdrawalRequestTransactions = () => {
 
 	const { isSearching, searchTransaction, clearSearch, search } =
 		useSearchTransaction();
-	const [isEnableQuery, setEnableQuery] = useState<boolean>(false);
 
 	useEffect(
 		() => {
@@ -52,22 +50,19 @@ const WithdrawalRequestTransactions = () => {
 	);
 
 	const { isLoading, data, refetch } = useQuery(
-		[QueryKeys.Transactions, query.page],
+		['Withdrawal', query.page],
 		() =>
-			allTransactions({
-				params: {
-					sort: '-createdAt',
-					limit: maxRecordRef.current,
-					skip: (page - 1) * maxRecordRef.current,
-					populate: 'network,plan,dataType',
-				},
+			walletWithdrawal({
+				sort: '-createdAt',
+				limit: maxRecordRef.current,
+				skip: (page - 1) * maxRecordRef.current,
+				populate: 'user',
+				status: 'PENDING',
 			}),
 		{
 			retry: 2,
-			enabled: isEnableQuery,
 			refetchOnWindowFocus: false,
 			onSettled: (data: any, error) => {
-				setEnableQuery(false);
 				if (error) {
 					const response = handleError({ error });
 					if (response?.message) {
@@ -87,12 +82,12 @@ const WithdrawalRequestTransactions = () => {
 	const handlePageChange = (page: number) => {
 		if (page !== 1) {
 			setPage(page);
-			navigate(`${LINKS.Transactions}?page=${page}`);
+			navigate(`${LINKS.WithdrawalRequestTransactions}?page=${page}`);
 		} else {
-			navigate(LINKS.Transactions);
+			navigate(LINKS.WithdrawalRequestTransactions);
 			setPage(page);
 		}
-		setEnableQuery(true);
+		refetch();
 	};
 
 	const handleChangeRowsPerPage = (value: number) => {
@@ -118,10 +113,12 @@ const WithdrawalRequestTransactions = () => {
 					/>
 				</Box>
 
-				<TransactionsTable
+				<WithdrawalTransactionsTable
+					hasActionButton
 					isLoading={isLoading || isSearching}
 					data={search && search.length > 0 ? search : data && data.payload}
 				/>
+
 				{!Boolean(search && search.length > 0) &&
 					!isSearching &&
 					!isLoading &&

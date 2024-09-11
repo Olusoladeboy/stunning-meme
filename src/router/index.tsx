@@ -36,6 +36,7 @@ import {
 	AutoConversionDetails,
 	AdBanner,
 	LienTransactions,
+	WithdrawalRequestTransactions,
 } from '../pages';
 
 const Router = () => {
@@ -60,6 +61,10 @@ const Router = () => {
 				<Route path={''} element={<Transactions />} />
 				{/* <Route path={'all'} element={<AllTransactions />} /> */}
 			</Route>
+			<Route
+				path={'withdrawal-request'}
+				element={<WithdrawalRequestTransactions />}
+			/>
 
 			<Route path={'conversions'}>
 				<Route path={''} element={<Conversions />} />

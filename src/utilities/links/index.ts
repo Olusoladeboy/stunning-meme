@@ -7,6 +7,7 @@ const LINKS = {
 	User: `/user`,
 	Managers: '/managers',
 	Transactions: '/transactions',
+	WithdrawalRequestTransactions: '/withdrawal-request',
 	Conversions: '/conversions',
 	Network: '/network',
 	DataNetwork: '/network/data',

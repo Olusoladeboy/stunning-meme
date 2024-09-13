@@ -57,6 +57,7 @@ const LienTransactions = () => {
 				sort: '-createdAt',
 				limit: maxRecordRef.current,
 				skip: (page - 1) * maxRecordRef.current,
+				populate: 'user',
 			}),
 		{
 			retry: 2,

@@ -17,6 +17,7 @@ import {
 	IReferral,
 	extractUserName,
 	User,
+	formatNumberToCurrency,
 } from 'utilities';
 import {
 	StyledTableCell as TableCell,
@@ -68,6 +69,7 @@ const ReferralTable: React.FC<Props> = ({ data, isLoading }) => {
 							<CustomTableCell label={'Referral Name'} />
 							<CustomTableCell label={'Email'} />
 							<CustomTableCell label={'No. of Referees'} />
+							<CustomTableCell label={'Bonus'} />
 							<CustomTableCell label={'Action'} />
 						</TableRow>
 					</TableHead>
@@ -106,6 +108,9 @@ const ReferralTable: React.FC<Props> = ({ data, isLoading }) => {
 												<TableCell style={styles.tableText}>
 													{row.referredBy.no_of_referees || 0}
 												</TableCell>
+												<TableCell style={styles.tableText}>
+													{formatNumberToCurrency(row.bonus || 0)}
+												</TableCell>
 												<TableCell
 													onClick={() =>
 														navigate(
@@ -120,7 +125,7 @@ const ReferralTable: React.FC<Props> = ({ data, isLoading }) => {
 										))
 									) : (
 										<TableRow>
-											<TableCell colSpan={6}>
+											<TableCell colSpan={5}>
 												<Empty text={'No users'} />
 											</TableCell>
 										</TableRow>

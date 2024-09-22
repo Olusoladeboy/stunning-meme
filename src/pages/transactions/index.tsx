@@ -349,6 +349,7 @@ const Transactions = () => {
 		}
 
 		if (values.service === SERVICES.ESIM) {
+			payload.populate = 'user';
 			queryESimTransactions(payload);
 			return;
 		}

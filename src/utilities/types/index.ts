@@ -530,6 +530,7 @@ export type User = {
 	deleted?: boolean;
 	restricted?: boolean;
 	twoFactorAuth?: boolean;
+	restrictWithdrawal?: boolean;
 	isLoggedIn?: boolean;
 	role?: string;
 	suspendWalletTransactions?: boolean;

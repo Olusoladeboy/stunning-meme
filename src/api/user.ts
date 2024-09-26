@@ -138,6 +138,22 @@ export const suspendWithdraw = async ({
 		data,
 	});
 
+export const restrictWithdraw = async ({
+	data,
+	id,
+}: {
+	data: {
+		restrictWithdrawal: boolean;
+	};
+	id: string;
+}) =>
+	apiRequest({
+		method: 'PUT',
+		url: `${ENDPOINTS.User}/withdrawal/restrict/${id}`,
+
+		data,
+	});
+
 export const restoreDeletedAccount = async (id: string) =>
 	apiRequest({
 		method: 'PATCH',

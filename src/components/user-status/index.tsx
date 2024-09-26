@@ -8,7 +8,7 @@ import SuspendUserForm from '../forms/suspend-user-form';
 import DeleteUserForm from '../forms/delete-user-form';
 import { User, QueryKey } from 'utilities';
 import { useAlert, useHandleError } from 'hooks';
-import { suspendWithdraw } from 'api';
+import { restrictWithdraw, suspendWithdraw } from 'api';
 import { useAppSelector } from 'store/hooks';
 
 type Props = {
@@ -42,11 +42,40 @@ const UserStatus = ({ user }: Props) => {
 		},
 	});
 
+	const {
+		mutate: mutateRestrictWithdrawal,
+		isLoading: isRestrictingWithdrawal,
+	} = useMutation(restrictWithdraw, {
+		onSettled: (data, error) => {
+			if (error) {
+				const response = handleError({ error });
+				if (response?.message) {
+					setAlert({ message: response.message, type: 'error' });
+				}
+			}
+
+			if (data && data.success) {
+				setAlert({ message: data.message, type: 'success' });
+				queryClient.invalidateQueries(QueryKey.AllUsers);
+				queryClient.invalidateQueries(QueryKey.GetSingleUser);
+				queryClient.invalidateQueries(QueryKey.Statistics);
+			}
+		},
+	});
+
 	const handleSuspendWithdraw = () =>
 		mutate({
 			data: {
 				suspended: user?.suspended as boolean,
 				suspendWithdrawal: !user?.suspendWithdrawal,
+			},
+			id: user?.id as string,
+		});
+
+	const handleRestrictWithdraw = () =>
+		mutateRestrictWithdrawal({
+			data: {
+				restrictWithdrawal: !user?.restrictWithdrawal,
 			},
 			id: user?.id as string,
 		});
@@ -63,25 +92,52 @@ const UserStatus = ({ user }: Props) => {
 			>
 				<UserAvatarWithDetails user={user} />
 				{canCreateOrUpdateRecord && (
-					<CustomButton
-						loading={isLoading}
-						onClick={(e: React.FormEvent<HTMLButtonElement>) => {
-							e.preventDefault();
-							handleSuspendWithdraw();
-						}}
+					<Box
 						sx={{
-							border: `1px solid ${theme.palette.secondary.main}`,
-							':hover': {
-								backgroundColor: theme.palette.secondary.main,
-								color: grey[50],
-							},
+							display: 'flex',
+							gap: '10px',
 						}}
-						size={'large'}
 					>
-						{user?.suspendWithdrawal
-							? 'Unsuspend withdrawal'
-							: 'Suspend Withdrawal'}
-					</CustomButton>
+						<CustomButton
+							loading={isLoading}
+							onClick={(e: React.FormEvent<HTMLButtonElement>) => {
+								e.preventDefault();
+								handleSuspendWithdraw();
+							}}
+							sx={{
+								border: `1px solid ${theme.palette.secondary.main}`,
+								':hover': {
+									backgroundColor: theme.palette.secondary.main,
+									color: grey[50],
+								},
+							}}
+							size={'large'}
+						>
+							{user?.suspendWithdrawal
+								? 'Unsuspend Transaction'
+								: 'Suspend Transaction'}
+						</CustomButton>
+
+						<CustomButton
+							loading={isRestrictingWithdrawal}
+							onClick={(e: React.FormEvent<HTMLButtonElement>) => {
+								e.preventDefault();
+								handleRestrictWithdraw();
+							}}
+							sx={{
+								border: `1px solid ${theme.palette.secondary.main}`,
+								':hover': {
+									backgroundColor: theme.palette.secondary.main,
+									color: grey[50],
+								},
+							}}
+							size={'large'}
+						>
+							{user?.restrictWithdrawal
+								? 'UnRestrict withdrawal'
+								: 'Restrict Withdrawal'}
+						</CustomButton>
+					</Box>
 				)}
 			</Box>
 			<Box>

@@ -749,6 +749,7 @@ export interface IReferral {
 	createdAt: string;
 	updatedAt: string;
 	id: string;
+	no_of_referees: string
 }
 
 export interface Metadata {

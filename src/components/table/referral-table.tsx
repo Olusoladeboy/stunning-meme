@@ -106,7 +106,7 @@ const ReferralTable: React.FC<Props> = ({ data, isLoading }) => {
 													{row.referredBy.email}
 												</TableCell>
 												<TableCell style={styles.tableText}>
-													{row.referredBy.no_of_referees || 0}
+													{row.no_of_referees || 0}
 												</TableCell>
 												<TableCell style={styles.tableText}>
 													{formatNumberToCurrency(row.bonus || 0)}

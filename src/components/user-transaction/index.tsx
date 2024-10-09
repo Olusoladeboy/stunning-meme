@@ -29,6 +29,11 @@ const UserTransaction = ({ user }: Props) => {
 	const { isSearching, search, clearSearch, searchTransaction } =
 		useSearchTransaction();
 
+	const isEnabledRequest = Boolean(
+		query && UserNavList.Transaction === query?.tab
+	);
+	// const isEnabledRequest = false;
+
 	useEffect(() => {
 		if (query && query.page) {
 			setPage(parseInt(query.page as string));
@@ -49,7 +54,7 @@ const UserTransaction = ({ user }: Props) => {
 				},
 			}),
 		{
-			enabled: !!(token && user),
+			enabled: !!(token && user && isEnabledRequest),
 			refetchOnWindowFocus: false,
 			onSettled: (data, error) => {
 				if (error) {

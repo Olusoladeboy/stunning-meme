@@ -1,8 +1,16 @@
 import React, { useState } from 'react';
-import { Table, TableBody, TableHead, useTheme } from '@mui/material';
+import {
+	Table,
+	TableBody,
+	TableHead,
+	useTheme,
+	Box,
+	Typography,
+} from '@mui/material';
 import moment from 'moment';
 import { grey } from '@mui/material/colors';
-import { AuditFilter, AuditLog } from 'utilities';
+import { AuditFilter, AuditLog, extractUserName, User } from 'utilities';
+import { ChevronRight } from '@mui/icons-material';
 import {
 	StyledTableCell as TableCell,
 	StyledTableRow as TableRow,
@@ -10,11 +18,8 @@ import {
 import Empty from '../empty';
 import CustomTableCell from './components/custom-table-cell';
 import TableLoader from '../loader/table-loader';
-import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
-import Typography from '@mui/material/Typography';
-import Modal from '@mui/material/Modal';
-import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+import ModalWrapper from 'components/modal/Wrapper';
+import Button from 'components/button';
 
 interface Props {
 	data: AuditLog[] | undefined | null;
@@ -22,36 +27,92 @@ interface Props {
 	auditFilter?: AuditFilter;
 }
 
-type ModalContent = {
-	username: string;
-	email: string | undefined;
-	role: string | undefined;
-	IP: string | undefined;
+interface IDetails {
+	close?: () => void;
+	data: AuditLog;
+}
+
+const DetailsItem = ({ label, value }: { label: string; value: string }) => {
+	return (
+		<Box>
+			<Typography
+				sx={{
+					fontWeight: 'bold',
+					marginBottom: '0.3em !important',
+				}}
+			>
+				{label}
+			</Typography>
+			<Typography>{value}</Typography>
+		</Box>
+	);
+};
+
+const Details = ({ close, data }: IDetails) => {
+	const theme = useTheme();
+	const staff = data.staff as User;
+	console.log(data);
+	return (
+		<ModalWrapper hasCloseButton closeModal={close} title={'Activity Details'}>
+			<Box>
+				<Box
+					sx={{
+						display: 'grid',
+						gridTemplateColumns: 'repeat(2, 1fr)',
+						gap: '15px',
+						marginBottom: '2.5rem',
+					}}
+				>
+					<DetailsItem label={'User'} value={extractUserName(staff)} />
+					<DetailsItem label={'Email Address'} value={staff?.email as string} />
+					<DetailsItem label={'Role'} value={staff?.role as string} />
+					<DetailsItem
+						label={'IP Address'}
+						value={staff?.currentIp as string}
+					/>
+				</Box>
+				<Box
+					sx={{
+						display: 'flex',
+						alignItems: 'center',
+						gap: '15px',
+					}}
+				>
+					<Button
+						sx={{
+							backgroundColor: theme.palette.secondary.main,
+							color: theme.palette.background.paper,
+							'&:hover': {
+								color: theme.palette.text.primary,
+							},
+						}}
+					>
+						View action
+					</Button>
+					<Button
+						sx={{
+							border: '1px solid',
+							borderColor: theme.palette.secondary.main,
+							color: theme.palette.secondary.main,
+							'&:hover': {
+								color: theme.palette.background.paper,
+								backgroundColor: theme.palette.secondary.main,
+							},
+						}}
+						onClick={close}
+					>
+						Close
+					</Button>
+				</Box>
+			</Box>
+		</ModalWrapper>
+	);
 };
 
 const AuditLogsTable: React.FC<Props> = ({ data, isLoading, auditFilter }) => {
 	const theme = useTheme();
-	const [openModal, setOpenModal] = useState(false);
-	const [modalContent, setModalContent] = useState<ModalContent>({
-		username: '',
-		email: '',
-		role: '',
-		IP: '',
-	});
 
-	const handleOpenModal = (row: AuditLog) => {
-		if (typeof row.staff === 'object') {
-			setModalContent({
-				username: `${row.staff.firstname} ${row.staff.lastname}`,
-				email: row.staff.email,
-				role: row.staff.role,
-				IP: row.staff.currentIp,
-			});
-			setOpenModal(true);
-		}
-	};
-
-	const handleCloseModal = () => setOpenModal(false);
+	const [selectedDetail, setSelectedDetail] = useState<null | AuditLog>(null);
 
 	const applyAuditFilter = (data: AuditLog[]) => {
 		if (auditFilter) {
@@ -70,8 +131,13 @@ const AuditLogsTable: React.FC<Props> = ({ data, isLoading, auditFilter }) => {
 		}
 	};
 
+	const closeModal = () => {
+		setSelectedDetail(null);
+	};
+
 	return (
 		<>
+			{selectedDetail && <Details data={selectedDetail} close={closeModal} />}
 			<Table sx={{ overflow: 'auto' }}>
 				<TableHead
 					sx={{
@@ -107,7 +173,10 @@ const AuditLogsTable: React.FC<Props> = ({ data, isLoading, auditFilter }) => {
 							<>
 								{data.length > 0 ? (
 									applyAuditFilter(data).map((row: AuditLog) => (
-										<TableRow key={row.id} onClick={() => handleOpenModal(row)}>
+										<TableRow
+											key={row.id}
+											onClick={() => setSelectedDetail(row)}
+										>
 											<TableCell style={{ whiteSpace: 'nowrap' }}>
 												{row.staff &&
 													typeof row.staff === 'object' &&
@@ -128,7 +197,7 @@ const AuditLogsTable: React.FC<Props> = ({ data, isLoading, auditFilter }) => {
 												{moment.utc(row.createdAt).format('LT')}
 											</TableCell>
 											<TableCell>
-												<ChevronRightIcon
+												<ChevronRight
 													sx={{
 														marginTop: '0.2em',
 													}}
@@ -147,122 +216,6 @@ const AuditLogsTable: React.FC<Props> = ({ data, isLoading, auditFilter }) => {
 						)
 					)}
 				</TableBody>
-				<Modal
-					open={openModal}
-					onClose={handleCloseModal}
-					aria-labelledby='modal-modal-title'
-				>
-					<Box
-						sx={{
-							position: 'absolute' as 'absolute',
-							top: '50%',
-							left: '50%',
-							transform: 'translate(-50%, -50%)',
-							width: 400,
-							bgcolor: 'background.paper',
-							p: 4,
-							borderRadius: 2,
-						}}
-					>
-						<Typography
-							id='modal-modal-title'
-							variant='h6'
-							component='h2'
-							sx={{
-								fontWeight: 'bold',
-								marginBottom: '1.5em',
-							}}
-						>
-							Activity Details
-						</Typography>
-						<Box
-							sx={{
-								display: 'grid',
-								gridTemplateColumns: 'repeat(2, 1fr)',
-								gap: '1.5em',
-								marginBottom: '2.5em',
-							}}
-						>
-							<Box>
-								<Typography
-									sx={{
-										fontWeight: 'bold',
-										marginBottom: '0.3em !important',
-									}}
-								>
-									User
-								</Typography>
-								<Typography>{modalContent.username}</Typography>
-							</Box>
-							<Box>
-								<Typography
-									sx={{
-										fontWeight: 'bold',
-										marginBottom: '0.3em !important',
-									}}
-								>
-									Email address
-								</Typography>
-								<Typography>{modalContent.email}</Typography>
-							</Box>
-							<Box>
-								<Typography
-									sx={{
-										fontWeight: 'bold',
-										marginBottom: '0.3em !important',
-									}}
-								>
-									Role
-								</Typography>
-								<Typography>{modalContent.role}</Typography>
-							</Box>
-							<Box>
-								<Typography
-									sx={{
-										fontWeight: 'bold',
-										marginBottom: '0.3em !important',
-									}}
-								>
-									IP address
-								</Typography>
-								<Typography>{modalContent.IP}</Typography>
-							</Box>
-						</Box>
-						<Box
-							sx={{
-								display: 'flex',
-								alignItems: 'center',
-								gap: '2em',
-							}}
-						>
-							<Button
-								sx={{
-									backgroundColor: theme.palette.secondary.main,
-									color: theme.palette.background.paper,
-									'&:hover': {
-										color: theme.palette.text.primary,
-									},
-								}}
-							>
-								View action
-							</Button>
-							<Button
-								sx={{
-									border: '1px solid',
-									borderColor: theme.palette.secondary.main,
-									color: theme.palette.secondary.main,
-									'&:hover': {
-										color: theme.palette.background.paper,
-										backgroundColor: theme.palette.secondary.main,
-									},
-								}}
-								onClick={handleCloseModal}
-							>
-								Close
-							</Button>
-						</Box>
-					</Box>
-				</Modal>
 			</Table>
 		</>
 	);

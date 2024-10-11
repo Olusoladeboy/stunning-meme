@@ -398,6 +398,7 @@ export interface Coupon {
 	couponUserType?: string;
 	user?: string;
 	usage?: string;
+	service?: string;
 }
 
 export enum TransactionServices {
@@ -749,7 +750,7 @@ export interface IReferral {
 	createdAt: string;
 	updatedAt: string;
 	id: string;
-	no_of_referees: string
+	no_of_referees: string;
 }
 
 export interface Metadata {

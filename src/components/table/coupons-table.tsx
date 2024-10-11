@@ -35,6 +35,7 @@ import {
 	checkAmount,
 	Amount,
 	PRIVILEGE_MESSAGE,
+	formatNumberToCurrency,
 } from 'utilities';
 import TableLoader from '../loader/table-loader';
 import { useAlert, useHandleError, useModalAlert } from 'hooks';
@@ -240,6 +241,7 @@ const CouponsTable = ({
 								<CustomTableCell label={'Coupon Name'} />
 								<CustomTableCell label={'Type'} />
 								<CustomTableCell label={'Gift'} />
+								<CustomTableCell label={'Service'} />
 								<CustomTableCell label={'Create By'} />
 								<CustomTableCell label={'Date'} />
 								<CustomTableCell label={'Expiration'} />
@@ -272,7 +274,14 @@ const CouponsTable = ({
 														{row.type}
 													</TableCell>
 													<TableCell style={styles.tableText}>
-														{checkAmount(row.gift as string | Amount)}
+														{row.type === 'AMOUNT'
+															? formatNumberToCurrency(
+																	checkAmount(row.gift as string | Amount)
+															  )
+															: `${row.gift}%`}
+													</TableCell>
+													<TableCell style={styles.tableText}>
+														{row.service || 'No service available'}
 													</TableCell>
 													<TableCell style={styles.tableText}>
 														{row.createdBy

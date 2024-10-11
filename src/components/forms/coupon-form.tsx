@@ -44,6 +44,27 @@ const SELECT_COUPON_TYPE = 'Select coupon type';
 const SELECT_COUPON_STATUS = 'Select coupon status';
 const SELECT_USER_TYPE = 'Select user type';
 
+const SELECT_COUPON_SERVICE = 'Select coupon service';
+
+export const SERVICES = {
+	DATA_SUBSCRIPTION: 'DATA SUBSCRIPTION',
+	AIRTIME_TOP_UP: 'AIRTIME TOP UP',
+	AIRTIME_CONVERSION: 'AIRTIME CONVERSION',
+	AUTO_AIRTIME_CONVERSION: 'AIRTIME AUTO CONVERSION',
+	CABLE: 'CABLE',
+	INTERNET: 'INTERNET',
+	EDUCATION: 'EDUCATION',
+	ELECTRICITY: 'ELECTRICITY',
+	BETTING: 'BETTING',
+	EPIN: 'EPIN',
+	CARD_FUNDING: 'CARD FUNDING',
+	CREDIT: 'CREDIT',
+	DEBIT: 'DEBIT',
+	INTERNATIONAL_DATA_SUBSCRIPTION: 'INTERNATIONAL DATA SUBSCRIPTION',
+	INTERNATIONAL_AIRTIME_TOP_UP: 'INTERNATIONAL AIRTIME TOP UP',
+	ESIM: 'ESIM',
+};
+
 const CouponForm = ({ data, isEdit, onSuccess }: Props) => {
 	const theme = useTheme();
 	const handleError = useHandleError();
@@ -62,6 +83,7 @@ const CouponForm = ({ data, isEdit, onSuccess }: Props) => {
 		couponUserType: SELECT_USER_TYPE,
 		usage: '',
 		user: '',
+		service: SELECT_COUPON_SERVICE,
 	};
 
 	const foundUser = search && search[0];
@@ -130,6 +152,8 @@ const CouponForm = ({ data, isEdit, onSuccess }: Props) => {
 				couponUserType: values.couponUserType,
 				usage: values.usage,
 			};
+
+			if (values.service) payload.service = values.service;
 
 			if (values.user) payload.user = values.user;
 
@@ -258,6 +282,25 @@ const CouponForm = ({ data, isEdit, onSuccess }: Props) => {
 						)}
 					</Box>
 				)}
+				<Box>
+					<Typography variant={'body1'} style={styles.label}>
+						Coupon Service (Optional)
+					</Typography>
+					<Select
+						fullWidth
+						value={values.service}
+						onChange={handleChange('service') as never}
+					>
+						<MenuItem value={SELECT_COUPON_SERVICE} disabled>
+							{SELECT_COUPON_SERVICE}
+						</MenuItem>
+						{Object.values(SERVICES).map((value) => (
+							<MenuItem key={value} value={value}>
+								{value}
+							</MenuItem>
+						))}
+					</Select>
+				</Box>
 				<Box
 					sx={{
 						display: 'grid',

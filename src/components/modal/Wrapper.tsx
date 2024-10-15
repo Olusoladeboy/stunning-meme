@@ -9,6 +9,7 @@ interface Props extends BoxProps {
 	closeModal?: () => void;
 	title?: any;
 	contentWidth?: string;
+	containerStyle?: any;
 }
 
 const ModalWrapper = ({
@@ -17,6 +18,7 @@ const ModalWrapper = ({
 	closeModal,
 	title,
 	contentWidth,
+	containerStyle,
 	...rest
 }: Props) => {
 	const theme = useTheme();
@@ -32,6 +34,7 @@ const ModalWrapper = ({
 				zIndex: theme.zIndex.modal,
 				overflow: 'auto',
 				padding: '15px',
+				...containerStyle,
 			}}
 		>
 			<Box

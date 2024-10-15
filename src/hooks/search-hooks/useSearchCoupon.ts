@@ -39,7 +39,7 @@ const useSearchCoupon = () => {
 		setSearching(true);
 
 		try {
-			const data = await coupons({ params });
+			const data = await coupons(params);
 			setSearching(false);
 			if (data && Array.isArray(data.payload)) {
 				if (data.payload.length === 0) {

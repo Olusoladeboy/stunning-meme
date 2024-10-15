@@ -796,6 +796,7 @@ export interface Notification {
 export interface AuditLog {
 	staff: string | User;
 	module: string;
+	recordId: string;
 	action: string;
 	details: string;
 	createdAt: Date;

@@ -28,12 +28,10 @@ const Coupons = () => {
 		queryKey: QueryKeys.Coupon,
 		queryFn: () =>
 			coupons({
-				params: {
-					sort: '-createdAt',
-					limit: MAX_RECORDS,
-					skip: (page - 1) * MAX_RECORDS,
-					populate: 'createdBy',
-				},
+				sort: '-createdAt',
+				limit: MAX_RECORDS,
+				skip: (page - 1) * MAX_RECORDS,
+				populate: 'createdBy',
 			}),
 		onSuccessFn: (data: any) => {
 			const total = data.metadata.total;

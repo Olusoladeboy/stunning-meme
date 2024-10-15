@@ -8,6 +8,7 @@ import {
 	Typography,
 } from '@mui/material';
 import moment from 'moment';
+import JsonFormatter from 'react-json-formatter';
 import { grey } from '@mui/material/colors';
 import { AuditFilter, AuditLog, extractUserName, User } from 'utilities';
 import { ChevronRight } from '@mui/icons-material';
@@ -20,6 +21,8 @@ import CustomTableCell from './components/custom-table-cell';
 import TableLoader from '../loader/table-loader';
 import ModalWrapper from 'components/modal/Wrapper';
 import Button from 'components/button';
+import { useAuditLogViewAction, useAlert } from 'hooks';
+import Loader from 'components/loader';
 
 interface Props {
 	data: AuditLog[] | undefined | null;
@@ -30,6 +33,7 @@ interface Props {
 interface IDetails {
 	close?: () => void;
 	data: AuditLog;
+	viewAction?: (data: AuditLog) => void;
 }
 
 const DetailsItem = ({ label, value }: { label: string; value: string }) => {
@@ -48,10 +52,9 @@ const DetailsItem = ({ label, value }: { label: string; value: string }) => {
 	);
 };
 
-const Details = ({ close, data }: IDetails) => {
+const Details = ({ close, data, viewAction }: IDetails) => {
 	const theme = useTheme();
 	const staff = data.staff as User;
-	console.log(data);
 	return (
 		<ModalWrapper hasCloseButton closeModal={close} title={'Activity Details'}>
 			<Box>
@@ -79,12 +82,10 @@ const Details = ({ close, data }: IDetails) => {
 					}}
 				>
 					<Button
+						onClick={() => typeof viewAction === 'function' && viewAction(data)}
 						sx={{
-							backgroundColor: theme.palette.secondary.main,
+							backgroundColor: `${theme.palette.secondary.main} !important`,
 							color: theme.palette.background.paper,
-							'&:hover': {
-								color: theme.palette.text.primary,
-							},
 						}}
 					>
 						View action
@@ -94,10 +95,6 @@ const Details = ({ close, data }: IDetails) => {
 							border: '1px solid',
 							borderColor: theme.palette.secondary.main,
 							color: theme.palette.secondary.main,
-							'&:hover': {
-								color: theme.palette.background.paper,
-								backgroundColor: theme.palette.secondary.main,
-							},
 						}}
 						onClick={close}
 					>
@@ -111,6 +108,22 @@ const Details = ({ close, data }: IDetails) => {
 
 const AuditLogsTable: React.FC<Props> = ({ data, isLoading, auditFilter }) => {
 	const theme = useTheme();
+	const alert = useAlert();
+
+	const jsonStyle = {
+		propertyStyle: { color: 'red' },
+		stringStyle: { color: 'green' },
+		numberStyle: { color: 'darkorange' },
+	};
+
+	const [jsonData, setJsonData] = useState<string>('');
+
+	const { isLoadingAuditLogViewAction, auditLogViewAction } =
+		useAuditLogViewAction((data) => {
+			if (data) {
+				setJsonData(JSON.stringify(data));
+			}
+		});
 
 	const [selectedDetail, setSelectedDetail] = useState<null | AuditLog>(null);
 
@@ -135,9 +148,61 @@ const AuditLogsTable: React.FC<Props> = ({ data, isLoading, auditFilter }) => {
 		setSelectedDetail(null);
 	};
 
+	const handleViewAction = (data: AuditLog) => {
+		const { recordId, module } = data;
+		if (!(recordId && module)) {
+			let message = '';
+			let errors = [];
+			if (!recordId) errors.push('Record ID');
+			if (!module) errors.push('Module');
+
+			if (errors.length > 0) message = errors.join(', and');
+			else message = errors.toString();
+
+			alert({
+				message: `${message} is not found in the record`,
+				type: 'error',
+			});
+
+			return;
+		}
+		auditLogViewAction({
+			module,
+			recordId,
+		});
+	};
+
 	return (
 		<>
-			{selectedDetail && <Details data={selectedDetail} close={closeModal} />}
+			{jsonData && (
+				<ModalWrapper
+					title={'View Action'}
+					containerStyle={{
+						zIndex: theme.zIndex.modal + 10,
+					}}
+					hasCloseButton={true}
+					closeModal={() => setJsonData('')}
+				>
+					<Box
+						sx={{
+							overflow: 'auto',
+							maxWidth: '540px',
+							width: '100%',
+							alignSelf: 'flex-start',
+						}}
+					>
+						<JsonFormatter json={jsonData} tabWith={4} jsonStyle={jsonStyle} />
+					</Box>
+				</ModalWrapper>
+			)}
+			{isLoadingAuditLogViewAction && <Loader />}
+			{selectedDetail && (
+				<Details
+					viewAction={handleViewAction}
+					data={selectedDetail}
+					close={closeModal}
+				/>
+			)}
 			<Table sx={{ overflow: 'auto' }}>
 				<TableHead
 					sx={{

@@ -16,3 +16,4 @@ export * from './useTransactionServices';
 export * from './search-hooks/useSearchTransaction';
 export { default as usePageTitle } from './page-title';
 export { default as useSearchApiLog } from './search-hooks/useSearchApiLog';
+export { default as useAuditLogViewAction } from './audit-log-view-action';

@@ -1,6 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import Storage from '../../utilities/storage';
-import { StorageKeys, ThemeModeType } from '../../utilities/types';
+import { Storage, StorageKeys, ThemeModeType } from 'utilities';
 
 export type ThemeState = {
 	mode: ThemeModeType;

@@ -1,54 +1,97 @@
 import React, { CSSProperties, useState } from 'react';
-import Table from '@mui/material/Table';
-import Box from '@mui/material/Box';
-import { Avatar, Typography, useTheme } from '@mui/material';
-import TableBody from '@mui/material/TableBody';
-import TableHead from '@mui/material/TableHead';
+import {
+	Table,
+	TableHead,
+	TableBody,
+	Avatar,
+	Typography,
+	useTheme,
+	Box,
+} from '@mui/material';
 import { grey } from '@mui/material/colors';
 import { AddCircle } from '@mui/icons-material';
-import { SUCCESS_COLOR, BOX_SHADOW } from '../../utilities/constant';
+import moment from 'moment';
+import { SUCCESS_COLOR, BOX_SHADOW, ManagerTypes, User } from 'utilities';
 import ModalWrapper from '../modal/Wrapper';
-import FilterIcon from '../icons/filter';
 import {
 	StyledTableCell as TableCell,
 	StyledTableRow as TableRow,
 } from './components';
-import TableHeader from '../header/table-header';
-import MANAGERS from '../../utilities/data/managers';
 import Empty from '../empty';
-import Pagination from '../pagination';
 import Button from '../button';
-import { ManagerTypes } from '../../utilities/types';
-import AddManagerForm from '../forms/add-manager-form';
+import ManagerForm from '../forms/manager-admin-form';
 import ManagerDetails from '../manager-details';
+import TableLoader from '../loader/table-loader';
+import ManagerTableHeader from '../header/manager-table-header';
+import CustomTableCell from './components/custom-table-cell';
+import { useAppSelector } from 'store/hooks';
 
-const ManagersTable = () => {
-	const [data] = useState<{ [key: string]: any }[] | null>(MANAGERS);
+type Props = {
+	managers: User[] | null | undefined;
+	isLoading: boolean;
+	searchManager?: (value: string) => void;
+	clearSearch?: () => void;
+};
 
-	const [addManager, setAddManager] = useState<ManagerTypes | null>(null);
-	const [viewManager, setViewManager] = useState<{ [key: string]: any } | null>(
-		null
-	);
-
+const ManagersTable = ({
+	managers,
+	isLoading,
+	clearSearch,
+	searchManager,
+}: Props) => {
 	const theme = useTheme();
 	const styles = useStyles(theme);
+	const { canCreateOrUpdateRecord } = useAppSelector(
+		(store) => store.authState
+	);
+
+	const [selectedManager, setSelectedManager] = useState<User | null>(null);
+	const [isViewManager, setViewManager] = useState<boolean>(false);
+	const [isDisplayForm, setDisplayForm] = useState<boolean>(false);
+
+	const handleViewManager = (data: User) => {
+		setSelectedManager(data);
+		setViewManager(true);
+	};
+
+	const closeModal = () => {
+		setSelectedManager(null);
+		setDisplayForm(false);
+	};
+
 	return (
 		<>
-			{addManager && (
+			{isDisplayForm && (
 				<ModalWrapper
-					close={() => setAddManager(null)}
+					hasCloseButton
+					closeModal={closeModal}
 					title={
 						<Typography variant={'h5'} sx={{ textTransform: 'uppercase' }}>
-							Add {addManager}
+							{selectedManager ? 'Edit' : 'Create'} Manager
 						</Typography>
 					}
 				>
-					<AddManagerForm type={addManager} />
+					<ManagerForm
+						callback={closeModal}
+						type={ManagerTypes.Manager}
+						managerDetails={selectedManager}
+					/>
 				</ModalWrapper>
 			)}
-			{viewManager && (
-				<ModalWrapper close={() => setViewManager(null)} title={'View manager'}>
-					<ManagerDetails details={viewManager} />
+			{selectedManager && isViewManager && (
+				<ModalWrapper
+					hasCloseButton
+					closeModal={closeModal}
+					title={'View manager'}
+				>
+					<ManagerDetails
+						handleEdit={() => {
+							setViewManager(false);
+							setDisplayForm(true);
+						}}
+						managerDetail={selectedManager}
+						callback={closeModal}
+					/>
 				</ModalWrapper>
 			)}
 			<Box style={styles.container} sx={{ overflow: 'auto' }}>
@@ -56,30 +99,29 @@ const ManagersTable = () => {
 					style={styles.tableHeader as CSSProperties}
 					sx={{ padding: '0px 1rem' }}
 				>
-					<TableHeader title={'Managers'} />
-					<Box
-						sx={{
-							alignSelf: 'flex-end',
-							display: 'flex',
-							alignItems: 'center',
-							gap: theme.spacing(3),
-						}}
-					>
-						<Button
-							onClick={() => setAddManager(ManagerTypes.Admin)}
-							startIcon={<AddCircle />}
-							style={styles.btnOutline as CSSProperties}
+					<ManagerTableHeader
+						handleSearch={searchManager}
+						clearSearch={clearSearch}
+						title={'Managers'}
+					/>
+					{canCreateOrUpdateRecord && (
+						<Box
+							sx={{
+								alignSelf: 'flex-end',
+								display: 'flex',
+								alignItems: 'center',
+								gap: theme.spacing(3),
+							}}
 						>
-							Add admin
-						</Button>
-						<Button
-							onClick={() => setAddManager(ManagerTypes.Manager)}
-							startIcon={<AddCircle />}
-							style={styles.btnOutline as CSSProperties}
-						>
-							Add manager
-						</Button>
-					</Box>
+							<Button
+								onClick={() => setDisplayForm(true)}
+								startIcon={<AddCircle />}
+								style={styles.btnOutline as CSSProperties}
+							>
+								Add manager
+							</Button>
+						</Box>
+					)}
 				</Box>
 
 				<Table sx={{ overflow: 'auto' }}>
@@ -92,47 +134,11 @@ const ManagersTable = () => {
 						}}
 					>
 						<TableRow>
-							<TableCell />
-							<TableCell>
-								<Box style={styles.filterWrapper}>
-									<Typography style={styles.tableHeaderText} variant={'body1'}>
-										Name
-									</Typography>
-									<FilterIcon />
-								</Box>
-							</TableCell>
-							<TableCell>
-								<Box style={styles.filterWrapper}>
-									<Typography style={styles.tableHeaderText} variant={'body1'}>
-										Email
-									</Typography>
-									<FilterIcon />
-								</Box>
-							</TableCell>
-							<TableCell>
-								<Box style={styles.filterWrapper}>
-									<Typography style={styles.tableHeaderText} variant={'body1'}>
-										Phone no.
-									</Typography>
-									<FilterIcon />
-								</Box>
-							</TableCell>
-							<TableCell>
-								<Box style={styles.filterWrapper}>
-									<Typography style={styles.tableHeaderText} variant={'body1'}>
-										Date
-									</Typography>
-									<FilterIcon />
-								</Box>
-							</TableCell>
-							<TableCell>
-								<Box style={styles.filterWrapper}>
-									<Typography style={styles.tableHeaderText} variant={'body1'}>
-										User
-									</Typography>
-									<FilterIcon />
-								</Box>
-							</TableCell>
+							<CustomTableCell label={'Name'} isSortable />
+							<CustomTableCell label={'Email'} isSortable />
+							<CustomTableCell label={'Phone'} isSortable />
+							<CustomTableCell label={'Date'} isSortable />
+							<CustomTableCell label={'User'} />
 						</TableRow>
 					</TableHead>
 					<TableBody
@@ -142,32 +148,58 @@ const ManagersTable = () => {
 							},
 						}}
 					>
-						{data && data.length > 0 ? (
-							data.map((data, key) => (
-								<TableRow onClick={() => setViewManager(data)} key={key}>
-									<TableCell sx={{ maxWidth: '30px' }}>
-										<Avatar src={data.avatar} />
-									</TableCell>
-									<TableCell style={styles.tableText}>{data.name}</TableCell>
-									<TableCell style={styles.tableText}>{data.email}</TableCell>
-									<TableCell style={styles.tableText}>
-										{data.phone_number}
-									</TableCell>
-									<TableCell style={styles.tableText}>{data.date}</TableCell>
-
-									<TableCell style={styles.tableText}>{data.user}</TableCell>
-								</TableRow>
-							))
+						{isLoading ? (
+							<TableLoader colSpan={5} />
 						) : (
-							<TableRow>
-								<TableCell colSpan={6}>
-									<Empty text={'No users'} />
-								</TableCell>
-							</TableRow>
+							managers && (
+								<>
+									{managers.length > 0 ? (
+										managers.map((data: User) => (
+											<TableRow
+												onClick={() => handleViewManager(data)}
+												key={data.id}
+											>
+												<TableCell style={styles.tableText}>
+													<Box
+														sx={{
+															display: 'flex',
+															gap: '15px',
+															alignItems: 'center',
+														}}
+													>
+														<Avatar src={data.photoUrl as string} />
+														<span>{`${data.firstname} ${data.lastname}`}</span>
+													</Box>
+												</TableCell>
+												<TableCell style={styles.tableText}>
+													{data.email}
+												</TableCell>
+												<TableCell style={styles.tableText}>
+													{data.phone}
+												</TableCell>
+
+												<TableCell style={styles.tableText}>
+													{moment.utc(data.createdAt).format('l')}
+												</TableCell>
+
+												<TableCell style={styles.tableText}>
+													{data?.users}
+												</TableCell>
+											</TableRow>
+										))
+									) : (
+										<TableRow>
+											<TableCell colSpan={5}>
+												<Empty text={'No Manager(s)'} />
+											</TableCell>
+										</TableRow>
+									)}
+								</>
+							)
 						)}
 					</TableBody>
 				</Table>
-				<Pagination
+				{/* 	<Pagination
 					sx={{
 						display: 'flex',
 						justifyContent: 'flex-end',
@@ -177,7 +209,7 @@ const ManagersTable = () => {
 					size={'large'}
 					shape={'rounded'}
 					variant={'outlined'}
-				/>
+				/> */}
 			</Box>
 		</>
 	);
@@ -188,7 +220,7 @@ const useStyles = (theme: any) => ({
 		display: 'grid',
 		gridTemplateColumn: '1fr',
 		gap: theme.spacing(4),
-		border: `1px solid ${theme.palette.secondary.main}`,
+		border: `0.5px solid ${theme.palette.secondary.main}`,
 		padding: '1.5rem 0px',
 		backgroundColor: grey[50],
 		borderRadius: theme.spacing(2),

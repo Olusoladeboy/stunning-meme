@@ -1,96 +1,131 @@
 import React from 'react';
 import { Route, Routes, Navigate } from 'react-router-dom';
-import Pages from '../pages';
-import LINKS from '../utilities/links';
-import { NetworkPageTypes } from '../utilities/types';
+import { LINKS, NetworkPage } from '../utilities';
+import {
+	Login,
+	Dashboard,
+	Kyc,
+	Managers,
+	Network,
+	Notifications,
+	Admin,
+	Dispute,
+	Coupons,
+	AuditLogs,
+	ViewDataPlan,
+	Referees,
+	Verification,
+	Message,
+	Suspension,
+	Transactions,
+	UserProfile,
+	Users,
+	Conversions,
+	Referrals,
+	DataTypes,
+	AutoConversions,
+	Statistics,
+	// AllTransactions,
+	AllConversions,
+	ReferralsBonus,
+	CreateNotification,
+	ChangePassword,
+	BvnVerification,
+	ApiLogs,
+	NinVerification,
+	AutoConversionDetails,
+	AdBanner,
+	LienTransactions,
+	WithdrawalRequestTransactions,
+} from '../pages';
 
 const Router = () => {
 	return (
 		<Routes>
-			<Route
-				path={Pages.Dashboard.path}
-				element={<Pages.Dashboard.Component />}
-			/>
 			<Route path={'/'} element={<Navigate to={LINKS.Dashboard} replace />} />
-			<Route
-				path={Pages.User.Initial.path}
-				element={<Pages.User.Initial.Component />}
-			/>
-			<Route
-				path={Pages.Auth.Login.path}
-				element={<Pages.Auth.Login.Component />}
-			/>
-			<Route
-				path={Pages.Auth.ForgetPassword.path}
-				element={<Pages.Auth.ForgetPassword.Component />}
-			/>
-			<Route
-				path={Pages.Auth.CreateNewPassword.path}
-				element={<Pages.Auth.CreateNewPassword.Component />}
-			/>
-			<Route path={Pages.User.UserProfile.path}>
-				<Route path=':id' element={<Pages.User.UserProfile.Component />} />
+			<Route path={'/dashboard'} element={<Dashboard />} />
+			<Route path={'users'}>
+				<Route path={''} element={<Users />} />
+				<Route path={':id'} element={<UserProfile />} />
+			</Route>
+			<Route path={'auth'}>
+				<Route path={'login'} element={<Login />} />
+				<Route path={'password/change'} element={<ChangePassword />} />
+				<Route path={'forget-password'} element={<ChangePassword />} />
+			</Route>
+			<Route path={'managers'}>
+				<Route path={''} element={<Managers />} />
+				<Route path={'admin'} element={<Admin />} />
+			</Route>
+			<Route path={'transactions'}>
+				<Route path={''} element={<Transactions />} />
+				{/* <Route path={'all'} element={<AllTransactions />} /> */}
 			</Route>
 			<Route
-				path={Pages.Managers.path}
-				element={<Pages.Managers.Component />}
+				path={'withdrawal-request'}
+				element={<WithdrawalRequestTransactions />}
 			/>
-			<Route
-				path={Pages.Transactions.path}
-				element={<Pages.Transactions.Component />}
-			/>
-			<Route
-				path={Pages.Conversions.path}
-				element={<Pages.Conversions.Component />}
-			/>
-			<Route path={LINKS.Network}>
+
+			<Route path={'conversions'}>
+				<Route path={''} element={<Conversions />} />
+				<Route path={'all'} element={<AllConversions />} />
 				<Route
-					path={'data'}
-					element={
-						<Pages.Network.Component pageType={NetworkPageTypes.DATA_NETWORK} />
-					}
-				/>
-				<Route
-					path={'airtime'}
-					element={
-						<Pages.Network.Component
-							pageType={NetworkPageTypes.AIRTIME_NETWORK}
-						/>
-					}
+					path={'network'}
+					element={<Network pageType={NetworkPage.CONVERSION_NETWORK} />}
 				/>
 			</Route>
-			<Route path={LINKS.DataPlan}>
-				<Route path={':plan'} element={<Pages.ViewDataPlan.Component />} />
+			<Route path={'auto-conversions'}>
+				<Route path={''} element={<AutoConversions />} />
+				<Route path={':id'} element={<AutoConversionDetails />} />
+				<Route
+					path={'network'}
+					element={<Network pageType={NetworkPage.AUTO_CONVERSION_NETWORK} />}
+				/>
 			</Route>
-			<Route path={Pages.Coupons.path} element={<Pages.Coupons.Component />} />
-			<Route path={Pages.Referral.Initial.path}>
-				<Route path={''} element={<Pages.Referral.Initial.Component />} />
-				<Route path={'all'} element={<Pages.Referral.All.Component />} />
+			<Route path={'data-network'}>
+				<Route
+					path={''}
+					element={<Network pageType={NetworkPage.DATA_NETWORK} />}
+				/>
+				<Route path={'types/:dataTypeName/:network'} element={<DataTypes />} />
+				<Route
+					path={'plans/:dataType/:planName/:network'}
+					element={<ViewDataPlan />}
+				/>
 			</Route>
 
-			<Route path={Pages.ViewReferees.path}>
-				<Route path=':id' element={<Pages.ViewReferees.Component />} />
-			</Route>
-			<Route path={Pages.Notifications.Initial.path}>
-				<Route path={''} element={<Pages.Notifications.Initial.Component />} />
-				<Route path={'all'} element={<Pages.Referral.All.Component />} />
-			</Route>
 			<Route
-				path={Pages.Notifications.PushNotification.path}
-				element={<Pages.Notifications.PushNotification.Component />}
+				path={'airtime-network'}
+				element={<Network pageType={NetworkPage.AIRTIME_NETWORK} />}
 			/>
-			<Route path={Pages.Verification.Initial.path}>
-				<Route path='' element={<Pages.Verification.Initial.Component />} />
-				<Route path='kyc' element={<Pages.Verification.Kyc.Component />} />
+			<Route path={'statistics'} element={<Statistics />} />
+			<Route path={'liens'} element={<LienTransactions />} />
+
+			<Route path={'coupons'} element={<Coupons />} />
+			<Route path={'dispute'}>
+				<Route path={''} element={<Dispute />} />
+				<Route path={':id'} element={<Message />} />
 			</Route>
-			<Route
-				path={Pages.Suspension.path}
-				element={<Pages.Suspension.Component />}
-			/>
-			<Route
-				path={Pages.AuditLogs.path}
-				element={<Pages.AuditLogs.Component />}
-			/>
+			<Route path={'referrals'}>
+				<Route path={''} element={<Referrals />} />
+				<Route path={':email/referees'} element={<Referees />} />
+				<Route path={'bonus'} element={<ReferralsBonus />} />
+			</Route>
+
+			<Route path={'notifications'}>
+				<Route path={''} element={<Notifications />} />
+				<Route path={'create'} element={<CreateNotification />} />
+			</Route>
+			<Route path={'verification'}>
+				<Route path='' element={<Verification />} />
+				<Route path='kyc' element={<Kyc />} />
+			</Route>
+			<Route path='bvn-verification' element={<BvnVerification />} />
+			<Route path='nin-verification' element={<NinVerification />} />
+			<Route path={'suspension'} element={<Suspension />} />
+			<Route path={'audit-logs'} element={<AuditLogs />} />
+			<Route path={'api-logs'} element={<ApiLogs />} />
+			<Route path={'ad-banners'} element={<AdBanner />} />
 		</Routes>
 	);
 };

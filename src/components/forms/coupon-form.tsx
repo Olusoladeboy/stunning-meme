@@ -1,126 +1,437 @@
-import React, { CSSProperties } from 'react';
-import { Box, useTheme, Typography, MenuItem } from '@mui/material';
+import React, { CSSProperties, useEffect } from 'react';
+import {
+	Box,
+	useTheme,
+	Typography,
+	MenuItem,
+	InputAdornment,
+	IconButton,
+} from '@mui/material';
+import { Close } from '@mui/icons-material';
 import { useFormik } from 'formik';
-import TextInput from '../form-components/TextInput';
-import Button from '../button';
+import moment from 'moment';
 import { grey } from '@mui/material/colors';
-import Select from '../form-components/Select';
+import { useMutation, useQueryClient } from 'react-query';
+import TextInput from '../form-components/TextInput';
+import Button from '../button/custom-button';
+import Select from '../form-components/select';
+import {
+	Coupon,
+	CouponType,
+	CouponStatus,
+	QueryKey,
+	validationSchema,
+	PRIMARY_COLOR,
+	extractUserName,
+} from 'utilities';
+import { useAlert, useHandleError, useSearchUser } from 'hooks';
+import { createCoupon, updateCoupon } from 'api';
+import SearchInput from 'components/form-components/search-input';
+import Loader from 'components/loader';
 
 type Props = {
-	data?: { [key: string]: any };
+	data?: Coupon;
 	isEdit?: boolean;
+	onSuccess?: () => void;
 };
 
-const CouponForm = ({ data, isEdit }: Props) => {
+const UserType = {
+	ALL: 'ALL',
+	INDIVIDUAL: 'INDIVIDUAL',
+};
+
+const SELECT_COUPON_TYPE = 'Select coupon type';
+const SELECT_COUPON_STATUS = 'Select coupon status';
+const SELECT_USER_TYPE = 'Select user type';
+
+const SELECT_COUPON_SERVICE = 'Select coupon service';
+
+export const SERVICES = {
+	DATA_SUBSCRIPTION: 'DATA SUBSCRIPTION',
+	AIRTIME_TOP_UP: 'AIRTIME TOP UP',
+	AIRTIME_CONVERSION: 'AIRTIME CONVERSION',
+	AUTO_AIRTIME_CONVERSION: 'AIRTIME AUTO CONVERSION',
+	CABLE: 'CABLE',
+	INTERNET: 'INTERNET',
+	EDUCATION: 'EDUCATION',
+	ELECTRICITY: 'ELECTRICITY',
+	BETTING: 'BETTING',
+	EPIN: 'EPIN',
+	CARD_FUNDING: 'CARD FUNDING',
+	CREDIT: 'CREDIT',
+	DEBIT: 'DEBIT',
+	INTERNATIONAL_DATA_SUBSCRIPTION: 'INTERNATIONAL DATA SUBSCRIPTION',
+	INTERNATIONAL_AIRTIME_TOP_UP: 'INTERNATIONAL AIRTIME TOP UP',
+	ESIM: 'ESIM',
+};
+
+const CouponForm = ({ data, isEdit, onSuccess }: Props) => {
 	const theme = useTheme();
+	const handleError = useHandleError();
+	const queryClient = useQueryClient();
+	const setAlert = useAlert();
 	const styles = useStyles(theme);
 
-	console.log(data);
+	const { isSearching, search, clearSearch, searchUser } = useSearchUser();
 
-	const initialValues: { [key: string]: any } = {
-		coupon_name: '',
-		date: '',
-		expiration: '',
+	const initialValues: Partial<Coupon> = {
+		code: '',
+		type: SELECT_COUPON_TYPE,
+		expiresIn: '',
 		gift: '',
-		status: '',
-		type: '',
+		status: SELECT_COUPON_STATUS,
+		couponUserType: SELECT_USER_TYPE,
+		usage: '',
+		user: '',
+		service: SELECT_COUPON_SERVICE,
 	};
 
-	const { values, handleChange } = useFormik({
-		initialValues: data ? data : initialValues,
+	const foundUser = search && search[0];
+
+	const { mutate: mutateCreateCoupon, isLoading: isCreatingCoupon } =
+		useMutation(createCoupon, {
+			onSettled: (data, error) => {
+				if (error) {
+					const response = handleError({ error });
+					if (response?.message) {
+						setAlert({ message: response.message, type: 'error' });
+					}
+				}
+
+				if (data && data.success) {
+					queryClient.invalidateQueries(QueryKey.Coupon);
+					setAlert({
+						message: 'Coupon created successfully!',
+						type: 'success',
+					});
+					typeof onSuccess !== 'undefined' && onSuccess();
+				}
+			},
+		});
+
+	const { mutate: mutateUpdateCoupon, isLoading: isUpdatingCoupon } =
+		useMutation(updateCoupon, {
+			onSettled: (data, error) => {
+				if (error) {
+					const response = handleError({ error });
+					if (response?.message) {
+						setAlert({ message: response.message, type: 'error' });
+					}
+				}
+
+				if (data && data.success) {
+					queryClient.invalidateQueries(QueryKey.Coupon);
+					setAlert({
+						message: 'Coupon updated successfully!',
+						type: 'success',
+					});
+					typeof onSuccess !== 'undefined' && onSuccess();
+				}
+			},
+		});
+
+	const {
+		values,
+		handleChange,
+		errors,
+		touched,
+		handleSubmit,
+		setFieldValue,
+		setValues,
+	} = useFormik({
+		initialValues,
+		validationSchema: isEdit
+			? validationSchema.EditCoupon
+			: validationSchema.Coupon,
 		onSubmit: (values) => {
-			console.log(values);
+			const payload: Record<string, any> = {
+				code: values.code,
+				type: values.type,
+				expiresIn: values.expiresIn,
+				gift: values.gift,
+				couponUserType: values.couponUserType,
+				usage: values.usage,
+			};
+
+			if (values.service) payload.service = values.service;
+
+			if (values.user) payload.user = values.user;
+
+			if (isEdit) {
+				return mutateUpdateCoupon({
+					data: {
+						type: values.type,
+						gift: values.gift,
+					},
+					id: data?.id as string,
+				});
+			}
+
+			mutateCreateCoupon(payload);
 		},
 	});
 
+	useEffect(
+		() => {
+			setFieldValue('user', foundUser?.id);
+
+			if (data) {
+				const {
+					expiresIn,
+					gift,
+					code,
+					usage,
+					couponUserType,
+					type,
+					user,
+					status,
+				} = data;
+
+				const values = {
+					code,
+					usage,
+					couponUserType,
+					type,
+					user,
+					status,
+					expiresIn: moment.utc(expiresIn).format('yyyy-MM-DD'),
+					gift: typeof gift === 'string' ? gift : gift?.$numberDecimal,
+				};
+
+				setValues(values);
+			}
+		},
+		// eslint-disable-next-line
+		[foundUser, data]
+	);
+
 	return (
-		<Box style={styles.form as CSSProperties} component={'form'}>
-			<Box
-				sx={{
-					display: 'grid',
-					gridTemplateColumns: {
-						xs: '1fr',
-						md: 'repeat(2, 1fr)',
-					},
-					gap: theme.spacing(4),
-				}}
-			>
+		<>
+			{isSearching && <Loader />}
+			<Box style={styles.form as CSSProperties} component={'form'}>
 				<Box>
 					<Typography variant={'body1'} style={styles.label}>
-						Coupon Name
+						Coupon Code
 					</Typography>
 					<TextInput
+						disabled={isEdit ? true : false}
 						fullWidth
-						placeholder={'Coupon name'}
-						value={values.coupon_name}
-						onChange={handleChange('coupon_name')}
-					/>
-				</Box>
-				<Box>
-					<Typography variant={'body1'} style={styles.label}>
-						Coupon code
-					</Typography>
-					<TextInput
-						fullWidth
-						placeholder={'Coupon code'}
+						error={errors.code && touched.code ? true : false}
+						helperText={errors && touched.code && errors.code}
+						placeholder={'Coupon Code'}
 						value={values.code}
 						onChange={handleChange('code')}
 					/>
 				</Box>
 				<Box>
 					<Typography variant={'body1'} style={styles.label}>
-						Coupon type
+						User type
 					</Typography>
-					<Select fullWidth>
-						<MenuItem disabled>Select coupon type</MenuItem>
+					<Select
+						fullWidth
+						error={
+							errors.couponUserType && touched.couponUserType ? true : false
+						}
+						helpertext={
+							errors && touched.couponUserType && errors.couponUserType
+						}
+						value={values.couponUserType}
+						onChange={handleChange('couponUserType') as never}
+					>
+						<MenuItem value={SELECT_USER_TYPE} disabled>
+							{SELECT_USER_TYPE}
+						</MenuItem>
+						{Object.values(UserType).map((value) => (
+							<MenuItem key={value} value={value}>
+								{value}
+							</MenuItem>
+						))}
 					</Select>
 				</Box>
+				{values.couponUserType === UserType.INDIVIDUAL && (
+					<Box>
+						<Typography variant={'body1'} style={styles.label}>
+							User
+						</Typography>
+						{foundUser ? (
+							<Box
+								sx={{
+									display: 'flex',
+									alignItems: 'center',
+									justifyContent: 'space-between',
+									border: `1px solid ${PRIMARY_COLOR}`,
+									borderRadius: '6px',
+									padding: '6px 12px',
+								}}
+							>
+								<Typography variant={'body1'}>
+									{extractUserName(foundUser)}
+								</Typography>
+								<IconButton onClick={clearSearch} size={'small'}>
+									<Close />
+								</IconButton>
+							</Box>
+						) : (
+							<SearchInput
+								borderRadius='6px'
+								fullWidth
+								placeholder='Search user by email'
+								clearSearch={clearSearch}
+								handleSearch={searchUser}
+							/>
+						)}
+					</Box>
+				)}
 				<Box>
 					<Typography variant={'body1'} style={styles.label}>
-						Gift
+						Coupon Service (Optional)
 					</Typography>
-					<Select fullWidth>
-						<MenuItem disabled>Select Gift</MenuItem>
+					<Select
+						fullWidth
+						value={values.service}
+						onChange={handleChange('service') as never}
+					>
+						<MenuItem value={SELECT_COUPON_SERVICE} disabled>
+							{SELECT_COUPON_SERVICE}
+						</MenuItem>
+						{Object.values(SERVICES).map((value) => (
+							<MenuItem key={value} value={value}>
+								{value}
+							</MenuItem>
+						))}
 					</Select>
 				</Box>
-			</Box>
-			<Box
-				sx={{
-					display: 'grid',
-					gridTemplateColumns: {
-						xs: '1fr',
-						md: isEdit ? 'repeat(2, 1fr)' : '1fr',
-					},
-					gap: theme.spacing(4),
-				}}
-			>
+				<Box
+					sx={{
+						display: 'grid',
+						gridTemplateColumns: {
+							xs: '1fr',
+							md: 'repeat(2, 1fr)',
+						},
+						gap: theme.spacing(4),
+					}}
+				>
+					<Box>
+						<Typography variant={'body1'} style={styles.label}>
+							Coupon type
+						</Typography>
+						<Select
+							fullWidth
+							error={errors.type && touched.type ? true : false}
+							helpertext={errors && touched.type && errors.type}
+							value={values.type}
+							onChange={handleChange('type') as never}
+						>
+							<MenuItem value={SELECT_COUPON_TYPE} disabled>
+								{SELECT_COUPON_TYPE}
+							</MenuItem>
+							{Object.values(CouponType).map((value) => (
+								<MenuItem key={value} value={value}>
+									{value}
+								</MenuItem>
+							))}
+						</Select>
+					</Box>
+					<Box>
+						<Typography variant={'body1'} style={styles.label}>
+							Gift
+						</Typography>
+						<TextInput
+							type={'number'}
+							error={errors.gift && touched.gift ? true : false}
+							helperText={errors && touched.gift && errors.gift}
+							fullWidth
+							placeholder={'Gift'}
+							value={values.gift}
+							onChange={handleChange('gift')}
+							InputProps={{
+								endAdornment: CouponType.PERCENT === values.type && (
+									<InputAdornment position='end'>%</InputAdornment>
+								),
+
+								startAdornment: CouponType.AMOUNT === values.type && (
+									<InputAdornment position='start'>₦</InputAdornment>
+								),
+							}}
+						/>
+					</Box>
+				</Box>
+
 				<Box>
 					<Typography variant={'body1'} style={styles.label}>
-						Expiration Date
+						Usage
 					</Typography>
 					<TextInput
 						fullWidth
-						placeholder={'Expiration date'}
-						value={values.expiration}
-						onChange={handleChange('expiration')}
+						type={'number'}
+						error={Boolean(errors.usage && touched.usage)}
+						helperText={errors && touched.usage && errors.usage}
+						placeholder={'Enter usage'}
+						value={values.usage}
+						onChange={handleChange('usage')}
 					/>
 				</Box>
-				<Box sx={{ display: isEdit ? 'block' : 'none' }}>
-					<Typography variant={'body1'} style={styles.label}>
-						Status
-					</Typography>
-					<TextInput
-						fullWidth
-						placeholder={'Status'}
-						value={values.status}
-						onChange={handleChange('status')}
-					/>
+				<Box
+					sx={{
+						display: 'grid',
+						gridTemplateColumns: {
+							xs: '1fr',
+							md: isEdit ? 'repeat(2, 1fr)' : '1fr',
+						},
+						gap: theme.spacing(4),
+					}}
+				>
+					<Box>
+						<Typography variant={'body1'} style={styles.label}>
+							Expiration Date
+						</Typography>
+						<TextInput
+							fullWidth
+							disabled={isEdit ? true : false}
+							error={errors.expiresIn && touched.expiresIn ? true : false}
+							helperText={errors && touched.expiresIn && errors.expiresIn}
+							type={'date'}
+							placeholder={'Expiration date'}
+							value={values.expiresIn}
+							onChange={handleChange('expiresIn')}
+						/>
+					</Box>
+					<Box sx={{ display: isEdit ? 'block' : 'none' }}>
+						<Typography variant={'body1'} style={styles.label}>
+							Status
+						</Typography>
+						<Select
+							fullWidth
+							disabled={isEdit ? true : false}
+							error={errors.status && touched.status ? true : false}
+							helpertext={errors && touched.status && errors.status}
+							value={values.status}
+							onChange={handleChange('status') as never}
+						>
+							<MenuItem value={SELECT_COUPON_STATUS} disabled>
+								{SELECT_COUPON_STATUS}
+							</MenuItem>
+							{Object.values(CouponStatus).map((status, key) => (
+								<MenuItem key={key} value={status}>
+									{status}
+								</MenuItem>
+							))}
+						</Select>
+					</Box>
 				</Box>
+				<Button
+					loading={isCreatingCoupon || isUpdatingCoupon}
+					size={'large'}
+					style={styles.btn}
+					onClick={(e: React.FormEvent<HTMLButtonElement>) => {
+						e.preventDefault();
+						handleSubmit();
+					}}
+				>
+					Save
+				</Button>
 			</Box>
-			<Button size={'large'} style={styles.btn}>
-				Save
-			</Button>
-		</Box>
+		</>
 	);
 };
 

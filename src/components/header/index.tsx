@@ -1,32 +1,82 @@
 import React from 'react';
-import { AppBar, Toolbar, useTheme, IconButton } from '@mui/material';
-import Image from '../image';
-import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import { setToggleDrawer } from '../../store/app';
+import {
+	AppBar,
+	Toolbar,
+	useTheme,
+	IconButton,
+	Box,
+	Typography,
+	Avatar,
+} from '@mui/material';
+import { Menu } from '@mui/icons-material';
+import { useAppDispatch, useAppSelector } from 'store/hooks';
+import { setToggleDrawer, setToggleMobileDrawer } from 'store/app';
+import { grey } from '@mui/material/colors';
+import Timer from '../timer';
 
 const Header = () => {
 	const theme = useTheme();
 	const styles = useStyles(theme);
 	const dispatch = useAppDispatch();
-	const { isToggleDrawer } = useAppSelector((store) => store.appState);
+	const {
+		appState: { isToggleDrawer },
+		authState: { user },
+	} = useAppSelector((store) => store);
 	return (
 		<AppBar position={'sticky'} style={styles.appBar}>
-			<Toolbar>
+			<Toolbar style={styles.toolbar}>
 				<IconButton
+					sx={{
+						color: 'white',
+						display: {
+							xs: 'none',
+							md: 'block',
+						},
+					}}
 					size={'large'}
 					onClick={() => dispatch(setToggleDrawer(!isToggleDrawer))}
 				>
-					<Image
-						style={styles.appMenu}
+					<Menu />
+				</IconButton>
+				<IconButton
+					sx={{
+						color: 'white',
+						display: {
+							md: 'none',
+						},
+					}}
+					size={'large'}
+					onClick={() => dispatch(setToggleMobileDrawer(true))}
+				>
+					<Menu />
+				</IconButton>
+				<Box
+					sx={{
+						display: 'flex',
+						alignItems: 'center',
+						gap: '3rem',
+					}}
+				>
+					<Timer
 						sx={{
-							img: {
-								width: '100%',
-								display: 'block',
+							display: {
+								xs: 'none',
+								md: 'block',
 							},
 						}}
-						src={require('../../assets/icons/menu.png')}
 					/>
-				</IconButton>
+					<Box style={styles.avatarUserNameWrapper}>
+						<Box>
+							<Typography style={styles.userName} variant={'body1'}>
+								{user && `${user.firstname} ${user.lastname}`}
+							</Typography>
+							<Typography style={styles.roleText} variant={'body2'}>
+								{user && user.role && `${user.role.replace(/_/gi, ' ')}`}
+							</Typography>
+						</Box>
+						<Avatar />
+					</Box>
+				</Box>
 			</Toolbar>
 		</AppBar>
 	);
@@ -42,6 +92,26 @@ const useStyles = (theme: any) => ({
 		height: '20px',
 		display: 'flex',
 		alignItems: 'center',
+	},
+	toolbar: {
+		display: 'flex',
+		alignItems: 'center',
+		justifyContent: 'space-between',
+		color: 'white',
+	},
+	avatarUserNameWrapper: {
+		display: 'flex',
+		alignItems: 'center',
+		gap: theme.spacing(3),
+	},
+	userName: {
+		fontSize: '16px',
+		color: grey[100],
+		fontWeight: '600',
+	},
+	roleText: {
+		fontSize: '14px',
+		color: grey[100],
 	},
 });
 export default Header;

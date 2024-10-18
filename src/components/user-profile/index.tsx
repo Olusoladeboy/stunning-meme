@@ -1,93 +1,234 @@
-import React, { useState } from 'react';
+import React, { CSSProperties, useState } from 'react';
 import { Box, Typography, useTheme } from '@mui/material';
+import { useMutation, useQuery, useQueryClient } from 'react-query';
+import { useNavigate } from 'react-router-dom';
+import { grey } from '@mui/material/colors';
+import moment from 'moment';
 import DetailItem from './detail-item';
 import Button from '../button';
-import { grey } from '@mui/material/colors';
 import ModalWrapper from '../modal/Wrapper';
-import EditProfileForm from '../forms/edit-profile';
-import UserAvatarWithDetails from '../user-avatar-with-details';
-import UserWallet from '../user-wallet';
+import EditProfileForm from '../forms/profile-form';
+import UserAvatarWithDetails from '../avatar-with-details';
+import { User, SUCCESS_COLOR, QueryKeys, extractUserName } from 'utilities';
+import VerifyUser from '../verify-user';
+import { restoreDeletedAccount, walletAccount } from 'api';
+import { useHandleError, useAlert } from 'hooks';
+import Loader from 'components/loader';
+import { UserWallet, UserLien } from 'components';
+import { useAppSelector } from 'store/hooks';
 
-const UserProfile = () => {
+type Props = {
+	user: User | null;
+};
+
+const UserProfile = ({ user }: Props) => {
+	const alert = useAlert();
+	const navigate = useNavigate();
+	const handleError = useHandleError();
+	const queryClient = useQueryClient();
 	const theme = useTheme();
+
+	const token = useAppSelector((store) => store.authState.token);
+
+	const styles = useStyles(theme);
 	const [isEditProfile, setEditProfile] = useState<boolean>(false);
+
+	const isAccountDeleted = user?.deleted;
+
+	// Restor user mutation
+	const { isLoading: isRestoringAccount, mutate: mutateRestoreAccount } =
+		useMutation(restoreDeletedAccount, {
+			onSettled: (data, error) => {
+				if (error) {
+					const response = handleError({ error });
+
+					if (response && response.message) {
+						alert({
+							message: response.message,
+							type: 'error',
+						});
+					}
+
+					return;
+				}
+
+				queryClient.invalidateQueries([QueryKeys.User]);
+				queryClient.invalidateQueries([QueryKeys.Users]);
+				queryClient.invalidateQueries([QueryKeys.Statistics]);
+
+				alert({
+					message: 'Account restore successfully!',
+					type: 'success',
+				});
+				navigate(-1);
+			},
+		});
+
+	const { data: dataWallet } = useQuery(
+		[QueryKeys.UserWallet, user?.id],
+		() =>
+			walletAccount({
+				user: user?.id,
+			}),
+		{
+			enabled: !!(token && user),
+			refetchOnWindowFocus: false,
+			onSettled: (data, error) => {
+				if (error) {
+					const response = handleError({ error });
+					if (response?.message) {
+						alert({ message: response.message, type: 'error' });
+					}
+				}
+			},
+		}
+	);
+
+	const wallet =
+		dataWallet &&
+		dataWallet.payload &&
+		Array.isArray(dataWallet.payload) &&
+		dataWallet.payload[0];
+
+	const handleRestoreAccount = () => mutateRestoreAccount(user?.id as string);
+
 	return (
-		<Box>
-			<Box
-				sx={{
-					display: 'grid',
-					gridTemplateColumns: {
-						xs: '1fr',
-						md: 'repeat(2, 1fr)',
-					},
-				}}
-			>
-				<UserAvatarWithDetails />
-				<UserWallet />
-			</Box>
-			<Box sx={{ marginTop: theme.spacing(5) }}>
-				{isEditProfile && (
-					<ModalWrapper
-						close={() => setEditProfile(false)}
-						title={'Edit Profile'}
-					>
-						<EditProfileForm />
-					</ModalWrapper>
-				)}
-				<Typography sx={{ marginBottom: theme.spacing(4) }} variant={'h5'}>
-					user profile
-				</Typography>
+		<>
+			{isRestoringAccount && <Loader />}
+			<Box>
 				<Box
 					sx={{
 						display: 'grid',
+						gap: ['1rem', '20px'],
 						gridTemplateColumns: {
 							xs: '1fr',
-							md: 'repeat(2, 1fr)',
+							md: 'repeat(3, 1fr)',
 						},
-						rowGap: theme.spacing(3),
-						columnGap: theme.spacing(6),
 					}}
 				>
-					<DetailItem text={'name'} value={'Bisoye Amadi'} />
-					<DetailItem text={'date joined'} value={'11/11/22'} />
-					<DetailItem text={'Username'} value={'Bisoye Amadi'} />
-					<DetailItem text={'pnone number'} value={'08101234567'} />
-					<DetailItem text={'email'} value={'Bisoye@gmail.com'} />
-					<DetailItem
-						text={'verification status'}
-						value={
-							<Box
+					<UserAvatarWithDetails user={user} />
+					<UserLien wallet={wallet} user={user} />
+					<UserWallet wallet={wallet} user={user} />
+				</Box>
+				<Box sx={{ marginTop: theme.spacing(5) }}>
+					{isEditProfile && (
+						<ModalWrapper
+							closeModal={() => setEditProfile(false)}
+							title={'Edit Profile'}
+						>
+							<EditProfileForm />
+						</ModalWrapper>
+					)}
+					<Typography sx={{ marginBottom: theme.spacing(4) }} variant={'h5'}>
+						User profile
+					</Typography>
+					<Box
+						sx={{
+							display: 'grid',
+							gridTemplateColumns: {
+								xs: '1fr',
+								md: 'repeat(2, 1fr)',
+							},
+							rowGap: theme.spacing(3),
+							columnGap: theme.spacing(6),
+						}}
+					>
+						<DetailItem text={'name'} value={extractUserName(user as User)} />
+						<DetailItem
+							text={'date joined'}
+							value={user && moment.utc(user.createdAt).format('l')}
+						/>
+						<DetailItem text={'Username'} value={user && user.username} />
+						<DetailItem text={'pnone number'} value={user && user.phone} />
+						<DetailItem text={'email'} value={user && user.email} />
+						<DetailItem
+							text={'Kyc Level'}
+							value={user && `Level ${user.kycLevel}`}
+						/>
+						<DetailItem
+							text={'verification status'}
+							value={
+								user && user.verified ? (
+									<Typography style={styles.verifyText as CSSProperties}>
+										Verified
+									</Typography>
+								) : (
+									<Box
+										sx={{
+											display: 'flex',
+											alignItems: 'center',
+											gap: theme.spacing(4),
+										}}
+									>
+										<Typography>Unverified</Typography>
+										<VerifyUser
+											buttonProps={{ style: styles.verifyButton }}
+											user={user}
+										/>
+									</Box>
+								)
+							}
+						/>
+					</Box>
+					<Box
+						sx={{
+							display: 'flex',
+							alignItems: 'center',
+							gap: ['25px', '50px', '100px'],
+						}}
+					>
+						<Button
+							disabled
+							onClick={() => setEditProfile(true)}
+							sx={{
+								backgroundColor: theme.palette.secondary.main,
+								color: grey[50],
+								textTransform: 'uppercase',
+								fontWeight: '600',
+								minWidth: '140px',
+								marginTop: theme.spacing(4),
+								':hover': {
+									backgroundColor: theme.palette.secondary.main,
+								},
+							}}
+						>
+							Edit profile
+						</Button>
+						{isAccountDeleted && (
+							<Button
+								onClick={handleRestoreAccount}
 								sx={{
-									display: 'flex',
-									alignItems: 'center',
-									gap: theme.spacing(4),
+									backgroundColor: theme.palette.secondary.main,
+									color: grey[50],
+									textTransform: 'uppercase',
+									fontWeight: '600',
+									minWidth: '140px',
+									marginTop: theme.spacing(4),
+									':hover': {
+										backgroundColor: theme.palette.secondary.main,
+									},
 								}}
 							>
-								<Typography>UNVERIFIED</Typography>
-								<Typography>VERIFY USER</Typography>
-							</Box>
-						}
-					/>
+								Restore account
+							</Button>
+						)}
+					</Box>
 				</Box>
-				<Button
-					onClick={() => setEditProfile(true)}
-					sx={{
-						backgroundColor: theme.palette.secondary.main,
-						color: grey[50],
-						textTransform: 'uppercase',
-						fontWeight: '600',
-						minWidth: '140px',
-						marginTop: theme.spacing(4),
-						':hover': {
-							backgroundColor: theme.palette.secondary.main,
-						},
-					}}
-				>
-					Edit profile
-				</Button>
 			</Box>
-		</Box>
+		</>
 	);
 };
+
+const useStyles = (theme: any) => ({
+	verifyText: {
+		color: SUCCESS_COLOR,
+		textTransform: 'uppercase',
+		fontWeight: '600',
+	},
+	verifyButton: {
+		border: `1px solid ${SUCCESS_COLOR}`,
+		color: SUCCESS_COLOR,
+	},
+});
 
 export default UserProfile;

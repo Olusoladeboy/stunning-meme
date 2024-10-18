@@ -12,9 +12,7 @@ const Managers = () => {
 		queryKey: QueryKeys.Managers,
 		queryFn: () =>
 			managers({
-				params: {
-					sort: '-createdAt',
-				},
+				sort: '-createdAt',
 			}),
 	});
 

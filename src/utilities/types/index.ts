@@ -385,6 +385,96 @@ export interface IVerification {
 	id: string;
 }
 
+export interface IBvnVerification {
+	id: string;
+	firstname: string;
+	middlename: string;
+	lastname: string;
+	fullname: string;
+	dob: string;
+	bvn: string;
+	gender: string;
+	customer: string;
+	verification_country: string;
+	env: string;
+	aliases: string[];
+	phone: string[];
+	email: string[];
+	address: string[];
+	nationality: string;
+	lga_of_origin: string;
+	lga_of_residence: string;
+	state_of_origin: string;
+	state_of_residence: string;
+	marital_status: string;
+	next_of_kins: string[];
+	nin: string;
+	photoid: [
+		{
+			url: string;
+			image_type: string;
+		}
+	];
+	enrollment: {
+		bank: string;
+		branch: string;
+		registration_date: string;
+	};
+	watch_listed: string;
+	receipt: {
+		status: boolean;
+		msg: string;
+		data: {
+			receipt: {
+				charge_breakdown: {
+					vat: number;
+				};
+				breakdown: {
+					billable_product: {
+						effective_credits: number;
+						credits: number;
+						status: boolean;
+						addon_products: string[];
+						product: string;
+					};
+					discount: number;
+					billable_products: [
+						{
+							effective_cost: number;
+							cost: number;
+							status: boolean;
+							addon_products: string[];
+							id: string;
+							archived: boolean;
+							product: string;
+						}
+					];
+					source: string;
+					limit: string;
+				};
+				billingStatus: boolean;
+				paid: boolean;
+				method: string;
+				charge: number;
+				wallet_balance: number;
+				addons: string[];
+				id: string;
+				plan_term: string;
+				owner: string;
+				type: string;
+				billable_product: string;
+				currency: string;
+				record: string;
+				customer: string;
+				current_project: string;
+				billable_service: string;
+				created_at: string;
+				last_updated: string;
+			};
+		};
+	};
+}
+
 export interface Coupon {
 	code?: string;
 	name?: string;

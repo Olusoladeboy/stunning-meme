@@ -3,7 +3,14 @@ import { Box, useTheme } from '@mui/material';
 import { useNavigate, useLocation } from 'react-router-dom';
 import queryString from 'query-string';
 import { useQuery } from 'react-query';
-import { Layout, Pagination, BvnVerificationTable } from 'components';
+import JsonFormatter from 'react-json-formatter';
+import {
+	Layout,
+	Pagination,
+	BvnVerificationTable,
+	Loader,
+	ModalWrapper,
+} from 'components';
 import {
 	MAX_RECORDS,
 	QueryKeys,
@@ -11,10 +18,18 @@ import {
 	VERIFICATION_STATUS,
 	ADMIN_ROLE,
 	RouteGuard,
+	EMAIL_REX,
+	PHONE_REX,
 } from 'utilities';
 import { useAppSelector } from 'store/hooks';
 import { verifications } from 'api';
-import { useSearchUser, useAlert, useHandleError, usePageTitle } from 'hooks';
+import {
+	useSearchUser,
+	useAlert,
+	useHandleError,
+	usePageTitle,
+	useSearchBvn,
+} from 'hooks';
 
 const BvnVerification = () => {
 	usePageTitle('BVN Verifications');
@@ -29,7 +44,21 @@ const BvnVerification = () => {
 	const location = useLocation();
 	const query = queryString.parse(location.search);
 
+	const jsonStyle = {
+		propertyStyle: { color: 'red' },
+		stringStyle: { color: 'green' },
+		numberStyle: { color: 'darkorange' },
+	};
+
+	const [jsonData, setJsonData] = useState<string>('');
+
 	const { search, isSearching, searchUser, clearSearch } = useSearchUser();
+
+	const { isSearchingBvn, searchBvn } = useSearchBvn((data) => {
+		if (data) {
+			setJsonData(JSON.stringify(data));
+		}
+	});
 
 	useEffect(() => {
 		if (query && query.page) {
@@ -67,6 +96,19 @@ const BvnVerification = () => {
 		}
 	);
 
+	const handleSearch = (value: string) => {
+		if (EMAIL_REX.test(value) || PHONE_REX.test(value)) {
+			searchUser(value);
+		} else if (/[0-9]{11}/.test(value)) {
+			searchBvn(value);
+		} else {
+			return setAlert({
+				message: 'Search User with email or phone or BVN',
+				type: 'info',
+			});
+		}
+	};
+
 	const handlePageChange = (page: number) => {
 		if (page !== 1) {
 			setPage(page);
@@ -78,11 +120,33 @@ const BvnVerification = () => {
 	};
 	return (
 		<Layout>
+			{isSearchingBvn && <Loader />}
+			{jsonData && (
+				<ModalWrapper
+					title={'View Action'}
+					containerStyle={{
+						zIndex: theme.zIndex.modal + 10,
+					}}
+					hasCloseButton={true}
+					closeModal={() => setJsonData('')}
+				>
+					<Box
+						sx={{
+							overflow: 'auto',
+							maxWidth: '540px',
+							width: '100%',
+							alignSelf: 'flex-start',
+						}}
+					>
+						<JsonFormatter json={jsonData} tabWith={4} jsonStyle={jsonStyle} />
+					</Box>
+				</ModalWrapper>
+			)}
 			<RouteGuard roles={[ADMIN_ROLE.SUPER_ADMIN, ADMIN_ROLE.OPERATIONS]}>
 				<Box>
 					<BvnVerificationTable
 						clearSearch={clearSearch}
-						searchUser={searchUser}
+						searchUser={handleSearch}
 						isLoading={isLoading || isSearching}
 						data={data && data.payload}
 					/>

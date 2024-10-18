@@ -1,10 +1,8 @@
 import apiRequest from './apiRequest';
 import { ENDPOINTS } from '../utilities';
 
-export const convertAirtimes = async ({
-	params,
-}: {
-	params?: { [key: string]: any };
+export const convertAirtimes = async (params?: {
+	[key: string]: any;
 }): Promise<any> =>
 	apiRequest({
 		method: 'GET',

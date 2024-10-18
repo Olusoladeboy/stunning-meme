@@ -65,12 +65,10 @@ const AllConversions = () => {
 		[QueryKeys.ConvertAirtime, page],
 		() =>
 			convertAirtimes({
-				params: {
-					limit: MAX_RECORDS,
-					skip: (page - 1) * MAX_RECORDS,
-					sort,
-					...conversionStatus,
-				},
+				limit: MAX_RECORDS,
+				skip: (page - 1) * MAX_RECORDS,
+				sort,
+				...conversionStatus,
 			}),
 		{
 			enabled: isLoad,

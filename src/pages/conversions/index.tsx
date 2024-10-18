@@ -71,10 +71,7 @@ const Conversions = () => {
 
 	const { isLoading, data, refetch } = useQuery(
 		[QueryKeys.ConvertAirtime, page],
-		() =>
-			convertAirtimes({
-				params,
-			}),
+		() => convertAirtimes(params),
 		{
 			enabled: !!(token || isReload),
 			keepPreviousData: true,

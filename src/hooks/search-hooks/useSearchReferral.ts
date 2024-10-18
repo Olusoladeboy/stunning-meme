@@ -64,10 +64,8 @@ const useSearchReferral = () => {
 
 				// setSearch(data.payload);
 				const referralData = await referrals({
-					params: {
-						referredBy: user.id,
-						populate: 'referredBy',
-					},
+					referredBy: user.id,
+					populate: 'referredBy',
 				});
 
 				if (referralData.payload.length === 0) {

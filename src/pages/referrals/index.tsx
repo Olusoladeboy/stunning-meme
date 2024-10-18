@@ -40,12 +40,10 @@ const Referrals = () => {
 		[QueryKeys.Referrals],
 		() =>
 			referrals({
-				params: {
-					sort: '-createdAt',
-					limit: MAX_RECORDS,
-					skip: (page - 1) * MAX_RECORDS,
-					populate: 'referredBy',
-				},
+				sort: '-createdAt',
+				limit: MAX_RECORDS,
+				skip: (page - 1) * MAX_RECORDS,
+				populate: 'referredBy',
 			}),
 		{
 			enabled: !!token,

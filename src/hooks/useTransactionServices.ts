@@ -165,7 +165,7 @@ export const useQueryConvertAirtimes = (
 	const queryConvertAirtimes = async (params: Record<string, any>) => {
 		setLoading(true);
 		try {
-			const response = await convertAirtimes({ params });
+			const response = await convertAirtimes(params);
 			setLoading(false);
 
 			if (response && response.success) {

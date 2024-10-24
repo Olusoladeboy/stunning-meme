@@ -55,37 +55,47 @@ const useAuditLogViewAction = (
 
 			case MODULE_NAMES.TRANSACTION:
 				data = await transactions({
-					id: recordId,
+					_id: recordId,
+					populate: 'user',
+					fields: 'user.email',
 				});
 				break;
 
 			case MODULE_NAMES.ADVERT:
 				data = await adBanners({
-					id: recordId,
+					_id: recordId,
 				});
 				break;
 
 			case MODULE_NAMES.AIRTIME:
 				data = await airtimeTransactions({
-					id: recordId,
+					_id: recordId,
+					populate: 'user',
+					fields: 'user.email',
 				});
 				break;
 
 			case MODULE_NAMES.DATASUBSCRIPTION:
 				data = await dataSubscriptions({
-					id: recordId,
+					_id: recordId,
+					populate: 'user',
+					fields: 'user.email',
 				});
 				break;
 
 			case MODULE_NAMES.AIRTIMECONVERT:
 				data = await convertAirtimes({
-					id: recordId,
+					_id: recordId,
+					populate: 'user',
+					fields: 'user.email',
 				});
 				break;
 
 			case MODULE_NAMES.AIRTIMEAUTOCONVERT:
 				data = await autoConvertAirtimes({
-					id: recordId,
+					_id: recordId,
+					populate: 'user',
+					fields: 'user.email',
 				});
 				break;
 
@@ -93,31 +103,33 @@ const useAuditLogViewAction = (
 				data = await networks({
 					url: API_ENDPOINTS.DataNetwork,
 					params: {
-						id: recordId,
+						_id: recordId,
 					},
 				});
 				break;
 
 			case MODULE_NAMES.DATAPLAN:
 				data = await dataPlans({
-					id: recordId,
+					_id: recordId,
 				});
 				break;
 
 			case MODULE_NAMES.DATATYPE:
 				data = await dataTypes({
-					id: recordId,
+					_id: recordId,
 				});
 				break;
 
 			case MODULE_NAMES.MANAGER:
 				data = await managers({
-					id: recordId,
+					_id: recordId,
+					populate: 'user',
+					fields: 'user.email',
 				});
 				break;
 			case MODULE_NAMES.STAFF:
 				data = await staffs({
-					id: recordId,
+					_id: recordId,
 				});
 				break;
 
@@ -129,61 +141,67 @@ const useAuditLogViewAction = (
 
 			case MODULE_NAMES.EVOUCHER:
 				data = await voucherTransactions({
-					id: recordId,
+					_id: recordId,
 				});
 				break;
 
 			case MODULE_NAMES.ESIM:
 				data = await eSimTransactions({
-					id: recordId,
+					_id: recordId,
 				});
 				break;
 
 			case MODULE_NAMES.EPIN:
 				data = await ePinTransactions({
-					id: recordId,
+					_id: recordId,
 				});
 				break;
 
 			case MODULE_NAMES.SETTING:
 				data = await settings({
-					id: recordId,
+					_id: recordId,
 				});
 				break;
 
 			case MODULE_NAMES.TRANSFER:
 				data = await walletTransfers({
-					id: recordId,
+					_id: recordId,
 				});
 				break;
 
 			case MODULE_NAMES.REFERRALS:
 				data = await referrals({
-					id: recordId,
+					_id: recordId,
 				});
 				break;
 
 			case MODULE_NAMES.INTERNATIONALAIRTIME:
 				data = await internationalAirtimeTransactions({
-					id: recordId,
+					_id: recordId,
+					populate: 'user',
+					fields: 'user.email',
 				});
 				break;
 
 			case MODULE_NAMES.INTERNATIONALDATA:
 				data = await internationalDataSubscriptions({
-					id: recordId,
+					_id: recordId,
+					populate: 'user',
+					fields: 'user.email',
 				});
 				break;
 
 			case MODULE_NAMES.WITHDRAW:
 				data = await walletWithdrawal({
-					id: recordId,
+					_id: recordId,
+					populate: 'user',
+					fields: 'user.email',
 				});
 				break;
 
 			case MODULE_NAMES.WALLET:
 				data = await walletAccount({
-					id: recordId,
+					_id: recordId,
 				});
 				break;
 

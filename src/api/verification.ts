@@ -6,6 +6,11 @@ import {
 	IBvnVerification,
 } from '../utilities';
 
+interface ResponseBVNVerification {
+	response: IBvnVerification | string;
+	success: boolean;
+}
+
 export const verifications = async (
 	params: Record<string, any>
 ): Promise<DataResponse<IVerification[]>> =>
@@ -13,7 +18,7 @@ export const verifications = async (
 
 export const bvnVerifications = async (
 	params: Record<string, any>
-): Promise<DataResponse<IBvnVerification>> =>
+): Promise<DataResponse<ResponseBVNVerification>> =>
 	apiRequest({ url: `${ENDPOINTS.Verification}/okra`, method: 'GET', params });
 
 export const updateVerification = async ({

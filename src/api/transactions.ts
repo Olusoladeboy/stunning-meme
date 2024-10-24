@@ -29,6 +29,15 @@ export const transactions = async (params?: {
 		params,
 	});
 
+export const transactionsStatistics = async (params?: {
+	[key: string]: any;
+}): Promise<any> =>
+	apiRequest({
+		method: 'GET',
+		url: `${ENDPOINTS.TransactionStatistics}`,
+		params,
+	});
+
 export const lienTransactions = async (params?: {
 	[key: string]: any;
 }): Promise<any> =>

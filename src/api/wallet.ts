@@ -1,10 +1,8 @@
 import apiRequest from './apiRequest';
 import { DataResponse, ENDPOINTS, IWallet } from '../utilities';
 
-export const walletAccount = async ({
-	params,
-}: {
-	params?: { [key: string]: any };
+export const walletAccount = async (params?: {
+	[key: string]: any;
 }): Promise<DataResponse<IWallet>> =>
 	apiRequest({
 		method: 'GET',

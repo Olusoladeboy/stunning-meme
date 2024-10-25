@@ -83,7 +83,7 @@ const BvnVerificationTable = ({
 				>
 					<TableHeader
 						title={'Bvn Verification'}
-						placeholder={'Search User by Email'}
+						placeholder={'Search User by Email/BVN'}
 						clearSearch={clearSearch}
 						handleSearch={searchUser}
 					/>

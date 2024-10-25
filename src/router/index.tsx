@@ -37,6 +37,7 @@ import {
 	AdBanner,
 	LienTransactions,
 	WithdrawalRequestTransactions,
+	TransactionMostUsers,
 } from '../pages';
 
 const Router = () => {
@@ -61,6 +62,10 @@ const Router = () => {
 				<Route path={''} element={<Transactions />} />
 				{/* <Route path={'all'} element={<AllTransactions />} /> */}
 			</Route>
+			<Route
+				path={'transactions-most-user'}
+				element={<TransactionMostUsers />}
+			/>
 			<Route
 				path={'withdrawal-request'}
 				element={<WithdrawalRequestTransactions />}

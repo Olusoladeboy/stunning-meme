@@ -24,6 +24,7 @@ interface Props extends BoxProps {
 	statusFilter?: ReactNode;
 	deletedCheckbox?: ReactNode;
 	canFilter?: boolean;
+	canSearch?: boolean;
 	auditData?: AuditLog[] | undefined | null;
 	handleAuditFilter?: (criteria: AuditFilter) => void;
 }
@@ -42,6 +43,7 @@ const TableHeader = ({
 	canFilter,
 	auditData,
 	handleAuditFilter,
+	canSearch = true,
 	...rest
 }: Props) => {
 	const theme = useTheme();
@@ -337,13 +339,15 @@ const TableHeader = ({
 				>
 					{statusFilter}
 					{deletedCheckbox}
-					<SearchInput
-						fullWidth
-						sx={{ maxWidth: ['100%', '320px'], minWidth: ['100%', '300px'] }}
-						placeholder={rest.placeholder || searchPlaceholder}
-						handleSearch={handleSearch}
-						clearSearch={clearSearch}
-					/>
+					{canSearch && (
+						<SearchInput
+							fullWidth
+							sx={{ maxWidth: ['100%', '320px'], minWidth: ['100%', '300px'] }}
+							placeholder={rest.placeholder || searchPlaceholder}
+							handleSearch={handleSearch}
+							clearSearch={clearSearch}
+						/>
+					)}
 				</Box>
 			</Box>
 		</Box>

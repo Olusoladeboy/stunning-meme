@@ -253,6 +253,28 @@ const DrawerList = () => {
 					}
 				/>
 				<ListItemButton
+					name={'Transactions (Most User)'}
+					link={LINKS.TransactionsMostUser}
+					isActive={
+						getActiveLink({
+							name: 'transactions-most-user',
+							currentPath: pathname,
+						}).isActive
+					}
+					icon={
+						<TransactionIcon
+							color={
+								getActiveLink({
+									name: 'transactions-most-user',
+									currentPath: pathname,
+								}).isActive
+									? activeColor
+									: initialColor
+							}
+						/>
+					}
+				/>
+				<ListItemButton
 					name={'Lien Transactions'}
 					link={LINKS.Liens}
 					isActive={

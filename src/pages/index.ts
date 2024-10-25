@@ -35,3 +35,4 @@ export { default as NinVerification } from './verification/nin-verification';
 export { default as AdBanner } from './ad-banner';
 export { default as LienTransactions } from './lien';
 export { default as WithdrawalRequestTransactions } from './transactions/withdrawal-request';
+export { default as TransactionMostUsers } from './transactions/transactions-most-user';

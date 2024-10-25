@@ -28,6 +28,7 @@ import {
 	internationalDataSubscriptions,
 	internationalAirtimeTransactions,
 	eSimTransactions,
+	transactionsStatistics,
 } from 'api';
 import { cableTransactions } from 'api/cable';
 import { billBundles, billProviders, billTransactions } from 'api/bill';
@@ -165,7 +166,7 @@ export const useQueryConvertAirtimes = (
 	const queryConvertAirtimes = async (params: Record<string, any>) => {
 		setLoading(true);
 		try {
-			const response = await convertAirtimes({ params });
+			const response = await convertAirtimes(params);
 			setLoading(false);
 
 			if (response && response.success) {
@@ -889,5 +890,39 @@ export const useQueryESimTransactions = (
 		isLoadingESimTransactions: isLoading,
 		dataESimTransactions: dataResponse,
 		queryESimTransactions,
+	};
+};
+
+export const useQueryTransactionStatistics = (
+	callback?: (data: any, metadata?: Metadata) => void
+) => {
+	const [dataResponse, setDataResponse] = useState<
+		{ [key: string]: any }[] | null
+	>(null);
+
+	const [isLoading, setLoading] = useState<boolean>(false);
+
+	const queryTransactionStatistics = async (params: Record<string, any>) => {
+		setLoading(true);
+		try {
+			const response = await transactionsStatistics(params);
+
+			if (response && response.success) {
+				setDataResponse(response.payload);
+				const metadata = response.metadata;
+				typeof callback === 'function' && callback(response.payload, metadata);
+				return response.payload;
+			}
+		} catch (error) {
+			console.log(error);
+		} finally {
+			setLoading(false);
+		}
+	};
+
+	return {
+		isLoadingTransactionStatistics: isLoading,
+		dataTransactionStatistics: dataResponse,
+		queryTransactionStatistics,
 	};
 };

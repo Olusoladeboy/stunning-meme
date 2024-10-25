@@ -95,6 +95,13 @@ export const checkAmount = (amount: number | string | Amount) => {
 	return amount;
 };
 
+export const dateRanges = (start: string, end: string) => {
+	const startDate = new Date(start).toISOString();
+	const endDate = new Date(end).toISOString();
+
+	return `createdAt>${startDate}&createdAt<${endDate}`;
+};
+
 export const checkTransactionAmount = ({
 	transaction,
 	field,

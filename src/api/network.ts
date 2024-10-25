@@ -40,6 +40,5 @@ export const updateNetwork = async ({
 	apiRequest({
 		method: 'PUT',
 		url: `${url}/${id}`,
-
 		data,
 	});

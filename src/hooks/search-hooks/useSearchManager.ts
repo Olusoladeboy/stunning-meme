@@ -37,7 +37,7 @@ const useSearchManager = () => {
 		setSearching(true);
 
 		try {
-			const data = await managers({ params });
+			const data = await managers(params);
 			setSearching(false);
 			if (data && Array.isArray(data.payload)) {
 				if (data.payload.length === 0) {

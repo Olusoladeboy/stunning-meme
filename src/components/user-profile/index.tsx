@@ -68,9 +68,7 @@ const UserProfile = ({ user }: Props) => {
 		[QueryKeys.UserWallet, user?.id],
 		() =>
 			walletAccount({
-				params: {
-					user: user?.id,
-				},
+				user: user?.id,
 			}),
 		{
 			enabled: !!(token && user),

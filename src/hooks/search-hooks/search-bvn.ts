@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useAlert, useHandleError } from '..';
-import { IBvnVerification, User } from 'utilities';
+import { IBvnVerification } from 'utilities';
 import { bvnVerifications } from 'api';
 
 const useSearchBvn = (callback?: (data: IBvnVerification) => void) => {

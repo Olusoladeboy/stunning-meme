@@ -68,9 +68,9 @@ const Referrals = () => {
 	const handlePageChange = (page: number) => {
 		if (page !== 1) {
 			setPage(page);
-			navigate(`${LINKS.Transactions}?&page=${page}`);
+			navigate(`${LINKS.Referrals}?&page=${page}`);
 		} else {
-			navigate(LINKS.Transactions);
+			navigate(LINKS.Referrals);
 			setPage(page);
 		}
 	};

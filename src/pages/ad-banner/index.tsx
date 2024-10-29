@@ -1,5 +1,5 @@
 import React from 'react';
-import { Layout, AdBannerTable, Button } from 'components';
+import { Layout, AdBannerTable } from 'components';
 import { QueryKeys } from 'utilities';
 import { usePageTitle, useQueryHook } from 'hooks';
 import { adBanners } from 'api';

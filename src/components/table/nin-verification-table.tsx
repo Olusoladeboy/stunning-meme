@@ -2,7 +2,6 @@ import React, { CSSProperties } from 'react';
 import Table from '@mui/material/Table';
 import { useMutation, useQueryClient } from 'react-query';
 import { useTheme, TableBody, TableHead, Box } from '@mui/material';
-import moment from 'moment';
 import { grey } from '@mui/material/colors';
 import {
 	SUCCESS_COLOR,

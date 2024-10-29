@@ -14,6 +14,7 @@ import { useAppSelector } from 'store/hooks';
 interface Props extends BoxProps {
 	isLoading?: boolean;
 	selectProps?: SelectProps;
+	placeholder?: string;
 }
 
 const FilterBy = (props: Props) => {

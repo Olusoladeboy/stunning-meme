@@ -45,8 +45,7 @@ const SearchStatistics = ({
 	const { isLoadingDataTypes, queryDataTypes, dataDataTypes } =
 		useQueryDataTypes();
 
-	const { cableBundles, isLoadingCableBundles, queryCableBundles } =
-		useCableBundles();
+	const { queryCableBundles } = useCableBundles();
 
 	const { isLoadingCableProviders, dataCableProviders, queryCableProviders } =
 		useQueryCableProviders();

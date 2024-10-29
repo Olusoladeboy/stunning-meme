@@ -153,7 +153,8 @@ const CouponForm = ({ data, isEdit, onSuccess }: Props) => {
 				usage: values.usage,
 			};
 
-			if (values.service) payload.service = values.service;
+			if (values.service !== SELECT_COUPON_SERVICE)
+				payload.service = values.service;
 
 			if (values.user) payload.user = values.user;
 

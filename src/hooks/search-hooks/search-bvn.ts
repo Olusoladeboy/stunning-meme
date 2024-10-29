@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { useAlert, useHandleError } from '..';
-import { User } from 'utilities';
+import { IBvnVerification } from 'utilities';
 import { bvnVerifications } from 'api';
 
-const useSearchBvn = (callback?: (data: { [key: string]: any }) => void) => {
+const useSearchBvn = (callback?: (data: IBvnVerification) => void) => {
 	const alert = useAlert();
 	const handleError = useHandleError();
 
@@ -11,14 +11,9 @@ const useSearchBvn = (callback?: (data: { [key: string]: any }) => void) => {
     @Hook state
     @User state and boolean is searching state
   */
-	const [search, setSearch] = useState<User[] | null>(null);
+	const [search, setSearch] = useState<IBvnVerification | null>(null);
 	const [isSearching, setSearching] = useState<boolean>(false);
 
-	/*
-	 *Search User
-	 *Update found MUser State
-	 *Handle Network error response, trigger an alert if any
-	 */
 	const searchUser = async (value: string) => {
 		if (!value) {
 			return alert({
@@ -36,17 +31,17 @@ const useSearchBvn = (callback?: (data: { [key: string]: any }) => void) => {
 		try {
 			const data = await bvnVerifications(params);
 			setSearching(false);
-			if (data && Array.isArray(data.payload)) {
-				if (data.payload.length === 0) {
-					setSearch(null);
-					return alert({
-						message: `User with ${value} not found`,
-						type: 'info',
-					});
+			if (data && data.success) {
+				if (
+					data.payload.success &&
+					Object.keys(data.payload.response).length > 0
+				) {
+					const response = data.payload.response as IBvnVerification;
+					setSearch(response);
+					typeof callback === 'function' && callback(response);
+				} else {
+					alert({ message: data.payload.response as string, type: 'error' });
 				}
-
-				setSearch(data.payload);
-				typeof callback === 'function' && callback(data.payload);
 			}
 		} catch (error) {
 			setSearching(false);

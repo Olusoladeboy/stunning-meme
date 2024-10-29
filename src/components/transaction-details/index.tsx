@@ -18,9 +18,9 @@ import {
 	Amount,
 	LIGHT_GRAY,
 	capitalize,
+	getCoupon,
 } from 'utilities';
 import TransactionItem from './transaction-item';
-import { useSearchCoupon } from 'hooks';
 import Button from 'components/button';
 import { grey } from '@mui/material/colors';
 
@@ -210,6 +210,18 @@ const TransactionDetails: React.FC<Props> = ({
 			</>
 		);
 
+		const coupon = transaction.transaction &&
+			transaction.transaction.discount_code &&
+			Object.keys(transaction.transaction.discount_code).length > 0 &&
+			typeof transaction.transaction.discount_code !== 'string' && (
+				<>
+					<TransactionItem
+						label={'Coupon'}
+						value={getCoupon(transaction.transaction.discount_code)}
+					/>
+				</>
+			);
+
 		return (
 			<Box>
 				<Container>
@@ -270,6 +282,7 @@ const TransactionDetails: React.FC<Props> = ({
 							value={transaction.network.name as string}
 						/>
 					)}
+					{coupon}
 
 					{isWalletTransfer && (
 						<>

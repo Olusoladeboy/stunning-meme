@@ -257,7 +257,7 @@ const CouponsTable = ({
 							}}
 						>
 							{isLoading ? (
-								<TableLoader colSpan={8} />
+								<TableLoader colSpan={canCreateOrUpdate ? 9 : 8} />
 							) : (
 								data && (
 									<>
@@ -359,7 +359,7 @@ const CouponsTable = ({
 											))
 										) : (
 											<TableRow>
-												<TableCell colSpan={8}>
+												<TableCell colSpan={canCreateOrUpdate ? 9 : 8}>
 													<Empty text={'No coupon'} />
 												</TableCell>
 											</TableRow>

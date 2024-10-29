@@ -13,7 +13,6 @@ const Users = () => {
 	const navigate = useNavigate();
 	const alert = useAlert();
 	const handleError = useHandleError();
-	const [isLoad, setLoad] = useState<boolean>(false);
 	const [count, setCount] = useState<number>(1);
 	const [page, setPage] = useState<number>(1);
 	const [total, setTotal] = useState<number>(0);
@@ -25,10 +24,6 @@ const Users = () => {
 	);
 	const [currentTab, setCurrentTab] = useState(USERS_TAB.All);
 	const { isSearching, search, clearSearch, searchUser } = useSearchUser();
-
-	useEffect(() => {
-		setLoad(true);
-	}, []);
 
 	useEffect(() => {
 		if (query && query.page) {
@@ -53,7 +48,6 @@ const Users = () => {
 			// enabled: isLoad,
 			refetchOnWindowFocus: false,
 			onSettled: (data, error) => {
-				setLoad(false);
 				if (error) {
 					const response = handleError({ error });
 					if (response?.message)
@@ -110,7 +104,7 @@ const Users = () => {
 				setUsersStatus({});
 				break;
 		}
-		setLoad(true);
+		refetch();
 	};
 
 	const handleChangeSearchDeletedUser = (state: boolean) =>

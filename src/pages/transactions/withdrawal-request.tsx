@@ -18,7 +18,6 @@ import {
 	useSearchTransaction,
 	usePageTitle,
 } from 'hooks';
-import { useAppSelector } from 'store/hooks';
 
 const WithdrawalRequestTransactions = () => {
 	usePageTitle('Withdrawal Request');
@@ -27,14 +26,12 @@ const WithdrawalRequestTransactions = () => {
 	const styles = useStyles(theme);
 	const alert = useAlert();
 	const navigate = useNavigate();
-	const [count, setCount] = useState<number>(1);
+	// const [count, setCount] = useState<number>(1);
 	const location = useLocation();
 	const query = queryString.parse(location.search);
 	const [page, setPage] = useState<number>(Number(query?.page) || 1);
 	const [total, setTotal] = useState<number>(0);
 	const maxRecordRef = useRef<number>(MAX_RECORDS);
-
-	const { canViewStatistics } = useAppSelector((store) => store.authState);
 
 	const { isSearching, searchTransaction, clearSearch, search } =
 		useSearchTransaction();
@@ -71,9 +68,9 @@ const WithdrawalRequestTransactions = () => {
 				}
 				if (data && data.success) {
 					const total = data.metadata.total;
-					setTotal(data.metadata.total);
-					const count = Math.ceil(total / maxRecordRef.current);
-					setCount(count);
+					setTotal(total);
+					// const count = Math.ceil(total / maxRecordRef.current);
+					// setCount(count);
 				}
 			},
 		}

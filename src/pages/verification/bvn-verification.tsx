@@ -19,7 +19,6 @@ import {
 	ADMIN_ROLE,
 	RouteGuard,
 	EMAIL_REX,
-	PHONE_REX,
 } from 'utilities';
 import { useAppSelector } from 'store/hooks';
 import { verifications } from 'api';

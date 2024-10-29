@@ -24,6 +24,7 @@ import {
 	RTransactionTable,
 	GiftcardESimTransactionTable,
 	CreditDebitTable,
+	ExportButton,
 } from 'components';
 import {
 	BOX_SHADOW,
@@ -33,7 +34,6 @@ import {
 	Metadata,
 	IPurchasedBill,
 	IWithdrawal,
-	ITransfer,
 	STATISTIC_TAB,
 	getFilterDateRange,
 	Transaction,
@@ -73,6 +73,7 @@ const Statistics = () => {
 	const filterUrlEntries = useRef<null | { [key: string]: any }>(null);
 
 	const queryValues = useRef<null | { [key: string]: any }>(null);
+	const sortValue = useRef<string>('-createdAt');
 
 	const maxRecordRef = useRef<number>(20);
 	const skipValue = useRef<number>(0);
@@ -251,12 +252,20 @@ const Statistics = () => {
 		let payload: { [key: string]: any } = {
 			populate: 'user,plan,dataType,network',
 			limit: maxRecordRef.current,
-			sort: '-createdAt',
+			// sort: '-createdAt',
+			sort: sortValue.current,
 		};
 
 		resetQueryValue(values.service);
 
 		queryValues.current = values;
+
+		// Date Range
+		if (values.dateRange && Object.keys(values.dateRange).length > 0)
+			payload = {
+				...payload,
+				...values.dateRange,
+			};
 
 		if (skipValue.current > 0) payload.skip = skipValue.current;
 
@@ -445,6 +454,16 @@ const Statistics = () => {
 							<StatisticsTotal name={'Total  Transactions'} figure={123000} />
 							<StatisticsTotal name={'Total  Data Revenue'} figure={123000} />
 						</StatisticsContainer>
+						{dataStatistics && dataStatistics.data && (
+							<Box
+								sx={{
+									display: 'flex',
+									justifyContent: 'flex-end',
+								}}
+							>
+								<ExportButton service={dataStatistics.service as string} />
+							</Box>
+						)}
 					</Box>
 					{dataStatistics && (
 						<>

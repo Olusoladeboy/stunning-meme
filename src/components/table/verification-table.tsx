@@ -134,7 +134,7 @@ const VerificationTable = ({
 									<>
 										{users.length > 0 ? (
 											users.map((row, key) => (
-												<TableRow key={key}>
+												<TableRow onClick={() => setSelectUser(row)} key={key}>
 													<TableCell style={styles.tableText}>
 														<Box
 															sx={{

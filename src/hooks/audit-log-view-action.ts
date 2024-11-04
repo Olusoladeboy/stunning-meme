@@ -12,7 +12,6 @@ import {
 	voucherTransactions,
 	eSimTransactions,
 	ePinTransactions,
-	bankFundings,
 	settings,
 	referrals,
 	walletTransfers,

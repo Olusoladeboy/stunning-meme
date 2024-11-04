@@ -38,17 +38,6 @@ const LienTransactions = () => {
 
 	const { isSearching, searchTransaction, clearSearch, search } =
 		useSearchTransaction();
-	const [isEnableQuery, setEnableQuery] = useState<boolean>(false);
-
-	// useEffect(
-	// 	() => {
-	// 		if (query && query.page) {
-	// 			setPage(parseInt(query.page as string));
-	// 		}
-	// 	},
-	// 	// eslint-disable-next-line
-	// 	[query]
-	// );
 
 	const { isLoading, data, refetch } = useQuery(
 		[QueryKeys.LienTransactions, query.page],
@@ -64,7 +53,6 @@ const LienTransactions = () => {
 			enabled: !!token,
 			refetchOnWindowFocus: false,
 			onSettled: (data: any, error) => {
-				setEnableQuery(false);
 				if (error) {
 					const response = handleError({ error });
 					if (response?.message) {
@@ -89,7 +77,8 @@ const LienTransactions = () => {
 			navigate(LINKS.Transactions);
 			setPage(page);
 		}
-		setEnableQuery(true);
+
+		refetch();
 	};
 
 	const handleChangeRowsPerPage = (value: number) => {

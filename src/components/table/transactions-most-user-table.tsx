@@ -1,20 +1,11 @@
-import React, { useState } from 'react';
+import React from 'react';
 import Table from '@mui/material/Table';
 import Box from '@mui/material/Box';
 import { useTheme, TableBody, TableHead } from '@mui/material';
-import moment from 'moment';
-import {
-	LIGHT_GRAY,
-	SUCCESS_COLOR,
-	PENDING_COLOR,
-	DANGER_COLOR,
-	Transaction,
-	TransactionStatus,
-} from 'utilities';
+import { LIGHT_GRAY } from 'utilities';
 import { StyledTableCell, StyledTableRow } from './components';
 import Empty from '../empty/table-empty';
 import Loader from '../loader/table-loader';
-import TransactionDetailsModal from '../modal/transaction-details-modal';
 import CustomTableCell from './components/custom-table-cell';
 
 type Props = {

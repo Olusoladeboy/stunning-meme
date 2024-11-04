@@ -4,7 +4,6 @@ import { StyledTableCell, StyledTableRow } from '.';
 import { ErrorBoundaryGuard, Transaction, LIGHT_GRAY } from 'utilities';
 import Loader from '../../loader/table-loader';
 import TableEmpty from '../../empty/table-empty';
-import { useAppSelector } from 'store/hooks';
 
 interface IAppTable {
 	header: string[];
@@ -25,8 +24,6 @@ const AppTable = ({
 	canClickRow,
 	onRowClick,
 }: IAppTable) => {
-	const { mode } = useAppSelector((store) => store.theme);
-
 	const handleRowClick = (value: Transaction) => {
 		if (typeof onRowClick === 'function') onRowClick(value);
 	};

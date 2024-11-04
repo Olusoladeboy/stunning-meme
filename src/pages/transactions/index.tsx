@@ -281,7 +281,8 @@ const Transactions = () => {
 			payload = { ...payload, ...filterUrlEntries.current };
 
 		if (values.service === SERVICES.DATA_SUBSCRIPTION) {
-			payload.populate = 'user,plan,plan.network,dataType,network';
+			payload.populate =
+				'user,plan,plan.network,dataType,network,transaction.discount_code';
 			if (values.plan) payload.plan = values.plan;
 			if (values.type) payload.dataType = values.type;
 			queryDataSubscriptions(payload);
@@ -290,21 +291,22 @@ const Transactions = () => {
 
 		if (values.service === SERVICES.AIRTIME_TOP_UP) {
 			if (values.provider) payload.network = values.provider;
-			payload.populate = 'user,plan.network,network';
+			payload.populate = 'user,plan.network,network,transaction.discount_code';
 			queryAirtimeTransactions(payload);
 			return;
 		}
 
 		if (values.service === SERVICES.AIRTIME_CONVERSION) {
 			if (values.provider) payload.network = values.provider;
-			payload.populate = 'user,plan,plan.network,network';
+			payload.populate =
+				'user,plan,plan.network,network,transaction.discount_code';
 			queryConvertAirtimes(payload);
 			return;
 		}
 
 		if (values.service === SERVICES.AUTO_AIRTIME_CONVERSION) {
 			if (values.provider) payload.network = values.provider;
-			payload.populate = 'user,network';
+			payload.populate = 'user,network,transaction.discount_code';
 
 			queryAutoConvertAirtimes(payload);
 			return;
@@ -329,13 +331,13 @@ const Transactions = () => {
 		}
 
 		if (values.service === SERVICES.EPIN) {
-			payload.populate = 'user,pin_data.network';
+			payload.populate = 'user,pin_data.network,transaction.discount_code';
 			queryEPinTransactions(payload);
 			return;
 		}
 
 		if (values.service === SERVICES.INTERNATIONAL_AIRTIME_TOP_UP) {
-			payload.populate = 'user';
+			payload.populate = 'user,transaction.discount_code';
 			queryInterAirtimeTransactions(payload);
 			return;
 		}
@@ -343,19 +345,19 @@ const Transactions = () => {
 		// queryInterDataTransactions
 
 		if (values.service === SERVICES.INTERNATIONAL_DATA_SUBSCRIPTION) {
-			payload.populate = 'user';
+			payload.populate = 'user,transaction.discount_code';
 			queryInterDataTransactions(payload);
 			return;
 		}
 
 		if (values.service === SERVICES.ESIM) {
-			payload.populate = 'user';
+			payload.populate = 'user,transaction.discount_code';
 			queryESimTransactions(payload);
 			return;
 		}
 
 		if (values.service === SERVICES.GIFT_CARD) {
-			payload.populate = 'user';
+			payload.populate = 'user,transaction.discount_code';
 			queryGiftCardTransactions(payload);
 			return;
 		}
@@ -380,7 +382,7 @@ const Transactions = () => {
 			values.service === SERVICES.BETTING
 		) {
 			payload.type = values.service;
-			payload.populate = 'user';
+			payload.populate = 'user,transaction.discount_code';
 			if (values.provider) payload.name = values.provider;
 
 			await queryBillTransactions(payload);

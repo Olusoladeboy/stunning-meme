@@ -20,7 +20,7 @@ import Select from '../form-components/select';
 import { User, QueryKeys, FUND_WALLET_SERVICE } from 'utilities';
 import { useAlert, useHandleError } from 'hooks';
 import { transactUser } from 'api';
-import { Close, Search } from '@mui/icons-material';
+import { Close } from '@mui/icons-material';
 import { useSearchTransaction } from 'hooks';
 
 type Props = {

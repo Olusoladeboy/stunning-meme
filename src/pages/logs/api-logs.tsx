@@ -1,28 +1,15 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useQuery } from 'react-query';
 import { Box } from '@mui/material';
-import {
-	Layout,
-	ApiLogsTable,
-	TableHeader,
-	Pagination,
-	TablePagination,
-} from 'components';
+import { Layout, ApiLogsTable, TableHeader, TablePagination } from 'components';
 import { useAlert, useHandleError, usePageTitle, useSearchApiLog } from 'hooks';
-import {
-	ADMIN_ROLE,
-	LINKS,
-	MAX_RECORDS,
-	QueryKeys,
-	RouteGuard,
-} from 'utilities';
+import { LINKS, MAX_RECORDS, QueryKeys } from 'utilities';
 import { apiLogs } from 'api';
 
 const ApiLogs = () => {
 	usePageTitle('Api logs');
 	const handleError = useHandleError();
-	const [isEnableQuery, setEnableQuery] = useState<boolean>(false);
 	const alert = useAlert();
 	const navigate = useNavigate();
 
@@ -47,7 +34,6 @@ const ApiLogs = () => {
 		{
 			refetchOnWindowFocus: false,
 			onSettled: (data: any, error) => {
-				setEnableQuery(false);
 				if (error) {
 					const response = handleError({ error });
 					if (response?.message) {

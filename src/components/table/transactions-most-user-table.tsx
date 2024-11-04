@@ -9,7 +9,7 @@ import Loader from '../loader/table-loader';
 import CustomTableCell from './components/custom-table-cell';
 
 type Props = {
-	data: { amount: number; email: string; count: string }[] | null;
+	data: { total: number; email: string; transactionCount: string }[] | null;
 	isLoading?: boolean;
 };
 
@@ -54,13 +54,15 @@ const TransactionMostUserTable = ({ data, isLoading }: Props) => {
 												key={key}
 											>
 												<StyledTableCell style={styles.text}>
-													{data.email}
+													{data?.email}
 												</StyledTableCell>
 												<StyledTableCell style={styles.text}>
-													{formatNumberToCurrency(checkAmount(data.amount))}
+													{data.total
+														? formatNumberToCurrency(checkAmount(data.total))
+														: 0}
 												</StyledTableCell>
 												<StyledTableCell style={styles.text}>
-													{data.count}
+													{data?.transactionCount}
 												</StyledTableCell>
 											</StyledTableRow>
 										))

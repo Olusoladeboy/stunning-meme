@@ -11,6 +11,7 @@ interface Props {
 	buttonText?: string;
 	isLoading?: boolean;
 	button?: ReactNode;
+	customButton?: ReactNode;
 	setDateRange?: (date: string) => void;
 }
 
@@ -21,6 +22,7 @@ const DatePicker: React.FC<Props> = ({
 	isLoading,
 	button,
 	setDateRange,
+	customButton,
 }) => {
 	const date = new Date();
 
@@ -51,13 +53,15 @@ const DatePicker: React.FC<Props> = ({
 				onChange={handleOnChange}
 			/>
 
-			<ButtonContainer>
-				<Button loading={isLoading} onClick={handleApplyChange}>
-					{buttonText}
-				</Button>
-				<Button onClick={cancelPicker}>Cancel</Button>
-				{button}
-			</ButtonContainer>
+			{customButton || (
+				<ButtonContainer>
+					<Button loading={isLoading} onClick={handleApplyChange}>
+						{buttonText}
+					</Button>
+					{button}
+					<Button onClick={cancelPicker}>Cancel</Button>
+				</ButtonContainer>
+			)}
 		</Container>
 	);
 };

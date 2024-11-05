@@ -74,6 +74,9 @@ const Statistics = () => {
 
 	const queryValues = useRef<null | { [key: string]: any }>(null);
 	const sortValue = useRef<string>('-createdAt');
+	const dataPlan = useRef<string>('');
+	const dataType = useRef<string>('');
+	const network = useRef<string>('');
 
 	const maxRecordRef = useRef<number>(20);
 	const skipValue = useRef<number>(0);
@@ -256,7 +259,13 @@ const Statistics = () => {
 			sort: sortValue.current,
 		};
 
+		console.log(values);
+
+		// Clear data
 		resetQueryValue(values.service);
+		network.current = '';
+		dataType.current = '';
+		dataPlan.current = '';
 
 		queryValues.current = values;
 
@@ -275,26 +284,51 @@ const Statistics = () => {
 			payload = { ...payload, ...filterUrlEntries.current };
 
 		if (values.service === SERVICES.DATA_SUBSCRIPTION) {
-			if (values.plan) payload.plan = values.plan;
-			if (values.type) payload.dataType = values.type;
+			values.populate = 'user,plan,dataType,network';
+			if (values.provider) {
+				payload.network = values.provider;
+				network.current = values.provider;
+			}
+			if (values.plan) {
+				payload.plan = values.plan;
+				dataPlan.current = values.plan;
+			}
+			if (values.type) {
+				payload.dataType = values.type;
+				dataType.current = values.type;
+			}
+
 			queryDataSubscriptions(payload);
 			return;
 		}
 
 		if (values.service === SERVICES.AIRTIME_TOP_UP) {
-			if (values.provider) payload.network = values.provider;
+			values.populate = 'user,network';
+
+			if (values.provider) {
+				payload.network = values.provider;
+				network.current = values.provider;
+			}
 			queryAirtimeTransactions(payload);
 			return;
 		}
 
 		if (values.service === SERVICES.AIRTIME_CONVERSION) {
-			if (values.provider) payload.network = values.provider;
+			values.populate = 'user,network';
+			if (values.provider) {
+				payload.network = values.provider;
+				network.current = values.provider;
+			}
 			queryConvertAirtimes(payload);
 			return;
 		}
 
 		if (values.service === SERVICES.AUTO_AIRTIME_CONVERSION) {
-			if (values.provider) payload.network = values.provider;
+			values.populate = 'user,network';
+			if (values.provider) {
+				payload.network = values.provider;
+				network.current = values.provider;
+			}
 			queryAutoConvertAirtimes(payload);
 			return;
 		}
@@ -336,6 +370,7 @@ const Statistics = () => {
 		}
 
 		if (values.service === SERVICES.ESIM) {
+			values.populate = 'user';
 			queryESimTransactions(payload);
 			return;
 		}
@@ -365,6 +400,7 @@ const Statistics = () => {
 			values.service === SERVICES.EDUCATION ||
 			values.service === SERVICES.BETTING
 		) {
+			values.populate = 'user';
 			payload.type = values.service;
 			if (values.provider) payload.name = values.provider;
 
@@ -461,7 +497,12 @@ const Statistics = () => {
 									justifyContent: 'flex-end',
 								}}
 							>
-								<ExportButton service={dataStatistics.service as string} />
+								<ExportButton
+									network={network.current}
+									dataPlan={dataPlan.current}
+									dataType={dataType.current}
+									service={dataStatistics.service as string}
+								/>
 							</Box>
 						)}
 					</Box>

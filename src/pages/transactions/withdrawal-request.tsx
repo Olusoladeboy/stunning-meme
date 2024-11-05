@@ -10,7 +10,13 @@ import {
 	TablePagination,
 	WithdrawalTransactionsTable,
 } from 'components';
-import { BOX_SHADOW, MAX_RECORDS, LINKS } from 'utilities';
+import {
+	BOX_SHADOW,
+	MAX_RECORDS,
+	LINKS,
+	RouteGuard,
+	ADMIN_ROLE,
+} from 'utilities';
 import { walletWithdrawal } from 'api';
 import {
 	useHandleError,
@@ -94,43 +100,45 @@ const WithdrawalRequestTransactions = () => {
 
 	return (
 		<Layout>
-			<Box style={styles.container}>
-				<Box
-					sx={{
-						padding: { xs: '0px 15px', md: '0px 2rem' },
-						display: 'grid',
-						gap: '2rem',
-					}}
-				>
-					<TableHeader
-						searchPlaceholder={'Search transaction by reference'}
-						title={'Withdrawal  Request'}
-						handleSearch={searchTransaction}
-						clearSearch={clearSearch}
+			<RouteGuard roles={[ADMIN_ROLE.SUPER_ADMIN]}>
+				<Box style={styles.container}>
+					<Box
+						sx={{
+							padding: { xs: '0px 15px', md: '0px 2rem' },
+							display: 'grid',
+							gap: '2rem',
+						}}
+					>
+						<TableHeader
+							searchPlaceholder={'Search transaction by reference'}
+							title={'Withdrawal  Request'}
+							handleSearch={searchTransaction}
+							clearSearch={clearSearch}
+						/>
+					</Box>
+
+					<WithdrawalTransactionsTable
+						hasActionButton
+						isLoading={isLoading || isSearching}
+						data={search && search.length > 0 ? search : data && data.payload}
 					/>
+
+					{!Boolean(search && search.length > 0) &&
+						!isSearching &&
+						!isLoading &&
+						total > maxRecordRef.current && (
+							<Box style={styles.paginationWrapper}>
+								<TablePagination
+									page={page - 1}
+									count={Number(total)}
+									onPageChange={(value) => handlePageChange(value + 1)}
+									rowsPerPage={maxRecordRef.current}
+									handleChangeRowsPerPage={handleChangeRowsPerPage}
+								/>
+							</Box>
+						)}
 				</Box>
-
-				<WithdrawalTransactionsTable
-					hasActionButton
-					isLoading={isLoading || isSearching}
-					data={search && search.length > 0 ? search : data && data.payload}
-				/>
-
-				{!Boolean(search && search.length > 0) &&
-					!isSearching &&
-					!isLoading &&
-					total > maxRecordRef.current && (
-						<Box style={styles.paginationWrapper}>
-							<TablePagination
-								page={page - 1}
-								count={Number(total)}
-								onPageChange={(value) => handlePageChange(value + 1)}
-								rowsPerPage={maxRecordRef.current}
-								handleChangeRowsPerPage={handleChangeRowsPerPage}
-							/>
-						</Box>
-					)}
-			</Box>
+			</RouteGuard>
 		</Layout>
 	);
 };

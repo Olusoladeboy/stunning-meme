@@ -1,4 +1,10 @@
-import React, { useState, useEffect, CSSProperties, MouseEvent } from 'react';
+import React, {
+	useState,
+	useEffect,
+	CSSProperties,
+	MouseEvent,
+	useRef,
+} from 'react';
 import queryString from 'query-string';
 import {
 	Box,
@@ -12,15 +18,24 @@ import {
 } from '@mui/material';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { grey } from '@mui/material/colors';
+import moment from 'moment';
 import {
 	Layout,
+	ModalWrapper,
 	Pagination,
 	TableHeader,
 	TransactionsMostUserTable,
 } from 'components';
-import { BOX_SHADOW, MAX_RECORDS, LINKS, dateRanges } from 'utilities';
+import {
+	BOX_SHADOW,
+	MAX_RECORDS,
+	LINKS,
+	SECOUNDARY_COLOR,
+	capitalize,
+} from 'utilities';
 import { useAlert, usePageTitle, useQueryTransactionStatistics } from 'hooks';
 import { ArrowDropDown } from '@mui/icons-material';
+import DatePicker from 'components/form-components/date-picker';
 
 export const TRANSACTION_SERVICE = {
 	AIRTIME: 'AIRTIME',
@@ -43,6 +58,9 @@ const TransactionMostUsers = () => {
 	const query = queryString.parse(location.search);
 	const [page, setPage] = useState<number>(Number(query?.page) || 1);
 	const [total, setTotal] = useState<number>(0);
+	const [isDisplayPicker, setDisplayPicker] = useState<boolean>(false);
+	const startDate = useRef<string>('');
+	const endDate = useRef<string>('');
 
 	const {
 		isLoadingTransactionStatistics,
@@ -62,7 +80,6 @@ const TransactionMostUsers = () => {
 		null
 	);
 	const [transactionService, setTransactionService] = useState<string>('');
-	const [isDisplayPicker, setDisplayPicker] = useState<boolean>(false);
 
 	const handleServiceClick = (e: MouseEvent<HTMLElement>) => {
 		setServiceAnchorEl(serviceAnchorEl ? null : e.currentTarget);
@@ -95,78 +112,192 @@ const TransactionMostUsers = () => {
 		}
 	};
 
-	const handleQueryTransaction = (service: string) => {
+	const handleQueryTransaction = () => {
+		if (!transactionService) {
+			alert({
+				message: 'Select transaction service',
+				type: 'info',
+			});
+			return;
+		}
+
 		let payload: { [key: string]: any } = {
-			service,
+			service: transactionService,
 		};
+
+		if (startDate.current) payload.start_date = startDate.current;
+		if (endDate.current) payload.end_date = endDate.current;
 
 		if (page > 1) payload.page = page;
 
+		setDisplayPicker(false);
 		queryTransactionStatistics(payload);
 	};
 
-	const handleFilter = (transactionService: string) => {
-		setServiceAnchorEl(null); // Clear   anchor state
-		setTransactionService(transactionService);
-
-		handleQueryTransaction(transactionService);
+	const closeModal = () => {
+		setDisplayPicker(false);
+		setTransactionService('');
+	};
+	const openModal = () => {
+		setDisplayPicker(true);
+		startDate.current = '';
+		endDate.current = '';
 	};
 
-	const handleApplyChange = (range: any) => {
-		const { startDate, endDate } = range;
+	const handleSetDateRange = (dateRange: any) => {
+		// Clear state
+		startDate.current = '';
+		endDate.current = '';
+		const rangeStartDate = moment(dateRange.startDate).format('YYYY-MM-DD');
+		const rangeEndDate = moment(dateRange.endDate).format('YYYY-MM-DD');
 
-		const data = dateRanges(startDate, endDate);
+		if (rangeStartDate === rangeEndDate) {
+			startDate.current = rangeStartDate;
+		} else {
+			startDate.current = rangeStartDate;
+			endDate.current = rangeEndDate;
+		}
 	};
+
+	// const statusFilter = (
+	// 	<Box
+	// 		sx={{
+	// 			display: 'flex',
+	// 			alignItems: 'center',
+	// 			gap: '10px',
+	// 		}}
+	// 	>
+	// 		<TextInput placeholder='Start date' size='small' type='date' />
+	// 		<TextInput placeholder='End date' size='small' />
+	// 		<Box>
+	// 			<ClickAwayListener onClickAway={() => setServiceAnchorEl(null)}>
+	// 				<Box>
+	// 					<Button
+	// 						style={styles.button as CSSProperties}
+	// 						onClick={(e) => handleServiceClick(e)}
+	// 						variant={'outlined'}
+	// 						endIcon={<ArrowDropDown />}
+	// 					>
+	// 						Filter by Service
+	// 					</Button>
+	// 					<Popper
+	// 						sx={{ zIndex: theme.zIndex.modal }}
+	// 						open={Boolean(serviceAnchorEl)}
+	// 						anchorEl={serviceAnchorEl}
+	// 					>
+	// 						<List
+	// 							sx={{
+	// 								'& .MuiListItemButton-root': {
+	// 									textTransform: 'capitalize',
+	// 								},
+	// 								'& .MuiListItemButton-root:hover': {
+	// 									backgroundColor: theme.palette.primary.main,
+	// 									color: grey[50],
+	// 								},
+	// 							}}
+	// 							style={styles.list}
+	// 						>
+	// 							{Object.values(TRANSACTION_SERVICE).map((value) => (
+	// 								<ListItemButton
+	// 									sx={{
+	// 										textTransform: 'capitalize',
+	// 									}}
+	// 									onClick={() => handleFilter(value)}
+	// 									key={value}
+	// 								>
+	// 									{value}
+	// 								</ListItemButton>
+	// 							))}
+	// 						</List>
+	// 					</Popper>
+	// 				</Box>
+	// 			</ClickAwayListener>
+	// 		</Box>
+	// 	</Box>
+	// );
 
 	const statusFilter = (
-		<Box>
-			<ClickAwayListener onClickAway={() => setServiceAnchorEl(null)}>
-				<Box>
-					<Button
-						style={styles.button as CSSProperties}
-						onClick={(e) => handleServiceClick(e)}
-						variant={'outlined'}
-						endIcon={<ArrowDropDown />}
-					>
-						Filter by Service
-					</Button>
-					<Popper
-						sx={{ zIndex: theme.zIndex.modal }}
-						open={Boolean(serviceAnchorEl)}
-						anchorEl={serviceAnchorEl}
-					>
-						<List
-							sx={{
-								'& .MuiListItemButton-root': {
-									textTransform: 'capitalize',
-								},
-								'& .MuiListItemButton-root:hover': {
-									backgroundColor: theme.palette.primary.main,
-									color: grey[50],
-								},
-							}}
-							style={styles.list}
+		<Box
+			sx={{
+				marginTop: '10px',
+				display: 'flex',
+				alignItems: 'center',
+				gap: '10px',
+			}}
+		>
+			<Box>
+				<ClickAwayListener onClickAway={() => setServiceAnchorEl(null)}>
+					<Box>
+						<Button
+							style={
+								{ ...styles.outlineBtn, minWidth: '120px' } as CSSProperties
+							}
+							onClick={(e) => handleServiceClick(e)}
+							variant={'outlined'}
+							endIcon={<ArrowDropDown />}
 						>
-							{Object.values(TRANSACTION_SERVICE).map((value) => (
-								<ListItemButton
-									sx={{
+							{capitalize(transactionService) || 'Select Service'}
+						</Button>
+						<Popper
+							sx={{ zIndex: theme.zIndex.modal }}
+							open={Boolean(serviceAnchorEl)}
+							anchorEl={serviceAnchorEl}
+						>
+							<List
+								sx={{
+									'& .MuiListItemButton-root': {
 										textTransform: 'capitalize',
-									}}
-									onClick={() => handleFilter(value)}
-									key={value}
-								>
-									{value}
-								</ListItemButton>
-							))}
-						</List>
-					</Popper>
-				</Box>
-			</ClickAwayListener>
+									},
+									'& .MuiListItemButton-root:hover': {
+										backgroundColor: theme.palette.primary.main,
+										color: grey[50],
+									},
+								}}
+								style={styles.list}
+							>
+								{Object.values(TRANSACTION_SERVICE).map((value) => (
+									<ListItemButton
+										sx={{
+											textTransform: 'capitalize',
+										}}
+										onClick={() => {
+											setServiceAnchorEl(null);
+											setTransactionService(value);
+										}}
+										key={value}
+									>
+										{capitalize(value)}
+									</ListItemButton>
+								))}
+							</List>
+						</Popper>
+					</Box>
+				</ClickAwayListener>
+			</Box>
+			<Button
+				style={styles.primaryButton as CSSProperties}
+				onClick={(e) => handleQueryTransaction()}
+			>
+				Apply
+			</Button>
 		</Box>
 	);
 
 	return (
 		<Layout>
+			{isDisplayPicker && (
+				<ModalWrapper
+					title={'Filter Transaction'}
+					contentWidth='700px'
+					closeModal={closeModal}
+				>
+					<DatePicker
+						cancelPicker={() => setDisplayPicker(false)}
+						setDateRange={handleSetDateRange}
+						customButton={statusFilter}
+					/>
+				</ModalWrapper>
+			)}
 			<Box style={styles.container}>
 				<Box
 					sx={{
@@ -179,11 +310,20 @@ const TransactionMostUsers = () => {
 						canSearch={false}
 						searchPlaceholder={'Search transaction by reference'}
 						title={'Transactions (Most User)'}
-						statusFilter={statusFilter}
+						statusFilter={
+							<Button
+								style={styles.outlineBtn as CSSProperties}
+								onClick={openModal}
+								variant={'outlined'}
+								// endIcon={<ArrowDropDown />}
+							>
+								Filter record
+							</Button>
+						}
 					/>
 				</Box>
 
-				{transactionService ? (
+				{transactionService && dataTransactionStatistics ? (
 					<>
 						<TransactionsMostUserTable
 							isLoading={isLoadingTransactionStatistics}
@@ -235,8 +375,12 @@ const useStyles = (theme: any) => ({
 		justifyContent: 'flex-end',
 		paddingRight: '20px',
 	},
-	button: {
+	outlineBtn: {
 		whiteSpace: 'nowrap',
+	},
+	primaryButton: {
+		backgroundColor: `${SECOUNDARY_COLOR}`,
+		color: 'white',
 	},
 	list: {
 		border: `1px solid ${theme.palette.primary.main}`,

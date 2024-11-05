@@ -33,6 +33,9 @@ interface IExportButton {
 	onExport?: (dateRange: string) => void;
 	isProcessing?: boolean;
 	service: string;
+	network?: string;
+	dataType?: string;
+	dataPlan?: string;
 }
 
 type TTransactionPayload = {
@@ -60,7 +63,14 @@ const handleProcessData = (data: any) => {
 	});
 };
 
-const ExportButton = ({ onExport, isProcessing, service }: IExportButton) => {
+const ExportButton = ({
+	onExport,
+	isProcessing,
+	service,
+	dataType,
+	dataPlan,
+	network,
+}: IExportButton) => {
 	const [isDisplayPicker, setDisplayPicker] = useState<boolean>(false);
 
 	const queryValues = useRef<null | { [key: string]: any }>(null);
@@ -224,6 +234,10 @@ const ExportButton = ({ onExport, isProcessing, service }: IExportButton) => {
 		let payload: { [key: string]: any } = {
 			// sort: sortValue.current,
 		};
+
+		if (network) payload.network = network;
+		if (dataPlan) payload.plan = dataPlan;
+		if (dataType) payload.dataType = dataType;
 
 		queryValues.current = values;
 

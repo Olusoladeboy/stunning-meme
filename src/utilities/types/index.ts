@@ -109,6 +109,7 @@ export type AuthState = {
 	token: string | null;
 	canViewStatistics: boolean;
 	canCreateOrUpdateRecord: boolean;
+	canApproveWithdrawal: boolean;
 };
 
 export enum SettingsTab {

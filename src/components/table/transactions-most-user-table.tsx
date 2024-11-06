@@ -2,14 +2,14 @@ import React from 'react';
 import Table from '@mui/material/Table';
 import Box from '@mui/material/Box';
 import { useTheme, TableBody, TableHead } from '@mui/material';
-import { LIGHT_GRAY } from 'utilities';
+import { LIGHT_GRAY, checkAmount, formatNumberToCurrency } from 'utilities';
 import { StyledTableCell, StyledTableRow } from './components';
 import Empty from '../empty/table-empty';
 import Loader from '../loader/table-loader';
 import CustomTableCell from './components/custom-table-cell';
 
 type Props = {
-	data: { total: number; email: string }[] | null;
+	data: { total: number; email: string; transactionCount: string }[] | null;
 	isLoading?: boolean;
 };
 
@@ -31,7 +31,8 @@ const TransactionMostUserTable = ({ data, isLoading }: Props) => {
 					>
 						<StyledTableRow>
 							<CustomTableCell label={'Email'} />
-							<CustomTableCell label={'Transactions'} />
+							<CustomTableCell label={'Amount'} />
+							<CustomTableCell label={'Count'} />
 						</StyledTableRow>
 					</TableHead>
 					<TableBody
@@ -42,7 +43,7 @@ const TransactionMostUserTable = ({ data, isLoading }: Props) => {
 						}}
 					>
 						{isLoading ? (
-							<Loader colSpan={2} />
+							<Loader colSpan={3} />
 						) : (
 							data && (
 								<>
@@ -53,15 +54,20 @@ const TransactionMostUserTable = ({ data, isLoading }: Props) => {
 												key={key}
 											>
 												<StyledTableCell style={styles.text}>
-													{data.email}
+													{data?.email}
 												</StyledTableCell>
 												<StyledTableCell style={styles.text}>
-													{data.total}
+													{data.total
+														? formatNumberToCurrency(checkAmount(data.total))
+														: 0}
+												</StyledTableCell>
+												<StyledTableCell style={styles.text}>
+													{data?.transactionCount}
 												</StyledTableCell>
 											</StyledTableRow>
 										))
 									) : (
-										<Empty colSpan={2} text={'No record found'} />
+										<Empty colSpan={3} text={'No record found'} />
 									)}
 								</>
 							)

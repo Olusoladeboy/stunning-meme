@@ -64,6 +64,13 @@ import {
 } from 'hooks';
 import { useAppSelector } from 'store/hooks';
 
+const STATUS = {
+	ALL: 'ALL',
+	SUCCESSFUL: 'SUCCESSFUL',
+	PENDING: 'PENDING',
+	FAILED: 'FAILED',
+};
+
 type TDataStatistics = {
 	service: string;
 	data: { [key: string]: any }[] | null;
@@ -83,9 +90,13 @@ const Transactions = () => {
 	const [total, setTotal] = useState(0);
 	const [currentPage, setCurrentPage] = useState(1);
 	const [selectedService, setSelectedService] = useState<string>('');
+	const [selectedStatus, setSelectedStatus] = useState<string>(STATUS.ALL);
 
 	const filterUrlEntries = useRef<null | { [key: string]: any }>(null);
 	const [serviceAnchorEl, setServiceAnchorEl] = useState<null | HTMLElement>(
+		null
+	);
+	const [statusAnchorEl, setStatusAnchorEl] = useState<null | HTMLElement>(
 		null
 	);
 
@@ -99,6 +110,10 @@ const Transactions = () => {
 
 	const handleServiceClick = (e: MouseEvent<HTMLElement>) => {
 		setServiceAnchorEl(serviceAnchorEl ? null : e.currentTarget);
+	};
+
+	const handleStatusClick = (e: MouseEvent<HTMLElement>) => {
+		setStatusAnchorEl(statusAnchorEl ? null : e.currentTarget);
 	};
 
 	const handleSetTotal = (metadata: Metadata) => {
@@ -272,6 +287,9 @@ const Transactions = () => {
 
 		queryValues.current = values;
 
+		if (values.status && values.status !== STATUS.ALL)
+			payload.status = values.status;
+
 		if (skipValue.current > 0) payload.skip = skipValue.current;
 		if (values.reference) payload.reference = values.reference;
 
@@ -412,6 +430,18 @@ const Transactions = () => {
 
 		switchHandleSubmit({
 			service,
+			status: selectedStatus,
+		});
+	};
+
+	// Handle select status
+	const handleSelectStatus = (status: string) => {
+		setStatusAnchorEl(null);
+		setSelectedStatus(status);
+
+		switchHandleSubmit({
+			service: selectedService,
+			status,
 		});
 	};
 
@@ -432,10 +462,13 @@ const Transactions = () => {
 			return;
 		}
 
-		const payload = {
+		const payload: { [key: string]: any } = {
 			service: selectedService,
 			reference,
 		};
+
+		if (selectedStatus && selectedStatus !== STATUS.ALL)
+			payload.status = selectedStatus;
 
 		switchHandleSubmit(payload);
 	};
@@ -446,7 +479,7 @@ const Transactions = () => {
 		});
 	};
 
-	const statusFilter = (
+	const servicesFilter = (
 		<ClickAwayListener onClickAway={() => setServiceAnchorEl(null)}>
 			<Box>
 				<Button
@@ -505,6 +538,63 @@ const Transactions = () => {
 		</ClickAwayListener>
 	);
 
+	const statusFilter = (
+		<ClickAwayListener onClickAway={() => setStatusAnchorEl(null)}>
+			<Box>
+				<Button
+					size='large'
+					style={styles.button as CSSProperties}
+					onClick={(e) => handleStatusClick(e)}
+					variant={'outlined'}
+					endIcon={<ArrowDropDown />}
+				>
+					{selectedStatus ? (
+						<>
+							{selectedStatus === SERVICES.CARD_FUNDING
+								? 'Card/Bank funding'
+								: `${capitalize(selectedStatus)}`}
+						</>
+					) : (
+						'Filter by status'
+					)}
+				</Button>
+				<Popper
+					// sx={{ zIndex: theme.zIndex.tooltip }}
+					open={Boolean(statusAnchorEl)}
+					anchorEl={statusAnchorEl}
+					sx={{
+						zIndex: theme.zIndex.appBar - 10,
+					}}
+				>
+					<List
+						sx={{
+							'& .MuiListItemButton-root': {
+								textTransform: 'capitalize',
+							},
+							'& .MuiListItemButton-root:hover': {
+								backgroundColor: theme.palette.primary.main,
+								color: grey[50],
+							},
+							maxHeight: '360px',
+							height: '100%',
+							overflow: 'auto',
+						}}
+						style={styles.list}
+					>
+						{Object.values(STATUS).map((value) => (
+							<ListItemButton
+								onClick={() => handleSelectStatus(value)}
+								key={value}
+							>
+								{capitalize(value.replace(/_/g, ' '))}
+							</ListItemButton>
+						))}
+					</List>
+				</Popper>
+			</Box>
+		</ClickAwayListener>
+	);
+
 	return (
 		<Layout>
 			<Container>
@@ -518,7 +608,12 @@ const Transactions = () => {
 					<TableHeader
 						searchPlaceholder={'Search transaction by reference'}
 						title={'Transactions'}
-						statusFilter={statusFilter}
+						statusFilter={
+							<Box sx={{ display: 'flex', gap: '15px' }}>
+								{servicesFilter}
+								{statusFilter}
+							</Box>
+						}
 						handleSearch={handleSearch}
 						clearSearch={clearSearch}
 					/>

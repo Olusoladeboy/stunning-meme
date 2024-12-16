@@ -24,6 +24,7 @@ import Button from 'components/button';
 import { green, red } from '@mui/material/colors';
 import Loader from 'components/loader';
 import { useAlert, useHandleError } from 'hooks';
+import { useAppSelector } from 'store/hooks';
 
 type Props = {
 	data: IWithdrawal[];
@@ -41,6 +42,11 @@ const WithdrawalTransactionsTable = ({
 	const queryClient = useQueryClient();
 	const alert = useAlert();
 	const styles = useStyles(theme);
+
+	const canApproveWithdrawal = useAppSelector(
+		(store) => store.authState.canApproveWithdrawal
+	);
+
 	const [selectedTransaction, setSelectedTransaction] =
 		useState<null | IWithdrawal>(null);
 
@@ -73,6 +79,13 @@ const WithdrawalTransactionsTable = ({
 	);
 
 	const handleMutate = ({ id, status }: { id: string; status: string }) => {
+		if (!canApproveWithdrawal) {
+			alert({
+				message: 'You are not authorize to perform the operation',
+				type: 'info',
+			});
+			return;
+		}
 		mutate({
 			id,
 			data: {

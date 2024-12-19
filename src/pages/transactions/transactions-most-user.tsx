@@ -32,6 +32,7 @@ import {
 	LINKS,
 	SECOUNDARY_COLOR,
 	capitalize,
+	removeSpecialChar,
 } from 'utilities';
 import { useAlert, usePageTitle, useQueryTransactionStatistics } from 'hooks';
 import { ArrowDropDown } from '@mui/icons-material';
@@ -45,6 +46,8 @@ export const TRANSACTION_SERVICE = {
 	INTERNET: 'INTERNET',
 	ELECTRICITY: 'ELECTRICITY',
 	BETTING: 'BETTING',
+	AIRTIME_CONVERSION: 'AIRTIME_CONVERSION',
+	AUTO_AIRTIME_CONVERSION: 'AIRTIME_AUTO_CONVERSION',
 };
 
 const TransactionMostUsers = () => {
@@ -266,7 +269,7 @@ const TransactionMostUsers = () => {
 										}}
 										key={value}
 									>
-										{capitalize(value)}
+										{capitalize(removeSpecialChar(value))}
 									</ListItemButton>
 								))}
 							</List>

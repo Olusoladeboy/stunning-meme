@@ -376,6 +376,7 @@ export interface IVerification {
 		payload: string;
 		dob?: string;
 	};
+	response: { [key: string]: any };
 	level: number;
 	payload: string;
 	type: string;

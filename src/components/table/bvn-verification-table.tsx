@@ -1,6 +1,7 @@
-import React, { CSSProperties } from 'react';
+import React, { CSSProperties, useState } from 'react';
 import Table from '@mui/material/Table';
 import { useMutation, useQueryClient } from 'react-query';
+import JsonFormatter from 'react-json-formatter';
 import { Avatar, useTheme, TableBody, TableHead, Box } from '@mui/material';
 import { grey } from '@mui/material/colors';
 import {
@@ -22,6 +23,7 @@ import { useAlert, useHandleError } from 'hooks';
 import { updateVerification } from 'api';
 import CustomTableCell from './components/custom-table-cell';
 import Loader from 'components/loader';
+import ModalWrapper from 'components/modal/Wrapper';
 
 type Props = {
 	data: IVerification[] | null | undefined;
@@ -42,6 +44,18 @@ const BvnVerificationTable = ({
 
 	const queryClient = useQueryClient();
 	const setAlert = useAlert();
+
+	const jsonStyle = {
+		propertyStyle: { color: 'red' },
+		stringStyle: { color: 'green' },
+		numberStyle: { color: 'darkorange' },
+	};
+
+	const [jsonData, setJsonData] = useState<string>('');
+
+	const handleViewLog = (log: any) => {
+		setJsonData(JSON.stringify(log));
+	};
 
 	const { isLoading: isVerifyingUser, mutate: mutateVerifyUser } = useMutation(
 		updateVerification,
@@ -75,6 +89,24 @@ const BvnVerificationTable = ({
 
 	return (
 		<>
+			{jsonData && (
+				<ModalWrapper
+					title={'Request and Response Data'}
+					hasCloseButton={true}
+					closeModal={() => setJsonData('')}
+				>
+					<Box
+						sx={{
+							overflow: 'auto',
+							maxWidth: '540px',
+							width: '100%',
+							alignSelf: 'flex-start',
+						}}
+					>
+						<JsonFormatter json={jsonData} tabWith={4} jsonStyle={jsonStyle} />
+					</Box>
+				</ModalWrapper>
+			)}
 			{isVerifyingUser && <Loader />}
 			<Box style={styles.container} sx={{ overflow: 'auto' }}>
 				<Box
@@ -156,6 +188,18 @@ const BvnVerificationTable = ({
 													<TableCell sx={{ maxWidth: '180px' }}>
 														{row.status === VERIFICATION_STATUS.PENDING && (
 															<Box style={styles.verifyPushWrapper}>
+																<Button
+																	onClick={() =>
+																		handleViewLog({
+																			request: row.request,
+																			response: row.response,
+																		})
+																	}
+																	size={'small'}
+																	style={styles.button as CSSProperties}
+																>
+																	View request & response
+																</Button>
 																<Button
 																	onClick={() =>
 																		handleVerifyUser(

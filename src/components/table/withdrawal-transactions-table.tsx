@@ -78,6 +78,8 @@ const WithdrawalTransactionsTable = ({
 		}
 	);
 
+	console.log(canApproveWithdrawal);
+
 	const handleMutate = ({ id, status }: { id: string; status: string }) => {
 		if (!canApproveWithdrawal) {
 			alert({

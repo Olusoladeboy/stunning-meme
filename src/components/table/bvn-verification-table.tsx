@@ -185,7 +185,7 @@ const BvnVerificationTable = ({
 													>
 														{row.status}
 													</TableCell>
-													<TableCell sx={{ maxWidth: '180px' }}>
+													<TableCell>
 														{row.status === VERIFICATION_STATUS.PENDING && (
 															<Box style={styles.verifyPushWrapper}>
 																<Button
@@ -196,7 +196,12 @@ const BvnVerificationTable = ({
 																		})
 																	}
 																	size={'small'}
-																	style={styles.button as CSSProperties}
+																	style={
+																		{
+																			...styles.button,
+																			minWidth: '180px',
+																		} as CSSProperties
+																	}
 																>
 																	View request & response
 																</Button>
@@ -271,6 +276,7 @@ const useStyles = (theme: any) => ({
 
 	tableText: {
 		color: theme.palette.primary.main,
+		whiteSpace: 'nowrap',
 	},
 
 	verifyPushWrapper: {

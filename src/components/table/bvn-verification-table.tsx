@@ -160,6 +160,7 @@ const BvnVerificationTable = ({
 																display: 'flex',
 																alignItems: 'center',
 																gap: '10px',
+																whiteSpace: 'nowrap !important',
 															}}
 														>
 															<Avatar src={row.user?.avatar} />
@@ -276,7 +277,6 @@ const useStyles = (theme: any) => ({
 
 	tableText: {
 		color: theme.palette.primary.main,
-		whiteSpace: 'nowrap',
 	},
 
 	verifyPushWrapper: {

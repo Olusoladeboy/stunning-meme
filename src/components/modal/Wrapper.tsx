@@ -24,6 +24,7 @@ const ModalWrapper = ({
 	const theme = useTheme();
 	return (
 		<Box
+			onClick={closeModal}
 			sx={{
 				position: 'fixed',
 				top: '0px',

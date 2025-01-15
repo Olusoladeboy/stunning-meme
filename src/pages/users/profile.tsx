@@ -28,7 +28,9 @@ const Profile = () => {
 	const alert = useAlert();
 	const handleError = useHandleError();
 	const styles = useStyles(theme);
+
 	const { id } = useParams();
+
 	const location = useLocation();
 	const { token } = useAppSelector((store) => store.authState);
 	const [user, setUser] = useState<null | User>(null);
@@ -110,7 +112,7 @@ const Profile = () => {
 				},
 			}),
 		{
-			enabled: !!(token && id),
+			enabled: !!(id && token),
 			refetchOnWindowFocus: false,
 			onSettled: (data, error) => {
 				if (error) {
@@ -118,7 +120,12 @@ const Profile = () => {
 					if (response?.message)
 						alert({ message: response.message, type: 'error' });
 				}
-				if (data && data.success) {
+				if (
+					data &&
+					data.success &&
+					data.payload &&
+					Array.isArray(data.payload)
+				) {
 					setUser(data.payload[0]);
 				}
 			},
@@ -167,9 +174,9 @@ const Profile = () => {
 								>
 									<UserProfile
 										user={
-											data && data.payload && Array.isArray(data.payload)
+											data && data?.payload && Array.isArray(data.payload)
 												? data.payload[0]
-												: data.payload
+												: data?.payload
 										}
 									/>
 								</Box>
@@ -179,18 +186,18 @@ const Profile = () => {
 								>
 									<UserStatus
 										user={
-											data && data.payload && Array.isArray(data.payload)
+											data && data?.payload && Array.isArray(data.payload)
 												? data.payload[0]
-												: data.payload
+												: data?.payload
 										}
 									/>
 								</Box>
 								<Box hidden={currentTab !== UserNavList.Transaction}>
 									<UserTransaction
 										user={
-											data && data.payload && Array.isArray(data.payload)
+											data && data?.payload && Array.isArray(data.payload)
 												? data.payload[0]
-												: data.payload
+												: data?.payload
 										}
 									/>
 								</Box>
@@ -199,7 +206,7 @@ const Profile = () => {
 										user={
 											data && data.payload && Array.isArray(data.payload)
 												? data.payload[0]
-												: data.payload
+												: data?.payload
 										}
 									/>
 								</Box>

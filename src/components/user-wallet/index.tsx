@@ -1,56 +1,27 @@
 import React, { CSSProperties, useState } from 'react';
 import { Box, Typography, useTheme } from '@mui/material';
 import { grey } from '@mui/material/colors';
-import { useQuery } from 'react-query';
-import { formatNumberToCurrency, QueryKey, User } from 'utilities';
+import { formatNumberToCurrency, IWallet, User } from 'utilities';
 import Button from '../button';
 import ModalWrapper from '../modal/Wrapper';
 import EditWalletForm from '../forms/edit-wallet-form';
 import { useAppSelector } from 'store/hooks';
-import { useAlert, useHandleError } from 'hooks';
-import { walletAccount } from 'api';
 
 type Props = {
 	user: User | null;
+	wallet: IWallet;
 };
 
-const UserWallet = ({ user }: Props) => {
+const UserWallet = ({ user, wallet }: Props) => {
 	const theme = useTheme();
-	const setAlert = useAlert();
-	const handleError = useHandleError();
 	const styles = useStyles(theme);
-	const [amount, setAmount] = useState<string>('');
+
 	const [isEditWallet, setEditWallet] = useState<boolean>(false);
-	const { token, canCreateOrUpdateRecord } = useAppSelector(
+	const { canCreateOrUpdateRecord } = useAppSelector(
 		(store) => store.authState
 	);
 
-	useQuery(
-		[QueryKey.UserWallet, user?.id],
-		() =>
-			walletAccount({
-				params: {
-					user: user?.id,
-				},
-			}),
-		{
-			enabled: !!(token && user),
-			refetchOnWindowFocus: false,
-			onSettled: (data, error) => {
-				if (error) {
-					const response = handleError({ error });
-					if (response?.message) {
-						setAlert({ message: response.message, type: 'error' });
-					}
-				}
-
-				if (data && data.success) {
-					const amount = data.payload[0].balance;
-					setAmount(amount);
-				}
-			},
-		}
-	);
+	const amount = wallet?.balance || 0;
 
 	return (
 		<>

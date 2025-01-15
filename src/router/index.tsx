@@ -34,6 +34,10 @@ import {
 	ApiLogs,
 	NinVerification,
 	AutoConversionDetails,
+	AdBanner,
+	LienTransactions,
+	WithdrawalRequestTransactions,
+	TransactionMostUsers,
 } from '../pages';
 
 const Router = () => {
@@ -58,6 +62,14 @@ const Router = () => {
 				<Route path={''} element={<Transactions />} />
 				{/* <Route path={'all'} element={<AllTransactions />} /> */}
 			</Route>
+			<Route
+				path={'transactions-most-user'}
+				element={<TransactionMostUsers />}
+			/>
+			<Route
+				path={'withdrawal-request'}
+				element={<WithdrawalRequestTransactions />}
+			/>
 
 			<Route path={'conversions'}>
 				<Route path={''} element={<Conversions />} />
@@ -92,6 +104,7 @@ const Router = () => {
 				element={<Network pageType={NetworkPage.AIRTIME_NETWORK} />}
 			/>
 			<Route path={'statistics'} element={<Statistics />} />
+			<Route path={'liens'} element={<LienTransactions />} />
 
 			<Route path={'coupons'} element={<Coupons />} />
 			<Route path={'dispute'}>
@@ -117,6 +130,7 @@ const Router = () => {
 			<Route path={'suspension'} element={<Suspension />} />
 			<Route path={'audit-logs'} element={<AuditLogs />} />
 			<Route path={'api-logs'} element={<ApiLogs />} />
+			<Route path={'ad-banners'} element={<AdBanner />} />
 		</Routes>
 	);
 };

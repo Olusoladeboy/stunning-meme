@@ -253,6 +253,64 @@ const DrawerList = () => {
 					}
 				/>
 				<ListItemButton
+					name={'Transactions (Most User)'}
+					link={LINKS.TransactionsMostUser}
+					isActive={
+						getActiveLink({
+							name: 'transactions-most-user',
+							currentPath: pathname,
+						}).isActive
+					}
+					icon={
+						<TransactionIcon
+							color={
+								getActiveLink({
+									name: 'transactions-most-user',
+									currentPath: pathname,
+								}).isActive
+									? activeColor
+									: initialColor
+							}
+						/>
+					}
+				/>
+				<ListItemButton
+					name={'Lien Transactions'}
+					link={LINKS.Liens}
+					isActive={
+						getActiveLink({ name: 'liens', currentPath: pathname }).isActive
+					}
+					icon={
+						<TransactionIcon
+							color={
+								getActiveLink({ name: 'liens', currentPath: pathname }).isActive
+									? activeColor
+									: initialColor
+							}
+						/>
+					}
+				/>
+				<ListItemButton
+					name={'Withdrawal Request'}
+					link={LINKS.WithdrawalRequestTransactions}
+					isActive={
+						getActiveLink({ name: 'withdrawal-request', currentPath: pathname })
+							.isActive
+					}
+					icon={
+						<TransactionIcon
+							color={
+								getActiveLink({
+									name: 'withdrawal-request',
+									currentPath: pathname,
+								}).isActive
+									? activeColor
+									: initialColor
+							}
+						/>
+					}
+				/>
+				<ListItemButton
 					name={'Conversions'}
 					link={LINKS.Conversions}
 					isActive={
@@ -510,6 +568,25 @@ const DrawerList = () => {
 						<CheckIcon
 							color={
 								getActiveLink({ name: 'logs', currentPath: pathname }).isActive
+									? activeColor
+									: initialColor
+							}
+						/>
+					}
+				/>
+
+				<ListItemButton
+					name={'Ad Banner'}
+					link={LINKS.AdBanner}
+					isActive={
+						getActiveLink({ name: 'ad-banners', currentPath: pathname })
+							.isActive
+					}
+					icon={
+						<CheckIcon
+							color={
+								getActiveLink({ name: 'ad-banners', currentPath: pathname })
+									.isActive
 									? activeColor
 									: initialColor
 							}

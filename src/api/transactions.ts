@@ -29,6 +29,24 @@ export const transactions = async (params?: {
 		params,
 	});
 
+export const transactionsStatistics = async (params?: {
+	[key: string]: any;
+}): Promise<any> =>
+	apiRequest({
+		method: 'GET',
+		url: `${ENDPOINTS.TransactionStatistics}`,
+		params,
+	});
+
+export const lienTransactions = async (params?: {
+	[key: string]: any;
+}): Promise<any> =>
+	apiRequest({
+		method: 'GET',
+		url: `${ENDPOINTS.Transaction}/lien`,
+		params,
+	});
+
 export const transactUser = async ({
 	data,
 	id,
@@ -49,6 +67,21 @@ export const walletWithdrawal = async (params?: {
 		method: 'GET',
 		url: `${ENDPOINTS.Withdraw}`,
 		params,
+	});
+
+export const updateWalletWithdrawal = async ({
+	data,
+	id,
+}: {
+	data?: {
+		[key: string]: any;
+	};
+	id: string;
+}): Promise<DataResponse<IWithdrawal[]>> =>
+	apiRequest({
+		method: 'PUT',
+		url: `${ENDPOINTS.Withdraw}/${id}`,
+		data,
 	});
 
 export const walletFunding = async (params?: {

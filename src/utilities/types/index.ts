@@ -109,6 +109,7 @@ export type AuthState = {
 	token: string | null;
 	canViewStatistics: boolean;
 	canCreateOrUpdateRecord: boolean;
+	canApproveWithdrawal: boolean;
 };
 
 export enum SettingsTab {
@@ -375,6 +376,7 @@ export interface IVerification {
 		payload: string;
 		dob?: string;
 	};
+	response: { [key: string]: any };
 	level: number;
 	payload: string;
 	type: string;
@@ -383,6 +385,96 @@ export interface IVerification {
 	createdAt: string;
 	updatedAt: string;
 	id: string;
+}
+
+export interface IBvnVerification {
+	id: string;
+	firstname: string;
+	middlename: string;
+	lastname: string;
+	fullname: string;
+	dob: string;
+	bvn: string;
+	gender: string;
+	customer: string;
+	verification_country: string;
+	env: string;
+	aliases: string[];
+	phone: string[];
+	email: string[];
+	address: string[];
+	nationality: string;
+	lga_of_origin: string;
+	lga_of_residence: string;
+	state_of_origin: string;
+	state_of_residence: string;
+	marital_status: string;
+	next_of_kins: string[];
+	nin: string;
+	photoid: [
+		{
+			url: string;
+			image_type: string;
+		}
+	];
+	enrollment: {
+		bank: string;
+		branch: string;
+		registration_date: string;
+	};
+	watch_listed: string;
+	receipt: {
+		status: boolean;
+		msg: string;
+		data: {
+			receipt: {
+				charge_breakdown: {
+					vat: number;
+				};
+				breakdown: {
+					billable_product: {
+						effective_credits: number;
+						credits: number;
+						status: boolean;
+						addon_products: string[];
+						product: string;
+					};
+					discount: number;
+					billable_products: [
+						{
+							effective_cost: number;
+							cost: number;
+							status: boolean;
+							addon_products: string[];
+							id: string;
+							archived: boolean;
+							product: string;
+						}
+					];
+					source: string;
+					limit: string;
+				};
+				billingStatus: boolean;
+				paid: boolean;
+				method: string;
+				charge: number;
+				wallet_balance: number;
+				addons: string[];
+				id: string;
+				plan_term: string;
+				owner: string;
+				type: string;
+				billable_product: string;
+				currency: string;
+				record: string;
+				customer: string;
+				current_project: string;
+				billable_service: string;
+				created_at: string;
+				last_updated: string;
+			};
+		};
+	};
 }
 
 export interface Coupon {
@@ -398,6 +490,7 @@ export interface Coupon {
 	couponUserType?: string;
 	user?: string;
 	usage?: string;
+	service?: string;
 }
 
 export enum TransactionServices {
@@ -530,6 +623,7 @@ export type User = {
 	deleted?: boolean;
 	restricted?: boolean;
 	twoFactorAuth?: boolean;
+	restrictWithdrawal?: boolean;
 	isLoggedIn?: boolean;
 	role?: string;
 	suspendWalletTransactions?: boolean;
@@ -692,10 +786,14 @@ export interface Transaction {
 	type: string;
 	plan: string | IDataPlan;
 	dataType?: string | DataType;
-	data_unit: {
-		$numberDecimal: string;
-	};
+	data_unit:
+		| string
+		| {
+				$numberDecimal: string;
+		  };
 	service: string;
+	operator?: string;
+	product?: string;
 	number: string;
 	noOfRetries: string;
 	createdBy: string;
@@ -715,11 +813,13 @@ export interface Transaction {
 	totalReturnAmount: string | Amount;
 	balanceBefore?: string | Amount;
 	balanceAfter?: string | Amount;
+	lienBefore?: string | Amount;
+	lienAfter?: string | Amount;
 	name: string;
 	createdAt: Date;
 	updatedAt: Date;
 	pin_data?: PinData;
-	pin?: string;
+	pin?: string | { [key: string]: any };
 	pins?: IPin[];
 	transaction: INestedTransaction;
 	electricity_token?: ElectricityToken;
@@ -742,6 +842,7 @@ export interface IReferral {
 	createdAt: string;
 	updatedAt: string;
 	id: string;
+	no_of_referees: string;
 }
 
 export interface Metadata {
@@ -787,6 +888,7 @@ export interface Notification {
 export interface AuditLog {
 	staff: string | User;
 	module: string;
+	recordId: string;
 	action: string;
 	details: string;
 	createdAt: Date;
@@ -931,3 +1033,23 @@ export type AuditFilter = {
 	action: string;
 	date: string;
 };
+
+export interface IAdBanner {
+	isActive: boolean;
+	url: string;
+	service: string;
+	createdBy: string;
+	imageUrl: string;
+	createdAt: string;
+	updatedAt: string;
+	id: string;
+}
+
+export interface IWallet {
+	id: string;
+	balance: string;
+	user: string;
+	createdAt: string;
+	updatedAt: string;
+	lien: Amount;
+}

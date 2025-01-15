@@ -31,6 +31,10 @@ const UserWalletSummary = ({ user }: Props) => {
 	const location = useLocation();
 	const query = queryString.parse(location.search);
 
+	const isEnabledRequest = Boolean(
+		query && UserNavList.WalletSummary === query?.tab
+	);
+
 	useEffect(() => {
 		if (query && query.page) {
 			setPage(parseInt(query.page as string));
@@ -52,7 +56,7 @@ const UserWalletSummary = ({ user }: Props) => {
 				},
 			}),
 		{
-			enabled: !!(token && user),
+			enabled: !!(token && user && isEnabledRequest),
 			refetchOnWindowFocus: false,
 			onSettled: (data, error) => {
 				if (error) {

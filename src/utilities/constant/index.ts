@@ -23,6 +23,7 @@ export const PRIVILEGE_MESSAGE =
 export const QueryKeys = {
 	LoginUserDetails: '@Query:Login_user_details',
 	Managers: '@Query:All_manager',
+	AdBanner: '@Query:AdBanner',
 	Referrals: '@Query:Referrals',
 	Referees: '@Query:Referees',
 	Settings: '@Query:Settings',
@@ -59,6 +60,8 @@ export const QueryKeys = {
 	ApiLogs: '@Query:ApiLogs',
 	AutoAirtimeConvertGroup: '@Query:AutoAirtimeConvertGroup',
 	UserTransactionStatistics: '@Query:UserTransactionStatistics',
+	UserLien: '@Query:UserLien',
+	LienTransactions: '@Query:LienTransactions',
 };
 
 export const StorageKeys = {
@@ -91,7 +94,9 @@ export const LINKS = {
 	User: `/user`,
 	Managers: '/managers',
 	Transactions: '/transactions',
+	TransactionsMostUser: '/transactions-most-user',
 	AllTransactions: '/transactions/all',
+	WithdrawalRequestTransactions: '/withdrawal-request',
 	Conversions: '/conversions',
 	AllConversions: '/conversions/all',
 	AutoConversions: '/auto-conversions',
@@ -121,6 +126,8 @@ export const LINKS = {
 	Message: '/support-ticket/message',
 	Messages: '/messages',
 	Statistics: '/statistics',
+	AdBanner: '/ad-banners',
+	Liens: '/liens',
 };
 
 export const DRAWER_LINKS = {
@@ -158,6 +165,7 @@ export const ENDPOINTS = {
 	Kyc: '/kyc',
 	Verification: '/verifications',
 	Transaction: '/transaction',
+	TransactionStatistics: '/transaction/statistics',
 	Wallet: '/wallet',
 	Coupon: '/coupon',
 	Ticket: '/ticket',
@@ -169,6 +177,12 @@ export const ENDPOINTS = {
 	EPin: 'epin',
 	Funding: '/funding',
 	Transfer: '/transfer',
+	Adverts: '/adverts',
+	InternationalAirtime: 'international-airtime',
+	InternationalData: 'international-data',
+	EVouchers: '/e-vouchers',
+	GiftCard: '/gift-cards',
+	ESim: 'esim',
 };
 
 export const FUND_WALLET_SERVICE = {
@@ -233,6 +247,7 @@ export const DATA_SOURCE = {
 	AYINLAKCONNECT: 'AYINLAKCONNECT',
 	OGDAMS: 'OGDAMS',
 	SMEPLUG: 'SMEPLUG',
+	AFFATECH: 'AFFATECH',
 };
 
 export const NOTIFICATION_TYPE = {
@@ -272,6 +287,10 @@ export const SERVICES = {
 	CREDIT: 'CREDIT',
 	DEBIT: 'DEBIT',
 	REFUND: 'REFUND',
+	INTERNATIONAL_DATA_SUBSCRIPTION: 'INTERNATIONAL DATA SUBSCRIPTION',
+	INTERNATIONAL_AIRTIME_TOP_UP: 'INTERNATIONAL AIRTIME TOP UP',
+	GIFT_CARD: 'GIFT_CARD',
+	ESIM: 'ESIM',
 };
 
 export const VERIFICATION_STATUS = {
@@ -328,4 +347,48 @@ export const SEO = {
 		iconimage: appLogo,
 	},
 	ga: 'UA-XXXXXXXXX-X',
+};
+
+export const MODULE_NAMES = {
+	ADVERT: 'ADVERT',
+	AIRTIME: 'AIRTIME',
+	AIRTIMEAUTOCONVERT: 'AIRTIMEAUTOCONVERT',
+	AIRTIMECONVERT: 'AIRTIMECONVERT',
+	AIRTIMENETWORK: 'AIRTIMENETWORK',
+	APILOGS: 'APILOGS',
+	AUDITLOGS: 'AUDITLOGS',
+	CONVERTNETWORK: 'CONVERTNETWORK',
+	BANKACCOUNTS: 'BANKACCOUNTS',
+	BENEFICIARYLIST: 'BENEFICIARYLIST',
+	BILLPAYMENT: 'BILLPAYMENT',
+	COUPON: 'COUPON',
+	COUPONUSAGE: 'COUPONUSAGE',
+	DATANETWORK: 'DATANETWORK',
+	DATAPLAN: 'DATAPLAN',
+	DATASUBSCRIPTION: 'DATASUBSCRIPTION',
+	DATATYPE: 'DATATYPE',
+	DEVICENOTIFICATIONTOKEN: 'DEVICENOTIFICATIONTOKEN',
+	EVOUCHER: 'EVOUCHER',
+	EPIN: 'EPIN',
+	ESIM: 'ESIM',
+	FUNDING: 'FUNDING',
+	GIFTCARD: 'GIFTCARD',
+	INTERNATIONALAIRTIME: 'INTERNATIONALAIRTIME',
+	INTERNATIONALDATA: 'INTERNATIONALDATA',
+	KYC: 'KYC',
+	MANAGER: 'MANAGER',
+	NOTIFICATION: 'NOTIFICATION',
+	NOTIFICATIONSETTINGS: 'NOTIFICATIONSETTINGS',
+	REFERRALS: 'REFERRALS',
+	SETTING: 'SETTING',
+	STAFF: 'STAFF',
+	TICKET: 'TICKET',
+	TRANSACTION: 'TRANSACTION',
+	TRANSFER: 'TRANSFER',
+	USER: 'USER',
+	VERIFICATIONS: 'VERIFICATIONS',
+	VIRTUALACCOUNT: 'VIRTUALACCOUNT',
+	WALLET: 'WALLET',
+	WITHDRAW: 'WITHDRAW',
+	AUTHENTICATION: 'AUTHENTICATION',
 };

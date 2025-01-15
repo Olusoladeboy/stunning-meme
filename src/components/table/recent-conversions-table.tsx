@@ -59,11 +59,9 @@ const RecentConversionsTable = () => {
 		queryKey: [QueryKeys.RecentConvertAirtime, 'recent-airtime-convert'],
 		queryFn: () =>
 			convertAirtimes({
-				params: {
-					limit: 4,
-					sort: '-createdAt',
-					populate: 'network,user',
-				},
+				limit: 4,
+				sort: '-createdAt',
+				populate: 'network,user',
 			}),
 	});
 

@@ -40,12 +40,10 @@ const Referrals = () => {
 		[QueryKeys.Referrals],
 		() =>
 			referrals({
-				params: {
-					sort: '-createdAt',
-					limit: MAX_RECORDS,
-					skip: (page - 1) * MAX_RECORDS,
-					populate: 'referredBy',
-				},
+				sort: '-createdAt',
+				limit: MAX_RECORDS,
+				skip: (page - 1) * MAX_RECORDS,
+				populate: 'referredBy',
 			}),
 		{
 			enabled: !!token,
@@ -70,9 +68,9 @@ const Referrals = () => {
 	const handlePageChange = (page: number) => {
 		if (page !== 1) {
 			setPage(page);
-			navigate(`${LINKS.Transactions}?&page=${page}`);
+			navigate(`${LINKS.Referrals}?&page=${page}`);
 		} else {
-			navigate(LINKS.Transactions);
+			navigate(LINKS.Referrals);
 			setPage(page);
 		}
 	};

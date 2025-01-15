@@ -14,6 +14,7 @@ import {
 	IconButton,
 	Tooltip,
 	FormLabel as MuiFormLabel,
+	SelectChangeEvent,
 } from '@mui/material';
 import { ImageOutlined, Close } from '@mui/icons-material';
 import * as yup from 'yup';
@@ -72,9 +73,7 @@ const SelectedUserItem: React.FC<SelectedUserItemProps> = ({
 				justifyContent: 'space-between',
 			}}
 		>
-			<Typography>
-				{user.username}
-			</Typography>
+			<Typography>{user.username}</Typography>
 			<Tooltip title={'Remove user'}>
 				<IconButton onClick={() => removeUser(user)}>
 					<Close />
@@ -191,21 +190,29 @@ const NotificationForm: React.FC<Props> = ({ notification }) => {
 				payload.dispatchUserType = DISPATCH_USER.ALL;
 			}
 
-			if (dispatchUserType === DISPATCH_USER.SELECTED && (type === NOTIFICATION_TYPE.PUSH_NOTIFICATION || type ===
-				NOTIFICATION_TYPE.EMAIL_NOTIFICATION)) {
-					payload.users = users;
+			if (
+				dispatchUserType === DISPATCH_USER.SELECTED &&
+				(type === NOTIFICATION_TYPE.PUSH_NOTIFICATION ||
+					type === NOTIFICATION_TYPE.EMAIL_NOTIFICATION)
+			) {
+				payload.users = users;
 			}
 
-			if (devices && devices !== SELECT_TARGET_DEVICE && (type === NOTIFICATION_TYPE.PUSH_NOTIFICATION || type ===
-				NOTIFICATION_TYPE.EMAIL_NOTIFICATION)) {
-					payload.devices = devices;
+			if (
+				devices &&
+				devices !== SELECT_TARGET_DEVICE &&
+				(type === NOTIFICATION_TYPE.PUSH_NOTIFICATION ||
+					type === NOTIFICATION_TYPE.EMAIL_NOTIFICATION)
+			) {
+				payload.devices = devices;
 			}
 
 			mutate(payload);
 		},
 	});
 
-	const { message, subject, imageUrl, type, devices, dispatchUserType } = values;
+	const { message, subject, imageUrl, type, devices, dispatchUserType } =
+		values;
 
 	/*
 	 *Save Image
@@ -262,9 +269,7 @@ const NotificationForm: React.FC<Props> = ({ notification }) => {
 							flexDirection: 'column',
 						}}
 					>
-						<Typography>
-							{search && search[0].username}
-						</Typography>
+						<Typography>{search && search[0].username}</Typography>
 						<AddUserButton onClick={() => handleSelectUser(search[0])}>
 							Add user
 						</AddUserButton>
@@ -310,7 +315,7 @@ const NotificationForm: React.FC<Props> = ({ notification }) => {
 						<Select
 							fullWidth
 							value={type}
-							onChange={(e) =>
+							onChange={(e: SelectChangeEvent<unknown>) =>
 								handleSelectNotificationType(e.target.value as string) as never
 							}
 						>

@@ -28,9 +28,7 @@ const AssignManagerForm = ({ User, close }: Props) => {
 		queryKey: QueryKeys.Managers,
 		queryFn: () =>
 			managers({
-				params: {
 					sort: '-createdAt',
-				},
 			}),
 	});
 

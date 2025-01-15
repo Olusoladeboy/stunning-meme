@@ -1,15 +1,10 @@
 import apiRequest from './apiRequest';
 import { ENDPOINTS, Coupon as ICoupon, UpdateCouponStatus } from '../utilities';
 
-export const coupons = async ({
-	params,
-}: {
-	params?: { [key: string]: any };
-}): Promise<any> =>
+export const coupons = async (params?: { [key: string]: any }): Promise<any> =>
 	apiRequest({
 		method: 'GET',
 		url: ENDPOINTS.Coupon,
-
 		params,
 	});
 

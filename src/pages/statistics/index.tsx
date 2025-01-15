@@ -21,6 +21,10 @@ import {
 	EPinTransactionsTable,
 	ReversalTransactionsTable,
 	TablePagination,
+	RTransactionTable,
+	GiftcardESimTransactionTable,
+	CreditDebitTable,
+	ExportButton,
 } from 'components';
 import {
 	BOX_SHADOW,
@@ -30,7 +34,6 @@ import {
 	Metadata,
 	IPurchasedBill,
 	IWithdrawal,
-	ITransfer,
 	STATISTIC_TAB,
 	getFilterDateRange,
 	Transaction,
@@ -46,6 +49,11 @@ import {
 	useQueryEPinTransactions,
 	useQueryWalletFundings,
 	useQueryWalletTransfers,
+	useQueryGiftCardTransactions,
+	useQueryInternationalAirtimeTransactions,
+	useQueryInternationalDataTransactions,
+	useQueryESimTransactions,
+	useQueryTransactions,
 } from 'hooks';
 
 type TDataStatistics = {
@@ -65,6 +73,10 @@ const Statistics = () => {
 	const filterUrlEntries = useRef<null | { [key: string]: any }>(null);
 
 	const queryValues = useRef<null | { [key: string]: any }>(null);
+	const sortValue = useRef<string>('-createdAt');
+	const dataPlan = useRef<string>('');
+	const dataType = useRef<string>('');
+	const network = useRef<string>('');
 
 	const maxRecordRef = useRef<number>(20);
 	const skipValue = useRef<number>(0);
@@ -175,6 +187,54 @@ const Statistics = () => {
 			});
 		});
 
+	const { isLoadingESimTransactions, queryESimTransactions } =
+		useQueryESimTransactions((data, metadata) => {
+			handleSetTotal(metadata as Metadata);
+			setDataStatistics({
+				service: SERVICES.ESIM,
+				data,
+			});
+		});
+
+	const { isLoadingGiftCardTransactions, queryGiftCardTransactions } =
+		useQueryGiftCardTransactions((data, metadata) => {
+			handleSetTotal(metadata as Metadata);
+			setDataStatistics({
+				service: SERVICES.GIFT_CARD,
+				data,
+			});
+		});
+
+	const { queryInterAirtimeTransactions, isLoadingInterAirtimeTransactions } =
+		useQueryInternationalAirtimeTransactions((data, metadata) => {
+			handleSetTotal(metadata as Metadata);
+			setDataStatistics({
+				service: SERVICES.INTERNATIONAL_AIRTIME_TOP_UP,
+				data,
+			});
+		});
+
+	// useQueryInternationalDataTransactions
+
+	const { queryInterDataTransactions, isLoadingInterDataTransactions } =
+		useQueryInternationalDataTransactions((data, metadata) => {
+			handleSetTotal(metadata as Metadata);
+			setDataStatistics({
+				service: SERVICES.INTERNATIONAL_DATA_SUBSCRIPTION,
+				data,
+			});
+		});
+
+	const { isLoadingTransactions, queryTransactions } = useQueryTransactions(
+		({ data, metadata, service }) => {
+			handleSetTotal(metadata as Metadata);
+			setDataStatistics({
+				data,
+				service: service as string,
+			});
+		}
+	);
+
 	const isLoading =
 		isLoadingDataSubscriptions ||
 		isLoadingAirtimeTransactions ||
@@ -184,18 +244,37 @@ const Statistics = () => {
 		isLoadingWalletWithdrawals ||
 		isLoadingEPinTransactions ||
 		isLoadingWalletFundings ||
-		isLoadingWalletTransfers;
+		isLoadingWalletTransfers ||
+		isLoadingESimTransactions ||
+		isLoadingInterDataTransactions ||
+		isLoadingInterAirtimeTransactions ||
+		isLoadingGiftCardTransactions ||
+		isLoadingTransactions;
 
 	const switchHandleSubmit = async (values: Record<string, any>) => {
 		let payload: { [key: string]: any } = {
 			populate: 'user,plan,dataType,network',
 			limit: maxRecordRef.current,
-			sort: '-createdAt',
+			// sort: '-createdAt',
+			sort: sortValue.current,
 		};
 
+		console.log(values);
+
+		// Clear data
 		resetQueryValue(values.service);
+		network.current = '';
+		dataType.current = '';
+		dataPlan.current = '';
 
 		queryValues.current = values;
+
+		// Date Range
+		if (values.dateRange && Object.keys(values.dateRange).length > 0)
+			payload = {
+				...payload,
+				...values.dateRange,
+			};
 
 		if (skipValue.current > 0) payload.skip = skipValue.current;
 
@@ -205,26 +284,51 @@ const Statistics = () => {
 			payload = { ...payload, ...filterUrlEntries.current };
 
 		if (values.service === SERVICES.DATA_SUBSCRIPTION) {
-			if (values.plan) payload.plan = values.plan;
-			if (values.type) payload.dataType = values.type;
+			values.populate = 'user,plan,dataType,network';
+			if (values.provider) {
+				payload.network = values.provider;
+				network.current = values.provider;
+			}
+			if (values.plan) {
+				payload.plan = values.plan;
+				dataPlan.current = values.plan;
+			}
+			if (values.type) {
+				payload.dataType = values.type;
+				dataType.current = values.type;
+			}
+
 			queryDataSubscriptions(payload);
 			return;
 		}
 
 		if (values.service === SERVICES.AIRTIME_TOP_UP) {
-			if (values.provider) payload.network = values.provider;
+			values.populate = 'user,network';
+
+			if (values.provider) {
+				payload.network = values.provider;
+				network.current = values.provider;
+			}
 			queryAirtimeTransactions(payload);
 			return;
 		}
 
 		if (values.service === SERVICES.AIRTIME_CONVERSION) {
-			if (values.provider) payload.network = values.provider;
+			values.populate = 'user,network';
+			if (values.provider) {
+				payload.network = values.provider;
+				network.current = values.provider;
+			}
 			queryConvertAirtimes(payload);
 			return;
 		}
 
 		if (values.service === SERVICES.AUTO_AIRTIME_CONVERSION) {
-			if (values.provider) payload.network = values.provider;
+			values.populate = 'user,network';
+			if (values.provider) {
+				payload.network = values.provider;
+				network.current = values.provider;
+			}
 			queryAutoConvertAirtimes(payload);
 			return;
 		}
@@ -253,6 +357,42 @@ const Statistics = () => {
 			return;
 		}
 
+		if (values.service === SERVICES.INTERNATIONAL_AIRTIME_TOP_UP) {
+			payload.populate = 'user';
+			queryInterAirtimeTransactions(payload);
+			return;
+		}
+
+		if (values.service === SERVICES.INTERNATIONAL_DATA_SUBSCRIPTION) {
+			payload.populate = 'user';
+			queryInterDataTransactions(payload);
+			return;
+		}
+
+		if (values.service === SERVICES.ESIM) {
+			values.populate = 'user';
+			queryESimTransactions(payload);
+			return;
+		}
+
+		if (values.service === SERVICES.GIFT_CARD) {
+			payload.populate = 'user';
+			queryGiftCardTransactions(payload);
+			return;
+		}
+
+		if (
+			values.service === SERVICES.CREDIT ||
+			values.service === SERVICES.DEBIT ||
+			values.service === SERVICES.REFUND ||
+			values.service === SERVICES.REVERSAL
+		) {
+			payload.service = values.service;
+			payload.populate = 'user';
+			queryTransactions(payload);
+			return;
+		}
+
 		if (
 			values.service === SERVICES.CABLE ||
 			values.service === SERVICES.INTERNET ||
@@ -260,6 +400,7 @@ const Statistics = () => {
 			values.service === SERVICES.EDUCATION ||
 			values.service === SERVICES.BETTING
 		) {
+			values.populate = 'user';
 			payload.type = values.service;
 			if (values.provider) payload.name = values.provider;
 
@@ -349,6 +490,21 @@ const Statistics = () => {
 							<StatisticsTotal name={'Total  Transactions'} figure={123000} />
 							<StatisticsTotal name={'Total  Data Revenue'} figure={123000} />
 						</StatisticsContainer>
+						{dataStatistics && dataStatistics.data && (
+							<Box
+								sx={{
+									display: 'flex',
+									justifyContent: 'flex-end',
+								}}
+							>
+								<ExportButton
+									network={network.current}
+									dataPlan={dataPlan.current}
+									dataType={dataType.current}
+									service={dataStatistics.service as string}
+								/>
+							</Box>
+						)}
 					</Box>
 					{dataStatistics && (
 						<>
@@ -378,6 +534,24 @@ const Statistics = () => {
 									data={dataStatistics.data as any}
 								/>
 							)}
+
+							{(dataStatistics?.service ===
+								SERVICES.INTERNATIONAL_AIRTIME_TOP_UP ||
+								dataStatistics?.service ===
+									SERVICES.INTERNATIONAL_DATA_SUBSCRIPTION) && (
+								<RTransactionTable
+									isLoading={isLoadingBillTransactions}
+									data={dataStatistics?.data as Transaction[]}
+								/>
+							)}
+							{(dataStatistics?.service === SERVICES.ESIM ||
+								dataStatistics?.service === SERVICES.GIFT_CARD) && (
+								<GiftcardESimTransactionTable
+									isLoading={isLoadingBillTransactions}
+									data={dataStatistics?.data as Transaction[]}
+								/>
+							)}
+
 							{dataStatistics.service === SERVICES.EDUCATION && (
 								<EducationTransactionsTable
 									data={dataStatistics.data as Transaction[]}
@@ -426,6 +600,18 @@ const Statistics = () => {
 							{dataStatistics.service === SERVICES.WALLET_TRANSFER && (
 								<WalletTransferTransactionsTable
 									data={dataStatistics.data as Transaction[]}
+									isLoading={isLoading}
+								/>
+							)}
+
+							{[
+								SERVICES.CREDIT,
+								SERVICES.DEBIT,
+								SERVICES.REFUND,
+								SERVICES.REVERSAL,
+							].includes(`${dataStatistics?.service}`) && (
+								<CreditDebitTable
+									data={dataStatistics?.data as Transaction[]}
 									isLoading={isLoading}
 								/>
 							)}

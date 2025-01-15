@@ -40,14 +40,9 @@ export const deleteManager = async (id: string): Promise<any> =>
 		url: `${ENDPOINTS.Manager}/${id}`,
 	});
 
-export const managers = async ({
-	params,
-}: {
-	params: { [key: string]: any };
-}): Promise<any> =>
+export const managers = async (params?: { [key: string]: any }): Promise<any> =>
 	apiRequest({
 		method: 'GET',
 		url: `${ENDPOINTS.Manager}`,
-
 		params,
 	});

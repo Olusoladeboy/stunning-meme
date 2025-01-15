@@ -76,7 +76,7 @@ export const getCoupon = (coupon: Coupon) => {
 			: coupon.type === CouponType.AMOUNT
 			? formatNumberToCurrency(coupon.gift as string)
 			: '';
-	return `${coupon.code}-${gift}`;
+	return `${coupon.code}(${gift})`;
 };
 
 export const cleanString = (value: string) => {
@@ -93,6 +93,13 @@ export const checkAmount = (amount: number | string | Amount) => {
 	}
 
 	return amount;
+};
+
+export const dateRanges = (start: string, end: string) => {
+	const startDate = new Date(start).toISOString();
+	const endDate = new Date(end).toISOString();
+
+	return `createdAt>${startDate}&createdAt<${endDate}`;
 };
 
 export const checkTransactionAmount = ({
@@ -166,7 +173,7 @@ export const extractExactTransactionService = (transaction: Transaction) => {
 
 export const extractUserName = (user: User) => {
 	let name = '';
-	if (Object.keys(user).length > 0) {
+	if (user && Object.keys(user).length > 0) {
 		if (user?.firstname) name += user.firstname;
 		if (user?.lastname)
 			name = name ? name + ` ${user.lastname}` : user.lastname;
@@ -202,4 +209,27 @@ export const capitalize = (text: string) => {
 				`${value.charAt(0).toUpperCase()}${value.substring(1).toLowerCase()}`
 		)
 		.join(' ');
+};
+
+export const removeSpecialChar = (text: string) => {
+	if (!text) return text;
+	return text.replace(/[ `!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?~]/g, ' ');
+};
+
+export const generateRandomNumber = ({
+	length,
+	suggestion,
+}: {
+	length: number;
+	suggestion?: string;
+}) => {
+	let text = '';
+	const str =
+		suggestion ||
+		'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+	// eslint-disable-next-line no-plusplus
+	for (let i = 0; i < length; i++) {
+		text += str.charAt(Math.floor(Math.random() * str.length));
+	}
+	return text;
 };

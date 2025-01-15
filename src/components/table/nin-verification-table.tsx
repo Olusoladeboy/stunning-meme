@@ -293,7 +293,6 @@ const useStyles = (theme: any) => ({
 	},
 	tableText: {
 		color: theme.palette.primary.main,
-		whiteSpace: 'nowrap',
 	},
 	transactionItemText: {
 		color: SUCCESS_COLOR,

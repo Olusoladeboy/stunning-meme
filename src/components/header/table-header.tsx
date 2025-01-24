@@ -41,8 +41,6 @@ const TableHeader = ({
 	children,
 	...rest
 }: Props) => {
-
-
 	return (
 		<Box
 			style={style}
@@ -77,8 +75,6 @@ const TableHeader = ({
 					gap: '20px',
 				}}
 			>
-		
-
 				<Box
 					sx={{
 						display: 'flex',

@@ -198,6 +198,23 @@ const DrawerList = () => {
 					}
 				/>
 				<ListItemButton
+					link={LINKS.Business}
+					name={'Business'}
+					isActive={
+						getActiveLink({ name: 'business', currentPath: pathname }).isActive
+					}
+					icon={
+						<UserIcon
+							color={
+								getActiveLink({ name: 'business', currentPath: pathname })
+									.isActive
+									? activeColor
+									: initialColor
+							}
+						/>
+					}
+				/>
+				<ListItemButton
 					name={'Managers'}
 					link={LINKS.Managers}
 					isActive={

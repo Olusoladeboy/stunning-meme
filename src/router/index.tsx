@@ -38,6 +38,8 @@ import {
 	LienTransactions,
 	WithdrawalRequestTransactions,
 	TransactionMostUsers,
+	Businesses,
+	BusinessProfile,
 } from '../pages';
 
 const Router = () => {
@@ -48,6 +50,10 @@ const Router = () => {
 			<Route path={'users'}>
 				<Route path={''} element={<Users />} />
 				<Route path={':id'} element={<UserProfile />} />
+			</Route>
+			<Route path={'business'}>
+				<Route path={''} element={<Businesses />} />
+				<Route path={':id'} element={<BusinessProfile />} />
 			</Route>
 			<Route path={'auth'}>
 				<Route path={'login'} element={<Login />} />

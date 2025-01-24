@@ -30,6 +30,7 @@ export const QueryKeys = {
 	Notifications: '@Query:Notifications',
 	RecentConvertAirtime: '@Query:RecentConvertAirtime',
 	Users: '@Query:All_Users',
+	Business: '@Query:Business',
 	User: '@Query:Get_single_user',
 	SuspendUser: '@Query:Suspend_user',
 	DataNetwork: '@Query:Data_Network',
@@ -128,6 +129,7 @@ export const LINKS = {
 	Statistics: '/statistics',
 	AdBanner: '/ad-banners',
 	Liens: '/liens',
+	Business: '/business',
 };
 
 export const DRAWER_LINKS = {
@@ -153,6 +155,7 @@ export const ENDPOINTS = {
 	Manager: '/manager',
 	Bills: '/bills',
 	User: '/user',
+	Business: '/business',
 	DataNetwork: '/data-networks',
 	Airtime: '/airtime',
 	DataSubscription: '/data-subscription',

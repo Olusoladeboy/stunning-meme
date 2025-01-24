@@ -123,3 +123,6 @@ export { default as RTransactionTable } from './table/r-transaction-table';
 export { default as GiftcardESimTransactionTable } from './table/giftcard-esim-trans-table';
 export { default as TransactionsMostUserTable } from './table/transactions-most-user-table';
 export { default as ExportButton } from './button/export-button';
+export { default as BusinessTable } from './table/business-table';
+export { default as BusinessTab } from './tabs/business-tab';
+export { default as BusinessProfile } from './business-profile';

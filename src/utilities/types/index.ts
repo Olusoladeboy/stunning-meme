@@ -645,6 +645,15 @@ export type User = {
 	users?: number;
 };
 
+export interface IBusiness {
+	status: string;
+	businessOwner: string | User;
+	businessName: string;
+	createdAt: string;
+	updatedAt: string;
+	id: string;
+}
+
 export interface PinData {
 	network?: INetwork | string;
 	amount?: number;

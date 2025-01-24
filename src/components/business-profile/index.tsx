@@ -1,4 +1,4 @@
-import React, { CSSProperties, useState } from 'react';
+import React, { useState } from 'react';
 import { Box, Typography, useTheme } from '@mui/material';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { useNavigate } from 'react-router-dom';
@@ -8,24 +8,15 @@ import DetailItem from './detail-item';
 import Button from '../button';
 import ModalWrapper from '../modal/Wrapper';
 import EditProfileForm from '../forms/profile-form';
-import UserAvatarWithDetails from '../avatar-with-details';
-import {
-	User,
-	SUCCESS_COLOR,
-	QueryKeys,
-	extractUserName,
-	IBusiness,
-} from 'utilities';
-import VerifyUser from '../verify-user';
+import { SUCCESS_COLOR, QueryKeys, IBusiness } from 'utilities';
 import { restoreDeletedAccount, walletAccount } from 'api';
 import { useHandleError, useAlert } from 'hooks';
 import Loader from 'components/loader';
-import { UserWallet, UserLien } from 'components';
 import { useAppSelector } from 'store/hooks';
 import BusinessAvatarWithDetails from 'components/avatar-with-details/business';
 
 type Props = {
-	business?: IBusiness | null;
+	business?: IBusiness;
 };
 
 const BusinessProfile = ({ business }: Props) => {
@@ -37,7 +28,6 @@ const BusinessProfile = ({ business }: Props) => {
 
 	const token = useAppSelector((store) => store.authState.token);
 
-	const styles = useStyles(theme);
 	const [isEditProfile, setEditProfile] = useState<boolean>(false);
 
 	// Restor user mutation
@@ -88,12 +78,6 @@ const BusinessProfile = ({ business }: Props) => {
 			},
 		}
 	);
-
-	const wallet =
-		dataWallet &&
-		dataWallet.payload &&
-		Array.isArray(dataWallet.payload) &&
-		dataWallet.payload[0];
 
 	return (
 		<>

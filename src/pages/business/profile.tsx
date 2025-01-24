@@ -7,15 +7,9 @@ import { grey } from '@mui/material/colors';
 import {
 	Layout,
 	BackButton,
-	UserTab,
-	UserProfile,
 	UserStatus,
-	UserTransaction,
-	UserWalletSummary,
-	UserManagerInfo,
 	ModalLayout,
 	AssignManagerForm,
-	Button,
 	BusinessTab,
 	BusinessProfile,
 } from 'components';
@@ -30,7 +24,7 @@ import {
 import { useAppSelector } from 'store/hooks';
 import ErrorBoundary from 'utilities/helpers/error-boundary';
 import { useHandleError, useAlert } from 'hooks';
-import { users } from 'api';
+import { businesses } from 'api';
 
 const Profile = () => {
 	const theme = useTheme();
@@ -51,21 +45,19 @@ const Profile = () => {
 
 	const link = (tab: string) => {
 		const deleted = query._deleted;
-		let defaultLink = `${LINKS.Users}/${id}`;
+		let defaultLink = `${LINKS.Business}/${id}`;
 
-		if (tab) defaultLink = `${LINKS.Users}/${id}?tab=${tab}`;
+		if (tab) defaultLink = `${LINKS.Business}/${id}?tab=${tab}`;
 
 		if (deleted)
 			defaultLink = tab
-				? `${LINKS.Users}/${id}?tab=${tab}&_deleted=true`
+				? `${LINKS.Business}/${id}?tab=${tab}&_deleted=true`
 				: `${LINKS.Users}/${id}?_deleted=true`;
 
 		return defaultLink;
-
-		// return `${LINKS.Users}/${id}?tab=${tab}`;
 	};
 
-	const { tab, _deleted } = queryString.parse(location.search);
+	const { tab } = queryString.parse(location.search);
 	const [currentTab, setCurrentTab] = useState<string>(UserNavList.Profile);
 
 	const handleChangeTab = (value: string) => {
@@ -75,15 +67,6 @@ const Profile = () => {
 
 			case UserNavList.Transaction:
 				return navigate(link(UserNavList.Transaction));
-			// return navigate(`${LINKS.Users}/${id}?tab=${UserNavList.Transaction}`);
-			case UserNavList.WalletSummary:
-				return navigate(link(UserNavList.WalletSummary));
-			// return navigate(
-			// 	`${LINKS.Users}/${id}?tab=${UserNavList.WalletSummary}`
-			// );
-			case UserNavList.Manager:
-				return navigate(link(UserNavList.Manager));
-			// return navigate(`${LINKS.Users}/${id}?tab=${UserNavList.Manager}`);
 
 			default:
 				navigate(`${LINKS.Users}/${id}`);
@@ -111,14 +94,11 @@ const Profile = () => {
 	}, [tab]);
 
 	const { isLoading, data } = useQuery(
-		[QueryKeys.User, id],
+		[QueryKeys.Business, id],
 		() =>
-			users({
-				params: {
-					_id: id,
-					populate: 'manager',
-					deleted: _deleted,
-				},
+			businesses({
+				_id: id,
+				populate: 'businessOwner',
 			}),
 		{
 			enabled: !!(id && token),
@@ -140,6 +120,9 @@ const Profile = () => {
 			},
 		}
 	);
+
+	const dataBusiness =
+		data && data.payload && Array.isArray(data.payload) && data.payload[0];
 
 	return (
 		<>
@@ -181,39 +164,16 @@ const Profile = () => {
 									sx={{ padding: { xs: '0px 1rem', md: '0px 2rem' } }}
 									hidden={currentTab !== UserNavList.Profile}
 								>
-									<BusinessProfile
-										business={data?.payload as IBusiness | null}
-									/>
+									<BusinessProfile business={dataBusiness as IBusiness} />
 								</Box>
 								<Box
 									sx={{ padding: { xs: '0px 1rem', md: '0px 2rem' } }}
 									hidden={currentTab !== UserNavList.Status}
 								>
-									<UserStatus
-										user={
-											data && data?.payload && Array.isArray(data.payload)
-												? data.payload[0]
-												: data?.payload
-										}
-									/>
+									<UserStatus user={dataBusiness as IBusiness} />
 								</Box>
 								<Box hidden={currentTab !== UserNavList.Transaction}>
-									<UserTransaction
-										user={
-											data && data?.payload && Array.isArray(data.payload)
-												? data.payload[0]
-												: data?.payload
-										}
-									/>
-								</Box>
-								<Box hidden={currentTab !== UserNavList.WalletSummary}>
-									<UserWalletSummary
-										user={
-											data && data.payload && Array.isArray(data.payload)
-												? data.payload[0]
-												: data?.payload
-										}
-									/>
+									<Typography>Business Transaction</Typography>
 								</Box>
 							</ErrorBoundary>
 						</Box>

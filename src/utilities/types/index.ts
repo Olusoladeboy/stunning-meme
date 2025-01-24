@@ -175,6 +175,7 @@ export enum UserNavList {
 	Transaction = 'transaction',
 	WalletSummary = 'wallet-summary',
 	Manager = 'manager',
+	Commissions = 'commissions',
 }
 
 export enum ManagerTypes {

@@ -1,15 +1,9 @@
 import React, { CSSProperties } from 'react';
 import { Box, Avatar, Typography, useTheme } from '@mui/material';
-import {
-	DANGER_COLOR,
-	IBusiness,
-	SUCCESS_COLOR,
-	User,
-	extractUserName,
-} from 'utilities';
+import { DANGER_COLOR, IBusiness, SUCCESS_COLOR } from 'utilities';
 
 type Props = {
-	business?: IBusiness | null;
+	business?: IBusiness;
 };
 
 const BusinessAvatarWithDetails = ({ business }: Props) => {
@@ -31,7 +25,7 @@ const BusinessAvatarWithDetails = ({ business }: Props) => {
 						...styles.text,
 						textTransform: 'uppercase',
 						color:
-							business?.status.toLocaleLowerCase() === 'active'
+							business?.status?.toLocaleLowerCase() === 'active'
 								? SUCCESS_COLOR
 								: DANGER_COLOR,
 					}}

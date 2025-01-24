@@ -8,6 +8,32 @@ type Props = {
 	currentTab: string;
 };
 
+const TabItem = ({
+	label,
+	currentTab,
+	handleChange,
+}: {
+	label: `${UserNavList}`;
+	currentTab: string;
+	handleChange: (tab: string) => void;
+}) => {
+	const styles = useStyles();
+	return (
+		<Button
+			onClick={() => handleChange(UserNavList.Profile)}
+			style={
+				{
+					...styles.btn,
+					backgroundColor:
+						currentTab === label ? `${LIGHT_PRIMARY_COLOR}` : '#CDD9F5',
+				} as CSSProperties
+			}
+		>
+			{label}
+		</Button>
+	);
+};
+
 const BusinessTab = ({ handleChange, currentTab }: Props) => {
 	const styles = useStyles();
 	return (
@@ -20,48 +46,26 @@ const BusinessTab = ({ handleChange, currentTab }: Props) => {
 				},
 			}}
 		>
-			<Button
-				onClick={() => handleChange(UserNavList.Profile)}
-				style={
-					{
-						...styles.btn,
-						backgroundColor:
-							currentTab === UserNavList.Profile
-								? `${LIGHT_PRIMARY_COLOR}`
-								: '#CDD9F5',
-					} as CSSProperties
-				}
-			>
-				{UserNavList.Profile}
-			</Button>
-			<Button
-				onClick={() => handleChange(UserNavList.Status)}
-				style={
-					{
-						...styles.btn,
-						backgroundColor:
-							currentTab === UserNavList.Status
-								? `${LIGHT_PRIMARY_COLOR}`
-								: '#CDD9F5',
-					} as CSSProperties
-				}
-			>
-				{UserNavList.Status}
-			</Button>
-			<Button
-				onClick={() => handleChange(UserNavList.Transaction)}
-				style={
-					{
-						...styles.btn,
-						backgroundColor:
-							currentTab === UserNavList.Transaction
-								? `${LIGHT_PRIMARY_COLOR}`
-								: '#CDD9F5',
-					} as CSSProperties
-				}
-			>
-				{UserNavList.Transaction}
-			</Button>
+			<TabItem
+				handleChange={() => handleChange(UserNavList.Profile)}
+				label='profile'
+				currentTab={currentTab}
+			/>
+			<TabItem
+				handleChange={() => handleChange(UserNavList.Status)}
+				label='status'
+				currentTab={currentTab}
+			/>
+			<TabItem
+				handleChange={() => handleChange(UserNavList.Transaction)}
+				label='transaction'
+				currentTab={currentTab}
+			/>
+			<TabItem
+				handleChange={() => handleChange(UserNavList.Commissions)}
+				label='commissions'
+				currentTab={currentTab}
+			/>
 		</Box>
 	);
 };

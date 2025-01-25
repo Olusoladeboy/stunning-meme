@@ -27,3 +27,19 @@ export const createBusinessCommissions = async (data?: {
 		url: `${ENDPOINTS.Commissions}`,
 		data,
 	});
+
+export const deleteBusinessCommissions = async (
+	id: string
+): Promise<DataResponse<IBusiness[]>> =>
+	apiRequest({
+		method: 'DELETE',
+		url: `${ENDPOINTS.Commissions}/${id}`,
+	});
+
+export const updateBusinessCommissions = async (
+	id: string
+): Promise<DataResponse<IBusiness[]>> =>
+	apiRequest({
+		method: 'PUT',
+		url: `${ENDPOINTS.Commissions}/${id}`,
+	});

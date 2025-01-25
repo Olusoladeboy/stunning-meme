@@ -123,7 +123,7 @@ const BusinessCommissionsTable = ({
 												</StyledTableRow>
 											))
 										) : (
-											<Empty colSpan={6} text={'No Transaction Summary'} />
+											<Empty colSpan={6} text={'No available commission'} />
 										)}
 									</>
 								)

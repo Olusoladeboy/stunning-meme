@@ -80,9 +80,11 @@ const CommissionForm = ({ dataPayload, callback }: Props) => {
 							'Something went wrong, unable to create business commission',
 					});
 				}
+				const commissionRate = Number(values.commissionRate) / 100;
 				const payload = {
 					...values,
 					businessId: id,
+					commissionRate,
 				};
 				mutateCreate(payload);
 			},
@@ -96,7 +98,7 @@ const CommissionForm = ({ dataPayload, callback }: Props) => {
 				sx={{
 					display: 'grid',
 					gridTemplateColumns: ['1fr'],
-					gap: theme.spacing(2),
+					gap: theme.spacing(3),
 				}}
 			>
 				<Box>

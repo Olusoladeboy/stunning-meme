@@ -126,3 +126,6 @@ export { default as ExportButton } from './button/export-button';
 export { default as BusinessTable } from './table/business-table';
 export { default as BusinessTab } from './tabs/business-tab';
 export { default as BusinessProfile } from './business-profile';
+export { default as BusinessCommissions } from './business-commissions';
+export { default as BusinessCommissionsTable } from './table/business-commissions-table';
+export { default as CommissionForm } from './forms/commission-form';

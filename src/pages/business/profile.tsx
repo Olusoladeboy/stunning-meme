@@ -12,6 +12,7 @@ import {
 	AssignManagerForm,
 	BusinessTab,
 	BusinessProfile,
+	BusinessCommissions,
 } from 'components';
 import {
 	BOX_SHADOW,
@@ -52,7 +53,7 @@ const Profile = () => {
 		if (deleted)
 			defaultLink = tab
 				? `${LINKS.Business}/${id}?tab=${tab}&_deleted=true`
-				: `${LINKS.Users}/${id}?_deleted=true`;
+				: `${LINKS.Business}/${id}?_deleted=true`;
 
 		return defaultLink;
 	};
@@ -69,7 +70,7 @@ const Profile = () => {
 				return navigate(link(UserNavList.Transaction));
 
 			default:
-				navigate(`${LINKS.Users}/${id}`);
+				navigate(`${LINKS.Business}/${id}`);
 		}
 		setCurrentTab(value);
 	};
@@ -166,14 +167,12 @@ const Profile = () => {
 								>
 									<BusinessProfile business={dataBusiness as IBusiness} />
 								</Box>
-								<Box
-									sx={{ padding: { xs: '0px 1rem', md: '0px 2rem' } }}
-									hidden={currentTab !== UserNavList.Status}
-								>
-									<UserStatus user={dataBusiness as IBusiness} />
-								</Box>
+
 								<Box hidden={currentTab !== UserNavList.Transaction}>
 									<Typography>Business Transaction</Typography>
+								</Box>
+								<Box hidden={currentTab !== UserNavList.Commissions}>
+									<BusinessCommissions business={dataBusiness as IBusiness} />
 								</Box>
 							</ErrorBoundary>
 						</Box>

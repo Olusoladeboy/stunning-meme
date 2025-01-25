@@ -51,7 +51,7 @@ const BusinessTab = ({ handleChange, currentTab }: Props) => {
 				label='profile'
 				currentTab={currentTab}
 			/>
-			<TabItem
+			{/* <TabItem
 				handleChange={() => handleChange(UserNavList.Status)}
 				label='status'
 				currentTab={currentTab}
@@ -60,7 +60,7 @@ const BusinessTab = ({ handleChange, currentTab }: Props) => {
 				handleChange={() => handleChange(UserNavList.Transaction)}
 				label='transaction'
 				currentTab={currentTab}
-			/>
+			/> */}
 			<TabItem
 				handleChange={() => handleChange(UserNavList.Commissions)}
 				label='commissions'

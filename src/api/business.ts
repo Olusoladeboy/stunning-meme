@@ -1,5 +1,5 @@
 import apiRequest from './apiRequest';
-import { ENDPOINTS, IBusiness, DataResponse } from '../utilities';
+import { ENDPOINTS, IBusiness, DataResponse, ICommission } from '../utilities';
 
 export const businesses = async (params?: {
 	[key: string]: any;
@@ -12,7 +12,7 @@ export const businesses = async (params?: {
 
 export const businessCommissions = async (params?: {
 	[key: string]: any;
-}): Promise<DataResponse<IBusiness[]>> =>
+}): Promise<DataResponse<ICommission[]>> =>
 	apiRequest({
 		method: 'GET',
 		url: `${ENDPOINTS.Commissions}`,
@@ -21,7 +21,7 @@ export const businessCommissions = async (params?: {
 
 export const createBusinessCommissions = async (data?: {
 	[key: string]: any;
-}): Promise<DataResponse<IBusiness[]>> =>
+}): Promise<DataResponse<ICommission>> =>
 	apiRequest({
 		method: 'POST',
 		url: `${ENDPOINTS.Commissions}`,
@@ -30,16 +30,23 @@ export const createBusinessCommissions = async (data?: {
 
 export const deleteBusinessCommissions = async (
 	id: string
-): Promise<DataResponse<IBusiness[]>> =>
+): Promise<DataResponse<any>> =>
 	apiRequest({
 		method: 'DELETE',
 		url: `${ENDPOINTS.Commissions}/${id}`,
 	});
 
-export const updateBusinessCommissions = async (
-	id: string
-): Promise<DataResponse<IBusiness[]>> =>
+export const updateBusinessCommissions = async ({
+	id,
+	data,
+}: {
+	id: string;
+	data: {
+		commissionRate: number;
+	};
+}): Promise<DataResponse<any>> =>
 	apiRequest({
 		method: 'PUT',
 		url: `${ENDPOINTS.Commissions}/${id}`,
+		data,
 	});

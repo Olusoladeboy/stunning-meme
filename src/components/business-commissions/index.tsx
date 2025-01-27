@@ -2,9 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { Box, useTheme } from '@mui/material';
 import { useQuery } from 'react-query';
 import queryString from 'query-string';
-import { useLocation, useNavigate } from 'react-router-dom';
-import { QueryKeys, MAX_RECORDS, IBusiness } from 'utilities';
-import { allTransactions } from 'api';
+import { useLocation } from 'react-router-dom';
+import { QueryKeys, MAX_RECORDS, IBusiness, ICommission } from 'utilities';
+import { businessCommissions } from 'api';
 import { useHandleError, useAlert, useSearchTransaction } from 'hooks';
 import { useAppSelector } from 'store/hooks';
 import Pagination from '../pagination';
@@ -21,10 +21,12 @@ const BusinessCommissions = ({ business }: Props) => {
 	const theme = useTheme();
 	const handleError = useHandleError();
 	const setAlert = useAlert();
-	const navigate = useNavigate();
 	const [count, setCount] = useState<number>(1);
 	const [page, setPage] = useState<number>(1);
 	const [total, setTotal] = useState<number>(0);
+
+	const [commission, setCommission] = useState<ICommission | null>(null);
+
 	const [isDisplayCreateCommissionModal, setDisplayCreateCommissionModal] =
 		useState<Boolean>(false);
 
@@ -36,6 +38,7 @@ const BusinessCommissions = ({ business }: Props) => {
 
 	const closeModal = () => {
 		setDisplayCreateCommissionModal(false);
+		setCommission(null);
 	};
 
 	// const isEnabledRequest = false;
@@ -51,13 +54,11 @@ const BusinessCommissions = ({ business }: Props) => {
 	const { isLoading, data } = useQuery(
 		[QueryKeys.Commissions, business?.id, page],
 		() =>
-			allTransactions({
-				params: {
-					businessId: business?.id,
-					sort: '-createdAt',
-					limit: MAX_RECORDS,
-					skip: (page - 1) * MAX_RECORDS,
-				},
+			businessCommissions({
+				business: business?.id,
+				sort: '-createdAt',
+				limit: MAX_RECORDS,
+				skip: (page - 1) * MAX_RECORDS,
 			}),
 		{
 			enabled: !!(token && business),
@@ -70,8 +71,8 @@ const BusinessCommissions = ({ business }: Props) => {
 				}
 
 				if (data && data.success) {
-					const total = data.metadata.total;
-					setTotal(data.metadata.total);
+					const total = Number(data?.metadata?.total);
+					setTotal(total);
 					const count = Math.ceil(total / MAX_RECORDS);
 					setCount(count);
 				}
@@ -90,11 +91,23 @@ const BusinessCommissions = ({ business }: Props) => {
 		// 	setPage(page);
 		// }
 	};
+
+	const handleSelectCommission = (commission: ICommission) => {
+		setCommission(commission);
+		setDisplayCreateCommissionModal(true);
+	};
+
 	return (
 		<>
 			{isDisplayCreateCommissionModal && (
-				<ModalWrapper title={`Create Commission`} closeModal={closeModal}>
-					<CommissionForm callback={closeModal} />
+				<ModalWrapper
+					title={`${commission ? 'Update' : 'Create'} Commission`}
+					closeModal={closeModal}
+				>
+					<CommissionForm
+						formData={commission as ICommission}
+						callback={closeModal}
+					/>
 				</ModalWrapper>
 			)}
 			<Box>
@@ -117,8 +130,9 @@ const BusinessCommissions = ({ business }: Props) => {
 					<BusinessCommissionsTable
 						isLoading={isLoading || isSearching}
 						searchTransaction={searchTransaction}
-						data={search ? search : data && data.payload}
+						data={data && data.payload}
 						clearSearch={clearSearch}
+						handleSelectCommission={handleSelectCommission}
 					/>
 					{!search && total > MAX_RECORDS && (
 						<Pagination

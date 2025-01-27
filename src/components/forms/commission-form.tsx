@@ -1,4 +1,4 @@
-import React, { CSSProperties } from 'react';
+import React, { CSSProperties, useEffect, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 import { useMutation, useQueryClient } from 'react-query';
 import * as yup from 'yup';
@@ -7,25 +7,30 @@ import { grey } from '@mui/material/colors';
 import { useFormik } from 'formik';
 import TextInput from '../form-components/TextInput';
 import Button from '../button/custom-button';
-import { DataPlan, QueryKeys, TRANSACTION_SERVICE } from 'utilities';
+import { ICommission, QueryKeys, TRANSACTION_SERVICE } from 'utilities';
 import Select from '../form-components/select';
 import { useAlert, useHandleError } from 'hooks';
-import { createBusinessCommissions } from 'api';
+import { createBusinessCommissions, updateBusinessCommissions } from 'api';
 
 type Props = {
-	dataPayload?: DataPlan;
+	formData?: ICommission;
 	callback?: () => void;
 };
 
 const SELECT_SERVICE_TYPE = 'Select service type';
 
-const CommissionForm = ({ dataPayload, callback }: Props) => {
+const CommissionForm = ({ formData, callback }: Props) => {
 	const theme = useTheme();
 	const queryClient = useQueryClient();
 	const handleError = useHandleError();
 	const setAlert = useAlert();
 	const styles = useStyles(theme);
 	const { id } = useParams();
+
+	const isEdit = useMemo(() => {
+		if (Boolean(formData && Object.keys(formData).length > 0)) return true;
+		return false;
+	}, [formData]);
 
 	const validationSchema = yup.object().shape({
 		serviceType: yup
@@ -68,29 +73,76 @@ const CommissionForm = ({ dataPayload, callback }: Props) => {
 		}
 	);
 
-	const { values, handleChange, errors, touched, handleSubmit, resetForm } =
-		useFormik({
-			initialValues,
-			validationSchema,
-			onSubmit: (values) => {
-				if (!id) {
-					return setAlert({
-						type: 'error',
-						message:
-							'Something went wrong, unable to create business commission',
-					});
+	const { isLoading: isUpdating, mutate: mutateUpdate } = useMutation(
+		updateBusinessCommissions,
+		{
+			onSettled: (data, error) => {
+				if (error) {
+					const response = handleError({ error });
+
+					if (response?.message) {
+						setAlert({ message: response.message, type: 'error' });
+					}
 				}
-				const commissionRate = Number(values.commissionRate) / 100;
-				const payload = {
-					...values,
-					businessId: id,
-					commissionRate,
-				};
-				mutateCreate(payload);
+
+				if (data && data.success) {
+					typeof callback !== 'undefined' && callback();
+					queryClient.invalidateQueries(QueryKeys.Commissions);
+					setAlert({
+						message: data.message,
+						type: 'success',
+					});
+					resetForm();
+				}
 			},
-		});
+		}
+	);
+
+	const {
+		values,
+		handleChange,
+		errors,
+		touched,
+		handleSubmit,
+		resetForm,
+		setFieldValue,
+	} = useFormik({
+		initialValues,
+		validationSchema,
+		onSubmit: (values) => {
+			if (!id) {
+				return setAlert({
+					type: 'error',
+					message: 'Something went wrong, unable to create business commission',
+				});
+			}
+			const commissionRate = Number(values.commissionRate) / 100;
+			const payload = {
+				...values,
+				business: id,
+				commissionRate,
+			};
+			if (isEdit && formData) {
+				mutateUpdate({
+					id: formData?.id,
+					data: {
+						commissionRate,
+					},
+				});
+				return;
+			}
+			mutateCreate(payload);
+		},
+	});
 
 	const { serviceType, commissionRate } = values;
+
+	useEffect(() => {
+		if (formData && Object.keys(formData).length > 0) {
+			setFieldValue('commissionRate', formData.commissionRate);
+			setFieldValue('serviceType', formData.serviceType);
+		}
+	}, [formData, setFieldValue]);
 
 	return (
 		<Box style={styles.form as CSSProperties} component={'form'}>
@@ -106,6 +158,7 @@ const CommissionForm = ({ dataPayload, callback }: Props) => {
 						Service Type
 					</Typography>
 					<Select
+						disabled={isEdit}
 						fullWidth
 						error={Boolean(touched.serviceType && errors.serviceType)}
 						helpertext={touched.serviceType ? errors.serviceType : undefined}
@@ -124,7 +177,7 @@ const CommissionForm = ({ dataPayload, callback }: Props) => {
 				</Box>
 				<Box>
 					<Typography variant={'body1'} style={styles.label}>
-						Rate
+						Percentage Rate
 					</Typography>
 					<TextInput
 						fullWidth
@@ -139,7 +192,7 @@ const CommissionForm = ({ dataPayload, callback }: Props) => {
 				</Box>
 			</Box>
 			<Button
-				loading={isCreating}
+				loading={isCreating || isUpdating}
 				style={styles.btn}
 				type={'submit'}
 				size={'large'}
@@ -148,7 +201,7 @@ const CommissionForm = ({ dataPayload, callback }: Props) => {
 					handleSubmit();
 				}}
 			>
-				Save
+				{isEdit ? 'Update' : 'Save'}
 			</Button>
 		</Box>
 	);

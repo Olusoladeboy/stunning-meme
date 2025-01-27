@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
 	useTheme,
 	Box,
@@ -9,53 +9,50 @@ import {
 } from '@mui/material';
 import moment from 'moment';
 import { StyledTableRow, StyledTableCell } from './components';
-import {
-	Transaction,
-	formatNumberToCurrency,
-	ErrorBoundary,
-	LIGHT_GRAY,
-	checkAmount,
-} from 'utilities';
-import Loader from '../loader/table-loader';
+import { ErrorBoundary, LIGHT_GRAY, ICommission, QueryKeys } from 'utilities';
+import TableLoader from '../loader/table-loader';
 import Empty from '../empty/table-empty';
 import CustomTableCell from './components/custom-table-cell';
-import TransactionDetailsModal from '../modal/transaction-details-modal';
+import Button from 'components/button';
+import { red } from '@mui/material/colors';
+import { useMutation, useQueryClient } from 'react-query';
+import { deleteBusinessCommissions } from 'api';
+import Loader from 'components/loader';
 
 type Props = {
-	data?: Transaction[] | null;
+	data?: ICommission[] | null;
 	isLoading?: boolean;
 	clearSearch?(): void;
 	searchTransaction?(value: string): void;
+	handleSelectCommission?: (commission: ICommission) => void;
 };
 
 const BusinessCommissionsTable = ({
-	clearSearch,
-	searchTransaction,
 	isLoading,
 	data,
+	handleSelectCommission,
 }: Props) => {
 	const theme = useTheme();
 	const styles = useStyles(theme);
-	const [selectedTransaction, setSelectedTransaction] =
-		useState<Transaction | null>(null);
+	const queryClient = useQueryClient();
+
+	const { isLoading: isDeleting, mutate: mutateDelete } = useMutation(
+		deleteBusinessCommissions,
+		{
+			onSettled: (data, error) => {
+				queryClient.invalidateQueries(QueryKeys.Commissions);
+			},
+		}
+	);
+
+	const handleMutateDelete = (id: string) => {
+		mutateDelete(id);
+	};
 
 	return (
 		<>
+			{isDeleting && <Loader />}
 			<Box sx={{ overflow: 'auto' }}>
-				{selectedTransaction && (
-					<TransactionDetailsModal
-						closeModal={() => setSelectedTransaction(null)}
-						transaction={selectedTransaction}
-					/>
-				)}
-				{/* <Box sx={{ padding: { xs: '0px 1rem', md: '0px 2rem' }, width: '100%' }}>
-				<TableHeader
-					title={'Commissions'}
-					searchPlaceholder={'Search transaction by reference...'}
-					clearSearch={clearSearch}
-					handleSearch={searchTransaction}
-				/>
-			</Box> */}
 				<ErrorBoundary>
 					<Table sx={{ overflow: 'auto' }} stickyHeader>
 						<TableHead
@@ -67,12 +64,11 @@ const BusinessCommissionsTable = ({
 							}}
 						>
 							<TableRow>
-								<CustomTableCell isSortable label={'Transaction'} />
-								<CustomTableCell isSortable label={'Reference'} />
-								<CustomTableCell isSortable label={'Amount'} />
+								<CustomTableCell label={'Service Type'} />
+								<CustomTableCell label={'Percentage Rate'} />
 								<CustomTableCell label={'Date'} />
 								<CustomTableCell label={'Time'} />
-								<CustomTableCell label={'Status'} />
+								<CustomTableCell label={'Actions'} />
 							</TableRow>
 						</TableHead>
 						<TableBody
@@ -83,42 +79,50 @@ const BusinessCommissionsTable = ({
 							}}
 						>
 							{isLoading ? (
-								<Loader colSpan={6} />
+								<TableLoader colSpan={6} />
 							) : (
 								data && (
 									<>
 										{data.length > 0 ? (
-											data.map((row: Transaction) => (
-												<StyledTableRow
-													onClick={() => setSelectedTransaction(row)}
-													key={row.id}
-												>
+											data.map((row: ICommission) => (
+												<StyledTableRow key={row.id}>
 													<StyledTableCell style={styles.text}>
-														{row.transaction
-															? row.transaction.service
-															: row.service
-															? row.service
-															: row.type}
+														{row.serviceType}
 													</StyledTableCell>
 													<StyledTableCell style={styles.text}>
-														{row.reference
-															? row.reference
-															: row.transaction
-															? row.transaction.reference
-															: 'No Reference'}
+														{parseFloat(row.commissionRate) * 100}%
 													</StyledTableCell>
-													<StyledTableCell style={styles.text}>
-														{formatNumberToCurrency(checkAmount(row.amount))}
-													</StyledTableCell>
+
 													<StyledTableCell style={styles.text}>
 														{moment.utc(row.createdAt).format('ll')}
 													</StyledTableCell>
 													<StyledTableCell style={styles.text}>
 														{moment.utc(row.createdAt).format('LT')}
 													</StyledTableCell>
-
-													<StyledTableCell style={styles.text}>
-														{row.status}
+													<StyledTableCell
+														sx={{
+															display: 'flex',
+															gap: '5px',
+															alignItems: 'center',
+														}}
+													>
+														<Button
+															onClick={() => {
+																typeof handleSelectCommission === 'function' &&
+																	handleSelectCommission(row);
+															}}
+															style={styles.updateButton}
+															variant='outlined'
+														>
+															Update
+														</Button>
+														<Button
+															onClick={() => handleMutateDelete(row.id)}
+															style={styles.deleteButton}
+															variant='outlined'
+														>
+															Delete
+														</Button>
 													</StyledTableCell>
 												</StyledTableRow>
 											))
@@ -144,6 +148,16 @@ const useStyles = (theme: any) => ({
 	},
 	text: {
 		color: theme.palette.primary.main,
+	},
+	deleteButton: {
+		backgroundColor: red['600'],
+		color: 'white',
+		borderColor: red['600'],
+	},
+	updateButton: {
+		backgroundColor: theme.palette.secondary.main,
+		color: 'white',
+		borderColor: theme.palette.secondary.main,
 	},
 });
 

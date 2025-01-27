@@ -1063,3 +1063,12 @@ export interface IWallet {
 	updatedAt: string;
 	lien: Amount;
 }
+
+export interface ICommission {
+	business: IBusiness;
+	serviceType: string;
+	commissionRate: string;
+	createdAt: string;
+	updatedAt: string;
+	id: string;
+}

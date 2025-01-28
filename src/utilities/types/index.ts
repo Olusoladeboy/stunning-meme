@@ -176,6 +176,7 @@ export enum UserNavList {
 	WalletSummary = 'wallet-summary',
 	Manager = 'manager',
 	Commissions = 'commissions',
+	Service = 'services',
 }
 
 export enum ManagerTypes {

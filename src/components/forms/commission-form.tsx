@@ -7,7 +7,7 @@ import { grey } from '@mui/material/colors';
 import { useFormik } from 'formik';
 import TextInput from '../form-components/TextInput';
 import Button from '../button/custom-button';
-import { ICommission, QueryKeys, TRANSACTION_SERVICE } from 'utilities';
+import { ICommission, QueryKeys } from 'utilities';
 import Select from '../form-components/select';
 import { useAlert, useHandleError } from 'hooks';
 import { createBusinessCommissions, updateBusinessCommissions } from 'api';
@@ -18,6 +18,12 @@ type Props = {
 };
 
 const SELECT_SERVICE_TYPE = 'Select service type';
+
+export const TRANSACTION_SERVICE = {
+	DATA_SUBSCRIPTION: 'DATA SUBSCRIPTION',
+	AIRTIME_TOP_UP: 'AIRTIME TOP UP',
+	AUTO_AIRTIME_CONVERSION: 'AIRTIME AUTO CONVERSION',
+};
 
 const CommissionForm = ({ formData, callback }: Props) => {
 	const theme = useTheme();
@@ -123,10 +129,14 @@ const CommissionForm = ({ formData, callback }: Props) => {
 				commissionRate,
 			};
 			if (isEdit && formData) {
+				const rate = /\./.test(values.commissionRate)
+					? Number(values.commissionRate)
+					: Number(values.commissionRate) / 100;
+
 				mutateUpdate({
 					id: formData?.id,
 					data: {
-						commissionRate,
+						commissionRate: rate,
 					},
 				});
 				return;

@@ -35,7 +35,6 @@ const TabItem = ({
 };
 
 const BusinessTab = ({ handleChange, currentTab }: Props) => {
-	const styles = useStyles();
 	return (
 		<Box
 			sx={{
@@ -51,19 +50,15 @@ const BusinessTab = ({ handleChange, currentTab }: Props) => {
 				label='profile'
 				currentTab={currentTab}
 			/>
-			{/* <TabItem
-				handleChange={() => handleChange(UserNavList.Status)}
-				label='status'
-				currentTab={currentTab}
-			/>
-			<TabItem
-				handleChange={() => handleChange(UserNavList.Transaction)}
-				label='transaction'
-				currentTab={currentTab}
-			/> */}
+
 			<TabItem
 				handleChange={() => handleChange(UserNavList.Commissions)}
 				label='commissions'
+				currentTab={currentTab}
+			/>
+			<TabItem
+				handleChange={() => handleChange(UserNavList.Service)}
+				label='services'
 				currentTab={currentTab}
 			/>
 		</Box>

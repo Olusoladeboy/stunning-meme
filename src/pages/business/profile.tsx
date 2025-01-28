@@ -7,7 +7,6 @@ import { grey } from '@mui/material/colors';
 import {
 	Layout,
 	BackButton,
-	UserStatus,
 	ModalLayout,
 	AssignManagerForm,
 	BusinessTab,
@@ -174,6 +173,7 @@ const Profile = () => {
 								<Box hidden={currentTab !== UserNavList.Commissions}>
 									<BusinessCommissions business={dataBusiness as IBusiness} />
 								</Box>
+								<Box hidden={currentTab !== UserNavList.Service}>Services</Box>
 							</ErrorBoundary>
 						</Box>
 					</>

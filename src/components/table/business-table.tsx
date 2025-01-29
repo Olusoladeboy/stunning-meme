@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import moment from 'moment';
 import {
@@ -9,14 +9,13 @@ import {
 	Table,
 	Box,
 } from '@mui/material';
-import { grey } from '@mui/material/colors';
+import { grey, red } from '@mui/material/colors';
 import {
-	User,
 	IBusiness,
 	SUCCESS_COLOR,
 	BOX_SHADOW,
 	LINKS,
-	USERS_TAB,
+	QueryKeys,
 } from 'utilities';
 import {
 	StyledTableCell as TableCell,
@@ -26,6 +25,13 @@ import TableHeader from '../header/table-header';
 import Empty from '../empty';
 import TableLoader from '../loader/table-loader';
 import CustomTableCell from './components/custom-table-cell';
+import Button from 'components/button';
+import { useMutation, useQueryClient } from 'react-query';
+import { deleteBusiness } from 'api';
+import Loader from 'components/loader';
+import { useAlert, useHandleError } from 'hooks';
+import UpdateBusinessStatusForm from 'components/forms/update-business-status-form';
+import ModalWrapper from 'components/modal/Wrapper';
 
 type Props = {
 	isLoading?: boolean;
@@ -44,104 +50,181 @@ const BusinessTable = ({
 	searchUser,
 	clearSearch,
 }: Props) => {
+	const handleError = useHandleError();
+	const alert = useAlert();
 	const navigate = useNavigate();
 	const theme = useTheme();
 	const styles = useStyles(theme);
+	const queryClient = useQueryClient();
+
+	const [selectedBusiness, setSelectedBusiness] = useState<IBusiness | null>(
+		null
+	);
+	const [isDisplayEditModal, setDisplayEditModal] = useState<boolean>(false);
 
 	const handleClickRow = (business: IBusiness) => {
 		navigate(`${LINKS.Business}/${business.id}`);
 	};
 
-	return (
-		<Box style={styles.container} sx={{ overflow: 'auto' }}>
-			<TableHeader
-				placeholder={'Search business with email/phone'}
-				sx={{ padding: '0px 1rem' }}
-				title={'Business'}
-				handleSearch={searchUser}
-				clearSearch={clearSearch}
-			/>
+	// Handle Delete Business
+	const { isLoading: isDeletingBusiness, mutate: mutateDeleteBusiness } =
+		useMutation(deleteBusiness, {
+			onSettled: (data, error) => {
+				if (data && data.success) {
+					queryClient.invalidateQueries([QueryKeys.Business]);
+				}
+				if (error) {
+					const response = handleError({ error });
+					if (response?.message)
+						alert({ message: response.message, type: 'error' });
+				}
+			},
+		});
 
-			<Table sx={{ overflow: 'auto' }}>
-				<TableHead
-					sx={{
-						'& tr': {
-							backgroundColor: `${grey[50]} !important`,
-							color: theme.palette.primary.main,
-						},
-					}}
-				>
-					<TableRow>
-						<CustomTableCell label={'Business Name'} isSortable />
-						<CustomTableCell label={'Email'} isSortable />
-						<CustomTableCell label={'Phone Number'} isSortable />
-						<CustomTableCell label={'Date'} />
-						<CustomTableCell label={'Status'} />
-					</TableRow>
-				</TableHead>
-				<TableBody
-					sx={{
-						'& tr': {
-							color: theme.palette.primary.main,
-						},
-					}}
-				>
-					{isLoading ? (
-						<TableLoader colSpan={5} />
-					) : businesses && businesses.length > 0 ? (
-						businesses.map((business: IBusiness, key: number) => (
-							<TableRow onClick={() => handleClickRow(business)} key={key}>
-								<TableCell style={styles.tableText}>
-									<Box
+	const handleDeleteBusiness = (id: string) => {
+		mutateDeleteBusiness(id);
+	};
+
+	const closeModal = () => {
+		setDisplayEditModal(false);
+		setSelectedBusiness(null);
+	};
+
+	return (
+		<>
+			{Boolean(isDisplayEditModal && selectedBusiness) && (
+				<ModalWrapper title={'Update Business'} closeModal={closeModal}>
+					<UpdateBusinessStatusForm
+						callback={closeModal}
+						formData={selectedBusiness as IBusiness}
+					/>
+				</ModalWrapper>
+			)}
+			{isDeletingBusiness && <Loader />}
+			<Box style={styles.container} sx={{ overflow: 'auto' }}>
+				<TableHeader
+					placeholder={'Search business with email/phone'}
+					sx={{ padding: '0px 1rem' }}
+					title={'Business'}
+					handleSearch={searchUser}
+					clearSearch={clearSearch}
+				/>
+
+				<Table sx={{ overflow: 'auto' }}>
+					<TableHead
+						sx={{
+							'& tr': {
+								backgroundColor: `${grey[50]} !important`,
+								color: theme.palette.primary.main,
+							},
+						}}
+					>
+						<TableRow>
+							<CustomTableCell label={'Business Name'} isSortable />
+							<CustomTableCell label={'Email'} isSortable />
+							<CustomTableCell label={'Phone Number'} isSortable />
+							<CustomTableCell label={'Date'} />
+							<CustomTableCell label={'Status'} />
+							<CustomTableCell label={'Action'} />
+						</TableRow>
+					</TableHead>
+					<TableBody
+						sx={{
+							'& tr': {
+								color: theme.palette.primary.main,
+							},
+						}}
+					>
+						{isLoading ? (
+							<TableLoader colSpan={6} />
+						) : businesses && businesses.length > 0 ? (
+							businesses.map((business: IBusiness, key: number) => (
+								<TableRow
+									onClick={(e) => {
+										e.stopPropagation();
+										handleClickRow(business);
+									}}
+									key={key}
+								>
+									<TableCell style={styles.tableText}>
+										<Box
+											sx={{
+												display: 'flex',
+												alignItems: 'center',
+												gap: '10px',
+											}}
+										>
+											{/* <Avatar src={user.photoUrl as string} /> */}
+											<span>{business.businessName}</span>
+										</Box>
+									</TableCell>
+									<TableCell style={styles.tableText}>
+										{typeof business.businessOwner === 'object' &&
+											business.businessOwner.email}
+									</TableCell>
+									<TableCell style={styles.tableText}>
+										{typeof business.businessOwner === 'object' &&
+											business.businessOwner?.phone}
+									</TableCell>
+									<TableCell style={styles.tableText}>
+										{moment.utc(business.createdAt).format('l')}
+									</TableCell>
+
+									<TableCell
+										sx={{
+											textTransform: 'uppercase',
+											fontWeight: '600',
+											// color: user.verified
+											// 	? SUCCESS_COLOR
+											// 	: user.verified === false
+											// 	? DANGER_COLOR
+											// 	: user.suspended
+											// 	? grey[800]
+											// 	: grey[500],
+										}}
+									>
+										{business.status}
+									</TableCell>
+									<TableCell
 										sx={{
 											display: 'flex',
 											alignItems: 'center',
-											gap: '10px',
+											gap: '5px',
 										}}
 									>
-										{/* <Avatar src={user.photoUrl as string} /> */}
-										<span>{business.businessName}</span>
-									</Box>
-								</TableCell>
-								<TableCell style={styles.tableText}>
-									{typeof business.businessOwner === 'object' &&
-										business.businessOwner.email}
-								</TableCell>
-								<TableCell style={styles.tableText}>
-									{typeof business.businessOwner === 'object' &&
-										business.businessOwner?.phone}
-								</TableCell>
-								<TableCell style={styles.tableText}>
-									{moment.utc(business.createdAt).format('l')}
-								</TableCell>
-
-								<TableCell
-									sx={{
-										textTransform: 'uppercase',
-										fontWeight: '600',
-										// color: user.verified
-										// 	? SUCCESS_COLOR
-										// 	: user.verified === false
-										// 	? DANGER_COLOR
-										// 	: user.suspended
-										// 	? grey[800]
-										// 	: grey[500],
-									}}
-								>
-									{business.status}
+										<Button
+											onClick={(e) => {
+												e.stopPropagation();
+												setDisplayEditModal(true);
+												setSelectedBusiness(business);
+											}}
+											style={styles.updateButton}
+										>
+											Update
+										</Button>
+										<Button
+											onClick={(e) => {
+												e.stopPropagation();
+												handleDeleteBusiness(business.id);
+											}}
+											style={styles.deleteButton}
+										>
+											Delete
+										</Button>
+									</TableCell>
+								</TableRow>
+							))
+						) : (
+							<TableRow>
+								<TableCell colSpan={6}>
+									<Empty text={'No available business'} />
 								</TableCell>
 							</TableRow>
-						))
-					) : (
-						<TableRow>
-							<TableCell colSpan={5}>
-								<Empty text={'No available business'} />
-							</TableCell>
-						</TableRow>
-					)}
-				</TableBody>
-			</Table>
-		</Box>
+						)}
+					</TableBody>
+				</Table>
+			</Box>
+		</>
 	);
 };
 
@@ -169,6 +252,18 @@ const useStyles = (theme: any) => ({
 	},
 	transactionItemText: {
 		color: SUCCESS_COLOR,
+	},
+	deleteButton: {
+		backgroundColor: red['600'],
+		color: 'white',
+		borderColor: red['600'],
+		minWidth: '120px',
+	},
+	updateButton: {
+		backgroundColor: theme.palette.secondary.main,
+		color: 'white',
+		borderColor: theme.palette.secondary.main,
+		minWidth: '120px',
 	},
 });
 

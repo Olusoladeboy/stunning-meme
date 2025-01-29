@@ -50,3 +50,24 @@ export const updateBusinessCommissions = async ({
 		url: `${ENDPOINTS.Commissions}/${id}`,
 		data,
 	});
+
+export const deleteBusiness = async (id: string): Promise<DataResponse<any>> =>
+	apiRequest({
+		method: 'DELETE',
+		url: `${ENDPOINTS.Business}/${id}`,
+	});
+
+export const updateBusiness = async ({
+	id,
+	data,
+}: {
+	id: string;
+	data: {
+		status: string;
+	};
+}): Promise<DataResponse<any>> =>
+	apiRequest({
+		method: 'PUT',
+		url: `${ENDPOINTS.Business}/${id}`,
+		data,
+	});

@@ -31,6 +31,7 @@ export const QueryKeys = {
 	RecentConvertAirtime: '@Query:RecentConvertAirtime',
 	Users: '@Query:All_Users',
 	Business: '@Query:Business',
+	Businesses: '@Query:Businesses',
 	User: '@Query:Get_single_user',
 	SuspendUser: '@Query:Suspend_user',
 	DataNetwork: '@Query:Data_Network',

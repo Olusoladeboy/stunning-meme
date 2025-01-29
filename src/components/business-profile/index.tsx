@@ -1,19 +1,19 @@
 import React, { useState } from 'react';
 import { Box, Typography, useTheme } from '@mui/material';
-import { useMutation, useQuery, useQueryClient } from 'react-query';
+import { useMutation, useQueryClient } from 'react-query';
 import { useNavigate } from 'react-router-dom';
-import { grey } from '@mui/material/colors';
 import moment from 'moment';
 import DetailItem from './detail-item';
 import Button from '../button';
 import ModalWrapper from '../modal/Wrapper';
 import EditProfileForm from '../forms/profile-form';
 import { SUCCESS_COLOR, QueryKeys, IBusiness } from 'utilities';
-import { restoreDeletedAccount, walletAccount } from 'api';
+import { restoreDeletedAccount } from 'api';
 import { useHandleError, useAlert } from 'hooks';
 import Loader from 'components/loader';
-import { useAppSelector } from 'store/hooks';
 import BusinessAvatarWithDetails from 'components/avatar-with-details/business';
+import UpdateBusinessStatusForm from 'components/forms/update-business-status-form';
+import { ModalLayout } from 'components';
 
 type Props = {
 	business?: IBusiness;
@@ -25,10 +25,10 @@ const BusinessProfile = ({ business }: Props) => {
 	const handleError = useHandleError();
 	const queryClient = useQueryClient();
 	const theme = useTheme();
-
-	const token = useAppSelector((store) => store.authState.token);
+	const styles = useStyles(theme);
 
 	const [isEditProfile, setEditProfile] = useState<boolean>(false);
+	const [isDisplayModal, setDisplayModal] = useState<boolean>(false);
 
 	// Restor user mutation
 	const { isLoading: isRestoringAccount, mutate: mutateRestoreAccount } =
@@ -59,29 +59,21 @@ const BusinessProfile = ({ business }: Props) => {
 			},
 		});
 
-	const { data: dataWallet } = useQuery(
-		[QueryKeys.UserWallet, business?.id],
-		() =>
-			walletAccount({
-				user: business?.id,
-			}),
-		{
-			enabled: !!(token && business),
-			refetchOnWindowFocus: false,
-			onSettled: (data, error) => {
-				if (error) {
-					const response = handleError({ error });
-					if (response?.message) {
-						alert({ message: response.message, type: 'error' });
-					}
-				}
-			},
-		}
-	);
-
 	return (
 		<>
 			{isRestoringAccount && <Loader />}
+			{isDisplayModal && (
+				<ModalLayout
+					title={'Update Business'}
+					hasCloseButton
+					closeModal={() => setDisplayModal(false)}
+				>
+					<UpdateBusinessStatusForm
+						formData={business}
+						callback={() => setDisplayModal(false)}
+					/>
+				</ModalLayout>
+			)}
 			<Box>
 				<Box
 					sx={{
@@ -148,24 +140,14 @@ const BusinessProfile = ({ business }: Props) => {
 							display: 'flex',
 							alignItems: 'center',
 							gap: ['25px', '50px', '100px'],
+							marginTop: theme.spacing(4),
 						}}
 					>
 						<Button
-							disabled
-							onClick={() => setEditProfile(true)}
-							sx={{
-								backgroundColor: theme.palette.secondary.main,
-								color: grey[50],
-								textTransform: 'uppercase',
-								fontWeight: '600',
-								minWidth: '140px',
-								marginTop: theme.spacing(4),
-								':hover': {
-									backgroundColor: theme.palette.secondary.main,
-								},
-							}}
+							onClick={() => setDisplayModal(true)}
+							style={styles.updateButton}
 						>
-							Edit profile
+							Update Status
 						</Button>
 					</Box>
 				</Box>
@@ -180,9 +162,11 @@ const useStyles = (theme: any) => ({
 		textTransform: 'uppercase',
 		fontWeight: '600',
 	},
-	verifyButton: {
-		border: `1px solid ${SUCCESS_COLOR}`,
-		color: SUCCESS_COLOR,
+	updateButton: {
+		backgroundColor: theme.palette.secondary.main,
+		color: 'white',
+		borderColor: theme.palette.secondary.main,
+		minWidth: '120px',
 	},
 });
 

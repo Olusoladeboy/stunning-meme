@@ -28,7 +28,7 @@ const Businesses = () => {
 	}, [query, query.page]);
 
 	const { isLoading, data, refetch } = useQuery(
-		[QueryKeys.Business, page],
+		[QueryKeys.Businesses, page],
 		() =>
 			businesses({
 				sort: '-createdAt',

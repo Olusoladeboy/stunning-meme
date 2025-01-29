@@ -37,7 +37,6 @@ const Profile = () => {
 	const location = useLocation();
 	const { token } = useAppSelector((store) => store.authState);
 	const [user, setUser] = useState<null | User>(null);
-	const [isDisplayModal, setDisplayModal] = useState<boolean>(false);
 
 	const navigate = useNavigate();
 
@@ -126,15 +125,6 @@ const Profile = () => {
 
 	return (
 		<>
-			{isDisplayModal && (
-				<ModalLayout
-					title={'Assign Manager to User'}
-					hasCloseButton
-					closeModal={() => setDisplayModal(false)}
-				>
-					<AssignManagerForm close={() => setDisplayModal(false)} User={user} />
-				</ModalLayout>
-			)}
 			<Layout>
 				{isLoading ? (
 					<Box style={styles.circularProgress}>

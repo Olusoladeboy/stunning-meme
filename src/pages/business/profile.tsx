@@ -7,11 +7,10 @@ import { grey } from '@mui/material/colors';
 import {
 	Layout,
 	BackButton,
-	ModalLayout,
-	AssignManagerForm,
 	BusinessTab,
 	BusinessProfile,
 	BusinessCommissions,
+	BusinessServiceActivations,
 } from 'components';
 import {
 	BOX_SHADOW,
@@ -36,7 +35,7 @@ const Profile = () => {
 
 	const location = useLocation();
 	const { token } = useAppSelector((store) => store.authState);
-	const [user, setUser] = useState<null | User>(null);
+	const [_, setUser] = useState<null | User>(null);
 
 	const navigate = useNavigate();
 
@@ -163,7 +162,11 @@ const Profile = () => {
 								<Box hidden={currentTab !== UserNavList.Commissions}>
 									<BusinessCommissions business={dataBusiness as IBusiness} />
 								</Box>
-								<Box hidden={currentTab !== UserNavList.Service}>Services</Box>
+								<Box hidden={currentTab !== UserNavList.Service}>
+									<BusinessServiceActivations
+										business={dataBusiness as IBusiness}
+									/>
+								</Box>
 							</ErrorBoundary>
 						</Box>
 					</>

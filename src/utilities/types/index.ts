@@ -1073,3 +1073,17 @@ export interface ICommission {
 	updatedAt: string;
 	id: string;
 }
+
+export interface IActivation {
+	business: string;
+	activations: {
+		[key: string]: {
+			active: boolean;
+			trxref: string;
+			id: string;
+		};
+	};
+	createdAt: string;
+	updatedAt: string;
+	id: string;
+}

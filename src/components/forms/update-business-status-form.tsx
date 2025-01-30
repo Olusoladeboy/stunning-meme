@@ -51,18 +51,18 @@ const UpdateBusinessStatusForm = ({ formData, callback }: Props) => {
 					if (response?.message) {
 						setAlert({ message: response.message, type: 'error' });
 					}
+
+					return;
 				}
 
-				if (data && data.success) {
-					typeof callback !== 'undefined' && callback();
-					queryClient.invalidateQueries(QueryKeys.Business);
-					queryClient.invalidateQueries(QueryKeys.Businesses);
-					setAlert({
-						message: data.message,
-						type: 'success',
-					});
-					resetForm();
-				}
+				typeof callback !== 'undefined' && callback();
+				queryClient.invalidateQueries(QueryKeys.Business);
+				queryClient.invalidateQueries(QueryKeys.Businesses);
+				setAlert({
+					message: 'Business deleted successfully!',
+					type: 'success',
+				});
+				resetForm();
 			},
 		}
 	);

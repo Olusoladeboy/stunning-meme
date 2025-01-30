@@ -127,7 +127,7 @@ const BusinessProfile = ({ business }: Props) => {
 							text={'Business email'}
 							value={
 								typeof business?.businessOwner === 'object' &&
-								business.businessOwner.phone
+								business.businessOwner.email
 							}
 						/>
 						{/* <DetailItem

@@ -70,14 +70,15 @@ const BusinessTable = ({
 	const { isLoading: isDeletingBusiness, mutate: mutateDeleteBusiness } =
 		useMutation(deleteBusiness, {
 			onSettled: (data, error) => {
-				if (data && data.success) {
-					queryClient.invalidateQueries([QueryKeys.Business]);
-				}
 				if (error) {
 					const response = handleError({ error });
 					if (response?.message)
 						alert({ message: response.message, type: 'error' });
+
+					return;
 				}
+
+				queryClient.invalidateQueries([QueryKeys.Businesses]);
 			},
 		});
 

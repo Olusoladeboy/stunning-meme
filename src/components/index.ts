@@ -129,3 +129,5 @@ export { default as BusinessProfile } from './business-profile';
 export { default as BusinessCommissions } from './business-commissions';
 export { default as BusinessCommissionsTable } from './table/business-commissions-table';
 export { default as CommissionForm } from './forms/commission-form';
+export { default as BusinessServiceActivationTable } from './table/service-activation-table';
+export { default as BusinessServiceActivations } from './business-service-activations';

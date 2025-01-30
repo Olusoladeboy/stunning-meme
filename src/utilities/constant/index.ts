@@ -65,6 +65,7 @@ export const QueryKeys = {
 	UserLien: '@Query:UserLien',
 	LienTransactions: '@Query:LienTransactions',
 	Commissions: '@Query:Commissions',
+	Activations: '@Query:Activations',
 };
 
 export const StorageKeys = {
@@ -159,6 +160,7 @@ export const ENDPOINTS = {
 	User: '/user',
 	Business: '/business',
 	Commissions: '/commissions',
+	Activations: '/activation',
 	DataNetwork: '/data-networks',
 	Airtime: '/airtime',
 	DataSubscription: '/data-subscription',

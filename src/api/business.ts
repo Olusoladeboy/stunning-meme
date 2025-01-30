@@ -1,5 +1,11 @@
 import apiRequest from './apiRequest';
-import { ENDPOINTS, IBusiness, DataResponse, ICommission } from '../utilities';
+import {
+	ENDPOINTS,
+	IBusiness,
+	DataResponse,
+	ICommission,
+	IActivation,
+} from '../utilities';
 
 export const businesses = async (params?: {
 	[key: string]: any;
@@ -16,6 +22,15 @@ export const businessCommissions = async (params?: {
 	apiRequest({
 		method: 'GET',
 		url: `${ENDPOINTS.Commissions}`,
+		params,
+	});
+
+export const businessActivations = async (params?: {
+	[key: string]: any;
+}): Promise<DataResponse<IActivation[]>> =>
+	apiRequest({
+		method: 'GET',
+		url: `${ENDPOINTS.Activations}`,
 		params,
 	});
 

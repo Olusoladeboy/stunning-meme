@@ -57,7 +57,7 @@ export const updateBusinessCommissions = async ({
 }: {
 	id: string;
 	data: {
-		commissionRate: number;
+		rate: number;
 	};
 }): Promise<DataResponse<any>> =>
 	apiRequest({

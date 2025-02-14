@@ -43,15 +43,20 @@ const CommissionForm = ({ formData, callback }: Props) => {
 			.string()
 			.notOneOf([SELECT_SERVICE_TYPE], SELECT_SERVICE_TYPE)
 			.required(SELECT_SERVICE_TYPE),
-		commissionRate: yup
+		rate: yup
 			.string()
-			.matches(/\d/, 'Data unit must be a number')
-			.required('Enter data unit'),
+			.matches(/\d/, 'Commission rate must be a number')
+			.required('Enter commission unit'),
+		cap: yup
+			.string()
+			.matches(/\d/, 'Commission cap must be a number')
+			.required('Enter commission cap unit'),
 	});
 
 	const initialValues = {
 		serviceType: SELECT_SERVICE_TYPE,
-		commissionRate: '',
+		rate: '',
+		cap: '',
 	};
 
 	const { isLoading: isCreating, mutate: mutateCreate } = useMutation(
@@ -122,21 +127,22 @@ const CommissionForm = ({ formData, callback }: Props) => {
 					message: 'Something went wrong, unable to create business commission',
 				});
 			}
-			const commissionRate = Number(values.commissionRate) / 100;
+			const rate = Number(values.rate) / 100;
 			const payload = {
 				...values,
 				business: id,
-				commissionRate,
+				rate,
+				cap: parseFloat(values.cap),
 			};
 			if (isEdit && formData) {
-				const rate = /\./.test(values.commissionRate)
-					? Number(values.commissionRate)
-					: Number(values.commissionRate) / 100;
+				const rate = /\./.test(values.rate)
+					? Number(values.rate)
+					: Number(values.rate) / 100;
 
 				mutateUpdate({
 					id: formData?.id,
 					data: {
-						commissionRate: rate,
+						rate,
 					},
 				});
 				return;
@@ -145,11 +151,11 @@ const CommissionForm = ({ formData, callback }: Props) => {
 		},
 	});
 
-	const { serviceType, commissionRate } = values;
+	const { serviceType, rate, cap } = values;
 
 	useEffect(() => {
 		if (formData && Object.keys(formData).length > 0) {
-			setFieldValue('commissionRate', formData.commissionRate);
+			setFieldValue('rate', formData.rate);
 			setFieldValue('serviceType', formData.serviceType);
 		}
 	}, [formData, setFieldValue]);
@@ -191,13 +197,26 @@ const CommissionForm = ({ formData, callback }: Props) => {
 					</Typography>
 					<TextInput
 						fullWidth
-						placeholder={'Data Code'}
-						error={Boolean(touched.commissionRate && errors.commissionRate)}
-						helperText={
-							touched.commissionRate ? errors.commissionRate : undefined
-						}
-						value={commissionRate}
-						onChange={handleChange('commissionRate')}
+						placeholder={'Commission rate'}
+						error={Boolean(touched.rate && errors.rate)}
+						helperText={touched.rate ? errors.rate : undefined}
+						value={rate}
+						onChange={handleChange('rate')}
+					/>
+				</Box>
+
+				<Box>
+					<Typography variant={'body1'} style={styles.label}>
+						Cap
+					</Typography>
+					<TextInput
+						disabled={isEdit}
+						fullWidth
+						placeholder={'Commission cap'}
+						error={Boolean(touched.cap && errors.cap)}
+						helperText={touched.cap ? errors.cap : undefined}
+						value={cap}
+						onChange={handleChange('cap')}
 					/>
 				</Box>
 			</Box>

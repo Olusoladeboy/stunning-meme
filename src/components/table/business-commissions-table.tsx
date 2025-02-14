@@ -90,7 +90,7 @@ const BusinessCommissionsTable = ({
 														{row.serviceType}
 													</StyledTableCell>
 													<StyledTableCell style={styles.text}>
-														{parseFloat(row.commissionRate) * 100}%
+														{parseFloat(row.rate) * 100}%
 													</StyledTableCell>
 
 													<StyledTableCell style={styles.text}>

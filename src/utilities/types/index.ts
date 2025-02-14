@@ -1068,7 +1068,7 @@ export interface IWallet {
 export interface ICommission {
 	business: IBusiness;
 	serviceType: string;
-	commissionRate: string;
+	rate: string;
 	createdAt: string;
 	updatedAt: string;
 	id: string;

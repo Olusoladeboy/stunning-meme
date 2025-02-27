@@ -32,7 +32,7 @@ const Profile = () => {
 	const { id } = useParams();
 
 	const location = useLocation();
-	const { token } = useAppSelector((store) => store.authState);
+	const token = useAppSelector((store) => store.authState.token);
 	const [user, setUser] = useState<null | User>(null);
 	const [isDisplayModal, setDisplayModal] = useState<boolean>(false);
 

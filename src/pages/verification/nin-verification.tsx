@@ -11,7 +11,7 @@ import { useSearchUser, useAlert, useHandleError, usePageTitle } from 'hooks';
 
 const Verification = () => {
 	usePageTitle('Verifications');
-	const { token } = useAppSelector((store) => store.authState);
+	const token = useAppSelector((store) => store.authState.token);
 	const handleError = useHandleError();
 	const setAlert = useAlert();
 	const theme = useTheme();

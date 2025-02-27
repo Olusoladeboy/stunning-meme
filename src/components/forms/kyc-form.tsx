@@ -20,8 +20,8 @@ const KycForm = ({ data, level }: Props) => {
 	const handleError = useHandleError();
 	const setAlert = useAlert();
 	const styles = useStyles(theme);
-	const { canCreateOrUpdateRecord } = useAppSelector(
-		(store) => store.authState
+	const canCreateOrUpdateRecord = useAppSelector(
+		(store) => store.authState.canCreateOrUpdateRecord
 	);
 
 	const initialValues = {

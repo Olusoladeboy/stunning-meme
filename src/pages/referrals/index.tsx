@@ -19,7 +19,7 @@ const Referrals = () => {
 	usePageTitle('Referrals');
 	const handleError = useHandleError();
 	const alert = useAlert();
-	const { token } = useAppSelector((store) => store.authState);
+	const token = useAppSelector((store) => store.authState.token);
 	const navigate = useNavigate();
 	const [count, setCount] = useState<number>(1);
 	const [page, setPage] = useState<number>(1);

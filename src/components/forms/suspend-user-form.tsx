@@ -29,8 +29,8 @@ const SuspendUserForm = ({ user }: Props) => {
 	const styles = useStyles(theme);
 	const setAlert = useAlert();
 
-	const { canCreateOrUpdateRecord } = useAppSelector(
-		(store) => store.authState
+	const canCreateOrUpdateRecord = useAppSelector(
+		(store) => store.authState.canCreateOrUpdateRecord
 	);
 
 	const [isUnsuspending, setUnsuspending] = useState<boolean>(false);

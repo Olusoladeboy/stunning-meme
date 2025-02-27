@@ -32,7 +32,7 @@ const SearchInput = ({
 	size = 'medium',
 	...rest
 }: Props) => {
-	const { mode } = useAppSelector((store) => store.theme);
+	const mode = useAppSelector((store) => store.theme.mode);
 	const [value, setValue] = useState('');
 	const handleClose = () => {
 		setValue('');

@@ -41,8 +41,8 @@ const DataTypesTable: React.FC<Props> = ({ isLoading, data }) => {
 	const styles = useStyles(theme);
 	const queryClient = useQueryClient();
 	const navigate = useNavigate();
-	const { canCreateOrUpdateRecord } = useAppSelector(
-		(store) => store.authState
+	const canCreateOrUpdateRecord = useAppSelector(
+		(store) => store.authState.canCreateOrUpdateRecord
 	);
 
 	const { isLoading: isUpdating, mutate: mutateUpdateDataType } = useMutation(

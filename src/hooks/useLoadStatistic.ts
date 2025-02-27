@@ -5,7 +5,7 @@ import { QueryKeys } from '../utilities';
 import { setLoadingStatistics, setStatistics } from '../store/app';
 
 const useLoadStatistics = () => {
-	const { token } = useAppSelector((store) => store.authState);
+	const token = useAppSelector((store) => store.authState.token);
 	const dispatch = useAppDispatch();
 	useQuery(QueryKeys.Statistics, () => statistic(), {
 		enabled: !!token,

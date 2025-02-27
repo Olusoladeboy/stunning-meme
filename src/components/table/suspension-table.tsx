@@ -29,8 +29,8 @@ type Props = {
 const SuspensionTable = ({ users, isLoading }: Props) => {
 	const theme = useTheme();
 	const styles = useStyles(theme);
-	const { canCreateOrUpdateRecord } = useAppSelector(
-		(store) => store.authState
+	const canCreateOrUpdateRecord = useAppSelector(
+		(store) => store.authState.canCreateOrUpdateRecord
 	);
 	return (
 		<>

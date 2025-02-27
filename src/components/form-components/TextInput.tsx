@@ -9,7 +9,7 @@ type Props = {
 };
 
 const TextInput = (props: TextFieldProps & Props) => {
-	const { mode } = useAppSelector((store) => store.theme);
+	const mode = useAppSelector((store) => store.theme.mode);
 	return (
 		<TextField
 			{...props}

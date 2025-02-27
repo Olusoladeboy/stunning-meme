@@ -18,7 +18,7 @@ const VerifyUser = ({ text = 'Verify user', buttonProps, user, id }: Props) => {
 	const queryClient = useQueryClient();
 	const setAlert = useAlert();
 	const handleError = useHandleError();
-	const { token } = useAppSelector((store) => store.authState);
+	const token = useAppSelector((store) => store.authState.token);
 	const [isVerifyUser, setVerifyUser] = useState<boolean>(false);
 
 	const { isLoading } = useQuery('', () => verifyUser(user?.id as string), {

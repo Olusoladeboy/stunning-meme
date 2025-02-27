@@ -98,7 +98,7 @@ const UserTransaction = ({ user }: Props) => {
 		}
 	}, [query, query.page]);
 
-	const { token } = useAppSelector((store) => store.authState);
+	const token = useAppSelector((store) => store.authState.token);
 
 	const { isLoading, data, refetch } = useQuery(
 		[QueryKeys.UserTransactions, user?.id, page, selectedService],

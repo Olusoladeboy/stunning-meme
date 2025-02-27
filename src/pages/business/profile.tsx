@@ -34,7 +34,7 @@ const Profile = () => {
 	const { id } = useParams();
 
 	const location = useLocation();
-	const { token } = useAppSelector((store) => store.authState);
+	const token = useAppSelector((store) => store.authState.token);
 	const [_, setUser] = useState<null | User>(null);
 
 	const navigate = useNavigate();

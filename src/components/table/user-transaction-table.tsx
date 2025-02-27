@@ -48,14 +48,20 @@ const UserTransactionsTable = ({
 					transaction={selectedTransaction}
 				/>
 			)}
-			<Box sx={{ padding: { xs: '0px 1rem', md: '0px 2rem' }, width: '100%' }}>
+			{/* <Box
+				sx={{
+					padding: { xs: '0px 1rem', md: '0px 2rem' },
+					width: '100%',
+					marginBottom: ['10px', '30px'],
+				}}
+			>
 				<TableHeader
 					title={'User Transaction Summary'}
 					searchPlaceholder={'Search transaction by reference...'}
 					clearSearch={clearSearch}
 					handleSearch={searchTransaction}
 				/>
-			</Box>
+			</Box> */}
 			<ErrorBoundary>
 				<Table sx={{ overflow: 'auto' }} stickyHeader>
 					<TableHead

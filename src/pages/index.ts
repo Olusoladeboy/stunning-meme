@@ -36,3 +36,7 @@ export { default as AdBanner } from './ad-banner';
 export { default as LienTransactions } from './lien';
 export { default as WithdrawalRequestTransactions } from './transactions/withdrawal-request';
 export { default as TransactionMostUsers } from './transactions/transactions-most-user';
+
+// Business
+export { default as Businesses } from './business';
+export { default as BusinessProfile } from './business/profile';

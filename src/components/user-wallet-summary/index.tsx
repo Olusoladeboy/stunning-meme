@@ -1,21 +1,50 @@
-import React, { useEffect, useState } from 'react';
+import React, { MouseEvent, useEffect, useMemo, useState } from 'react';
 import { useQuery } from 'react-query';
-import { Box, useTheme } from '@mui/material';
+import {
+	Box,
+	ClickAwayListener,
+	List,
+	ListItemButton,
+	Popper,
+	useTheme,
+} from '@mui/material';
 import { useNavigate, useLocation } from 'react-router-dom';
 import queryString from 'query-string';
 import UserAvatarWithDetails from '../avatar-with-details';
 import WalletSummaryTable from '../table/wallet-summary-table';
-import { LINKS, MAX_RECORDS, QueryKeys, User, UserNavList } from 'utilities';
+import {
+	capitalize,
+	LINKS,
+	MAX_RECORDS,
+	QueryKeys,
+	removeSpecialChar,
+	SERVICES,
+	User,
+	UserNavList,
+} from 'utilities';
 import { allTransactions } from 'api';
 import { useAppSelector } from 'store/hooks';
 import { useAlert, useHandleError, useSearchTransaction } from 'hooks';
 import Pagination from '../pagination';
 import TableHeader from '../header/table-header';
 import UserTransactionStat from 'components/user-wallet/transaction-statistics';
+import Button from 'components/button';
+import { ArrowDropDown } from '@mui/icons-material';
+import { grey } from '@mui/material/colors';
+
+interface IParamsRef {
+	user: string;
+	sort: string;
+	limit: number;
+	skip: number;
+	service?: string;
+}
 
 type Props = {
 	user: User | null;
 };
+
+const ALL_SERVICES = 'ALL SERVICES';
 
 const UserWalletSummary = ({ user }: Props) => {
 	const theme = useTheme();
@@ -31,6 +60,31 @@ const UserWalletSummary = ({ user }: Props) => {
 	const location = useLocation();
 	const query = queryString.parse(location.search);
 
+	const [selectedService, setSelectedService] = useState<string>(ALL_SERVICES);
+	const [serviceAnchorEl, setServiceAnchorEl] = useState<null | HTMLElement>(
+		null
+	);
+
+	const styles = useStyles(theme);
+
+	const handleServiceClick = (e: MouseEvent<HTMLElement>) => {
+		setServiceAnchorEl(serviceAnchorEl ? null : e.currentTarget);
+	};
+
+	const params = useMemo(() => {
+		const data: IParamsRef = {
+			user: user?.id || '',
+			sort: '-createdAt',
+			limit: MAX_RECORDS,
+			skip: (page - 1) * MAX_RECORDS,
+		};
+		const regExp = new RegExp(selectedService, 'ig').test(ALL_SERVICES);
+		if (selectedService && !regExp) {
+			data.service = selectedService;
+		}
+		return data;
+	}, [page, selectedService]);
+
 	const isEnabledRequest = Boolean(
 		query && UserNavList.WalletSummary === query?.tab
 	);
@@ -43,17 +97,11 @@ const UserWalletSummary = ({ user }: Props) => {
 
 	const { token } = useAppSelector((store) => store.authState);
 
-	const { isLoading, data } = useQuery(
-		[QueryKeys.UserWalletTransaction, user?.id, page],
+	const { isLoading, data, refetch } = useQuery(
+		[QueryKeys.UserWalletTransaction, user?.id, page, selectedService],
 		() =>
 			allTransactions({
-				params: {
-					user: user?.id,
-					sort: '-createdAt',
-					limit: MAX_RECORDS,
-					skip: (page - 1) * MAX_RECORDS,
-					// service: SERVICES.WALLET_TRANSFER,
-				},
+				params,
 			}),
 		{
 			enabled: !!(token && user && isEnabledRequest),
@@ -87,6 +135,79 @@ const UserWalletSummary = ({ user }: Props) => {
 		}
 	};
 
+	// Select filter handler
+	const handleSelectFilter = (service: string) => {
+		setServiceAnchorEl(null);
+		setSelectedService(service);
+
+		refetch(); // Refetch Data
+	};
+
+	// Transaction filter
+	const servicesFilter = (
+		<ClickAwayListener onClickAway={() => setServiceAnchorEl(null)}>
+			<Box>
+				<Button
+					size='small'
+					sx={{
+						whiteSpace: 'nowrap',
+						minWidth: '160px',
+						padding: '6.5px 8px',
+						borderWidth: '1px',
+					}}
+					onClick={(e) => handleServiceClick(e)}
+					variant={'outlined'}
+					endIcon={<ArrowDropDown />}
+				>
+					{selectedService ? (
+						<>
+							{selectedService === SERVICES.CARD_FUNDING
+								? 'Card/Bank funding'
+								: `${capitalize(removeSpecialChar(selectedService))}`}
+						</>
+					) : (
+						'Filter by Service'
+					)}
+				</Button>
+				<Popper
+					// sx={{ zIndex: theme.zIndex.tooltip }}
+					open={Boolean(serviceAnchorEl)}
+					anchorEl={serviceAnchorEl}
+					sx={{
+						zIndex: theme.zIndex.appBar - 10,
+					}}
+				>
+					<List
+						sx={{
+							'& .MuiListItemButton-root': {
+								textTransform: 'capitalize',
+							},
+							'& .MuiListItemButton-root:hover': {
+								backgroundColor: theme.palette.primary.main,
+								color: grey[50],
+							},
+							maxHeight: '360px',
+							height: '100%',
+							overflow: 'auto',
+						}}
+						style={styles.list}
+					>
+						{Object.values({ ALL_SERVICES, ...SERVICES }).map((value) => (
+							<ListItemButton
+								onClick={() => handleSelectFilter(value)}
+								key={value}
+							>
+								{value === SERVICES.CARD_FUNDING
+									? 'Card/Bank Funding'
+									: capitalize(removeSpecialChar(value))}
+							</ListItemButton>
+						))}
+					</List>
+				</Popper>
+			</Box>
+		</ClickAwayListener>
+	);
+
 	return (
 		<Box>
 			<Box
@@ -104,6 +225,7 @@ const UserWalletSummary = ({ user }: Props) => {
 			</Box>
 			<Box sx={{ marginTop: theme.spacing(4) }}>
 				<TableHeader
+					searchInputSize='small'
 					sx={{
 						marginBottom: '2rem',
 						padding: ['0px 15px', '0px 30px'],
@@ -111,7 +233,8 @@ const UserWalletSummary = ({ user }: Props) => {
 					title={'User Wallet Summary'}
 					clearSearch={clearSearch}
 					handleSearch={searchTransaction}
-					placeholder={'Search transaction by  reference'}
+					placeholder={'Search transaction by reference'}
+					statusFilter={servicesFilter}
 				/>
 				<WalletSummaryTable
 					isLoading={isLoading || isSearching}
@@ -137,5 +260,18 @@ const UserWalletSummary = ({ user }: Props) => {
 		</Box>
 	);
 };
+
+const useStyles = (theme: any) => ({
+	button: {
+		whiteSpace: 'nowrap',
+		minWidth: '160px',
+	},
+	list: {
+		border: `1px solid ${theme.palette.primary.main}`,
+		borderRadius: theme.spacing(1),
+		backgroundColor: theme.palette.background.paper,
+		marginTop: theme.spacing(2),
+	},
+});
 
 export default UserWalletSummary;

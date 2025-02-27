@@ -113,6 +113,7 @@ const NinVerificationTable = ({
 		<>
 			{jsonData && (
 				<ModalWrapper
+					canOverlayCloseModal
 					title={'Request and Response Data'}
 					hasCloseButton={true}
 					closeModal={() => setJsonData('')}

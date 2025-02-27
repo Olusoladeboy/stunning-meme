@@ -21,6 +21,7 @@ interface Props extends BoxProps {
 	auditData?: AuditLog[] | undefined | null;
 	handleAuditFilter?: (criteria: AuditFilter) => void;
 	placeholder?: string;
+	searchInputSize?: 'small' | 'medium';
 }
 
 const TableHeader = ({
@@ -39,10 +40,9 @@ const TableHeader = ({
 	handleAuditFilter,
 	canSearch = true,
 	children,
+	searchInputSize,
 	...rest
 }: Props) => {
-
-
 	return (
 		<Box
 			style={style}
@@ -77,8 +77,6 @@ const TableHeader = ({
 					gap: '20px',
 				}}
 			>
-		
-
 				<Box
 					sx={{
 						display: 'flex',
@@ -96,6 +94,7 @@ const TableHeader = ({
 							placeholder={rest.placeholder || searchPlaceholder}
 							handleSearch={handleSearch}
 							clearSearch={clearSearch}
+							size={searchInputSize}
 						/>
 					)}
 				</Box>

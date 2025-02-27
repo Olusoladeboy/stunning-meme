@@ -175,6 +175,8 @@ export enum UserNavList {
 	Transaction = 'transaction',
 	WalletSummary = 'wallet-summary',
 	Manager = 'manager',
+	Commissions = 'commissions',
+	Service = 'services',
 }
 
 export enum ManagerTypes {
@@ -645,6 +647,15 @@ export type User = {
 	users?: number;
 };
 
+export interface IBusiness {
+	status: string;
+	businessOwner: string | User;
+	businessName: string;
+	createdAt: string;
+	updatedAt: string;
+	id: string;
+}
+
 export interface PinData {
 	network?: INetwork | string;
 	amount?: number;
@@ -1052,4 +1063,27 @@ export interface IWallet {
 	createdAt: string;
 	updatedAt: string;
 	lien: Amount;
+}
+
+export interface ICommission {
+	business: IBusiness;
+	serviceType: string;
+	rate: string;
+	createdAt: string;
+	updatedAt: string;
+	id: string;
+}
+
+export interface IActivation {
+	business: string;
+	activations: {
+		[key: string]: {
+			active: boolean;
+			trxref: string;
+			id: string;
+		};
+	};
+	createdAt: string;
+	updatedAt: string;
+	id: string;
 }

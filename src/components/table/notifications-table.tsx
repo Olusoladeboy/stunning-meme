@@ -32,8 +32,8 @@ interface Props {
 const NotificationsTable: React.FC<Props> = ({ notifications, isLoading }) => {
 	const navigate = useNavigate();
 	const [isCreateReferral, setCreateReferral] = useState<boolean>(false);
-	const { canCreateOrUpdateRecord } = useAppSelector(
-		(store) => store.authState
+	const canCreateOrUpdateRecord = useAppSelector(
+		(store) => store.authState.canCreateOrUpdateRecord
 	);
 
 	const theme = useTheme();

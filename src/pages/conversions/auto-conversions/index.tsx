@@ -44,9 +44,12 @@ const AutoConversions = () => {
 
 	const location = useLocation();
 	const query = queryString.parse(location.search);
-	const { token, canViewStatistics } = useAppSelector(
+	const authState = useAppSelector(
 		(store) => store.authState
 	);
+
+	const token = authState.token;
+	const canViewStatistics = authState.canViewStatistics
 
 	const statistics = useAppSelector((store) => store.appState.statistics);
 

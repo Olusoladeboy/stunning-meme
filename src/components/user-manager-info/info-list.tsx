@@ -14,7 +14,7 @@ type Props = {
 
 const InfoList = ({ text }: Props) => {
 	const theme = useTheme();
-	const { mode } = useAppSelector((store) => store.theme);
+	const mode = useAppSelector((store) => store.theme.mode);
 	const { enqueueSnackbar } = useSnackbar();
 
 	const handleCopy = () =>

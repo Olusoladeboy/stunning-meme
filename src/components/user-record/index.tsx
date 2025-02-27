@@ -8,7 +8,7 @@ import { useAppSelector } from 'store/hooks';
 const UserRecords = () => {
 	const theme = useTheme();
 	const styles = useStyles(theme);
-	const { statistics } = useAppSelector((store) => store.appState);
+	const statistics = useAppSelector((store) => store.appState.statistics);
 	return (
 		<Box
 			sx={{

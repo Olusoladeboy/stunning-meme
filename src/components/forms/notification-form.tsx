@@ -92,7 +92,7 @@ const NotificationForm: React.FC<Props> = ({ notification }) => {
 	const { searchUser, search, clearSearch, isSearching } = useSearchUser();
 	const [users, setUsers] = useState<string[]>([]);
 	const [selectedUser, setSelectedUser] = useState<User[]>([]);
-	const { token } = useAppSelector((store) => store.authState);
+	const token = useAppSelector((store) => store.authState.token);
 	const handleError = useHandleError();
 
 	const notificationSchema = yup.object().shape({

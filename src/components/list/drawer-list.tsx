@@ -47,7 +47,9 @@ const ListItemButton = ({
 	const initialColor = theme.palette.primary.main;
 	const activeColor = theme.palette.secondary.main;
 	const styles = useStyles(theme);
-	const { isToggleDrawer } = useAppSelector((store) => store.appState);
+	const isToggleDrawer = useAppSelector(
+		(store) => store.appState.isToggleDrawer
+	);
 
 	const handleNavigate = () => {
 		navigate(link as string);
@@ -101,10 +103,13 @@ const DrawerList = () => {
 	};
 
 	const styles = useStyles(theme);
-	const {
-		appState: { isToggleDrawer },
-		authState: { canViewStatistics },
-	} = useAppSelector((store) => store);
+	const canViewStatistics = useAppSelector(
+		(store) => store.authState.canViewStatistics
+	);
+	const isToggleDrawer = useAppSelector(
+		(store) => store.appState.isToggleDrawer
+	);
+
 	return (
 		<>
 			<Box style={styles.appLogoWrapper}>
@@ -191,6 +196,23 @@ const DrawerList = () => {
 						<UserIcon
 							color={
 								getActiveLink({ name: 'users', currentPath: pathname }).isActive
+									? activeColor
+									: initialColor
+							}
+						/>
+					}
+				/>
+				<ListItemButton
+					link={LINKS.Business}
+					name={'Business'}
+					isActive={
+						getActiveLink({ name: 'business', currentPath: pathname }).isActive
+					}
+					icon={
+						<UserIcon
+							color={
+								getActiveLink({ name: 'business', currentPath: pathname })
+									.isActive
 									? activeColor
 									: initialColor
 							}

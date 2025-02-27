@@ -27,8 +27,8 @@ const ManagerDetails = ({
 	const handleError = useHandleError();
 	const theme = useTheme();
 	const styles = useStyles(theme);
-	const { canCreateOrUpdateRecord } = useAppSelector(
-		(store) => store.authState
+	const canCreateOrUpdateRecord = useAppSelector(
+		(store) => store.authState.canCreateOrUpdateRecord
 	);
 
 	const { isLoading: isDeletingManager, mutate: mutateDeleteManager } =

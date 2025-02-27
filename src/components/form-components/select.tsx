@@ -23,7 +23,7 @@ type Props = {
 } & SelectProps;
 
 const Select = (props: Props) => {
-	const { mode } = useAppSelector((store) => store.theme);
+	const mode = useAppSelector((store) => store.theme.mode);
 	return (
 		<Box sx={{ width: '100%' }}>
 			<MuiSelect

@@ -7,9 +7,11 @@ import { useAppSelector } from 'store/hooks';
 const TransactionMainBalance = () => {
 	const theme = useTheme();
 	const styles = useStyles(theme);
-	const { statistics, isLoadingStatistics } = useAppSelector(
-		(store) => store.appState
-	);
+	const appState = useAppSelector((store) => store.appState);
+
+	const statistics = appState.statistics;
+	const isLoadingStatistics = appState.isLoadingStatistics;
+
 	return (
 		<>
 			{isLoadingStatistics ? (

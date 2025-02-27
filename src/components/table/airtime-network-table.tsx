@@ -43,9 +43,10 @@ const AirtimeNetworkTable = () => {
 		null
 	);
 
-	const { token, canCreateOrUpdateRecord } = useAppSelector(
-		(store) => store.authState
-	);
+	const authState = useAppSelector((store) => store.authState);
+
+	const token = authState.token;
+	const canCreateOrUpdateRecord = authState.canCreateOrUpdateRecord;
 
 	const { isLoading, data } = useQuery(
 		QueryKeys.AirtimeNetwork,

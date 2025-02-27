@@ -13,7 +13,7 @@ const RouteGuard: React.FC<Props> = ({ children, roles }) => {
 	const navigate = useNavigate();
 	const logout = useLogoutUser();
 	const alert = useAlert();
-	const { user } = useAppSelector((store) => store.authState);
+	const user = useAppSelector((store) => store.authState.user);
 	const [canViewRoute, setCanViewRoute] = useState<boolean>(false);
 
 	useEffect(() => {

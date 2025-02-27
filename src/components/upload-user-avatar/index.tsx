@@ -24,7 +24,8 @@ const UploadUserAvatar: React.FC<IUploadUserAvatar> = ({ managerId }) => {
 	const [previewImage, setPreviewImage] = useState<string>('');
 	const [photoUrl, setPhotoUrl] = useState<string>('');
 
-	const { user, token } = useAppSelector((store) => store.authState);
+	const user = useAppSelector((store) => store.authState.user);
+	const token = useAppSelector((store) => store.authState.token);
 
 	const handleClosePreviewModal = () => {
 		setFile(null);

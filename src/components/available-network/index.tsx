@@ -20,7 +20,7 @@ const AvailableNetwork: React.FC<IAvailableNetwork> = ({ type = 'normal' }) => {
 	const setAlert = useAlert();
 	const navigate = useNavigate();
 	const styles = useStyles(theme);
-	const { token } = useAppSelector((store) => store.authState);
+	const token = useAppSelector((store) => store.authState.token);
 
 	const { isLoading, data } = useQuery(
 		[QueryKey.ConvertNetwork, type],

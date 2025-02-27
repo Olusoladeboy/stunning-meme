@@ -41,7 +41,7 @@ const AutoConversionNetworkTable = () => {
 		null
 	);
 
-	const { token } = useAppSelector((store) => store.authState);
+	const token = useAppSelector((store) => store.authState.token);
 
 	const { isLoading, data } = useQuery(
 		QueryKeys.AutoConvertNetwork,

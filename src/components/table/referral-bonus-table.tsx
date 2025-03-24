@@ -38,8 +38,8 @@ interface Props {
 const ReferralBonusTable: React.FC<Props> = ({ data, isLoading }) => {
 	const theme = useTheme();
 	const styles = useStyles(theme);
-	const { canCreateOrUpdateRecord } = useAppSelector(
-		(store) => store.authState
+	const canCreateOrUpdateRecord = useAppSelector(
+		(store) => store.authState.canCreateOrUpdateRecord
 	);
 
 	const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);

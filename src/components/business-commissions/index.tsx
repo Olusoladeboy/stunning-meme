@@ -49,7 +49,7 @@ const BusinessCommissions = ({ business }: Props) => {
 		}
 	}, [query, query.page]);
 
-	const { token } = useAppSelector((store) => store.authState);
+	const token = useAppSelector((store) => store.authState.token);
 
 	const { isLoading, data } = useQuery(
 		[QueryKeys.Commissions, business?.id, page],

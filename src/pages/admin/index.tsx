@@ -11,7 +11,7 @@ const Admin = () => {
 	const handleError = useHandleError();
 	usePageTitle('Admin');
 
-	const { token } = useAppSelector((store) => store.authState);
+	const token = useAppSelector((store) => store.authState.token);
 	const { data, isLoading } = useQuery(
 		QueryKeys.Staffs,
 		() =>

@@ -17,7 +17,7 @@ const ModalAlert = () => {
 	const dispatch = useAppDispatch();
 	const closeModal = () => dispatch(setModalAlert(null));
 
-	const { modalAlert } = useAppSelector((store) => store.appState);
+	const modalAlert = useAppSelector((store) => store.appState.modalAlert);
 
 	// Lottie Option
 	const defaultOptions = (animationData: any) => ({

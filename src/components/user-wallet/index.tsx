@@ -17,8 +17,8 @@ const UserWallet = ({ user, wallet }: Props) => {
 	const styles = useStyles(theme);
 
 	const [isEditWallet, setEditWallet] = useState<boolean>(false);
-	const { canCreateOrUpdateRecord } = useAppSelector(
-		(store) => store.authState
+	const canCreateOrUpdateRecord = useAppSelector(
+		(store) => store.authState.canCreateOrUpdateRecord
 	);
 
 	const amount = wallet?.balance || 0;

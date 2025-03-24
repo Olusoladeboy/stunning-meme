@@ -12,7 +12,7 @@ type Props = {
 
 const TextPlaceholder = ({ text, hasArrowDropDown }: Props) => {
 	const theme = useTheme();
-	const { mode } = useAppSelector((store) => store.theme);
+	const mode = useAppSelector((store) => store.theme.mode);
 	return (
 		<Box
 			sx={{

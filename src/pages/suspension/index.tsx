@@ -12,7 +12,7 @@ import { users } from 'api';
 const Suspension = () => {
 	usePageTitle('Suspension');
 	const handleError = useHandleError();
-	const { token } = useAppSelector((store) => store.authState);
+	const token = useAppSelector((store) => store.authState.token);
 	const setAlert = useAlert();
 	const navigate = useNavigate();
 	const [count, setCount] = useState<number>(1);

@@ -18,7 +18,7 @@ interface Props extends BoxProps {
 }
 
 const FilterBy = (props: Props) => {
-	const { mode } = useAppSelector((store) => store.theme);
+	const mode = useAppSelector((store) => store.theme.mode);
 	return (
 		<Box
 			sx={{

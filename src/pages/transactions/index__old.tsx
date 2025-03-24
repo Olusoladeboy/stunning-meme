@@ -59,7 +59,9 @@ const AllTransactions = () => {
 	const [total, setTotal] = useState<number>(0);
 	const maxRecordRef = useRef<number>(MAX_RECORDS);
 
-	const { canViewStatistics } = useAppSelector((store) => store.authState);
+	const canViewStatistics = useAppSelector(
+		(store) => store.authState.canViewStatistics
+	);
 
 	const [serviceAnchorEl, setServiceAnchorEl] = useState<null | HTMLElement>(
 		null

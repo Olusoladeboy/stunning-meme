@@ -61,7 +61,9 @@ const Statistics = () => {
 
 	const [total, setTotal] = useState(0);
 	const [currentPage, setCurrentPage] = useState(1);
-	const { canViewStatistics } = useAppSelector((store) => store.authState);
+	const canViewStatistics = useAppSelector(
+		(store) => store.authState.canViewStatistics
+	);
 	const [selectedFilter, setSelectedFilter] = useState<string>(
 		STATISTIC_TAB.ALL_TIME
 	);

@@ -8,7 +8,7 @@ import useHandleResponse from './useHandleError';
 import useLogout from './useLogoutUser';
 
 const useLoadUser = () => {
-	const { token } = useAppSelector((store) => store.authState);
+	const token = useAppSelector((store) => store.authState.token);
 	const logout = useLogout();
 	const alert = useToastAlert();
 	const handleResponse = useHandleResponse();

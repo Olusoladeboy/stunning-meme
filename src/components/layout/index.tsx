@@ -16,7 +16,9 @@ type Props = {
 
 const Layout = ({ children }: Props) => {
 	const theme = useTheme();
-	const { isToggleDrawer } = useAppSelector((store) => store.appState);
+	const isToggleDrawer = useAppSelector(
+		(store) => store.appState.isToggleDrawer
+	);
 	return (
 		<AuthGuard>
 			<Box

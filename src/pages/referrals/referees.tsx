@@ -14,7 +14,7 @@ const Referees = () => {
 	usePageTitle('Referees');
 	const handleError = useHandleError();
 	const alert = useAlert();
-	const { token } = useAppSelector((store) => store.authState);
+	const token = useAppSelector((store) => store.authState.token);
 	const { email } = useParams();
 	const navigate = useNavigate();
 	const [count, setCount] = useState<number>(1);

@@ -113,6 +113,7 @@ const NinVerificationTable = ({
 		<>
 			{jsonData && (
 				<ModalWrapper
+					canOverlayCloseModal
 					title={'Request and Response Data'}
 					hasCloseButton={true}
 					closeModal={() => setJsonData('')}
@@ -200,7 +201,7 @@ const NinVerificationTable = ({
 													>
 														{row.status}
 													</TableCell>
-													<TableCell sx={{ maxWidth: '280px' }}>
+													<TableCell>
 														{row.status === VERIFICATION_STATUS.PENDING && (
 															<Box style={styles.verifyPushWrapper}>
 																<Button
@@ -211,7 +212,12 @@ const NinVerificationTable = ({
 																		})
 																	}
 																	size={'small'}
-																	style={styles.button as CSSProperties}
+																	style={
+																		{
+																			...styles.button,
+																			minWidth: '180px',
+																		} as CSSProperties
+																	}
 																>
 																	View request & response
 																</Button>

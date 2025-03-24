@@ -19,7 +19,10 @@ const LargeView = () => {
 	const theme = useTheme();
 	usePageTitle('Dashboard');
 	const styles = useStyles(theme);
-	const { canViewStatistics } = useAppSelector((store) => store.authState);
+	const canViewStatistics = useAppSelector(
+		(store) => store.authState.canViewStatistics
+	);
+
 	return (
 		<>
 			{/* <Seo title='Dashboard' /> */}

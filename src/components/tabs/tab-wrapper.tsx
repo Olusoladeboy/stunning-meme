@@ -12,7 +12,7 @@ type Props = {
 
 const TabWrapper = ({ currentTab, handleChange, children }: Props) => {
 	const theme = useTheme();
-	const { mode } = useAppSelector((store) => store.theme);
+	const mode = useAppSelector((store) => store.theme.mode);
 	return (
 		<Tabs
 			sx={{

@@ -91,6 +91,7 @@ const BvnVerificationTable = ({
 		<>
 			{jsonData && (
 				<ModalWrapper
+					canOverlayCloseModal
 					title={'Request and Response Data'}
 					hasCloseButton={true}
 					closeModal={() => setJsonData('')}
@@ -160,6 +161,7 @@ const BvnVerificationTable = ({
 																display: 'flex',
 																alignItems: 'center',
 																gap: '10px',
+																whiteSpace: 'nowrap !important',
 															}}
 														>
 															<Avatar src={row.user?.avatar} />
@@ -185,7 +187,7 @@ const BvnVerificationTable = ({
 													>
 														{row.status}
 													</TableCell>
-													<TableCell sx={{ maxWidth: '180px' }}>
+													<TableCell>
 														{row.status === VERIFICATION_STATUS.PENDING && (
 															<Box style={styles.verifyPushWrapper}>
 																<Button
@@ -196,7 +198,12 @@ const BvnVerificationTable = ({
 																		})
 																	}
 																	size={'small'}
-																	style={styles.button as CSSProperties}
+																	style={
+																		{
+																			...styles.button,
+																			minWidth: '180px',
+																		} as CSSProperties
+																	}
 																>
 																	View request & response
 																</Button>

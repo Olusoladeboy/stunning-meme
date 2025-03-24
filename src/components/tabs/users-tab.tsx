@@ -16,10 +16,10 @@ interface Props {
 }
 
 const UsersTab: React.FC<Props> = ({ currentTab, changeCurrentTab }) => {
-	const {
-		appState: { statistics },
-		authState: { canViewStatistics },
-	} = useAppSelector((store) => store);
+	const canViewStatistics = useAppSelector(
+		(store) => store.authState.canViewStatistics
+	);
+	const statistics = useAppSelector((store) => store.appState.statistics);
 	const handleChangeTab = (value?: string) => {
 		if (typeof changeCurrentTab !== 'undefined') {
 			changeCurrentTab(value);

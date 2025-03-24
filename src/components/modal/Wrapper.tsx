@@ -10,6 +10,7 @@ interface Props extends BoxProps {
 	title?: any;
 	contentWidth?: string;
 	containerStyle?: any;
+	canOverlayCloseModal?: boolean;
 }
 
 const ModalWrapper = ({
@@ -19,11 +20,20 @@ const ModalWrapper = ({
 	title,
 	contentWidth,
 	containerStyle,
+	canOverlayCloseModal = false,
 	...rest
 }: Props) => {
 	const theme = useTheme();
+
+	const onBackgroundClick = () => {
+		if (canOverlayCloseModal && typeof closeModal === 'function') {
+			closeModal();
+		}
+	};
+
 	return (
 		<Box
+			onClick={onBackgroundClick}
 			sx={{
 				position: 'fixed',
 				top: '0px',

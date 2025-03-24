@@ -19,8 +19,8 @@ const DeleteUserForm = ({ user }: Props) => {
 	const styles = useStyles(theme);
 	const setAlert = useAlert();
 	const queryClient = useQueryClient();
-	const { canCreateOrUpdateRecord } = useAppSelector(
-		(store) => store.authState
+	const canCreateOrUpdateRecord = useAppSelector(
+		(store) => store.authState.canCreateOrUpdateRecord
 	);
 
 	const [isActive, setActive] = useState<boolean>(

@@ -20,8 +20,8 @@ type Props = {
 const NetworkDescriptiveMessageAndAddButton = ({ message, type }: Props) => {
 	const theme = useTheme();
 	const styles = useStyles(theme);
-	const { canCreateOrUpdateRecord } = useAppSelector(
-		(store) => store.authState
+	const canCreateOrUpdateRecord = useAppSelector(
+		(store) => store.authState.canCreateOrUpdateRecord
 	);
 
 	const [isDisplayModal, setDisplayModal] = useState<boolean>(false);

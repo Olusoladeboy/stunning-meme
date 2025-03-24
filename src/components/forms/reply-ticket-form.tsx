@@ -25,9 +25,7 @@ interface Props {
 const ReplyTicketForm = ({ ticket }: Props) => {
 	const alert = useAlert();
 	const handleError = useHandleError();
-	const {
-		theme: { mode },
-	} = useAppSelector((store) => store);
+	const mode = useAppSelector((store) => store.theme.mode);
 	const theme = useTheme();
 	const queryClient = useQueryClient();
 

@@ -3,6 +3,7 @@ import { Box, Typography, useTheme } from '@mui/material';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { useNavigate } from 'react-router-dom';
 import { grey } from '@mui/material/colors';
+import JsonFormatter from 'react-json-formatter';
 import moment from 'moment';
 import DetailItem from './detail-item';
 import Button from '../button';
@@ -12,7 +13,7 @@ import UserAvatarWithDetails from '../avatar-with-details';
 import { User, SUCCESS_COLOR, QueryKeys, extractUserName } from 'utilities';
 import VerifyUser from '../verify-user';
 import { restoreDeletedAccount, walletAccount } from 'api';
-import { useHandleError, useAlert } from 'hooks';
+import { useHandleError, useAlert, useQueryVerification } from 'hooks';
 import Loader from 'components/loader';
 import { UserWallet, UserLien } from 'components';
 import { useAppSelector } from 'store/hooks';
@@ -21,19 +22,40 @@ type Props = {
 	user: User | null;
 };
 
+const jsonStyle = {
+	propertyStyle: { color: 'red' },
+	stringStyle: { color: 'green' },
+	numberStyle: { color: 'darkorange' },
+};
+
 const UserProfile = ({ user }: Props) => {
 	const alert = useAlert();
 	const navigate = useNavigate();
 	const handleError = useHandleError();
 	const queryClient = useQueryClient();
 	const theme = useTheme();
+	const {
+		isQueryingVerification,
+		verification,
+		queryVerification,
+		clearVerification,
+	} = useQueryVerification();
 
 	const token = useAppSelector((store) => store.authState.token);
+	const isSupperAdmin = useAppSelector(
+		(store) => store.authState.isSupperAdmin
+	);
 
 	const styles = useStyles(theme);
 	const [isEditProfile, setEditProfile] = useState<boolean>(false);
 
 	const isAccountDeleted = user?.deleted;
+
+	const onQueryVerification = () => {
+		queryVerification({
+			email: user?.email,
+		});
+	};
 
 	// Restor user mutation
 	const { isLoading: isRestoringAccount, mutate: mutateRestoreAccount } =
@@ -94,6 +116,29 @@ const UserProfile = ({ user }: Props) => {
 
 	return (
 		<>
+			{verification && (
+				<ModalWrapper
+					canOverlayCloseModal
+					title={'KYC Details'}
+					hasCloseButton={true}
+					closeModal={clearVerification}
+				>
+					<Box
+						sx={{
+							overflow: 'auto',
+							maxWidth: '540px',
+							width: '100%',
+							alignSelf: 'flex-start',
+						}}
+					>
+						<JsonFormatter
+							json={JSON.stringify(verification)}
+							tabWith={4}
+							jsonStyle={jsonStyle}
+						/>
+					</Box>
+				</ModalWrapper>
+			)}
 			{isRestoringAccount && <Loader />}
 			<Box>
 				<Box
@@ -174,7 +219,8 @@ const UserProfile = ({ user }: Props) => {
 						sx={{
 							display: 'flex',
 							alignItems: 'center',
-							gap: ['25px', '50px', '100px'],
+							gap: ['25px', '50px'],
+							marginTop: theme.spacing(4),
 						}}
 					>
 						<Button
@@ -185,8 +231,7 @@ const UserProfile = ({ user }: Props) => {
 								color: grey[50],
 								textTransform: 'uppercase',
 								fontWeight: '600',
-								minWidth: '140px',
-								marginTop: theme.spacing(4),
+								minWidth: '160px',
 								':hover': {
 									backgroundColor: theme.palette.secondary.main,
 								},
@@ -202,14 +247,34 @@ const UserProfile = ({ user }: Props) => {
 									color: grey[50],
 									textTransform: 'uppercase',
 									fontWeight: '600',
-									minWidth: '140px',
-									marginTop: theme.spacing(4),
+									minWidth: '160px',
+
 									':hover': {
 										backgroundColor: theme.palette.secondary.main,
 									},
 								}}
 							>
 								Restore account
+							</Button>
+						)}
+
+						{isSupperAdmin && (
+							<Button
+								loading={isQueryingVerification}
+								onClick={onQueryVerification}
+								sx={{
+									backgroundColor: theme.palette.secondary.main,
+									color: grey[50],
+									textTransform: 'uppercase',
+									fontWeight: '600',
+									minWidth: '160px',
+
+									':hover': {
+										backgroundColor: theme.palette.secondary.main,
+									},
+								}}
+							>
+								View KYC
 							</Button>
 						)}
 					</Box>

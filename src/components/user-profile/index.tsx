@@ -3,7 +3,6 @@ import { Box, Typography, useTheme } from '@mui/material';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { useNavigate } from 'react-router-dom';
 import { grey } from '@mui/material/colors';
-import JsonFormatter from 'react-json-formatter';
 import moment from 'moment';
 import DetailItem from './detail-item';
 import Button from '../button';
@@ -20,12 +19,6 @@ import { useAppSelector } from 'store/hooks';
 
 type Props = {
 	user: User | null;
-};
-
-const jsonStyle = {
-	propertyStyle: { color: 'red' },
-	stringStyle: { color: 'green' },
-	numberStyle: { color: 'darkorange' },
 };
 
 const UserProfile = ({ user }: Props) => {
@@ -125,19 +118,23 @@ const UserProfile = ({ user }: Props) => {
 				>
 					<Box
 						sx={{
-							overflow: 'auto',
-							maxWidth: '540px',
-							width: '100%',
-							alignSelf: 'flex-start',
+							display: 'grid',
+							gap: '6px',
+							span: {
+								fontWeight: 'bold',
+								minWidth: '60px',
+								display: 'inline-block',
+							},
 						}}
 					>
-						<JsonFormatter
-							json={JSON.stringify(
-								verification?.filter((item) => item.level !== 1)
-							)}
-							tabWith={4}
-							jsonStyle={jsonStyle}
-						/>
+						{verification
+							?.filter((item) => item.level !== 1)
+							?.map((value) => (
+								<Box key={value.payload}>
+									<span>{[value.type]}:</span>
+									{value.payload}
+								</Box>
+							))}
 					</Box>
 				</ModalWrapper>
 			)}

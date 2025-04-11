@@ -259,8 +259,6 @@ const Statistics = () => {
 			sort: sortValue.current,
 		};
 
-		console.log(values);
-
 		// Clear data
 		resetQueryValue(values.service);
 		network.current = '';

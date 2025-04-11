@@ -132,7 +132,7 @@ const UserProfile = ({ user }: Props) => {
 						}}
 					>
 						<JsonFormatter
-							json={JSON.stringify(verification)}
+							json={JSON.stringify(verification?.slice(1))}
 							tabWith={4}
 							jsonStyle={jsonStyle}
 						/>

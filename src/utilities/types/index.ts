@@ -110,6 +110,7 @@ export type AuthState = {
 	canViewStatistics: boolean;
 	canCreateOrUpdateRecord: boolean;
 	canApproveWithdrawal: boolean;
+	isSupperAdmin: boolean;
 };
 
 export enum SettingsTab {

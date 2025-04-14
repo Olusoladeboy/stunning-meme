@@ -20,8 +20,8 @@ const UserStatus = ({ user }: Props) => {
 	const setAlert = useAlert();
 	const handleError = useHandleError();
 	const queryClient = useQueryClient();
-	const { canCreateOrUpdateRecord } = useAppSelector(
-		(store) => store.authState
+	const canCreateOrUpdateRecord = useAppSelector(
+		(store) => store.authState.canCreateOrUpdateRecord
 	);
 
 	const { mutate, isLoading } = useMutation(suspendWithdraw, {

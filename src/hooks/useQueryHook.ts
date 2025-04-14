@@ -23,7 +23,7 @@ const useQueryHook = ({
 }: Props) => {
 	const query_key = typeof queryKey !== 'undefined' ? queryKey : '';
 	const { enqueueSnackbar } = useSnackbar();
-	const { token } = useAppSelector((store) => store.authState);
+	const token = useAppSelector((store) => store.authState.token);
 	const handleError = useHandleError();
 	const alert = useToastAlert();
 

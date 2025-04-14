@@ -18,10 +18,12 @@ const Header = () => {
 	const theme = useTheme();
 	const styles = useStyles(theme);
 	const dispatch = useAppDispatch();
-	const {
-		appState: { isToggleDrawer },
-		authState: { user },
-	} = useAppSelector((store) => store);
+	const user = useAppSelector((store) => store.authState.user);
+
+	const isToggleDrawer = useAppSelector(
+		(store) => store.appState.isToggleDrawer
+	);
+
 	return (
 		<AppBar position={'sticky'} style={styles.appBar}>
 			<Toolbar style={styles.toolbar}>

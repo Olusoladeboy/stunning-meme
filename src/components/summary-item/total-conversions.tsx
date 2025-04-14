@@ -10,7 +10,7 @@ import { useAppSelector } from 'store/hooks';
 const TotalConversions = () => {
 	const theme = useTheme();
 	const styles = useStyles(theme);
-	const { statistics } = useAppSelector((store) => store.appState);
+	const statistics = useAppSelector((store) => store.appState.statistics);
 	return (
 		<SummaryWrapper
 			bgColor={SEMI_GREEN_COLOR}

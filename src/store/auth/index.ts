@@ -9,6 +9,7 @@ const initialState: AuthState = {
 	canViewStatistics: false,
 	canCreateOrUpdateRecord: false,
 	canApproveWithdrawal: false,
+	isSupperAdmin: false,
 };
 
 export const userSlice = createSlice({
@@ -27,6 +28,7 @@ export const userSlice = createSlice({
 				state.canViewStatistics = canViewStatistics;
 				state.canCreateOrUpdateRecord = canCreateOrUpdateRecord;
 				state.canApproveWithdrawal = canApproveWithdrawal;
+				state.isSupperAdmin = user.role === ADMIN_ROLE.SUPER_ADMIN;
 			}
 		},
 		setToken: (state, action: PayloadAction<string | null>) => {

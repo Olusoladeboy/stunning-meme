@@ -33,7 +33,7 @@ const Message = () => {
 	const params = useParams();
 	const navigate = useNavigate();
 	const handleError = useHandleError();
-	const { token } = useAppSelector((store) => store.authState);
+	const token = useAppSelector((store) => store.authState.token);
 
 	const { data, isLoading } = useQuery(
 		[QueryKey.Ticket, params.id],

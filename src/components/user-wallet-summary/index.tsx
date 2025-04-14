@@ -95,7 +95,7 @@ const UserWalletSummary = ({ user }: Props) => {
 		}
 	}, [query, query.page]);
 
-	const { token } = useAppSelector((store) => store.authState);
+	const token = useAppSelector((store) => store.authState.token);
 
 	const { isLoading, data, refetch } = useQuery(
 		[QueryKeys.UserWalletTransaction, user?.id, page, selectedService],

@@ -65,7 +65,7 @@ const CouponsTable = ({
 	const styles = useStyles(theme);
 	const queryClient = useQueryClient();
 
-	const { user } = useAppSelector((store) => store.authState);
+	const user = useAppSelector((store) => store.authState.user);
 
 	const [canCreateOrUpdate, setCanCreateOrUpdate] = useState<boolean>(false);
 	const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);

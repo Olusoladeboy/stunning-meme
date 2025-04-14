@@ -45,8 +45,8 @@ const DataPlansTable: React.FC<Props> = ({ data, isLoading }) => {
 	const handleError = useHandleError();
 	const setAlert = useAlert();
 	const styles = useStyles(theme);
-	const { canCreateOrUpdateRecord } = useAppSelector(
-		(store) => store.authState
+	const canCreateOrUpdateRecord = useAppSelector(
+		(store) => store.authState.canCreateOrUpdateRecord
 	);
 
 	const [selectedPlan, setSelectedPlan] = useState<null | DataPlan>(null);

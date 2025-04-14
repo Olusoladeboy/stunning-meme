@@ -9,9 +9,11 @@ import { setToggleMobileDrawer } from 'store/app';
 
 const Drawer = () => {
 	const theme = useTheme();
-	const { isToggleDrawer, isToggleMobileDrawer } = useAppSelector(
-		(store) => store.appState
-	);
+	const appState = useAppSelector((store) => store.appState);
+
+	const isToggleDrawer = appState.isToggleDrawer;
+	const isToggleMobileDrawer = appState.isToggleMobileDrawer;
+
 	const dispatch = useAppDispatch();
 
 	const closeDrawer = () =>

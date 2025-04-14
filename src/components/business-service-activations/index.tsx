@@ -48,7 +48,7 @@ const BusinessServiceActivations = ({ business }: Props) => {
 		}
 	}, [query, query.page]);
 
-	const { token } = useAppSelector((store) => store.authState);
+	const token = useAppSelector((store) => store.authState.token);
 
 	const { isLoading, data } = useQuery(
 		[QueryKeys.Activations, business?.id, page],

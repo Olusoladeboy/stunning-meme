@@ -36,9 +36,10 @@ const DataNetworkTable = () => {
 	const styles = useStyles(theme);
 	const queryClient = useQueryClient();
 	const navigate = useNavigate();
-	const { token, canCreateOrUpdateRecord } = useAppSelector(
-		(store) => store.authState
-	);
+	const authState = useAppSelector((store) => store.authState);
+
+	const token = authState.token;
+	const canCreateOrUpdateRecord = authState.canCreateOrUpdateRecord;
 
 	const { isLoading, data } = useQuery(
 		QueryKeys.DataNetwork,

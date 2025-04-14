@@ -61,6 +61,7 @@ const WithdrawalRequestTransactions = () => {
 				skip: (page - 1) * maxRecordRef.current,
 				populate: 'user',
 				status: 'PENDING',
+				canRequery: false,
 			}),
 		{
 			retry: 2,

@@ -23,8 +23,8 @@ const DataTypes = () => {
 	const { network, dataTypeName } = useParams();
 	const styles = useStyles(theme);
 	const [isDisplayModal, setDisplayModal] = useState<boolean>(false);
-	const { canCreateOrUpdateRecord } = useAppSelector(
-		(store) => store.authState
+	const canCreateOrUpdateRecord = useAppSelector(
+		(store) => store.authState.canCreateOrUpdateRecord
 	);
 
 	const { isLoading, data } = useQuery(

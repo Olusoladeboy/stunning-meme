@@ -8,7 +8,7 @@ interface Props {
 }
 
 const MessageItem = ({ message, repliedBy }: Props) => {
-	const { user } = useAppSelector((store) => store.authState);
+	const user = useAppSelector((store) => store.authState.user);
 
 	return (
 		<Box

@@ -10,10 +10,12 @@ import { useAppSelector } from 'store/hooks';
 const TotalTransactions = () => {
 	const theme = useTheme();
 	const styles = useStyles(theme);
-	const {
-		appState: { statistics },
-		authState: { canViewStatistics },
-	} = useAppSelector((store) => store);
+	const canViewStatistics = useAppSelector(
+		(store) => store.authState.canViewStatistics
+	);
+
+	const statistics = useAppSelector((store) => store.appState.statistics);
+
 	if (canViewStatistics) {
 		return (
 			<SummaryWrapper

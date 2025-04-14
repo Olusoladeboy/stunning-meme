@@ -10,6 +10,8 @@ import {
 	ConversionTotal,
 	AvailableNetwork,
 	Pagination,
+	Button,
+	Loader,
 } from 'components';
 import {
 	BOX_SHADOW,
@@ -17,6 +19,7 @@ import {
 	MAX_RECORDS,
 	LINKS,
 	ErrorBoundary,
+	AUTO_AIRTIME_CONVERT_PROVIDERS,
 } from 'utilities';
 import { useAppSelector } from 'store/hooks';
 import {
@@ -24,6 +27,8 @@ import {
 	useHandleError,
 	usePageTitle,
 	useSearchConversion,
+	useSettings,
+	useUpdateSettings,
 } from 'hooks';
 import { autoConvertAirtimeGroups } from 'api';
 
@@ -44,12 +49,10 @@ const AutoConversions = () => {
 
 	const location = useLocation();
 	const query = queryString.parse(location.search);
-	const authState = useAppSelector(
-		(store) => store.authState
-	);
+	const authState = useAppSelector((store) => store.authState);
 
 	const token = authState.token;
-	const canViewStatistics = authState.canViewStatistics
+	const canViewStatistics = authState.canViewStatistics;
 
 	const statistics = useAppSelector((store) => store.appState.statistics);
 
@@ -128,12 +131,20 @@ const AutoConversions = () => {
 						marginBottom: '2rem',
 					}}
 				>
-					<Typography
-						sx={{ marginBottom: theme.spacing(4), fontWeight: 'bold' }}
-						variant={'h5'}
+					<Box
+						sx={{
+							marginBottom: theme.spacing(4),
+							display: 'flex',
+							gap: '15px',
+							alignItems: 'center',
+							justifyContent: 'space-between',
+						}}
 					>
-						Auto Conversions
-					</Typography>
+						<Typography sx={{ fontWeight: 'bold' }} variant={'h5'}>
+							Auto Conversions
+						</Typography>
+						<SwitchProvider />
+					</Box>
 					{canViewStatistics && (
 						<Box
 							sx={{
@@ -199,3 +210,92 @@ const useStyles = (theme: any) => ({
 });
 
 export default AutoConversions;
+
+const SwitchProvider = () => {
+	const theme = useTheme();
+	const { settings, refetchSettings } = useSettings({
+		queryKey: ['auto-convert-provider'],
+		params: {
+			name: 'AIRTIME_CONVERSION_PROVIDER',
+		},
+	});
+
+	const { updateSettings, isUpdatingSettings } = useUpdateSettings({
+		callback: () => {
+			refetchSettings();
+		},
+	});
+
+	const provider =
+		settings && Array.isArray(settings) && settings.length > 0 && settings[0];
+
+	const onSwitchProvider = (value: string) => {
+		if (provider) {
+			updateSettings({
+				id: provider.id as string,
+				data: {
+					value,
+				},
+			});
+		}
+	};
+
+	if (provider) {
+		return (
+			<>
+				{isUpdatingSettings && <Loader />}
+				<Box>
+					<Box
+						sx={{
+							display: 'flex',
+							gap: '8px',
+							alignItems: 'center',
+							marginBottom: '8px',
+						}}
+					>
+						<Typography>Switch Provider</Typography>
+
+						<Box
+							sx={{
+								display: 'flex',
+								gap: '4px',
+							}}
+						>
+							{Object.values(AUTO_AIRTIME_CONVERT_PROVIDERS).map((value) => (
+								<Button
+									disabled={provider.value === value}
+									onClick={() => onSwitchProvider(value)}
+									variant='outlined'
+									sx={{
+										borderColor: theme.palette.secondary.main,
+										backgroundColor:
+											provider.value === value
+												? theme.palette.secondary.main
+												: 'white',
+										color:
+											provider.value === value
+												? 'white'
+												: theme.palette.primary.main,
+										':hover': {
+											background: theme.palette.secondary.main,
+											borderColor: theme.palette.secondary.main,
+											color: 'white',
+										},
+									}}
+									key={value}
+								>
+									{value}
+								</Button>
+							))}
+						</Box>
+					</Box>
+					<Typography sx={{ textAlign: 'right' }}>
+						Active: {provider.value}
+					</Typography>
+				</Box>
+			</>
+		);
+	}
+
+	return null;
+};

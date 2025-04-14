@@ -99,7 +99,6 @@ const BvnVerification = () => {
 		if (EMAIL_REX.test(value)) {
 			searchUser(value);
 		} else if (/[0-9]{11}/.test(value)) {
-			console.log('Value-BVN', value);
 			searchBvn(value);
 		} else {
 			return setAlert({

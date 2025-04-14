@@ -53,7 +53,6 @@ const AvailableNetwork: React.FC<IAvailableNetwork> = ({ type = 'normal' }) => {
 					: LINKS.AutoConversionNetwork
 			);
 		} else {
-			console.log('Add network');
 		}
 	};
 

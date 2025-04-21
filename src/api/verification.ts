@@ -16,6 +16,11 @@ export const verifications = async (
 ): Promise<DataResponse<IVerification[]>> =>
 	apiRequest({ url: ENDPOINTS.Verification, method: 'GET', params });
 
+export const queryVerifications = async (
+	params: Record<string, any>
+): Promise<DataResponse<IVerification[]>> =>
+	apiRequest({ url: `${ENDPOINTS.Verification}/q`, method: 'GET', params });
+
 export const bvnVerifications = async (
 	params: Record<string, any>
 ): Promise<DataResponse<ResponseBVNVerification>> =>

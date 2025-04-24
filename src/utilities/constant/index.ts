@@ -170,6 +170,7 @@ export const ENDPOINTS = {
 	ConvertNetworks: '/convert-networks',
 	ConvertAirtime: '/convert-airtime',
 	AutoConvertAirtime: '/auto-convert-airtime',
+	AutoConvertNetwork: '/auto-convert-networks',
 	Kyc: '/kyc',
 	Verification: '/verifications',
 	Transaction: '/transaction',

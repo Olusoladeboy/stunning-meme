@@ -143,7 +143,7 @@ const AutoConversions = () => {
 						<Typography sx={{ fontWeight: 'bold' }} variant={'h5'}>
 							Auto Conversions
 						</Typography>
-						<SwitchProvider />
+						{/* <SwitchProvider /> */}
 					</Box>
 					{canViewStatistics && (
 						<Box

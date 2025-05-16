@@ -239,29 +239,31 @@ const AutoConversionNetworkTable = () => {
 									<TableCell>{data.name}</TableCell>
 									<TableCell>{data.rate}%</TableCell>
 									<TableCell>
-										{data.gateway ? (
-											<Box
-												onClick={() => {
-													setSelectedNetwork(data);
-													setSwitchProvider(true);
-												}}
-												style={styles.editNetwork as CSSProperties}
-											>
-												{data?.gateway}
-												<Image
-													sx={{
-														width: '15px',
-														img: { width: '100%' },
-														display: 'flex',
-														alignItems: 'center',
-													}}
-													src={require('assets/icons/edit.png')}
-													alt={'edit'}
-												/>
-											</Box>
-										) : (
-											'No available gateway'
-										)}
+										<Box
+											onClick={() => {
+												setSelectedNetwork(data);
+												setSwitchProvider(true);
+											}}
+											style={styles.editNetwork as CSSProperties}
+										>
+											{data.gateway ? (
+												<>
+													{data?.gateway}
+													<Image
+														sx={{
+															width: '15px',
+															img: { width: '100%' },
+															display: 'flex',
+															alignItems: 'center',
+														}}
+														src={require('assets/icons/edit.png')}
+														alt={'edit'}
+													/>
+												</>
+											) : (
+												'No available gateway'
+											)}
+										</Box>
 									</TableCell>
 									<TableCell>
 										<Box

@@ -1,5 +1,5 @@
 import apiRequest from './apiRequest';
-import { DataResponse, NetworkData } from '../utilities';
+import { DataResponse, ENDPOINTS, NetworkData } from '../utilities';
 
 export const networks = async ({
 	url,
@@ -40,5 +40,18 @@ export const updateNetwork = async ({
 	apiRequest({
 		method: 'PUT',
 		url: `${url}/${id}`,
+		data,
+	});
+
+export const updateAutoConvertAirtimeProvider = async ({
+	id,
+	data,
+}: {
+	id: string;
+	data: { [key: string]: any };
+}): Promise<any> =>
+	apiRequest({
+		method: 'PUT',
+		url: `${ENDPOINTS.AutoConvertNetwork}/${id}`,
 		data,
 	});

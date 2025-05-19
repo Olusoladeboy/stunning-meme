@@ -6,6 +6,7 @@ import { Layout, ApiLogsTable, TableHeader, TablePagination } from 'components';
 import { useAlert, useHandleError, usePageTitle, useSearchApiLog } from 'hooks';
 import { LINKS, MAX_RECORDS, QueryKeys } from 'utilities';
 import { apiLogs } from 'api';
+import moment from 'moment';
 
 const ApiLogs = () => {
 	usePageTitle('Api logs');
@@ -21,6 +22,8 @@ const ApiLogs = () => {
 	const { apiLog, isSearchingApiLog, searchApiLog, clearSearch } =
 		useSearchApiLog();
 
+	const backdated = moment().subtract(24, 'hours').toISOString();
+
 	// Audit logs
 	const { isLoading, data, refetch } = useQuery(
 		[QueryKeys.ApiLogs, pageRef.current],
@@ -30,6 +33,7 @@ const ApiLogs = () => {
 				limit: maxRecordRef.current,
 				skip: pageRef.current * maxRecordRef.current,
 				populate: 'user',
+				'createdAt>': backdated,
 			}),
 		{
 			refetchOnWindowFocus: false,

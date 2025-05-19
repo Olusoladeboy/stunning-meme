@@ -170,6 +170,7 @@ export const ENDPOINTS = {
 	ConvertNetworks: '/convert-networks',
 	ConvertAirtime: '/convert-airtime',
 	AutoConvertAirtime: '/auto-convert-airtime',
+	AutoConvertNetwork: '/auto-convert-networks',
 	Kyc: '/kyc',
 	Verification: '/verifications',
 	Transaction: '/transaction',
@@ -399,4 +400,9 @@ export const MODULE_NAMES = {
 	WALLET: 'WALLET',
 	WITHDRAW: 'WITHDRAW',
 	AUTHENTICATION: 'AUTHENTICATION',
+};
+
+export const AUTO_AIRTIME_CONVERT_PROVIDERS = {
+	AIRFUND: 'AIRFUND',
+	OGDAMS: 'OGDAMS',
 };

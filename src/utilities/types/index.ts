@@ -293,6 +293,7 @@ export type NetworkData = {
 	createdAt?: Date;
 	no_of_dataTypes?: string;
 	no_of_plans?: string;
+	gateway?: string;
 };
 
 export type KycData = {
@@ -698,6 +699,7 @@ export interface INetwork {
 	createdAt?: Date;
 	no_of_dataTypes?: string;
 	no_of_plans?: string;
+	gateway?: string;
 }
 
 export interface DataType {
@@ -879,6 +881,8 @@ export interface Settings {
 	createdAt?: string;
 	updatedAt?: string;
 	id?: string;
+	isActive?: boolean;
+	gateway?: string;
 }
 
 export interface Notification {

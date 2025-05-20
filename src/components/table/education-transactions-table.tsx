@@ -29,6 +29,7 @@ import useToastAlert from 'hooks/useToastAlert';
 import { useHandleError } from 'hooks';
 import { green, red } from '@mui/material/colors';
 import Loader from 'components/loader';
+import { useAppSelector } from 'store/hooks';
 
 type Props = {
 	data: Transaction[];
@@ -43,7 +44,9 @@ const EducationTransactionsTable = ({
 }: Props) => {
 	const theme = useTheme();
 	const styles = useStyles(theme);
-
+	const isSupperAdmin = useAppSelector(
+		(store) => store.authState.isSupperAdmin
+	);
 	const alert = useToastAlert();
 	const handleError = useHandleError();
 
@@ -82,6 +85,21 @@ const EducationTransactionsTable = ({
 			},
 		}
 	);
+
+	const handleUpdate = ({ status, id }: { status: string; id: string }) => {
+		if (!isSupperAdmin) {
+			alert({
+				message: 'You are not authorized to perform this action',
+				type: 'error',
+			});
+			return;
+		}
+
+		mutate({
+			id,
+			data: { status },
+		});
+	};
 
 	return (
 		<>
@@ -203,9 +221,9 @@ const EducationTransactionsTable = ({
 																	<Button
 																		onClick={(e) => {
 																			e.stopPropagation();
-																			mutate({
+																			handleUpdate({
 																				id: value.id,
-																				data: { status: 'SUCCESSFUL' },
+																				status: 'SUCCESSFUL',
 																			});
 																		}}
 																		sx={{
@@ -218,9 +236,9 @@ const EducationTransactionsTable = ({
 																	<Button
 																		onClick={(e) => {
 																			e.stopPropagation();
-																			mutate({
+																			handleUpdate({
 																				id: value.id,
-																				data: { status: 'FAILED' },
+																				status: 'FAILED',
 																			});
 																		}}
 																		sx={{

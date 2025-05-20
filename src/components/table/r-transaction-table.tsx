@@ -19,6 +19,8 @@ import { Box } from '@mui/material';
 import Button from 'components/button';
 import { green, red } from '@mui/material/colors';
 import { SERVICES } from 'utilities';
+import useToastAlert from 'hooks/useToastAlert';
+import { useAppSelector } from 'store/hooks';
 
 interface Props {
 	data: Transaction[] | null;
@@ -34,6 +36,10 @@ const RTransactionTable = ({
 	transactionType,
 }: Props) => {
 	const handleError = useHandleError();
+	const alert = useToastAlert();
+	const isSupperAdmin = useAppSelector(
+		(store) => store.authState.isSupperAdmin
+	);
 	const [selectedTransaction, setSelectedTransaction] =
 		useState<null | Transaction>(null);
 
@@ -74,6 +80,13 @@ const RTransactionTable = ({
 		id: string;
 		status: string;
 	}) => {
+		if (!isSupperAdmin) {
+			alert({
+				message: 'You are not authorized to perform this action',
+				type: 'error',
+			});
+			return;
+		}
 		(mutateUpdateTransaction as Function)({
 			id,
 			data: {

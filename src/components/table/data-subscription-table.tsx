@@ -30,6 +30,7 @@ import TablePagination from 'components/pagination/table-pagination';
 import TransactionDetailsModal from 'components/modal/transaction-details-modal';
 import Button from 'components/button';
 import { green, red } from '@mui/material/colors';
+import { useAppSelector } from 'store/hooks';
 
 type Props = {
 	subscriptions: Transaction[] | null;
@@ -63,6 +64,10 @@ const DataSubscriptionTable = ({
 	const handleError = useHandleError();
 	const alert = useAlert();
 	const queryClient = useQueryClient();
+
+	const isSupperAdmin = useAppSelector(
+		(store) => store.authState.isSupperAdmin
+	);
 
 	const [selectedTransaction, setSelectedTransaction] =
 		useState<null | Transaction>(null);
@@ -120,6 +125,13 @@ const DataSubscriptionTable = ({
 		id: string;
 		status: string;
 	}) => {
+		if (!isSupperAdmin) {
+			alert({
+				message: 'You are not authorized to perform this action',
+				type: 'error',
+			});
+			return;
+		}
 		mutateUpdateTransaction({
 			id,
 			data: {

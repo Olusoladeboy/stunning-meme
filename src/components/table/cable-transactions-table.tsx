@@ -27,6 +27,7 @@ import useToastAlert from 'hooks/useToastAlert';
 import Loader from 'components/loader';
 import Button from 'components/button';
 import { green, red } from '@mui/material/colors';
+import { useAppSelector } from 'store/hooks';
 
 type Props = {
 	data: Transaction[];
@@ -43,6 +44,9 @@ const CableTransactionsTable = ({
 	const styles = useStyles(theme);
 	const handleError = useHandleError();
 	const alert = useToastAlert();
+	const isSupperAdmin = useAppSelector(
+		(store) => store.authState.isSupperAdmin
+	);
 
 	const [selectedTransaction, setSelectedTransaction] =
 		useState<null | Transaction>(null);
@@ -73,6 +77,27 @@ const CableTransactionsTable = ({
 			},
 		}
 	);
+
+	const handleUpdateTransaction = ({
+		status,
+		id,
+	}: {
+		status: string;
+		id: string;
+	}) => {
+		if (!isSupperAdmin) {
+			alert({
+				message: 'You are not authorized to perform this action',
+				type: 'error',
+			});
+			return;
+		}
+
+		mutate({
+			id,
+			data: { status },
+		});
+	};
 
 	return (
 		<Container>
@@ -167,9 +192,9 @@ const CableTransactionsTable = ({
 															<Button
 																onClick={(e) => {
 																	e.stopPropagation();
-																	mutate({
+																	handleUpdateTransaction({
 																		id: value.id,
-																		data: { status: 'SUCCESSFUL' },
+																		status: 'SUCCESSFUL',
 																	});
 																}}
 																sx={{
@@ -182,9 +207,9 @@ const CableTransactionsTable = ({
 															<Button
 																onClick={(e) => {
 																	e.stopPropagation();
-																	mutate({
+																	handleUpdateTransaction({
 																		id: value.id,
-																		data: { status: 'FAILED' },
+																		status: 'FAILED',
 																	});
 																}}
 																sx={{

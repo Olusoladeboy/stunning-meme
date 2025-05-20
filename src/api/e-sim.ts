@@ -9,3 +9,13 @@ export const eSimTransactions = async (params: {
 		method: 'GET',
 		params,
 	});
+
+export const updateESimTransactions = async (payload: {
+	data: { [key: string]: any };
+	id: string;
+}): Promise<DataResponse<any>> =>
+	apiRequest({
+		url: `${ENDPOINTS.ESim}/${payload.id}`,
+		method: 'PUT',
+		data: payload.data,
+	});

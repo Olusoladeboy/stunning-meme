@@ -22,10 +22,12 @@ import TableLoader from '../loader/table-loader';
 import Empty from '../empty/table-empty';
 import SearchInput from '../form-components/search-input';
 import CustomTableCell from './components/custom-table-cell';
-import { updateConvertAirtimeStatus } from 'api';
+import { updateAirtime, updateConvertAirtimeStatus } from 'api';
 import Loader from '../loader';
 import { useAlert, useHandleError } from 'hooks';
 import TransactionDetailsModal from 'components/modal/transaction-details-modal';
+import Button from 'components/button';
+import { green, red } from '@mui/material/colors';
 
 type Props = {
 	transactions: Transaction[] | null;
@@ -34,6 +36,7 @@ type Props = {
 	handleSearch?: (search: string) => void;
 	clearSearch?: () => void;
 	isDisplaySearchField?: boolean;
+	reloadTransactions?: () => void;
 };
 
 const AirtimePurchaseTable = ({
@@ -43,6 +46,7 @@ const AirtimePurchaseTable = ({
 	handleSearch,
 	clearSearch,
 	isDisplaySearchField = false,
+	reloadTransactions,
 }: Props) => {
 	const theme = useTheme();
 	const styles = useStyles(theme);
@@ -78,8 +82,41 @@ const AirtimePurchaseTable = ({
 		}
 	);
 
+	const { isLoading: isUpdatingTransaction, mutate: mutateUpdateTransaction } =
+		useMutation(updateAirtime, {
+			onSettled: (data, error) => {
+				if (error) {
+					const response = handleError({ error });
+					if (response?.message)
+						alert({ message: response.message, type: 'error' });
+				}
+
+				if (data && data.success) {
+					reloadTransactions?.();
+					alert({
+						message: 'Airtime status updated successfully!!',
+						type: 'success',
+					});
+				}
+			},
+		});
+
+	const onUpdateTransaction = ({
+		id,
+		status,
+	}: {
+		id: string;
+		status: string;
+	}) => {
+		mutateUpdateTransaction({
+			id,
+			data: {
+				status,
+			},
+		});
+	};
+
 	const handleClickRow = (value: Transaction) => {
-		console.log(value);
 		setSelectedTransaction(value);
 	};
 
@@ -92,7 +129,7 @@ const AirtimePurchaseTable = ({
 					isDisplayButtons
 				/>
 			)}
-			{isUpdatingStatus && <Loader />}
+			{(isUpdatingStatus || isUpdatingTransaction) && <Loader />}
 			{isDisplaySearchField && (
 				<SearchContainer>
 					<SearchInput
@@ -122,6 +159,7 @@ const AirtimePurchaseTable = ({
 							<CustomTableCell style={styles.headTableCell} label={'Amount'} />
 							<CustomTableCell style={styles.headTableCell} label={'Date'} />
 							<CustomTableCell style={styles.headTableCell} label={'Status'} />
+							<CustomTableCell style={styles.headTableCell} label={'Action'} />
 						</StyledTableRow>
 					</TableHead>
 					<TableBody
@@ -132,7 +170,7 @@ const AirtimePurchaseTable = ({
 						}}
 					>
 						{isLoading ? (
-							<TableLoader colSpan={7} />
+							<TableLoader colSpan={8} />
 						) : (
 							transactions && (
 								<>
@@ -171,11 +209,47 @@ const AirtimePurchaseTable = ({
 													<StyledTableCell style={styles.text}>
 														{transaction.status}
 													</StyledTableCell>
+													<StyledTableCell style={styles.text}>
+														{transaction.status === 'PENDING' && (
+															<Box sx={{ display: 'flex', gap: '10px' }}>
+																<Button
+																	onClick={(e) => {
+																		e.stopPropagation();
+																		onUpdateTransaction({
+																			id: transaction.id,
+																			status: 'SUCCESSFUL',
+																		});
+																	}}
+																	sx={{
+																		backgroundColor: `${green['600']} !important`,
+																		color: 'white',
+																	}}
+																>
+																	Approve
+																</Button>
+																<Button
+																	onClick={(e) => {
+																		e.stopPropagation();
+																		onUpdateTransaction({
+																			id: transaction.id,
+																			status: 'FAILED',
+																		});
+																	}}
+																	sx={{
+																		backgroundColor: `${red['600']} !important`,
+																		color: 'white',
+																	}}
+																>
+																	Decline
+																</Button>
+															</Box>
+														)}
+													</StyledTableCell>
 												</StyledTableRow>
 											);
 										})
 									) : (
-										<Empty colSpan={7} text={'No Airtime Convert'} />
+										<Empty colSpan={8} text={'No Airtime transaction'} />
 									)}
 								</>
 							)

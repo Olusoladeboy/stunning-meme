@@ -141,7 +141,6 @@ const Transactions = () => {
 
 	const { queryAirtimeTransactions, isLoadingAirtimeTransactions } =
 		useQueryAirtimeTransactions((data, metadata) => {
-			console.log('META_DATA::', metadata);
 			handleSetTotal(metadata as Metadata);
 			setDataTransaction({
 				service: SERVICES.AIRTIME_TOP_UP,
@@ -408,6 +407,10 @@ const Transactions = () => {
 		}
 	};
 
+	const reloadTransactions = () => {
+		switchHandleSubmit(queryValues?.current as any);
+	};
+
 	const handleChangeRowsPerPage = (value: number) => {
 		maxRecordRef.current = value;
 
@@ -629,18 +632,20 @@ const Transactions = () => {
 						<DataSubscriptionTable
 							isLoading={isLoadingDataSubscriptions}
 							subscriptions={dataTransactions?.data as any}
+							reloadTransactions={reloadTransactions}
 						/>
 					)}
 					{dataTransactions?.service === SERVICES.AIRTIME_TOP_UP && (
 						<AirtimePurchaseTable
 							transactions={dataTransactions?.data as any}
-							isLoading={isLoading}
+							isLoading={isLoadingDataSubscriptions}
+							reloadTransactions={reloadTransactions}
 						/>
 					)}
 					{dataTransactions?.service === SERVICES.AIRTIME_CONVERSION && (
 						<ConversionsTable
 							conversions={dataTransactions?.data as any}
-							isLoading={isLoading}
+							isLoading={isLoadingConvertAirtime}
 							isDisplayTransactionDetails
 							handleRefetch={() =>
 								switchHandleSubmit(queryValues?.current as any)
@@ -652,58 +657,68 @@ const Transactions = () => {
 						dataTransactions?.service ===
 							SERVICES.INTERNATIONAL_DATA_SUBSCRIPTION) && (
 						<RTransactionTable
-							isLoading={isLoadingTransactions}
+							isLoading={isLoadingInterDataTransactions}
 							data={dataTransactions?.data as Transaction[]}
+							reloadTransactions={reloadTransactions}
+							transactionType={dataTransactions.service}
 						/>
 					)}
 					{(dataTransactions?.service === SERVICES.ESIM ||
 						dataTransactions?.service === SERVICES.GIFT_CARD) && (
 						<GiftcardESimTransactionTable
-							isLoading={isLoadingTransactions}
+							isLoading={
+								isLoadingESimTransactions || isLoadingGiftCardTransactions
+							}
 							data={dataTransactions?.data as Transaction[]}
+							reloadTransactions={reloadTransactions}
+							transactionType={dataTransactions.service}
 						/>
 					)}
 					{dataTransactions?.service === SERVICES.CABLE && (
 						<CableTransactionsTable
 							isLoading={isLoadingBillTransactions}
 							data={dataTransactions?.data as Transaction[]}
+							reloadTransactions={reloadTransactions}
 						/>
 					)}
 					{dataTransactions?.service === SERVICES.INTERNET && (
 						<InternetTransactionsTable
 							isLoading={isLoadingBillTransactions}
 							data={dataTransactions?.data as any}
+							reloadTransactions={reloadTransactions}
 						/>
 					)}
 					{dataTransactions?.service === SERVICES.EDUCATION && (
 						<EducationTransactionsTable
 							data={dataTransactions?.data as Transaction[]}
-							isLoading={isLoading}
+							isLoading={isLoadingBillTransactions}
+							reloadTransactions={reloadTransactions}
 						/>
 					)}
 					{dataTransactions?.service === SERVICES.ELECTRICITY && (
 						<ElectricityTransactionsTable
 							data={dataTransactions?.data as Transaction[]}
 							isLoading={isLoadingBillTransactions}
+							reloadTransactions={reloadTransactions}
 						/>
 					)}
 					{dataTransactions?.service === SERVICES.WITHDRAWAL && (
 						<WithdrawalTransactionsTable
 							data={dataTransactions?.data as IWithdrawal[]}
-							isLoading={isLoading}
+							isLoading={isLoadingWalletWithdrawals}
 						/>
 					)}
 					{dataTransactions?.service === SERVICES.AUTO_AIRTIME_CONVERSION && (
 						<AutoConversionsTable
 							conversions={dataTransactions?.data as IGroupAutoTransaction[]}
-							isLoading={isLoading}
+							isLoading={isLoadingAutoConvertAirtime}
 							isDisplayPopupTransactionDetails
 						/>
 					)}
 					{dataTransactions?.service === SERVICES.CARD_FUNDING && (
 						<CardTopUpTransactionsTable
 							data={dataTransactions?.data as Transaction[]}
-							isLoading={isLoading}
+							isLoading={isLoadingWalletFundings}
 						/>
 					)}
 					{dataTransactions?.service === SERVICES.BETTING && (
@@ -715,13 +730,13 @@ const Transactions = () => {
 					{dataTransactions?.service === SERVICES.EPIN && (
 						<EPinTransactionsTable
 							data={dataTransactions?.data as Transaction[]}
-							isLoading={isLoading}
+							isLoading={isLoadingEPinTransactions}
 						/>
 					)}
 					{dataTransactions?.service === SERVICES.WALLET_TRANSFER && (
 						<WalletTransferTransactionsTable
 							data={dataTransactions?.data as Transaction[]}
-							isLoading={isLoading}
+							isLoading={isLoadingWalletTransfers}
 						/>
 					)}
 				</Box>

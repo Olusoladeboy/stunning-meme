@@ -26,6 +26,16 @@ export const dataSubscriptions = async (params: {
 		params,
 	});
 
+export const updateDataSubscriptions = async (payload: {
+	[key: string]: any;
+	id: string;
+}): Promise<DataResponse<DataPlan[]>> =>
+	apiRequest({
+		url: `${ENDPOINTS.DataSubscription}/${payload.id}`,
+		method: 'PUT',
+		data: payload.data,
+	});
+
 export const dataTypes = async (params: {
 	[key: string]: any;
 }): Promise<DataResponse<DataType[]>> =>
@@ -86,4 +96,14 @@ export const internationalDataSubscriptions = async (params: {
 		url: ENDPOINTS.InternationalData,
 		method: 'GET',
 		params,
+	});
+
+export const updateInternationalDataSubscriptions = async (payload: {
+	data: { [key: string]: any };
+	id: string;
+}): Promise<DataResponse<any>> =>
+	apiRequest({
+		url: `${ENDPOINTS.InternationalData}/${payload.id}`,
+		method: 'PUT',
+		data: payload.data,
 	});

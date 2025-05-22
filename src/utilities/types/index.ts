@@ -1099,6 +1099,7 @@ export interface IRecipient {
 	alias: string;
 	networkName: string;
 	targetBalance: number | string;
+	currentBalance: number | string;
 	createdAt: string;
 	updatedAt: string;
 	pin?: string;

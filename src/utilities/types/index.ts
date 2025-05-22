@@ -1098,9 +1098,10 @@ export interface IRecipient {
 	phoneNumber: string;
 	alias: string;
 	networkName: string;
-	targetBalance: number;
+	targetBalance: number | string;
 	createdAt: string;
 	updatedAt: string;
 	pin?: string;
+	otp?: string;
 	id: string;
 }

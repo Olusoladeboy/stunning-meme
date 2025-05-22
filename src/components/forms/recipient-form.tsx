@@ -1,4 +1,4 @@
-import React, { CSSProperties, useEffect, useMemo } from 'react';
+import React, { CSSProperties, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useMutation, useQueryClient } from 'react-query';
 import * as yup from 'yup';
@@ -9,7 +9,7 @@ import TextInput from '../form-components/TextInput';
 import Button from '../button/custom-button';
 import { QueryKeys, IRecipient } from 'utilities';
 import { useAlert, useHandleError } from 'hooks';
-import { createRecipient, updateRecipient } from 'api';
+import { createRecipient, sendRecipientOtp, updateRecipient } from 'api';
 
 type Props = {
 	dataPayload?: IRecipient;
@@ -24,6 +24,8 @@ const RecipientForm = ({ dataPayload, callback }: Props) => {
 	const handleError = useHandleError();
 	const setAlert = useAlert();
 	const styles = useStyles(theme);
+
+	const [canCreateRecipient, setCanCreateRecipient] = useState<boolean>(false);
 
 	const isEdit = useMemo(() => {
 		if (
@@ -45,12 +47,20 @@ const RecipientForm = ({ dataPayload, callback }: Props) => {
 		pin: yup.string().required('Enter share and sell pin'),
 	});
 
-	const initialValues = {
+	const extendValidationSchema = validationSchema.shape({
+		otp: yup
+			.string()
+			.matches(/^[0-9]{6}$/, 'OTP must be a digit')
+			.required('Enter OTP'),
+	});
+
+	const initialValues: Partial<IRecipient> = {
 		phoneNumber: '',
 		alias: '',
 		networkName: network?.toUpperCase(),
 		pin: '',
 		targetBalance: '',
+		otp: '',
 	};
 
 	const { isLoading: isCreatingRecipient, mutate: mutateCreateRecipient } =
@@ -72,6 +82,23 @@ const RecipientForm = ({ dataPayload, callback }: Props) => {
 					});
 					resetForm();
 					queryClient.invalidateQueries(QueryKeys.AutoConversionRecipients);
+				}
+			},
+		});
+
+	const { isLoading: isSendingRecipientOtp, mutate: mutateSendRecipientOtp } =
+		useMutation(sendRecipientOtp, {
+			onSettled: (data, error) => {
+				if (error) {
+					const response = handleError({ error });
+
+					if (response?.message) {
+						setAlert({ message: response.message, type: 'error' });
+					}
+				}
+
+				if (data && data.success) {
+					setCanCreateRecipient(true);
 				}
 			},
 		});
@@ -110,7 +137,7 @@ const RecipientForm = ({ dataPayload, callback }: Props) => {
 			let payload = {
 				alias: values.alias,
 				pin: values.pin,
-				targetBalance: parseFloat(values.targetBalance),
+				targetBalance: parseFloat(`${values.targetBalance}`),
 			};
 
 			return mutateUpdateRecipient({
@@ -119,10 +146,17 @@ const RecipientForm = ({ dataPayload, callback }: Props) => {
 			});
 		}
 
-		mutateCreateRecipient({
-			...values,
-			targetBalance: parseFloat(values.targetBalance),
-		});
+		if (canCreateRecipient) {
+			mutateCreateRecipient({
+				...values,
+				targetBalance: parseFloat(`${values.targetBalance}`),
+			});
+		} else {
+			mutateSendRecipientOtp({
+				phoneNumber: values.phoneNumber,
+				networkName: values.networkName,
+			});
+		}
 	};
 
 	const {
@@ -135,7 +169,9 @@ const RecipientForm = ({ dataPayload, callback }: Props) => {
 		setValues,
 	} = useFormik({
 		initialValues,
-		validationSchema,
+		validationSchema: canCreateRecipient
+			? extendValidationSchema
+			: validationSchema,
 		onSubmit: (values) => {
 			createOrUpdateDataPlan(values);
 		},
@@ -157,7 +193,7 @@ const RecipientForm = ({ dataPayload, callback }: Props) => {
 		}
 	}, [dataPayload, setValues]);
 
-	const { phoneNumber, alias, pin, targetBalance } = values;
+	const { phoneNumber, alias, pin, targetBalance, otp } = values;
 
 	return (
 		<Box style={styles.form as CSSProperties} component={'form'}>
@@ -232,9 +268,26 @@ const RecipientForm = ({ dataPayload, callback }: Props) => {
 						onChange={handleChange('targetBalance')}
 					/>
 				</Box>
+				{canCreateRecipient && (
+					<Box>
+						<Typography variant={'body1'} style={styles.label}>
+							OTP
+						</Typography>
+						<TextInput
+							fullWidth
+							placeholder={'Enter OTP'}
+							error={errors && touched.otp && errors.otp ? true : false}
+							helperText={errors && touched.otp && errors.otp}
+							value={otp}
+							onChange={handleChange('otp')}
+						/>
+					</Box>
+				)}
 			</Box>
 			<Button
-				loading={isCreatingRecipient || isUpdatingRecipient}
+				loading={
+					isCreatingRecipient || isUpdatingRecipient || isSendingRecipientOtp
+				}
 				style={styles.btn}
 				type={'submit'}
 				size={'large'}
@@ -243,7 +296,7 @@ const RecipientForm = ({ dataPayload, callback }: Props) => {
 					handleSubmit();
 				}}
 			>
-				Save
+				{isEdit || canCreateRecipient ? 'Save' : 'Send OTP'}
 			</Button>
 		</Box>
 	);

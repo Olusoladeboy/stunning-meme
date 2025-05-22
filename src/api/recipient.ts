@@ -10,11 +10,28 @@ export const getRecipients = async (params: {
 		params,
 	});
 
+export const refreshRecipientBalance = async (
+	id: string
+): Promise<DataResponse<IRecipient>> =>
+	apiRequest({
+		url: `${ENDPOINTS.Recipients}/${id}/balance`,
+		method: 'GET',
+	});
+
 export const createRecipient = async (
 	data: Partial<IRecipient>
 ): Promise<DataResponse<IRecipient>> =>
 	apiRequest({
 		url: ENDPOINTS.Recipients,
+		method: 'POST',
+		data,
+	});
+
+export const sendRecipientOtp = async (
+	data: Partial<IRecipient>
+): Promise<DataResponse<IRecipient>> =>
+	apiRequest({
+		url: `${ENDPOINTS.Recipients}/otp`,
 		method: 'POST',
 		data,
 	});

@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Switch } from '@mui/material';
+import React, { useRef, useState } from 'react';
+import { Box, IconButton, Switch, CircularProgress } from '@mui/material';
 import {
 	IRecipient,
 	QueryKeys,
@@ -10,13 +10,13 @@ import {
 } from 'utilities';
 import AppTable from './components/table';
 import TransactionDetailsModal from 'components/modal/transaction-details-modal';
-import { updateRecipient } from 'api';
+import { refreshRecipientBalance, updateRecipient } from 'api';
 import { useHandleError } from 'hooks';
 import { useMutation, useQueryClient } from 'react-query';
 import Loader from 'components/loader';
 import Button from 'components/button';
 import useToastAlert from 'hooks/useToastAlert';
-import { Edit } from '@mui/icons-material';
+import { Edit, Refresh } from '@mui/icons-material';
 import ModalWrapper from 'components/modal/Wrapper';
 import RecipientForm from 'components/forms/recipient-form';
 
@@ -30,6 +30,9 @@ const AutoConversionRecipientsTable = ({ data, isLoading }: Props) => {
 	const handleError = useHandleError();
 	const queryClient = useQueryClient();
 	const alert = useToastAlert();
+
+	const [isRefreshing, setRefreshing] = useState<boolean>(false);
+	const recipientIdRef = useRef<string>('');
 
 	const [selectedTransaction, setSelectedTransaction] =
 		useState<null | Transaction>(null);
@@ -60,6 +63,23 @@ const AutoConversionRecipientsTable = ({ data, isLoading }: Props) => {
 				isActive: !recipient.isActive,
 			},
 		});
+	};
+
+	const onRefresh = async (id: string) => {
+		recipientIdRef.current = id;
+		try {
+			setRefreshing(true);
+			const response = await refreshRecipientBalance(id);
+			if (response.success) {
+				queryClient.invalidateQueries(QueryKeys.AutoConversionRecipients);
+			}
+		} catch (error) {
+			const response = handleError({ error });
+			if (response?.message)
+				alert({ message: response.message, type: 'error' });
+		} finally {
+			setRefreshing(false);
+		}
 	};
 
 	return (
@@ -109,9 +129,28 @@ const AutoConversionRecipientsTable = ({ data, isLoading }: Props) => {
 											checked={value.isActive}
 											onChange={() => onUpdateTransaction(value)}
 										/>,
-										formatNumberToCurrency(
-											checkAmount(`${value?.targetBalance}`)
-										),
+										<Box
+											sx={{
+												display: 'flex',
+												gap: '6px',
+												alignItems: 'center',
+											}}
+										>
+											{formatNumberToCurrency(
+												checkAmount(`${value?.targetBalance}`)
+											)}
+											<IconButton
+												onClick={() => onRefresh(value.id)}
+												disabled={isRefreshing}
+												size='small'
+											>
+												<Refresh />
+											</IconButton>
+											{isRefreshing && recipientIdRef.current === value.id && (
+												<CircularProgress size={18} />
+											)}
+										</Box>,
+
 										<Button
 											onClick={() => setRecipient(value)}
 											sx={{

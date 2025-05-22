@@ -16,6 +16,8 @@ import Loader from 'components/loader';
 import Button from 'components/button';
 import { Box } from '@mui/material';
 import { green, red } from '@mui/material/colors';
+import { useAppSelector } from 'store/hooks';
+import useToastAlert from 'hooks/useToastAlert';
 
 interface Props {
 	data: Transaction[] | null;
@@ -30,7 +32,11 @@ const GiftcardESimTransactionTable = ({
 	reloadTransactions,
 	transactionType,
 }: Props) => {
+	const isSupperAdmin = useAppSelector(
+		(store) => store.authState.isSupperAdmin
+	);
 	const handleError = useHandleError();
+	const alert = useToastAlert();
 	const [selectedTransaction, setSelectedTransaction] =
 		useState<null | Transaction>(null);
 
@@ -68,6 +74,13 @@ const GiftcardESimTransactionTable = ({
 	);
 
 	const handleUpdateTransaction = ({}: { id: string; status: string }) => {
+		if (!isSupperAdmin) {
+			alert({
+				message: 'You are not authorized to perform this action',
+				type: 'error',
+			});
+			return;
+		}
 		(mutate as Function)({
 			data: {
 				status: 'completed',

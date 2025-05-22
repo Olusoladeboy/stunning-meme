@@ -66,6 +66,7 @@ export const QueryKeys = {
 	LienTransactions: '@Query:LienTransactions',
 	Commissions: '@Query:Commissions',
 	Activations: '@Query:Activations',
+	AutoConversionRecipients: '@Query:AutoConversionRecipients',
 };
 
 export const StorageKeys = {
@@ -104,6 +105,7 @@ export const LINKS = {
 	Conversions: '/conversions',
 	AllConversions: '/conversions/all',
 	AutoConversions: '/auto-conversions',
+	AutoConversionRecipients: '/auto-conversion-recipients',
 	Network: '/network',
 	DataNetwork: '/data-network',
 	ConversionNetwork: '/conversions/network',
@@ -192,6 +194,7 @@ export const ENDPOINTS = {
 	EVouchers: '/e-vouchers',
 	GiftCard: '/gift-cards',
 	ESim: 'esim',
+	Recipients: '/recipients',
 };
 
 export const FUND_WALLET_SERVICE = {
@@ -405,4 +408,5 @@ export const MODULE_NAMES = {
 export const AUTO_AIRTIME_CONVERT_PROVIDERS = {
 	AIRFUND: 'AIRFUND',
 	OGDAMS: 'OGDAMS',
+	AIRTIMEFLIP_A2C_SERVER: 'AIRTIMEFLIP_A2C_SERVER',
 };

@@ -1,4 +1,5 @@
 import React, { CSSProperties, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from 'react-query';
 import Table from '@mui/material/Table';
 import Box from '@mui/material/Box';
@@ -15,6 +16,7 @@ import {
 	NetworkData,
 	NetworkPage,
 	AUTO_AIRTIME_CONVERT_PROVIDERS,
+	SECOUNDARY_COLOR,
 } from 'utilities';
 import {
 	StyledTableCell as TableCell,
@@ -29,11 +31,12 @@ import TableLoader from '../loader/table-loader';
 import NetworkForm from '../forms/network-form';
 import Modal from '../modal/Wrapper';
 import Loader from '../loader';
-import { useAlert, useHandleError, useUpdateSettings } from 'hooks';
+import { useAlert, useHandleError } from 'hooks';
 import { networks, updateAutoConvertAirtimeProvider, updateNetwork } from 'api';
 
 const AutoConversionNetworkTable = () => {
 	const theme = useTheme();
+	const navigate = useNavigate();
 	const handleError = useHandleError();
 	const setAlert = useAlert();
 	const styles = useStyles(theme);
@@ -287,18 +290,31 @@ const AutoConversionNetworkTable = () => {
 										</Box>
 									</TableCell>
 
-									<TableCell sx={{ maxWidth: '200px' }}>
+									<TableCell>
 										<Box
 											sx={{
 												button: {
-													minWidth: '120px',
+													// minWidth: '120px',
 													color: grey[50],
 													backgroundColor: grey[400],
-													textTransform: 'uppercase',
+													textTransform: 'capitalize',
 												},
 											}}
 											style={styles.statusBtnWrapper}
 										>
+											<Button
+												style={{
+													backgroundColor: SECOUNDARY_COLOR,
+													color: grey[50],
+												}}
+												onClick={() => {
+													navigate(
+														`/auto-conversions/network/${data.name?.toLocaleLowerCase()}/recipients`
+													);
+												}}
+											>
+												View Recipients
+											</Button>
 											<Button
 												disabled={Boolean(data.isActive)}
 												style={{

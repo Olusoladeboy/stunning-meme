@@ -40,6 +40,7 @@ import {
 	TransactionMostUsers,
 	Businesses,
 	BusinessProfile,
+	AutoConversionRecipients,
 } from '../pages';
 
 const Router = () => {
@@ -89,10 +90,15 @@ const Router = () => {
 				<Route path={''} element={<AutoConversions />} />
 				<Route path={':id'} element={<AutoConversionDetails />} />
 				<Route
+					path={'network/:network/recipients'}
+					element={<AutoConversionRecipients />}
+				/>
+				<Route
 					path={'network'}
 					element={<Network pageType={NetworkPage.AUTO_CONVERSION_NETWORK} />}
 				/>
 			</Route>
+
 			<Route path={'data-network'}>
 				<Route
 					path={''}

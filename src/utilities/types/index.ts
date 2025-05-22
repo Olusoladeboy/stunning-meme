@@ -1092,3 +1092,16 @@ export interface IActivation {
 	updatedAt: string;
 	id: string;
 }
+
+export interface IRecipient {
+	isActive: boolean;
+	phoneNumber: string;
+	alias: string;
+	networkName: string;
+	targetBalance: number | string;
+	createdAt: string;
+	updatedAt: string;
+	pin?: string;
+	otp?: string;
+	id: string;
+}

@@ -23,15 +23,32 @@ import CustomTableCell from './components/custom-table-cell';
 import TableLoader from 'components/loader/table-loader';
 import ModalWrapper from 'components/modal/Wrapper';
 import TransactionDetailsModal from 'components/modal/transaction-details-modal';
+import { updateBillTransactions } from 'api/bill';
+import { useMutation } from 'react-query';
+import useToastAlert from 'hooks/useToastAlert';
+import { useHandleError } from 'hooks';
+import { green, red } from '@mui/material/colors';
+import Loader from 'components/loader';
+import { useAppSelector } from 'store/hooks';
 
 type Props = {
 	data: Transaction[];
 	isLoading?: boolean;
+	reloadTransactions?: () => void;
 };
 
-const InternetTransactionsTable = ({ data, isLoading }: Props) => {
+const InternetTransactionsTable = ({
+	data,
+	isLoading,
+	reloadTransactions,
+}: Props) => {
 	const theme = useTheme();
 	const styles = useStyles(theme);
+	const alert = useToastAlert();
+	const handleError = useHandleError();
+	const isSupperAdmin = useAppSelector(
+		(store) => store.authState.isSupperAdmin
+	);
 
 	const [jsonData, setJsonData] = useState<string>('');
 	const [selectedTransaction, setSelectedTransaction] =
@@ -47,8 +64,52 @@ const InternetTransactionsTable = ({ data, isLoading }: Props) => {
 		setJsonData(JSON.stringify(jsonObj));
 	};
 
+	const { mutate, isLoading: isUpdatingTransaction } = useMutation(
+		updateBillTransactions,
+		{
+			onSettled: (data, error) => {
+				if (error) {
+					const errorResponse = handleError({ error });
+					if (errorResponse?.message) {
+						alert({ message: errorResponse.message, type: 'error' });
+					}
+				}
+
+				if (data && data.success) {
+					reloadTransactions?.();
+					alert({
+						message: 'Transaction updated successfully',
+						type: 'success',
+					});
+				}
+			},
+		}
+	);
+
+	const handleUpdateTransaction = ({
+		status,
+		id,
+	}: {
+		status: string;
+		id: string;
+	}) => {
+		if (!isSupperAdmin) {
+			alert({
+				message: 'You are not authorized to perform this action',
+				type: 'error',
+			});
+			return;
+		}
+
+		mutate({
+			id,
+			data: { status },
+		});
+	};
+
 	return (
 		<>
+			{isUpdatingTransaction && <Loader />}
 			{jsonData && (
 				<ModalWrapper
 					title={'Internet Pins'}
@@ -101,7 +162,10 @@ const InternetTransactionsTable = ({ data, isLoading }: Props) => {
 									style={styles.headTableCell}
 									label={'Status'}
 								/>
-								<CustomTableCell style={styles.headTableCell} label={''} />
+								<CustomTableCell
+									style={styles.headTableCell}
+									label={'Action'}
+								/>
 							</StyledTableRow>
 						</TableHead>
 						<TableBody
@@ -112,7 +176,7 @@ const InternetTransactionsTable = ({ data, isLoading }: Props) => {
 							}}
 						>
 							{isLoading ? (
-								<TableLoader colSpan={6} />
+								<TableLoader colSpan={7} />
 							) : (
 								data && (
 									<>
@@ -153,11 +217,45 @@ const InternetTransactionsTable = ({ data, isLoading }: Props) => {
 														>
 															View Pins
 														</Button>
+														{value.status === 'PENDING' && (
+															<Box sx={{ display: 'flex', gap: '10px' }}>
+																<Button
+																	onClick={(e) => {
+																		e.stopPropagation();
+																		handleUpdateTransaction({
+																			id: value.id,
+																			status: 'SUCCESSFUL',
+																		});
+																	}}
+																	sx={{
+																		backgroundColor: `${green['600']} !important`,
+																		color: 'white',
+																	}}
+																>
+																	Approve
+																</Button>
+																<Button
+																	onClick={(e) => {
+																		e.stopPropagation();
+																		handleUpdateTransaction({
+																			id: value.id,
+																			status: 'FAILED',
+																		});
+																	}}
+																	sx={{
+																		backgroundColor: `${red['600']} !important`,
+																		color: 'white',
+																	}}
+																>
+																	Decline
+																</Button>
+															</Box>
+														)}
 													</StyledTableCell>
 												</StyledTableRow>
 											))
 										) : (
-											<Empty colSpan={8} text={'No Internet Information'} />
+											<Empty colSpan={7} text={'No Internet Information'} />
 										)}
 									</>
 								)

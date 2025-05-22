@@ -27,6 +27,7 @@ export { default as Message } from './dispute/message';
 export { default as DataTypes } from './data-type';
 export { default as AutoConversions } from './conversions/auto-conversions';
 export { default as AutoConversionDetails } from './conversions/auto-conversions/details';
+export { default as AutoConversionRecipients } from './conversions/auto-conversions/recipients';
 export { default as Statistics } from './statistics';
 export { default as AllConversions } from './conversions/all-conversions';
 export { default as CreateNotification } from './notifications/create-notification';

@@ -210,7 +210,7 @@ const RecipientForm = ({ dataPayload, callback }: Props) => {
 
 					<TextInput
 						fullWidth
-						disabled={isEdit}
+						disabled={isEdit || canCreateRecipient}
 						error={
 							errors && touched.phoneNumber && errors.phoneNumber ? true : false
 						}
@@ -228,6 +228,7 @@ const RecipientForm = ({ dataPayload, callback }: Props) => {
 
 					<TextInput
 						fullWidth
+						disabled={canCreateRecipient}
 						error={errors && touched.pin && errors.pin ? true : false}
 						helperText={errors && touched.pin && errors.pin}
 						placeholder={'Share and sell pin'}
@@ -243,6 +244,7 @@ const RecipientForm = ({ dataPayload, callback }: Props) => {
 
 					<TextInput
 						fullWidth
+						disabled={canCreateRecipient}
 						error={errors && touched.alias && errors.alias ? true : false}
 						helperText={errors && touched.alias && errors.alias}
 						placeholder={'a.k.a for the number'}
@@ -257,6 +259,7 @@ const RecipientForm = ({ dataPayload, callback }: Props) => {
 					</Typography>
 					<TextInput
 						fullWidth
+						disabled={canCreateRecipient}
 						placeholder={'Target balance'}
 						error={
 							errors && touched.targetBalance && errors.targetBalance

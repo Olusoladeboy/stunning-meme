@@ -47,6 +47,13 @@ const RecipientForm = ({ dataPayload, callback }: Props) => {
 		pin: yup.string().required('Enter share and sell pin'),
 	});
 
+	const updateValidationSchema = yup.object().shape({
+		targetBalance: yup
+			.string()
+			.matches(/^[1-9]\d*(\.\d+)?$/, 'Incorrect amount')
+			.required('Enter target balance'),
+	});
+
 	const extendValidationSchema = validationSchema.shape({
 		otp: yup
 			.string()
@@ -129,14 +136,8 @@ const RecipientForm = ({ dataPayload, callback }: Props) => {
 		});
 
 	const createOrUpdateDataPlan = (values: typeof initialValues) => {
-		if (
-			dataPayload &&
-			typeof dataPayload === 'object' &&
-			Object.keys(dataPayload).length > 0
-		) {
+		if (isEdit && dataPayload) {
 			let payload = {
-				alias: values.alias,
-				pin: values.pin,
 				targetBalance: parseFloat(`${values.targetBalance}`),
 			};
 
@@ -166,10 +167,12 @@ const RecipientForm = ({ dataPayload, callback }: Props) => {
 		touched,
 		handleSubmit,
 		resetForm,
-		setValues,
+		setFieldValue,
 	} = useFormik({
 		initialValues,
-		validationSchema: canCreateRecipient
+		validationSchema: isEdit
+			? updateValidationSchema
+			: canCreateRecipient
 			? extendValidationSchema
 			: validationSchema,
 		onSubmit: (values) => {
@@ -183,17 +186,57 @@ const RecipientForm = ({ dataPayload, callback }: Props) => {
 			typeof dataPayload === 'object' &&
 			Object.keys(dataPayload).length > 0
 		) {
-			setValues({
-				phoneNumber: dataPayload.phoneNumber,
-				alias: dataPayload.alias,
-				networkName: dataPayload.networkName,
-				pin: dataPayload.pin as string,
-				targetBalance: dataPayload.targetBalance.toString(),
-			});
+			setFieldValue('targetBalance', dataPayload.targetBalance);
 		}
-	}, [dataPayload, setValues]);
+	}, [dataPayload, setFieldValue]);
 
 	const { phoneNumber, alias, pin, targetBalance, otp } = values;
+
+	if (isEdit) {
+		return (
+			<Box style={styles.form as CSSProperties} component={'form'}>
+				<Box
+					sx={{
+						display: 'grid',
+						gap: theme.spacing(2),
+					}}
+				>
+					<Box>
+						<Typography variant={'body1'} style={styles.label}>
+							Target Balance
+						</Typography>
+						<TextInput
+							fullWidth
+							disabled={canCreateRecipient}
+							placeholder={'Target balance'}
+							error={
+								errors && touched.targetBalance && errors.targetBalance
+									? true
+									: false
+							}
+							helperText={
+								errors && touched.targetBalance && errors.targetBalance
+							}
+							value={targetBalance}
+							onChange={handleChange('targetBalance')}
+						/>
+					</Box>
+				</Box>
+				<Button
+					loading={isUpdatingRecipient}
+					style={styles.btn}
+					type={'submit'}
+					size={'large'}
+					onClick={(e: React.FormEvent<HTMLButtonElement>) => {
+						e.preventDefault();
+						handleSubmit();
+					}}
+				>
+					Save
+				</Button>
+			</Box>
+		);
+	}
 
 	return (
 		<Box style={styles.form as CSSProperties} component={'form'}>
@@ -210,7 +253,7 @@ const RecipientForm = ({ dataPayload, callback }: Props) => {
 
 					<TextInput
 						fullWidth
-						disabled={isEdit}
+						disabled={isEdit || canCreateRecipient}
 						error={
 							errors && touched.phoneNumber && errors.phoneNumber ? true : false
 						}
@@ -228,6 +271,7 @@ const RecipientForm = ({ dataPayload, callback }: Props) => {
 
 					<TextInput
 						fullWidth
+						disabled={canCreateRecipient}
 						error={errors && touched.pin && errors.pin ? true : false}
 						helperText={errors && touched.pin && errors.pin}
 						placeholder={'Share and sell pin'}
@@ -243,6 +287,7 @@ const RecipientForm = ({ dataPayload, callback }: Props) => {
 
 					<TextInput
 						fullWidth
+						disabled={canCreateRecipient}
 						error={errors && touched.alias && errors.alias ? true : false}
 						helperText={errors && touched.alias && errors.alias}
 						placeholder={'a.k.a for the number'}
@@ -257,6 +302,7 @@ const RecipientForm = ({ dataPayload, callback }: Props) => {
 					</Typography>
 					<TextInput
 						fullWidth
+						disabled={canCreateRecipient}
 						placeholder={'Target balance'}
 						error={
 							errors && touched.targetBalance && errors.targetBalance

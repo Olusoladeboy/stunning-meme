@@ -114,6 +114,7 @@ const AutoConversionRecipientsTable = ({ data, isLoading }: Props) => {
 					'Phone Number',
 					'Alias',
 					'Switch',
+					'Current Balance',
 					'Target Balance',
 					'Action',
 				]}
@@ -137,7 +138,7 @@ const AutoConversionRecipientsTable = ({ data, isLoading }: Props) => {
 											}}
 										>
 											{formatNumberToCurrency(
-												checkAmount(`${value?.targetBalance}`)
+												checkAmount(`${value?.currentBalance}`)
 											)}
 											<IconButton
 												onClick={() => onRefresh(value.id)}
@@ -150,7 +151,7 @@ const AutoConversionRecipientsTable = ({ data, isLoading }: Props) => {
 												<CircularProgress size={18} />
 											)}
 										</Box>,
-
+										formatNumberToCurrency(value?.targetBalance),
 										<Button
 											onClick={() => setRecipient(value)}
 											sx={{

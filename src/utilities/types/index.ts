@@ -1106,3 +1106,10 @@ export interface IRecipient {
 	otp?: string;
 	id: string;
 }
+
+export interface IAutoConvertAirtimeStatistics {
+	totalSuccessA2CashCount: number;
+	totalFailedA2CashCount: number;
+	totalPendingA2CashCount: number;
+	totalAmountReceived: number;
+}

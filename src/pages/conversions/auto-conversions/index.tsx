@@ -12,6 +12,7 @@ import {
 	Pagination,
 	Button,
 	Loader,
+	AutoConversionStatistics,
 } from 'components';
 import {
 	BOX_SHADOW,
@@ -143,32 +144,40 @@ const AutoConversions = () => {
 						<Typography sx={{ fontWeight: 'bold' }} variant={'h5'}>
 							Auto Conversions
 						</Typography>
-						{/* <SwitchProvider /> */}
 					</Box>
 					{canViewStatistics && (
 						<Box
 							sx={{
 								display: 'grid',
-								gridTemplateColumns: {
-									xs: '1fr',
-									lg: 'repeat(2, 1fr)',
-								},
-								gap: {
-									xs: theme.spacing(3),
-									lg: theme.spacing(5),
-								},
+								gap: ['15px', '30px'],
 							}}
 						>
-							<ConversionTotal
-								handleRefresh={() => {
-									refetch();
-									setReloading(true);
-									queryClient.invalidateQueries([QueryKeys.Statistics]);
+							<Box
+								sx={{
+									display: 'grid',
+									gridTemplateColumns: {
+										xs: '1fr',
+										lg: 'repeat(2, 1fr)',
+									},
+									gap: {
+										xs: theme.spacing(3),
+										lg: theme.spacing(5),
+									},
 								}}
-								total={data && data.metadata.total}
-								totalAmount={statistics?.total_auto_airtime_converted || 0}
-							/>
-							<AvailableNetwork type={'auto'} />
+							>
+								<ConversionTotal
+									handleRefresh={() => {
+										refetch();
+										setReloading(true);
+										queryClient.invalidateQueries([QueryKeys.Statistics]);
+									}}
+									total={data && data.metadata.total}
+									totalAmount={statistics?.total_auto_airtime_converted || 0}
+								/>
+								<AvailableNetwork type={'auto'} />
+							</Box>
+
+							<AutoConversionStatistics />
 						</Box>
 					)}
 				</Box>
@@ -210,92 +219,3 @@ const useStyles = (theme: any) => ({
 });
 
 export default AutoConversions;
-
-const SwitchProvider = () => {
-	const theme = useTheme();
-	const { settings, refetchSettings } = useSettings({
-		queryKey: ['auto-convert-provider'],
-		params: {
-			name: 'AIRTIME_CONVERSION_PROVIDER',
-		},
-	});
-
-	const { updateSettings, isUpdatingSettings } = useUpdateSettings({
-		callback: () => {
-			refetchSettings();
-		},
-	});
-
-	const provider =
-		settings && Array.isArray(settings) && settings.length > 0 && settings[0];
-
-	const onSwitchProvider = (value: string) => {
-		if (provider) {
-			updateSettings({
-				id: provider.id as string,
-				data: {
-					value,
-				},
-			});
-		}
-	};
-
-	if (provider) {
-		return (
-			<>
-				{isUpdatingSettings && <Loader />}
-				<Box>
-					<Box
-						sx={{
-							display: 'flex',
-							gap: '8px',
-							alignItems: 'center',
-							marginBottom: '8px',
-						}}
-					>
-						<Typography>Switch Provider</Typography>
-
-						<Box
-							sx={{
-								display: 'flex',
-								gap: '4px',
-							}}
-						>
-							{Object.values(AUTO_AIRTIME_CONVERT_PROVIDERS).map((value) => (
-								<Button
-									disabled={provider.value === value}
-									onClick={() => onSwitchProvider(value)}
-									variant='outlined'
-									sx={{
-										borderColor: theme.palette.secondary.main,
-										backgroundColor:
-											provider.value === value
-												? theme.palette.secondary.main
-												: 'white',
-										color:
-											provider.value === value
-												? 'white'
-												: theme.palette.primary.main,
-										':hover': {
-											background: theme.palette.secondary.main,
-											borderColor: theme.palette.secondary.main,
-											color: 'white',
-										},
-									}}
-									key={value}
-								>
-									{value}
-								</Button>
-							))}
-						</Box>
-					</Box>
-					<Typography sx={{ textAlign: 'right' }}>
-						Active: {provider.value}
-					</Typography>
-				</Box>
-			</>
-		);
-	}
-
-	return null;
-};

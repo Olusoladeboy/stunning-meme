@@ -9,3 +9,13 @@ export const giftCardTransactions = async (params: {
 		method: 'GET',
 		params,
 	});
+
+export const updateGiftCardTransactions = async (payload: {
+	data: { [key: string]: any };
+	id: string;
+}): Promise<DataResponse<Transaction[]>> =>
+	apiRequest({
+		url: `${ENDPOINTS.GiftCard}/${payload.id}`,
+		method: 'PUT',
+		data: payload.data,
+	});

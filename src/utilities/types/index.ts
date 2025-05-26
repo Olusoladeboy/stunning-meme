@@ -1092,3 +1092,24 @@ export interface IActivation {
 	updatedAt: string;
 	id: string;
 }
+
+export interface IRecipient {
+	isActive: boolean;
+	phoneNumber: string;
+	alias: string;
+	networkName: string;
+	targetBalance: number | string;
+	currentBalance: number | string;
+	createdAt: string;
+	updatedAt: string;
+	pin?: string;
+	otp?: string;
+	id: string;
+}
+
+export interface IAutoConvertAirtimeStatistics {
+	totalSuccessA2CashCount: number;
+	totalFailedA2CashCount: number;
+	totalPendingA2CashCount: number;
+	totalAmountReceived: number;
+}

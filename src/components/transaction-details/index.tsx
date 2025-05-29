@@ -128,17 +128,13 @@ const TransactionDetails: React.FC<Props> = ({
 					<TransactionItem
 						label={'Total Amount'}
 						value={formatNumberToCurrency(
-							typeof transaction?.totalAmount === 'object'
-								? transaction.totalAmount.$numberDecimal
-								: ''
+							checkAmount(transaction?.totalAmount as string)
 						)}
 					/>
 					<TransactionItem
 						label={'Total Return Amount'}
 						value={formatNumberToCurrency(
-							typeof transaction?.totalReturnAmount === 'object'
-								? transaction.totalReturnAmount.$numberDecimal
-								: ''
+							checkAmount(transaction?.totalReturnAmount)
 						)}
 					/>
 				</Box>

@@ -4,6 +4,7 @@ import { autoAirtimeConvertStatistics } from 'api';
 import moment from 'moment';
 import React, { useRef } from 'react';
 import { useQuery } from 'react-query';
+import { formatNumberToCurrency } from 'utilities';
 
 const AutoConversionStatistics = () => {
 	const params = useRef({
@@ -26,7 +27,10 @@ const AutoConversionStatistics = () => {
 			>
 				{(Object.keys(data.payload) as Array<keyof typeof data.payload>).map(
 					(dataKey) => {
-						const value = data.payload[dataKey];
+						const value = dataKey.toLowerCase().includes('amount')
+							? formatNumberToCurrency(data.payload[dataKey])
+							: data.payload[dataKey];
+
 						return (
 							<Box
 								sx={{

@@ -162,11 +162,14 @@ export const extractTransactionType = (transaction: Transaction) => {
 };
 
 export const extractExactTransactionService = (transaction: Transaction) => {
-	const service = transaction.service
-		? transaction.service
-		: transaction.transaction
-		? transaction.transaction.service
-		: 'No available services';
+	const service =
+		transaction.transactions && transaction.transactions.length > 0
+			? transaction.transactions?.[0].service
+			: transaction.service
+			? transaction.service
+			: transaction.transaction
+			? transaction.transaction.service
+			: 'No available services';
 
 	return service;
 };

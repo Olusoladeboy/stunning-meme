@@ -2,6 +2,7 @@ import { settings, updateSettings } from 'api';
 import { useMutation, useQuery, QueryKey } from 'react-query';
 import useHandleError from './useHandleError';
 import useToastAlert from './useToastAlert';
+import { useState } from 'react';
 
 export const useUpdateSettings = (props?: { callback?: () => void }) => {
 	const callback = props?.callback;
@@ -38,21 +39,25 @@ export const useUpdateSettings = (props?: { callback?: () => void }) => {
 
 export const useSettings = (props?: {
 	queryKey?: QueryKey;
-	params: { [key: string]: any };
+	params?: { [key: string]: any };
 }) => {
 	const queryKey = props?.queryKey;
 	const params = props?.params;
 	const errorHandler = useHandleError();
 	const toastAlert = useToastAlert();
 
+	const [settingsError, setSettingsError] = useState<string>('');
+
 	const { isLoading, data, refetch } = useQuery(
 		[queryKey],
 		() => settings(params as any),
 		{
+			refetchOnWindowFocus: false,
 			onSettled: (data, error) => {
 				if (error) {
 					const response = errorHandler({ error });
 					if (response?.message) {
+						setSettingsError(response.message);
 						toastAlert({
 							message: response.message,
 							type: 'error',
@@ -63,9 +68,17 @@ export const useSettings = (props?: {
 		}
 	);
 
+	const refetchSettings = () => {
+		// Clear error state
+		setSettingsError('');
+		// refetch settings
+		refetch();
+	};
+
 	return {
 		isLoadingSettings: isLoading,
 		settings: data?.payload,
-		refetchSettings: refetch,
+		refetchSettings,
+		settingsError,
 	};
 };

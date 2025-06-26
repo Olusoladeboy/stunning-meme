@@ -2,7 +2,7 @@ import { Box, Switch, Typography } from '@mui/material';
 import { grey } from '@mui/material/colors';
 import { useSettings, useUpdateSettings } from 'hooks';
 import { useCallback, useMemo } from 'react';
-import { BOX_SHADOW, removeSpecialChar, Settings } from 'utilities';
+import { BOX_SHADOW, capitalize, removeSpecialChar, Settings } from 'utilities';
 
 enum ServiceName {
 	IS_INTERNET_AVAILABLE = 'IS_INTERNET_AVAILABLE',
@@ -117,7 +117,12 @@ const Services = () => {
 											key={settings.id}
 										>
 											<Typography>
-												{removeSpecialChar(settings.name ?? '')}
+												{capitalize(
+													removeSpecialChar(
+														settings?.name?.match(/^IS_(.*)_AVAILABLE$/)?.[1] ||
+															''
+													)
+												)}
 											</Typography>
 											<Switch
 												checked={isChecked(settings)}

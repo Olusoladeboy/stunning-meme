@@ -133,3 +133,4 @@ export { default as BusinessServiceActivationTable } from './table/service-activ
 export { default as BusinessServiceActivations } from './business-service-activations';
 export { default as RecipientForm } from './forms/recipient-form';
 export { default as AutoConversionStatistics } from './auto-convert-statistics';
+export { default as Services } from './services';

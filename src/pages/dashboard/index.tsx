@@ -11,6 +11,7 @@ import {
 	TaskList,
 	RecentConversionsTable,
 	RecentTransactionsTable,
+	Services,
 } from 'components';
 import { useAppSelector } from 'store/hooks';
 import { usePageTitle } from 'hooks';
@@ -72,7 +73,7 @@ const LargeView = () => {
 					>
 						<WalletOverview />
 						{canViewStatistics && <UserRecord />}
-						<TaskList />
+						<Services />
 					</Box>
 				</Box>
 			</Box>

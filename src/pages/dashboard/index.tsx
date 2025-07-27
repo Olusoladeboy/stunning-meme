@@ -24,6 +24,10 @@ const LargeView = () => {
 		(store) => store.authState.canViewStatistics
 	);
 
+	const isSupperAdmin = useAppSelector(
+		(store) => store.authState.isSupperAdmin
+	);
+
 	return (
 		<>
 			{/* <Seo title='Dashboard' /> */}
@@ -73,7 +77,7 @@ const LargeView = () => {
 					>
 						<WalletOverview />
 						{canViewStatistics && <UserRecord />}
-						<Services />
+						{isSupperAdmin && <Services />}
 					</Box>
 				</Box>
 			</Box>

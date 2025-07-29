@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Table from '@mui/material/Table';
 import moment from 'moment';
 import Box from '@mui/material/Box';
 import { useTheme } from '@mui/material';
 import TableBody from '@mui/material/TableBody';
 import TableHead from '@mui/material/TableHead';
+import JsonFormatter from 'react-json-formatter';
 import {
 	LIGHT_GRAY,
 	BOX_SHADOW,
@@ -19,6 +20,11 @@ import { grey } from '@mui/material/colors';
 
 import Empty from '../empty/table-empty';
 import { IGroupTransaction } from 'utilities';
+import Button from 'components/button';
+import { useHandleError } from 'hooks';
+import { apiLogs } from 'api';
+import ModalWrapper from 'components/modal/Wrapper';
+import Loader from 'components/loader';
 
 interface Props {
 	transactions: IGroupTransaction[];
@@ -27,9 +33,63 @@ interface Props {
 const AutoConversionTaskTable: React.FC<Props> = ({ transactions }) => {
 	const theme = useTheme();
 	const styles = useStyles(theme);
+	const handleError = useHandleError();
+	const [isLoadingApiLog, setLoadingApiLog] = useState<boolean>(false);
+	const [jsonData, setJsonData] = useState<string>('');
+
+	const jsonStyle = {
+		propertyStyle: { color: 'red' },
+		stringStyle: { color: 'green' },
+		numberStyle: { color: 'darkorange' },
+	};
+
+	const queryApiLog = async (reference: string) => {
+		try {
+			setLoadingApiLog(true);
+			const res = await apiLogs({
+				reference,
+			});
+
+			if (res.success) {
+				const data = res.payload;
+				setJsonData(JSON.stringify(data[0].api_log));
+
+				console.log(data);
+			}
+		} catch (error) {
+			const response = handleError({ error });
+			if (response?.message) {
+				alert({
+					message: response.message,
+					type: 'error',
+				});
+			}
+		} finally {
+			setLoadingApiLog(false);
+		}
+	};
 
 	return (
 		<>
+			{isLoadingApiLog && <Loader />}
+			{jsonData && (
+				<ModalWrapper
+					title={'API Logs'}
+					hasCloseButton={true}
+					closeModal={() => setJsonData('')}
+				>
+					<Box
+						sx={{
+							overflow: 'auto',
+							maxWidth: '540px',
+							width: '100%',
+							alignSelf: 'flex-start',
+						}}
+					>
+						<JsonFormatter json={jsonData} tabWith={4} jsonStyle={jsonStyle} />
+					</Box>
+				</ModalWrapper>
+			)}
 			<Box sx={{ overflow: 'auto' }}>
 				<Table sx={{ overflow: 'auto' }} stickyHeader>
 					<TableHead
@@ -94,6 +154,19 @@ const AutoConversionTaskTable: React.FC<Props> = ({ transactions }) => {
 										</TableCell>
 										<TableCell sx={{ minWidth: '500px' }} style={styles.text}>
 											{transaction.networkResponse}
+										</TableCell>
+										<TableCell sx={{ minWidth: '120px' }} style={styles.text}>
+											<Button
+												onClick={(e) => {
+													e.stopPropagation();
+													queryApiLog(transaction.reference);
+												}}
+												sx={{
+													textDecoration: 'underline !important',
+												}}
+											>
+												View Log
+											</Button>
 										</TableCell>
 									</TableRow>
 								);

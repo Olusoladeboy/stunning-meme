@@ -64,7 +64,8 @@ const LargeView = () => {
 							</Box>
 						)}
 						<RecentConversionsTable />
-						<RecentTransactionsTable />
+						{/* <RecentTransactionsTable /> */}
+						{isSupperAdmin && <Services />}
 					</Box>
 				</Box>
 				<Box>
@@ -77,7 +78,6 @@ const LargeView = () => {
 					>
 						<WalletOverview />
 						{canViewStatistics && <UserRecord />}
-						{isSupperAdmin && <Services />}
 					</Box>
 				</Box>
 			</Box>

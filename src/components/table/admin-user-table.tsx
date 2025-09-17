@@ -191,7 +191,7 @@ const AdminUserTable = ({ managers, isLoading }: Props) => {
 													{data.email}
 												</TableCell>
 												<TableCell style={styles.tableText}>
-													{moment.utc(data.createdAt).format('l')}
+													{moment(data.createdAt).format('l')}
 												</TableCell>
 											</TableRow>
 										))

@@ -110,10 +110,10 @@ const WalletSummaryTable = ({ transactions, isLoading }: Props) => {
 											</StyledTableCell>
 
 											<StyledTableCell style={styles.text}>
-												{moment.utc(row.createdAt).format('ll')}
+												{moment(row.createdAt).format('ll')}
 											</StyledTableCell>
 											<StyledTableCell style={styles.text}>
-												{moment.utc(row.createdAt).format('LT')}
+												{moment(row.createdAt).format('LT')}
 											</StyledTableCell>
 										</StyledTableRow>
 									))

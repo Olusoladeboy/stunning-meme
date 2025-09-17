@@ -133,7 +133,7 @@ const TransactionsTable = ({ data, isLoading }: Props) => {
 													}}
 													style={styles.text}
 												>
-													{moment.utc(data.createdAt).format('ll')}
+													{moment(data.createdAt).format('ll')}
 												</StyledTableCell>
 												<StyledTableCell
 													sx={{
@@ -141,7 +141,7 @@ const TransactionsTable = ({ data, isLoading }: Props) => {
 													}}
 													style={styles.text}
 												>
-													{moment.utc(data.createdAt).format('LT')}
+													{moment(data.createdAt).format('LT')}
 												</StyledTableCell>
 												<StyledTableCell>
 													<Box

@@ -137,7 +137,7 @@ const AuditLogsTable: React.FC<Props> = ({ data, isLoading, auditFilter }) => {
 						auditFilter.user
 					) &&
 					datum.details.includes(auditFilter.action) &&
-					moment.utc(datum.createdAt).format('l').includes(auditFilter.date)
+					moment(datum.createdAt).format('l').includes(auditFilter.date)
 			);
 		} else {
 			return data;
@@ -255,11 +255,9 @@ const AuditLogsTable: React.FC<Props> = ({ data, isLoading, auditFilter }) => {
 											<TableCell>{row.module}</TableCell>
 											<TableCell>{row.action}</TableCell>
 											<TableCell>{row.details}</TableCell>
-											<TableCell>
-												{moment.utc(row.createdAt).format('l')}
-											</TableCell>
+											<TableCell>{moment(row.createdAt).format('l')}</TableCell>
 											<TableCell style={{ whiteSpace: 'nowrap' }}>
-												{moment.utc(row.createdAt).format('LT')}
+												{moment(row.createdAt).format('LT')}
 											</TableCell>
 											<TableCell>
 												<ChevronRight

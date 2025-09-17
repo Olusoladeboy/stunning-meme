@@ -168,7 +168,7 @@ const BusinessTable = ({
 											business.businessOwner?.phone}
 									</TableCell>
 									<TableCell style={styles.tableText}>
-										{moment.utc(business.createdAt).format('l')}
+										{moment(business.createdAt).format('l')}
 									</TableCell>
 
 									<TableCell

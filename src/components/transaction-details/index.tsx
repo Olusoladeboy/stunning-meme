@@ -234,13 +234,13 @@ const TransactionDetails: React.FC<Props> = ({
 					{transaction.createdAt && (
 						<TransactionItem
 							label={'Date'}
-							value={moment.utc(transaction.createdAt).format('l')}
+							value={moment(transaction.createdAt).format('l')}
 						/>
 					)}
 					{transaction.createdAt && (
 						<TransactionItem
 							label={'Time'}
-							value={moment.utc(transaction.createdAt).format('LT')}
+							value={moment(transaction.createdAt).format('LT')}
 						/>
 					)}
 					{transaction.card_number && (

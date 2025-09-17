@@ -128,7 +128,7 @@ const Message = () => {
 									</Status>
 									<Typography>
 										Ticket created on{' '}
-										{moment.utc(data.payload[0].createdAt).format('ll')}
+										{moment(data.payload[0].createdAt).format('ll')}
 									</Typography>
 								</Box>
 							</Box>

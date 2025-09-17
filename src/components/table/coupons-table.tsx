@@ -290,10 +290,10 @@ const CouponsTable = ({
 													</TableCell>
 
 													<TableCell style={styles.tableText}>
-														{moment.utc(row.createdAt).format('l')}
+														{moment(row.createdAt).format('l')}
 													</TableCell>
 													<TableCell style={styles.tableText}>
-														{moment.utc(row.expiresIn).format('l')}
+														{moment(row.expiresIn).format('l')}
 													</TableCell>
 													<TableCell style={styles.tableText}>
 														{row.status}

@@ -195,7 +195,7 @@ const CouponForm = ({ data, isEdit, onSuccess }: Props) => {
 					type,
 					user,
 					status,
-					expiresIn: moment.utc(expiresIn).format('yyyy-MM-DD'),
+					expiresIn: moment(expiresIn).format('yyyy-MM-DD'),
 					gift: typeof gift === 'string' ? gift : gift?.$numberDecimal,
 				};
 

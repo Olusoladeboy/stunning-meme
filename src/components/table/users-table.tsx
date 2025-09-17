@@ -142,7 +142,7 @@ const UsersTable = ({
 								<TableCell style={styles.tableText}>{user.email}</TableCell>
 								<TableCell style={styles.tableText}>{user.phone}</TableCell>
 								<TableCell style={styles.tableText}>
-									{moment.utc(user.createdAt).format('l')}
+									{moment(user.createdAt).format('l')}
 								</TableCell>
 
 								<TableCell

@@ -1,6 +1,7 @@
 import React from 'react';
 import './index.css';
 import { createRoot } from 'react-dom/client';
+import * as Sentry from '@sentry/react';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools';
 import { Provider } from 'react-redux';
@@ -13,6 +14,13 @@ import store from './store';
 
 const container: any = document.getElementById('root');
 const root = createRoot(container);
+
+Sentry.init({
+	dsn: 'https://a3fb854d3ad5e1cc0798f82569381d92@o4509805294518272.ingest.us.sentry.io/4510362164985856',
+	// Setting this option to true will send default PII data to Sentry.
+	// For example, automatic IP address collection on events
+	sendDefaultPii: true,
+});
 
 const RootApp = () => {
 	const queryClient = new QueryClient();

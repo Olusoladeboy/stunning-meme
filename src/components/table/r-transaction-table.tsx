@@ -169,6 +169,40 @@ const RTransactionTable = ({
 										</Button>
 									</Box>
 								),
+								value.status === 'PENDING' && (
+									<Box sx={{ display: 'flex', gap: '10px' }}>
+										<Button
+											onClick={(e) => {
+												e.stopPropagation();
+												onUpdateTransaction({
+													id: value.id,
+													status: 'SUCCESSFUL',
+												});
+											}}
+											sx={{
+												backgroundColor: `${green['600']} !important`,
+												color: 'white',
+											}}
+										>
+											Approve
+										</Button>
+										<Button
+											onClick={(e) => {
+												e.stopPropagation();
+												onUpdateTransaction({
+													id: value.id,
+													status: 'FAILED',
+												});
+											}}
+											sx={{
+												backgroundColor: `${red['600']} !important`,
+												color: 'white',
+											}}
+										>
+											Decline
+										</Button>
+									</Box>
+								),
 							],
 							rawData: value,
 						};

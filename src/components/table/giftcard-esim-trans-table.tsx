@@ -73,7 +73,13 @@ const GiftcardESimTransactionTable = ({
 		}
 	);
 
-	const handleUpdateTransaction = ({}: { id: string; status: string }) => {
+	const handleUpdateTransaction = ({
+		id,
+		status,
+	}: {
+		id: string;
+		status: string;
+	}) => {
 		if (!isSupperAdmin) {
 			alert({
 				message: 'You are not authorized to perform this action',
@@ -83,9 +89,9 @@ const GiftcardESimTransactionTable = ({
 		}
 		(mutate as Function)({
 			data: {
-				status: 'completed',
+				status,
 			},
-			id: selectedTransaction?.id,
+			id,
 		});
 	};
 
@@ -103,7 +109,7 @@ const GiftcardESimTransactionTable = ({
 			<AppTable
 				canClickRow
 				onRowClick={handleRowClick}
-				numberOfColumns={6}
+				numberOfColumns={8}
 				isLoading={isLoading}
 				header={[
 					'Reference',

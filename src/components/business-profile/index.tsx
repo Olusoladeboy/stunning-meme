@@ -114,7 +114,7 @@ const BusinessProfile = ({ business }: Props) => {
 						<DetailItem text={'name'} value={business?.businessName} />
 						<DetailItem
 							text={'date joined'}
-							value={business && moment.utc(business.createdAt).format('l')}
+							value={business && moment(business.createdAt).format('l')}
 						/>
 						<DetailItem
 							text={'Business number'}

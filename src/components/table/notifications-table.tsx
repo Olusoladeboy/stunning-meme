@@ -145,7 +145,7 @@ const NotificationsTable: React.FC<Props> = ({ notifications, isLoading }) => {
 													{notification.type}
 												</TableCell>
 												<TableCell style={styles.tableText}>
-													{moment.utc(notification.createdAt).format('l')}
+													{moment(notification.createdAt).format('l')}
 												</TableCell>
 											</TableRow>
 										))

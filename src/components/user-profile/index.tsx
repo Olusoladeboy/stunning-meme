@@ -180,7 +180,7 @@ const UserProfile = ({ user }: Props) => {
 						<DetailItem text={'name'} value={extractUserName(user as User)} />
 						<DetailItem
 							text={'date joined'}
-							value={user && moment.utc(user.createdAt).format('l')}
+							value={user && moment(user.createdAt).format('l')}
 						/>
 						<DetailItem text={'Username'} value={user && user.username} />
 						<DetailItem text={'pnone number'} value={user && user.phone} />

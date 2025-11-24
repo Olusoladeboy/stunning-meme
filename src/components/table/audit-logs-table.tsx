@@ -82,7 +82,7 @@ const Details = ({ close, data, viewAction }: IDetails) => {
 					}}
 				>
 					<Button
-						onClick={() => typeof viewAction === 'function' && viewAction(data)}
+						onClick={() => viewAction?.(data)}
 						sx={{
 							backgroundColor: `${theme.palette.secondary.main} !important`,
 							color: theme.palette.background.paper,
@@ -137,7 +137,7 @@ const AuditLogsTable: React.FC<Props> = ({ data, isLoading, auditFilter }) => {
 						auditFilter.user
 					) &&
 					datum.details.includes(auditFilter.action) &&
-					moment.utc(datum.createdAt).format('l').includes(auditFilter.date)
+					moment(datum.createdAt).format('l').includes(auditFilter.date)
 			);
 		} else {
 			return data;
@@ -149,6 +149,7 @@ const AuditLogsTable: React.FC<Props> = ({ data, isLoading, auditFilter }) => {
 	};
 
 	const handleViewAction = (data: AuditLog) => {
+		console.log('DATA::', data);
 		const { recordId, module } = data;
 		if (!(recordId && module)) {
 			let message = '';
@@ -255,11 +256,9 @@ const AuditLogsTable: React.FC<Props> = ({ data, isLoading, auditFilter }) => {
 											<TableCell>{row.module}</TableCell>
 											<TableCell>{row.action}</TableCell>
 											<TableCell>{row.details}</TableCell>
-											<TableCell>
-												{moment.utc(row.createdAt).format('l')}
-											</TableCell>
+											<TableCell>{moment(row.createdAt).format('l')}</TableCell>
 											<TableCell style={{ whiteSpace: 'nowrap' }}>
-												{moment.utc(row.createdAt).format('LT')}
+												{moment(row.createdAt).format('LT')}
 											</TableCell>
 											<TableCell>
 												<ChevronRight

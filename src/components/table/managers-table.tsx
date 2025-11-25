@@ -179,7 +179,7 @@ const ManagersTable = ({
 												</TableCell>
 
 												<TableCell style={styles.tableText}>
-													{moment.utc(data.createdAt).format('l')}
+													{moment(data.createdAt).format('l')}
 												</TableCell>
 
 												<TableCell style={styles.tableText}>

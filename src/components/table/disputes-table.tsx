@@ -132,7 +132,7 @@ const DisputeTable = ({
 												</TableCell>
 
 												<TableCell>
-													{moment.utc(row.createdAt).format('l')}
+													{moment(row.createdAt).format('l')}
 												</TableCell>
 
 												<TableCell>

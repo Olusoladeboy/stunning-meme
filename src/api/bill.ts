@@ -30,3 +30,13 @@ export const billTransactions = async (params: {
 		method: 'GET',
 		params,
 	});
+
+export const updateBillTransactions = async (payload: {
+	data: { [key: string]: any };
+	id: string;
+}): Promise<any> =>
+	apiRequest({
+		url: `${ENDPOINTS.Bills}/${payload.id}`,
+		method: 'PUT',
+		data: payload.data,
+	});

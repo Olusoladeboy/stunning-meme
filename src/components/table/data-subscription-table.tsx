@@ -23,11 +23,14 @@ import TableLoader from '../loader/table-loader';
 import Empty from '../empty/table-empty';
 import SearchInput from '../form-components/search-input';
 import CustomTableCell from './components/custom-table-cell';
-import { updateConvertAirtimeStatus } from 'api';
+import { updateConvertAirtimeStatus, updateDataSubscriptions } from 'api';
 import Loader from '../loader';
 import { useAlert, useHandleError } from 'hooks';
 import TablePagination from 'components/pagination/table-pagination';
 import TransactionDetailsModal from 'components/modal/transaction-details-modal';
+import Button from 'components/button';
+import { green, red } from '@mui/material/colors';
+import { useAppSelector } from 'store/hooks';
 
 type Props = {
 	subscriptions: Transaction[] | null;
@@ -40,6 +43,7 @@ type Props = {
 	handleRefresh?: () => void;
 	page?: number;
 	handlePageChange?: (page: number) => void;
+	reloadTransactions?: () => void;
 };
 
 const DataSubscriptionTable = ({
@@ -52,6 +56,7 @@ const DataSubscriptionTable = ({
 	total,
 	handleRefresh,
 	handlePageChange,
+	reloadTransactions,
 	page,
 }: Props) => {
 	const theme = useTheme();
@@ -59,6 +64,10 @@ const DataSubscriptionTable = ({
 	const handleError = useHandleError();
 	const alert = useAlert();
 	const queryClient = useQueryClient();
+
+	const isSupperAdmin = useAppSelector(
+		(store) => store.authState.isSupperAdmin
+	);
 
 	const [selectedTransaction, setSelectedTransaction] =
 		useState<null | Transaction>(null);
@@ -90,6 +99,47 @@ const DataSubscriptionTable = ({
 		}
 	);
 
+	const { isLoading: isUpdatingTransaction, mutate: mutateUpdateTransaction } =
+		useMutation(updateDataSubscriptions, {
+			onSettled: (data, error) => {
+				if (error) {
+					const response = handleError({ error });
+					if (response?.message)
+						alert({ message: response.message, type: 'error' });
+				}
+
+				if (data && data.success) {
+					reloadTransactions?.();
+					alert({
+						message: 'Data subscription status updated successfully!!',
+						type: 'success',
+					});
+				}
+			},
+		});
+
+	const onUpdateTransaction = ({
+		id,
+		status,
+	}: {
+		id: string;
+		status: string;
+	}) => {
+		if (!isSupperAdmin) {
+			alert({
+				message: 'You are not authorized to perform this action',
+				type: 'error',
+			});
+			return;
+		}
+		mutateUpdateTransaction({
+			id,
+			data: {
+				status,
+			},
+		});
+	};
+
 	const handleChangeRowsPerPage = (value: number) => {
 		maxRecordRef.current = value;
 		typeof handleRefresh === 'function' && handleRefresh();
@@ -108,7 +158,7 @@ const DataSubscriptionTable = ({
 					isDisplayButtons
 				/>
 			)}
-			{isUpdatingStatus && <Loader />}
+			{(isUpdatingStatus || isUpdatingTransaction) && <Loader />}
 			{isDisplaySearchField && (
 				<SearchContainer>
 					<SearchInput
@@ -140,6 +190,7 @@ const DataSubscriptionTable = ({
 							<CustomTableCell style={styles.headTableCell} label={'Amount'} />
 							<CustomTableCell style={styles.headTableCell} label={'Date'} />
 							<CustomTableCell style={styles.headTableCell} label={'Status'} />
+							<CustomTableCell style={styles.headTableCell} label={'Action'} />
 						</StyledTableRow>
 					</TableHead>
 					<TableBody
@@ -150,7 +201,7 @@ const DataSubscriptionTable = ({
 						}}
 					>
 						{isLoading ? (
-							<TableLoader colSpan={9} />
+							<TableLoader colSpan={10} />
 						) : (
 							subscriptions && (
 								<>
@@ -218,12 +269,48 @@ const DataSubscriptionTable = ({
 													<StyledTableCell style={styles.text}>
 														{subscription.status}
 													</StyledTableCell>
+													<StyledTableCell style={styles.text}>
+														{subscription.status === 'PENDING' && (
+															<Box sx={{ display: 'flex', gap: '10px' }}>
+																<Button
+																	onClick={(e) => {
+																		e.stopPropagation();
+																		onUpdateTransaction({
+																			id: subscription.id,
+																			status: 'SUCCESSFUL',
+																		});
+																	}}
+																	sx={{
+																		backgroundColor: `${green['600']} !important`,
+																		color: 'white',
+																	}}
+																>
+																	Approve
+																</Button>
+																<Button
+																	onClick={(e) => {
+																		e.stopPropagation();
+																		onUpdateTransaction({
+																			id: subscription.id,
+																			status: 'FAILED',
+																		});
+																	}}
+																	sx={{
+																		backgroundColor: `${red['600']} !important`,
+																		color: 'white',
+																	}}
+																>
+																	Decline
+																</Button>
+															</Box>
+														)}
+													</StyledTableCell>
 												</StyledTableRow>
 											);
 										})
 									) : (
 										<Empty
-											colSpan={9}
+											colSpan={10}
 											text={'No available data subscription'}
 										/>
 									)}

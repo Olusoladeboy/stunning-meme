@@ -209,7 +209,6 @@ export const useQueryAutoConvertAirtimes = (
 				return response.payload;
 			}
 		} catch (error) {
-			console.log(error);
 			setLoading(false);
 		}
 	};

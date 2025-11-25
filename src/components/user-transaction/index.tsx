@@ -73,8 +73,6 @@ const UserTransaction = ({ user }: Props) => {
 		return data;
 	}, [page, selectedService]);
 
-	console.log('Params::', params);
-
 	const styles = useStyles(theme);
 
 	const location = useLocation();

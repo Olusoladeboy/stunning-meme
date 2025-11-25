@@ -132,7 +132,7 @@ const LienTransactionsTable = ({ data, isLoading }: Props) => {
 													}}
 													style={styles.text}
 												>
-													{moment.utc(data.createdAt).format('ll')}
+													{moment(data.createdAt).format('ll')}
 												</StyledTableCell>
 											</StyledTableRow>
 										))

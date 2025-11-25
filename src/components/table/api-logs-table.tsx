@@ -104,11 +104,9 @@ const ApiLogsTable: React.FC<Props> = ({ data, isLoading }) => {
 											<TableCell>
 												{typeof row.user === 'object' && row.user.email}
 											</TableCell>
+											<TableCell>{moment(row.createdAt).format('l')}</TableCell>
 											<TableCell>
-												{moment.utc(row.createdAt).format('l')}
-											</TableCell>
-											<TableCell>
-												{moment.utc(row.createdAt).format('LT')}
+												{moment(row.createdAt).format('LT')}
 											</TableCell>
 											<TableCell>
 												<Button onClick={() => handleViewProfile(row)}>

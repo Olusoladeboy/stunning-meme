@@ -12,7 +12,7 @@ import UserAvatarWithDetails from '../avatar-with-details';
 import { User, SUCCESS_COLOR, QueryKeys, extractUserName } from 'utilities';
 import VerifyUser from '../verify-user';
 import { restoreDeletedAccount, walletAccount } from 'api';
-import { useHandleError, useAlert } from 'hooks';
+import { useHandleError, useAlert, useQueryVerification } from 'hooks';
 import Loader from 'components/loader';
 import { UserWallet, UserLien } from 'components';
 import { useAppSelector } from 'store/hooks';
@@ -27,13 +27,28 @@ const UserProfile = ({ user }: Props) => {
 	const handleError = useHandleError();
 	const queryClient = useQueryClient();
 	const theme = useTheme();
+	const {
+		isQueryingVerification,
+		verification,
+		queryVerification,
+		clearVerification,
+	} = useQueryVerification();
 
 	const token = useAppSelector((store) => store.authState.token);
+	const isSupperAdmin = useAppSelector(
+		(store) => store.authState.isSupperAdmin
+	);
 
 	const styles = useStyles(theme);
 	const [isEditProfile, setEditProfile] = useState<boolean>(false);
 
 	const isAccountDeleted = user?.deleted;
+
+	const onQueryVerification = () => {
+		queryVerification({
+			email: user?.email,
+		});
+	};
 
 	// Restor user mutation
 	const { isLoading: isRestoringAccount, mutate: mutateRestoreAccount } =
@@ -94,6 +109,35 @@ const UserProfile = ({ user }: Props) => {
 
 	return (
 		<>
+			{verification && (
+				<ModalWrapper
+					canOverlayCloseModal
+					title={'KYC Details'}
+					hasCloseButton={true}
+					closeModal={clearVerification}
+				>
+					<Box
+						sx={{
+							display: 'grid',
+							gap: '6px',
+							span: {
+								fontWeight: 'bold',
+								minWidth: '60px',
+								display: 'inline-block',
+							},
+						}}
+					>
+						{verification
+							?.filter((item) => item.level !== 1)
+							?.map((value) => (
+								<Box key={value.payload}>
+									<span>{[value.type]}:</span>
+									{value.payload}
+								</Box>
+							))}
+					</Box>
+				</ModalWrapper>
+			)}
 			{isRestoringAccount && <Loader />}
 			<Box>
 				<Box
@@ -136,7 +180,7 @@ const UserProfile = ({ user }: Props) => {
 						<DetailItem text={'name'} value={extractUserName(user as User)} />
 						<DetailItem
 							text={'date joined'}
-							value={user && moment.utc(user.createdAt).format('l')}
+							value={user && moment(user.createdAt).format('l')}
 						/>
 						<DetailItem text={'Username'} value={user && user.username} />
 						<DetailItem text={'pnone number'} value={user && user.phone} />
@@ -174,7 +218,8 @@ const UserProfile = ({ user }: Props) => {
 						sx={{
 							display: 'flex',
 							alignItems: 'center',
-							gap: ['25px', '50px', '100px'],
+							gap: ['25px', '50px'],
+							marginTop: theme.spacing(4),
 						}}
 					>
 						<Button
@@ -185,8 +230,7 @@ const UserProfile = ({ user }: Props) => {
 								color: grey[50],
 								textTransform: 'uppercase',
 								fontWeight: '600',
-								minWidth: '140px',
-								marginTop: theme.spacing(4),
+								minWidth: '160px',
 								':hover': {
 									backgroundColor: theme.palette.secondary.main,
 								},
@@ -202,14 +246,34 @@ const UserProfile = ({ user }: Props) => {
 									color: grey[50],
 									textTransform: 'uppercase',
 									fontWeight: '600',
-									minWidth: '140px',
-									marginTop: theme.spacing(4),
+									minWidth: '160px',
+
 									':hover': {
 										backgroundColor: theme.palette.secondary.main,
 									},
 								}}
 							>
 								Restore account
+							</Button>
+						)}
+
+						{isSupperAdmin && (
+							<Button
+								loading={isQueryingVerification}
+								onClick={onQueryVerification}
+								sx={{
+									backgroundColor: theme.palette.secondary.main,
+									color: grey[50],
+									textTransform: 'uppercase',
+									fontWeight: '600',
+									minWidth: '160px',
+
+									':hover': {
+										backgroundColor: theme.palette.secondary.main,
+									},
+								}}
+							>
+								View KYC
 							</Button>
 						)}
 					</Box>

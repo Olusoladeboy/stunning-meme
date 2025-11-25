@@ -110,6 +110,7 @@ export type AuthState = {
 	canViewStatistics: boolean;
 	canCreateOrUpdateRecord: boolean;
 	canApproveWithdrawal: boolean;
+	isSupperAdmin: boolean;
 };
 
 export enum SettingsTab {
@@ -292,6 +293,7 @@ export type NetworkData = {
 	createdAt?: Date;
 	no_of_dataTypes?: string;
 	no_of_plans?: string;
+	gateway?: string;
 };
 
 export type KycData = {
@@ -697,6 +699,7 @@ export interface INetwork {
 	createdAt?: Date;
 	no_of_dataTypes?: string;
 	no_of_plans?: string;
+	gateway?: string;
 }
 
 export interface DataType {
@@ -878,6 +881,8 @@ export interface Settings {
 	createdAt?: string;
 	updatedAt?: string;
 	id?: string;
+	isActive?: boolean;
+	gateway?: string;
 }
 
 export interface Notification {
@@ -1086,4 +1091,25 @@ export interface IActivation {
 	createdAt: string;
 	updatedAt: string;
 	id: string;
+}
+
+export interface IRecipient {
+	isActive: boolean;
+	phoneNumber: string;
+	alias: string;
+	networkName: string;
+	targetBalance: number | string;
+	currentBalance: number | string;
+	createdAt: string;
+	updatedAt: string;
+	pin?: string;
+	otp?: string;
+	id: string;
+}
+
+export interface IAutoConvertAirtimeStatistics {
+	totalSuccessA2CashCount: number;
+	totalFailedA2CashCount: number;
+	totalPendingA2CashCount: number;
+	totalAmountReceived: number;
 }

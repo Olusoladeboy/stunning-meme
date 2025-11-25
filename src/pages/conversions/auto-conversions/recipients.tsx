@@ -1,18 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import queryString from 'query-string';
 import { Box, Typography, useTheme } from '@mui/material';
 import { grey } from '@mui/material/colors';
-import { useQuery, useQueryClient } from 'react-query';
+import { useQuery } from 'react-query';
 import {
-	Layout,
-	AutoConversionsTable,
-	ConversionTotal,
-	AvailableNetwork,
-	Pagination,
 	Button,
-	Loader,
-	AutoConversionStatistics,
+	Layout,
+	ModalWrapper,
+	Pagination,
+	RecipientForm,
 } from 'components';
 import {
 	BOX_SHADOW,
@@ -20,7 +17,7 @@ import {
 	MAX_RECORDS,
 	LINKS,
 	ErrorBoundary,
-	AUTO_AIRTIME_CONVERT_PROVIDERS,
+	SECOUNDARY_COLOR,
 } from 'utilities';
 import { useAppSelector } from 'store/hooks';
 import {
@@ -28,39 +25,39 @@ import {
 	useHandleError,
 	usePageTitle,
 	useSearchConversion,
-	useSettings,
-	useUpdateSettings,
 } from 'hooks';
-import { autoConvertAirtimeGroups } from 'api';
+import { getRecipients } from 'api/recipient';
+import AutoConversionRecipientsTable from 'components/table/auto-conversion-recipients-table';
+import { Add } from '@mui/icons-material';
 
-const AutoConversions = () => {
+const AutoConversionRecipients = () => {
 	usePageTitle('Auto Conversion');
-	const queryClient = useQueryClient();
+	const routerParams = useParams();
+	const network = routerParams?.network;
+
 	const theme = useTheme();
 	const handleError = useHandleError();
 	const setAlert = useAlert();
 	const styles = useStyles(theme);
 	const [isReload, setReload] = useState<boolean>(false);
-	const [sort, setSort] = useState('-createdAt');
 	const [isReloading, setReloading] = useState<boolean>(false);
 	const navigate = useNavigate();
 	const [count, setCount] = useState<number>(1);
 	const [page, setPage] = useState<number>(1);
 	const [total, setTotal] = useState<number>(0);
 
+	const [isDisplayAddRecipient, setDisplayAddRecipient] =
+		useState<boolean>(false);
+
 	const location = useLocation();
 	const query = queryString.parse(location.search);
 	const authState = useAppSelector((store) => store.authState);
 
 	const token = authState.token;
-	const canViewStatistics = authState.canViewStatistics;
 
-	const statistics = useAppSelector((store) => store.appState.statistics);
-
-	const { isSearching, search, clearSearch, searchConversion } =
-		useSearchConversion({
-			isAutoConvert: true,
-		});
+	const { isSearching, search } = useSearchConversion({
+		isAutoConvert: true,
+	});
 
 	useEffect(() => {
 		if (query && query.page) {
@@ -75,13 +72,14 @@ const AutoConversions = () => {
 	const params = {
 		limit: MAX_RECORDS,
 		skip: (page - 1) * MAX_RECORDS,
-		sort,
+		sort: '-createdAt',
 		populate: 'network,user',
+		networkName: network?.toUpperCase(),
 	};
 
 	const { isLoading, data, refetch } = useQuery(
-		[QueryKeys.AutoConvertAirtime, page],
-		() => autoConvertAirtimeGroups(params),
+		[QueryKeys.AutoConversionRecipients, page, network],
+		() => getRecipients(params),
 		{
 			enabled: !!(token || isReload),
 			keepPreviousData: true,
@@ -96,8 +94,8 @@ const AutoConversions = () => {
 				}
 
 				if (data && data.success) {
-					const total = data.metadata.total;
-					setTotal(data.metadata.total);
+					const total = Number(data?.metadata?.total);
+					setTotal(total);
 					const count = Math.ceil(total / MAX_RECORDS);
 					setCount(count);
 				}
@@ -106,25 +104,27 @@ const AutoConversions = () => {
 	);
 
 	const handlePageChange = (page: number) => {
-		setReload(true);
+		// setReload(true);
 		if (page !== 1) {
 			setPage(page);
-			navigate(`${LINKS.AutoConversions}?page=${page}`);
+			navigate(`${LINKS.AutoConversionRecipients}?page=${page}`);
 		} else {
-			navigate(LINKS.AutoConversions);
+			navigate(LINKS.AutoConversionRecipients);
 			setPage(page);
 		}
-	};
-
-	const handleSort = (sort: string) => {
-		if (data) {
-			setSort(sort);
-			refetch();
-		}
+		refetch();
 	};
 
 	return (
 		<Layout>
+			{isDisplayAddRecipient && (
+				<ModalWrapper
+					closeModal={() => setDisplayAddRecipient(false)}
+					title={`ADD ${network?.toUpperCase()}  RECIPIENT`}
+				>
+					<RecipientForm callback={() => setDisplayAddRecipient(false)} />
+				</ModalWrapper>
+			)}
 			<Box style={styles.container}>
 				<Box
 					sx={{
@@ -142,53 +142,25 @@ const AutoConversions = () => {
 						}}
 					>
 						<Typography sx={{ fontWeight: 'bold' }} variant={'h5'}>
-							Auto Conversions
+							Auto Conversion Recipients
 						</Typography>
-					</Box>
-					{canViewStatistics && (
-						<Box
+						<Button
+							onClick={() => setDisplayAddRecipient(true)}
 							sx={{
-								display: 'grid',
-								gap: ['15px', '30px'],
+								backgroundColor: `${SECOUNDARY_COLOR} !important`,
+								color: 'white',
+								display: 'flex',
+								gap: '4px',
 							}}
 						>
-							<Box
-								sx={{
-									display: 'grid',
-									gridTemplateColumns: {
-										xs: '1fr',
-										lg: 'repeat(2, 1fr)',
-									},
-									gap: {
-										xs: theme.spacing(3),
-										lg: theme.spacing(5),
-									},
-								}}
-							>
-								<ConversionTotal
-									handleRefresh={() => {
-										refetch();
-										setReloading(true);
-										queryClient.invalidateQueries([QueryKeys.Statistics]);
-									}}
-									total={data && data.metadata.total}
-									totalAmount={statistics?.total_auto_airtime_converted || 0}
-								/>
-								<AvailableNetwork type={'auto'} />
-							</Box>
-
-							<AutoConversionStatistics />
-						</Box>
-					)}
+							<Add /> <span>Add Recipient</span>
+						</Button>
+					</Box>
 				</Box>
 				<ErrorBoundary>
-					<AutoConversionsTable
-						isDisplaySearchField
+					<AutoConversionRecipientsTable
 						isLoading={isLoading || isReloading || isSearching}
-						conversions={search ? search : data && data.payload}
-						handleSort={handleSort}
-						handleSearch={searchConversion}
-						clearSearch={clearSearch}
+						data={data?.payload}
 					/>
 
 					{!search && total > MAX_RECORDS && !isReloading && (
@@ -218,4 +190,4 @@ const useStyles = (theme: any) => ({
 	},
 });
 
-export default AutoConversions;
+export default AutoConversionRecipients;

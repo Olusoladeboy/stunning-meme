@@ -11,6 +11,7 @@ import {
 	TaskList,
 	RecentConversionsTable,
 	RecentTransactionsTable,
+	Services,
 } from 'components';
 import { useAppSelector } from 'store/hooks';
 import { usePageTitle } from 'hooks';
@@ -21,6 +22,10 @@ const LargeView = () => {
 	const styles = useStyles(theme);
 	const canViewStatistics = useAppSelector(
 		(store) => store.authState.canViewStatistics
+	);
+
+	const isSupperAdmin = useAppSelector(
+		(store) => store.authState.isSupperAdmin
 	);
 
 	return (
@@ -59,7 +64,8 @@ const LargeView = () => {
 							</Box>
 						)}
 						<RecentConversionsTable />
-						<RecentTransactionsTable />
+						{/* <RecentTransactionsTable /> */}
+						{isSupperAdmin && <Services />}
 					</Box>
 				</Box>
 				<Box>
@@ -72,7 +78,6 @@ const LargeView = () => {
 					>
 						<WalletOverview />
 						{canViewStatistics && <UserRecord />}
-						<TaskList />
 					</Box>
 				</Box>
 			</Box>

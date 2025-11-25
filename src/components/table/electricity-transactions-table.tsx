@@ -23,15 +23,33 @@ import CustomTableCell from './components/custom-table-cell';
 import TableLoader from 'components/loader/table-loader';
 import ModalWrapper from 'components/modal/Wrapper';
 import TransactionDetailsModal from 'components/modal/transaction-details-modal';
+import { useMutation } from 'react-query';
+import { updateBillTransactions } from 'api/bill';
+import { useHandleError } from 'hooks';
+import useToastAlert from 'hooks/useToastAlert';
+import { green, red } from '@mui/material/colors';
+import { useAppSelector } from 'store/hooks';
 
 type Props = {
 	data: Transaction[];
 	isLoading?: boolean;
+	reloadTransactions?: () => void;
 };
 
-const ElectricityTransactionsTable = ({ data, isLoading }: Props) => {
+const ElectricityTransactionsTable = ({
+	data,
+	isLoading,
+	reloadTransactions,
+}: Props) => {
 	const theme = useTheme();
 	const styles = useStyles(theme);
+
+	const isSupperAdmin = useAppSelector(
+		(store) => store.authState.isSupperAdmin
+	);
+
+	const handleError = useHandleError();
+	const alert = useToastAlert();
 
 	const [jsonData, setJsonData] = useState<string>('');
 
@@ -45,6 +63,49 @@ const ElectricityTransactionsTable = ({ data, isLoading }: Props) => {
 	const handleViewToken = (bill: Transaction) => {
 		const jsonObj = bill.electricity_token;
 		setJsonData(JSON.stringify(jsonObj));
+	};
+
+	const { mutate, isLoading: isUpdatingTransaction } = useMutation(
+		updateBillTransactions,
+		{
+			onSettled: (data, error) => {
+				if (error) {
+					const errorResponse = handleError({ error });
+					if (errorResponse?.message) {
+						alert({ message: errorResponse.message, type: 'error' });
+					}
+				}
+
+				if (data && data.success) {
+					reloadTransactions?.();
+					alert({
+						message: 'Transaction updated successfully',
+						type: 'success',
+					});
+				}
+			},
+		}
+	);
+
+	const handleUpdateTransaction = ({
+		status,
+		id,
+	}: {
+		status: string;
+		id: string;
+	}) => {
+		if (!isSupperAdmin) {
+			alert({
+				message: 'You are not authorized to perform this action',
+				type: 'error',
+			});
+			return;
+		}
+
+		mutate({
+			id,
+			data: { status },
+		});
 	};
 
 	return (
@@ -104,7 +165,10 @@ const ElectricityTransactionsTable = ({ data, isLoading }: Props) => {
 									style={styles.headTableCell}
 									label={'Status'}
 								/>
-								<CustomTableCell style={styles.headTableCell} label={''} />
+								<CustomTableCell
+									style={styles.headTableCell}
+									label={'Action'}
+								/>
 							</StyledTableRow>
 						</TableHead>
 						<TableBody
@@ -148,14 +212,55 @@ const ElectricityTransactionsTable = ({ data, isLoading }: Props) => {
 														{value.status}
 													</StyledTableCell>
 													<StyledTableCell style={styles.text}>
-														<Button
-															onClick={(e) => {
-																e.stopPropagation();
-																handleViewToken(value);
+														<Box
+															sx={{
+																display: 'flex',
+																gap: '10px',
 															}}
 														>
-															View token
-														</Button>
+															<Button
+																onClick={(e) => {
+																	e.stopPropagation();
+																	handleViewToken(value);
+																}}
+															>
+																View token
+															</Button>
+															{value.status === 'PENDING' && (
+																<Box sx={{ display: 'flex', gap: '10px' }}>
+																	<Button
+																		onClick={(e) => {
+																			e.stopPropagation();
+																			handleUpdateTransaction({
+																				id: value.id,
+																				status: 'SUCCESSFUL',
+																			});
+																		}}
+																		sx={{
+																			backgroundColor: `${green['600']} !important`,
+																			color: 'white',
+																		}}
+																	>
+																		Approve
+																	</Button>
+																	<Button
+																		onClick={(e) => {
+																			e.stopPropagation();
+																			handleUpdateTransaction({
+																				id: value.id,
+																				status: 'FAILED',
+																			});
+																		}}
+																		sx={{
+																			backgroundColor: `${red['600']} !important`,
+																			color: 'white',
+																		}}
+																	>
+																		Decline
+																	</Button>
+																</Box>
+															)}
+														</Box>
 													</StyledTableCell>
 												</StyledTableRow>
 											))

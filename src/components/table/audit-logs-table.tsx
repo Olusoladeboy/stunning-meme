@@ -82,7 +82,7 @@ const Details = ({ close, data, viewAction }: IDetails) => {
 					}}
 				>
 					<Button
-						onClick={() => typeof viewAction === 'function' && viewAction(data)}
+						onClick={() => viewAction?.(data)}
 						sx={{
 							backgroundColor: `${theme.palette.secondary.main} !important`,
 							color: theme.palette.background.paper,
@@ -149,6 +149,7 @@ const AuditLogsTable: React.FC<Props> = ({ data, isLoading, auditFilter }) => {
 	};
 
 	const handleViewAction = (data: AuditLog) => {
+		console.log('DATA::', data);
 		const { recordId, module } = data;
 		if (!(recordId && module)) {
 			let message = '';

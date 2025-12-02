@@ -10,15 +10,16 @@ import {
 } from 'utilities';
 import AppTable from './components/table';
 import TransactionDetailsModal from 'components/modal/transaction-details-modal';
-import { refreshRecipientBalance, updateRecipient } from 'api';
+import { deleteRecipient, refreshRecipientBalance, updateRecipient } from 'api';
 import { useHandleError } from 'hooks';
 import { useMutation, useQueryClient } from 'react-query';
 import Loader from 'components/loader';
 import Button from 'components/button';
 import useToastAlert from 'hooks/useToastAlert';
-import { Edit, Refresh } from '@mui/icons-material';
+import { Delete, Edit, Refresh } from '@mui/icons-material';
 import ModalWrapper from 'components/modal/Wrapper';
 import RecipientForm from 'components/forms/recipient-form';
+import { red } from '@mui/material/colors';
 
 interface Props {
 	data?: IRecipient[] | null;
@@ -56,6 +57,26 @@ const AutoConversionRecipientsTable = ({ data, isLoading }: Props) => {
 			},
 		});
 
+	// Delete recipient
+	const { isLoading: isDeletingRecipient, mutate: mutateDeleteRecipient } =
+		useMutation(deleteRecipient, {
+			onSettled: (data, error) => {
+				if (error) {
+					const response = handleError({ error });
+					if (response?.message)
+						alert({ message: response.message, type: 'error' });
+				}
+
+				if (data && (data as any).success) {
+					queryClient.invalidateQueries(QueryKeys.AutoConversionRecipients);
+					alert({
+						message: 'Recipient deleted successfully!!',
+						type: 'success',
+					});
+				}
+			},
+		});
+
 	const onUpdateTransaction = (recipient: IRecipient) => {
 		mutateUpdateRecipient({
 			id: recipient.id,
@@ -63,6 +84,10 @@ const AutoConversionRecipientsTable = ({ data, isLoading }: Props) => {
 				isActive: !recipient.isActive,
 			},
 		});
+	};
+
+	const onDeleteRecipient = (id: string) => {
+		mutateDeleteRecipient(id);
 	};
 
 	const onRefresh = async (id: string) => {
@@ -85,7 +110,7 @@ const AutoConversionRecipientsTable = ({ data, isLoading }: Props) => {
 	return (
 		<>
 			{/* <TransactionDetails ref={transactionDetailsRef} /> */}
-			{isUpdatingRecipient && <Loader />}
+			{(isUpdatingRecipient || isDeletingRecipient) && <Loader />}
 			{selectedTransaction && (
 				<TransactionDetailsModal
 					closeModal={() => setSelectedTransaction(null)}
@@ -152,19 +177,40 @@ const AutoConversionRecipientsTable = ({ data, isLoading }: Props) => {
 											)}
 										</Box>,
 										formatNumberToCurrency(value?.targetBalance),
-										<Button
-											onClick={() => setRecipient(value)}
+										<Box
 											sx={{
-												backgroundColor: `${SECOUNDARY_COLOR} !important`,
-												color: 'white',
 												display: 'flex',
-												gap: '4px',
-												minWidth: '100px',
+												gap: '8px',
+												alignItems: 'center',
 											}}
 										>
-											<Edit sx={{ fontSize: '16px' }} fontSize='small' />
-											Edit
-										</Button>,
+											<Button
+												onClick={() => setRecipient(value)}
+												sx={{
+													backgroundColor: `${SECOUNDARY_COLOR} !important`,
+													color: 'white',
+													display: 'flex',
+													gap: '4px',
+													minWidth: '100px',
+												}}
+											>
+												<Edit sx={{ fontSize: '16px' }} fontSize='small' />
+												Edit
+											</Button>
+											<Button
+												onClick={() => onDeleteRecipient(value.id)}
+												sx={{
+													backgroundColor: `${red['600']} !important`,
+													color: 'white',
+													display: 'flex',
+													gap: '4px',
+													minWidth: '100px',
+												}}
+											>
+												<Delete sx={{ fontSize: '16px' }} fontSize='small' />
+												Delete
+											</Button>
+										</Box>,
 									],
 									rawData: value as unknown as Transaction,
 								};

@@ -706,6 +706,8 @@ const Transactions = () => {
 						<WithdrawalTransactionsTable
 							data={dataTransactions?.data as IWithdrawal[]}
 							isLoading={isLoadingWalletWithdrawals}
+							reloadTransactions={reloadTransactions}
+							hasActionButton
 						/>
 					)}
 					{dataTransactions?.service === SERVICES.AUTO_AIRTIME_CONVERSION && (
@@ -737,6 +739,7 @@ const Transactions = () => {
 						<WalletTransferTransactionsTable
 							data={dataTransactions?.data as Transaction[]}
 							isLoading={isLoadingWalletTransfers}
+							reloadTransactions={reloadTransactions}
 						/>
 					)}
 				</Box>

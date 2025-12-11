@@ -19,15 +19,29 @@ import Empty from '../empty/table-empty';
 import CustomTableCell from './components/custom-table-cell';
 import TableLoader from 'components/loader/table-loader';
 import TransactionDetailsModal from 'components/modal/transaction-details-modal';
+import { useAlert, useHandleError } from 'hooks';
+import { useAppSelector } from 'store/hooks';
 
 type Props = {
 	data: Transaction[];
 	isLoading?: boolean;
+	reloadTransactions?: () => void;
 };
 
-const WalletTransferTransactionsTable = ({ data, isLoading }: Props) => {
+const WalletTransferTransactionsTable = ({
+	data,
+	isLoading,
+	reloadTransactions,
+}: Props) => {
 	const theme = useTheme();
 	const styles = useStyles(theme);
+
+	const isSupperAdmin = useAppSelector(
+		(store) => store.authState.isSupperAdmin
+	);
+
+	const handleError = useHandleError();
+	const alert = useAlert();
 
 	const [selectedTransaction, setSelectedTransaction] =
 		useState<null | Transaction>(null);

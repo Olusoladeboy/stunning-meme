@@ -199,7 +199,7 @@ const WithdrawalTransactionsTable = ({
 																		e.stopPropagation();
 																		handleMutate({
 																			id: value.id,
-																			status: 'APPROVE',
+																			status: 'SUCCESSFUL',
 																		});
 																	}}
 																	sx={{
@@ -217,7 +217,7 @@ const WithdrawalTransactionsTable = ({
 																		e.stopPropagation();
 																		handleMutate({
 																			id: value.id,
-																			status: 'DECLINE',
+																			status: 'FAILED',
 																		});
 																	}}
 																	sx={{

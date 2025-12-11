@@ -80,7 +80,7 @@ export const updateWalletWithdrawal = async ({
 }): Promise<DataResponse<IWithdrawal[]>> =>
 	apiRequest({
 		method: 'PUT',
-		url: `${ENDPOINTS.Withdraw}/${id}`,
+		url: `${ENDPOINTS.Withdraw}/status/${id}`,
 		data,
 	});
 

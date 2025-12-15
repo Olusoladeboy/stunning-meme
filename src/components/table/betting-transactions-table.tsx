@@ -11,6 +11,7 @@ import { StyledTableCell, StyledTableRow } from './components';
 import {
 	IPurchasedBill,
 	Transaction,
+	checkAmount,
 	extractUserName,
 	formatNumberToCurrency,
 } from 'utilities';
@@ -19,24 +20,83 @@ import CustomTableCell from './components/custom-table-cell';
 import TableLoader from 'components/loader/table-loader';
 import { useState } from 'react';
 import TransactionDetailsModal from 'components/modal/transaction-details-modal';
+import Button from 'components/button';
+import { green, red } from '@mui/material/colors';
+import { useMutation } from 'react-query';
+import { useHandleError } from 'hooks';
+import { updateBillTransactions } from 'api/bill';
+import { useAppSelector } from 'store/hooks';
+import Loader from 'components/loader';
 
 type Props = {
 	data: IPurchasedBill[];
 	isLoading?: boolean;
+	reloadTransactions?: () => void;
 };
 
-const BettingTransactionsTable = ({ data, isLoading }: Props) => {
+const BettingTransactionsTable = ({
+	data,
+	isLoading,
+	reloadTransactions,
+}: Props) => {
 	const theme = useTheme();
 	const styles = useStyles(theme);
+	const handleError = useHandleError();
 	const [selectedTransaction, setSelectedTransaction] =
 		useState<null | Transaction>(null);
+
+	const isSupperAdmin = useAppSelector(
+		(store) => store.authState.isSupperAdmin
+	);
 
 	const handleClickRow = (value: Transaction) => {
 		setSelectedTransaction(value);
 	};
 
+	const { isLoading: isUpdatingTransaction, mutate: mutateUpdateTransaction } =
+		useMutation(updateBillTransactions, {
+			onSettled: (data, error) => {
+				if (error) {
+					const response = handleError({ error });
+					if (response?.message)
+						alert({ message: response.message, type: 'error' });
+				}
+
+				if (data && data.success) {
+					reloadTransactions?.();
+					alert({
+						message: 'Airtime status updated successfully!!',
+						type: 'success',
+					});
+				}
+			},
+		});
+
+	const onUpdateTransaction = ({
+		id,
+		status,
+	}: {
+		id: string;
+		status: string;
+	}) => {
+		if (!isSupperAdmin) {
+			alert({
+				message: 'You are not authorized to perform this action',
+				type: 'error',
+			});
+			return;
+		}
+		mutateUpdateTransaction({
+			id,
+			data: {
+				status,
+			},
+		});
+	};
+
 	return (
 		<Container>
+			{isUpdatingTransaction && <Loader />}
 			{selectedTransaction && (
 				<TransactionDetailsModal
 					closeModal={() => setSelectedTransaction(null)}
@@ -63,6 +123,7 @@ const BettingTransactionsTable = ({ data, isLoading }: Props) => {
 							<CustomTableCell style={styles.headTableCell} label={'Amount'} />
 							<CustomTableCell style={styles.headTableCell} label={'Date'} />
 							<CustomTableCell style={styles.headTableCell} label={'Status'} />
+							<CustomTableCell style={styles.headTableCell} label={'Action'} />
 						</StyledTableRow>
 					</TableHead>
 					<TableBody
@@ -97,13 +158,49 @@ const BettingTransactionsTable = ({ data, isLoading }: Props) => {
 													{value.name}
 												</StyledTableCell>
 												<StyledTableCell style={styles.text}>
-													{formatNumberToCurrency(value.amount)}
+													{formatNumberToCurrency(checkAmount(value.amount))}
 												</StyledTableCell>
 												<StyledTableCell style={styles.text}>
 													{moment(value.createdAt).format('l')}
 												</StyledTableCell>
 												<StyledTableCell style={styles.text}>
 													{value.status}
+												</StyledTableCell>
+												<StyledTableCell style={styles.text}>
+													{value.status === 'PENDING' && (
+														<Box sx={{ display: 'flex', gap: '10px' }}>
+															<Button
+																onClick={(e) => {
+																	e.stopPropagation();
+																	onUpdateTransaction({
+																		id: value.id,
+																		status: 'SUCCESSFUL',
+																	});
+																}}
+																sx={{
+																	backgroundColor: `${green['600']} !important`,
+																	color: 'white',
+																}}
+															>
+																Approve
+															</Button>
+															<Button
+																onClick={(e) => {
+																	e.stopPropagation();
+																	onUpdateTransaction({
+																		id: value.id,
+																		status: 'FAILED',
+																	});
+																}}
+																sx={{
+																	backgroundColor: `${red['600']} !important`,
+																	color: 'white',
+																}}
+															>
+																Decline
+															</Button>
+														</Box>
+													)}
 												</StyledTableCell>
 											</StyledTableRow>
 										))

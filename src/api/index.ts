@@ -22,3 +22,4 @@ export * from './e-voucher';
 export * from './e-sim';
 export * from './business';
 export * from './recipient';
+export * from './e-pin';

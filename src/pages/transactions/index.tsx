@@ -647,9 +647,7 @@ const Transactions = () => {
 							conversions={dataTransactions?.data as any}
 							isLoading={isLoadingConvertAirtime}
 							isDisplayTransactionDetails
-							handleRefetch={() =>
-								switchHandleSubmit(queryValues?.current as any)
-							}
+							handleRefetch={reloadTransactions}
 						/>
 					)}
 					{(dataTransactions?.service ===
@@ -727,6 +725,7 @@ const Transactions = () => {
 						<BettingTransactionsTable
 							data={dataTransactions?.data as IPurchasedBill[]}
 							isLoading={isLoading}
+							reloadTransactions={reloadTransactions}
 						/>
 					)}
 					{dataTransactions?.service === SERVICES.EPIN && (

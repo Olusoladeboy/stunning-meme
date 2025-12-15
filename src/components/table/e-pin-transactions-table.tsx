@@ -22,15 +22,28 @@ import CustomTableCell from './components/custom-table-cell';
 import TableLoader from 'components/loader/table-loader';
 import TransactionDetailsModal from 'components/modal/transaction-details-modal';
 import ModalWrapper from 'components/modal/Wrapper';
+import { useMutation } from 'react-query';
+import { updateEPinTransaction } from 'api';
+import { useHandleError } from 'hooks';
+import { useAppSelector } from 'store/hooks';
+import { green, red } from '@mui/material/colors';
+import Loader from 'components/loader';
 
 type Props = {
 	data: Transaction[];
 	isLoading?: boolean;
+	reloadTransactions?: () => void;
 };
 
-const EPinTransactionsTable = ({ data, isLoading }: Props) => {
+const EPinTransactionsTable = ({
+	data,
+	isLoading,
+	reloadTransactions,
+}: Props) => {
 	const theme = useTheme();
 	const styles = useStyles(theme);
+
+	const handleError = useHandleError();
 
 	const [jsonData, setJsonData] = useState<string>('');
 
@@ -47,8 +60,54 @@ const EPinTransactionsTable = ({ data, isLoading }: Props) => {
 		setJsonData(JSON.stringify(jsonObj));
 	};
 
+	const isSupperAdmin = useAppSelector(
+		(store) => store.authState.isSupperAdmin
+	);
+
+	const { isLoading: isUpdatingTransaction, mutate: mutateUpdateTransaction } =
+		useMutation(updateEPinTransaction, {
+			onSettled: (data, error) => {
+				if (error) {
+					const response = handleError({ error });
+					if (response?.message)
+						alert({ message: response.message, type: 'error' });
+				}
+
+				if (data && data.success) {
+					reloadTransactions?.();
+					alert({
+						message: 'Airtime status updated successfully!!',
+						type: 'success',
+					});
+				}
+			},
+		});
+
+	const onUpdateTransaction = ({
+		id,
+		status,
+	}: {
+		id: string;
+		status: string;
+	}) => {
+		if (!isSupperAdmin) {
+			alert({
+				message: 'You are not authorized to perform this action',
+				type: 'error',
+			});
+			return;
+		}
+		mutateUpdateTransaction({
+			id,
+			data: {
+				status,
+			},
+		});
+	};
+
 	return (
 		<Container>
+			{isUpdatingTransaction && <Loader />}
 			{jsonData && (
 				<ModalWrapper
 					title={'Pin Data'}
@@ -147,14 +206,56 @@ const EPinTransactionsTable = ({ data, isLoading }: Props) => {
 													{value.status}
 												</StyledTableCell>
 												<StyledTableCell>
-													<Button
-														onClick={(e) => {
-															e.stopPropagation();
-															handleViewToken(value);
+													<Box
+														sx={{
+															display: 'flex',
+															alignItems: 'center',
+															gap: '10px',
 														}}
 													>
-														View Pin Data
-													</Button>
+														<Button
+															onClick={(e) => {
+																e.stopPropagation();
+																handleViewToken(value);
+															}}
+														>
+															View Pin Data
+														</Button>
+														{value.status === 'PENDING' && (
+															<>
+																<Button
+																	onClick={(e) => {
+																		e.stopPropagation();
+																		onUpdateTransaction({
+																			id: value.id,
+																			status: 'SUCCESSFUL',
+																		});
+																	}}
+																	sx={{
+																		backgroundColor: `${green['600']} !important`,
+																		color: 'white',
+																	}}
+																>
+																	Approve
+																</Button>
+																<Button
+																	onClick={(e) => {
+																		e.stopPropagation();
+																		onUpdateTransaction({
+																			id: value.id,
+																			status: 'FAILED',
+																		});
+																	}}
+																	sx={{
+																		backgroundColor: `${red['600']} !important`,
+																		color: 'white',
+																	}}
+																>
+																	Decline
+																</Button>
+															</>
+														)}
+													</Box>
 												</StyledTableCell>
 											</StyledTableRow>
 										))

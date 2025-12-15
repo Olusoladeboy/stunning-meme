@@ -110,12 +110,3 @@ export const bankFundings = async (params?: {
 		url: `${ENDPOINTS.Transfer}`,
 		params,
 	});
-
-export const ePinTransactions = async (params?: {
-	[key: string]: any;
-}): Promise<DataResponse<IEpin[]>> =>
-	apiRequest({
-		method: 'GET',
-		url: `${ENDPOINTS.EPin}`,
-		params,
-	});

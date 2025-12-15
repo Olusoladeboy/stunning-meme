@@ -65,7 +65,7 @@ const BettingTransactionsTable = ({
 				if (data && data.success) {
 					reloadTransactions?.();
 					alert({
-						message: 'Airtime status updated successfully!!',
+						message: 'Betting status updated successfully!!',
 						type: 'success',
 					});
 				}

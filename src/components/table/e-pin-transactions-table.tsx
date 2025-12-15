@@ -76,7 +76,7 @@ const EPinTransactionsTable = ({
 				if (data && data.success) {
 					reloadTransactions?.();
 					alert({
-						message: 'Airtime status updated successfully!!',
+						message: 'E-Pin status updated successfully!!',
 						type: 'success',
 					});
 				}

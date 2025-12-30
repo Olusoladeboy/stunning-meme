@@ -316,6 +316,7 @@ export type DataPlan = {
 	data_source?: string;
 	dataType?: DataType | string;
 	level?: string | number;
+	cost_price?: string;
 };
 
 export enum DataPlanType {
@@ -1112,4 +1113,15 @@ export interface IAutoConvertAirtimeStatistics {
 	totalFailedA2CashCount: number;
 	totalPendingA2CashCount: number;
 	totalAmountReceived: number;
+}
+
+export interface IDataSubscriptionStatistic {
+	dataType: string;
+	dataTypeName: string;
+	plan: string;
+	planName: string;
+	totalAmount: number;
+	totalCount: number;
+	totalCostPrice: number;
+	totalUserCount: number;
 }

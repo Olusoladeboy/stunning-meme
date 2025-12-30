@@ -9,6 +9,7 @@ import {
 	IFunding,
 	ITransfer,
 	Transaction,
+	IDataSubscriptionStatistic,
 } from 'utilities';
 import {
 	dataSubscriptions,
@@ -29,6 +30,7 @@ import {
 	internationalAirtimeTransactions,
 	eSimTransactions,
 	transactionsStatistics,
+	dataSubscriptionsStatistics,
 } from 'api';
 import { cableTransactions } from 'api/cable';
 import { billBundles, billProviders, billTransactions } from 'api/bill';
@@ -311,6 +313,45 @@ export const useQueryDataSubscriptions = (
 		isLoadingDataSubscriptions: isLoading,
 		dataSubscriptions: dataDataSubscriptions,
 		queryDataSubscriptions,
+	};
+};
+
+// Data subscription statistic
+export const useQueryDataStatisticSubscriptions = (
+	callback?: (
+		data: IDataSubscriptionStatistic[] | IDataSubscriptionStatistic
+	) => void
+) => {
+	const [data, setData] = useState<
+		IDataSubscriptionStatistic[] | IDataSubscriptionStatistic | null
+	>(null);
+	const [isLoading, setLoading] = useState<boolean>(false);
+
+	const queryDataSubscriptionStatistics = async (
+		params?: Record<string, any>
+	) => {
+		setLoading(true);
+		try {
+			const response = await dataSubscriptionsStatistics(params);
+			setLoading(false);
+
+			if (response && response.success) {
+				setData(response.payload);
+
+				callback?.(response.payload);
+				return response.payload;
+			}
+		} catch (error) {
+			console.log(error);
+		} finally {
+			setLoading(false);
+		}
+	};
+
+	return {
+		isLoadingDataStatisticSubscriptions: isLoading,
+		dataSubscriptionStatistics: data,
+		queryDataSubscriptionStatistics,
 	};
 };
 

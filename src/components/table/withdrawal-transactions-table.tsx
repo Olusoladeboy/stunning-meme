@@ -30,12 +30,14 @@ type Props = {
 	data: IWithdrawal[];
 	isLoading?: boolean;
 	hasActionButton?: boolean;
+	reloadTransactions?: () => void;
 };
 
 const WithdrawalTransactionsTable = ({
 	data,
 	isLoading,
 	hasActionButton,
+	reloadTransactions,
 }: Props) => {
 	const theme = useTheme();
 	const handleError = useHandleError();
@@ -69,6 +71,7 @@ const WithdrawalTransactionsTable = ({
 				}
 				if (data && data.success) {
 					queryClient.invalidateQueries(['Withdrawal']);
+					reloadTransactions?.();
 					alert({
 						message: 'Transaction updated successfully',
 						type: 'success',
@@ -189,39 +192,44 @@ const WithdrawalTransactionsTable = ({
 												</StyledTableCell>
 												{hasActionButton && (
 													<StyledTableCell style={styles.text}>
-														<Button
-															onClick={(e) => {
-																e.stopPropagation();
-																handleMutate({
-																	id: value.id,
-																	status: 'APPROVE',
-																});
-															}}
-															sx={{
-																backgroundColor: green['600'] + '!important',
-																marginRight: '6px',
-																color: 'white',
-															}}
-															size='small'
-														>
-															Approve
-														</Button>
-														<Button
-															onClick={(e) => {
-																e.stopPropagation();
-																handleMutate({
-																	id: value.id,
-																	status: 'DECLINE',
-																});
-															}}
-															sx={{
-																backgroundColor: red['600'] + '!important',
-																color: 'white',
-															}}
-															size='small'
-														>
-															Decline
-														</Button>
+														{value.status === 'PENDING' && (
+															<>
+																<Button
+																	onClick={(e) => {
+																		e.stopPropagation();
+																		handleMutate({
+																			id: value.id,
+																			status: 'SUCCESSFUL',
+																		});
+																	}}
+																	sx={{
+																		backgroundColor:
+																			green['600'] + '!important',
+																		marginRight: '6px',
+																		color: 'white',
+																	}}
+																	size='small'
+																>
+																	Approve
+																</Button>
+																<Button
+																	onClick={(e) => {
+																		e.stopPropagation();
+																		handleMutate({
+																			id: value.id,
+																			status: 'FAILED',
+																		});
+																	}}
+																	sx={{
+																		backgroundColor: red['600'] + '!important',
+																		color: 'white',
+																	}}
+																	size='small'
+																>
+																	Decline
+																</Button>
+															</>
+														)}
 													</StyledTableCell>
 												)}
 											</StyledTableRow>

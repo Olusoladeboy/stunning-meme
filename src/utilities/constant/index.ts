@@ -195,6 +195,7 @@ export const ENDPOINTS = {
 	GiftCard: '/gift-cards',
 	ESim: 'esim',
 	Recipients: '/recipients',
+	DataSubscriptionStat: 'data-subscription/statistics',
 };
 
 export const FUND_WALLET_SERVICE = {

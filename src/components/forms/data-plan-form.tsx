@@ -53,6 +53,10 @@ const DataPlanForm = ({ dataPayload, callback }: Props) => {
 			.string()
 			.matches(/\d/, 'Data unit must be a number')
 			.required('Enter data unit'),
+		cost_price: yup
+			.string()
+			.matches(/\d/, 'Cost Price must be a number')
+			.required('Enter cost price'),
 	});
 
 	const initialValues: DataPlan = {
@@ -63,6 +67,7 @@ const DataPlanForm = ({ dataPayload, callback }: Props) => {
 		// merchant_amount: '',
 		data_unit: '',
 		level: '',
+		cost_price: '',
 	};
 
 	const { isLoading: isCreatingPlan, mutate: mutateCreatePlan } = useMutation(
@@ -127,6 +132,7 @@ const DataPlanForm = ({ dataPayload, callback }: Props) => {
 				data_unit: data.data_unit,
 				code: data.code,
 				data_source: data.data_source,
+				cost_price: data.cost_price,
 			};
 
 			if (values.level) payload.level = values.level;
@@ -158,7 +164,8 @@ const DataPlanForm = ({ dataPayload, callback }: Props) => {
 			},
 		});
 
-	const { name, amount, code, data_source, data_unit, level } = values;
+	const { name, amount, code, data_source, data_unit, level, cost_price } =
+		values;
 
 	return (
 		<Box style={styles.form as CSSProperties} component={'form'}>
@@ -246,6 +253,22 @@ const DataPlanForm = ({ dataPayload, callback }: Props) => {
 						helperText={errors && touched.data_unit && errors.data_unit}
 						value={data_unit}
 						onChange={handleChange('data_unit')}
+					/>
+				</Box>
+
+				<Box>
+					<Typography variant={'body1'} style={styles.label}>
+						Cost Price
+					</Typography>
+					<TextInput
+						fullWidth
+						placeholder={'Cost Price'}
+						error={
+							errors && touched.cost_price && errors.cost_price ? true : false
+						}
+						helperText={errors && touched.cost_price && errors.cost_price}
+						value={cost_price}
+						onChange={handleChange('cost_price')}
 					/>
 				</Box>
 				<Box>

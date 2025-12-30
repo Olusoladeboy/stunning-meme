@@ -3,6 +3,7 @@ import {
 	DataResponse,
 	ENDPOINTS,
 	IAutoConvertAirtimeStatistics,
+	IDataSubscriptionStatistic,
 } from '../utilities';
 
 export const statistic = async (): Promise<any> =>
@@ -17,5 +18,16 @@ export const autoAirtimeConvertStatistics = async (params?: {
 	apiRequest({
 		method: 'GET',
 		url: `${ENDPOINTS.AutoConvertAirtime}/stats`,
+		params,
+	});
+
+export const dataSubscriptionsStatistics = async (params?: {
+	[key: string]: any;
+}): Promise<
+	DataResponse<IDataSubscriptionStatistic | IDataSubscriptionStatistic[]>
+> =>
+	apiRequest({
+		method: 'GET',
+		url: ENDPOINTS.DataSubscriptionStat,
 		params,
 	});

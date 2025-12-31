@@ -58,7 +58,6 @@ const ConversionsTable = ({
 	isDisplaySearchField = false,
 	conversionType,
 	handleRefetch,
-	isDisplayApprovedDeclinedButton = false,
 	isDisplayTransactionDetails = false,
 }: Props) => {
 	const theme = useTheme();
@@ -199,6 +198,11 @@ const ConversionsTable = ({
 									style={styles.headTableCell}
 									label={'Status'}
 								/>
+								<CustomTableCell
+									onClick={() => handleSortRecord('status')}
+									style={styles.headTableCell}
+									label={'Action'}
+								/>
 							</StyledTableRow>
 						</TableHead>
 						<TableBody
@@ -262,12 +266,10 @@ const ConversionsTable = ({
 																{moment(conversion.createdAt).format('ll')}
 															</StyledTableCell>
 															<StyledTableCell style={styles.text}>
-																{/* {conversion.status} */}
-																{conversion.status === STATUS.APPROVED ? (
-																	TransactionStatus.APPROVED
-																) : conversion.status === STATUS.DECLINED ? (
-																	STATUS.DECLINED
-																) : isDisplayApprovedDeclinedButton ? (
+																{conversion.status}
+															</StyledTableCell>
+															<StyledTableCell style={styles.text}>
+																{conversion.status === 'PENDING' && (
 																	<Box
 																		sx={{
 																			display: 'flex',
@@ -300,8 +302,6 @@ const ConversionsTable = ({
 																			Decline
 																		</DeclineButton>
 																	</Box>
-																) : (
-																	'PENDING'
 																)}
 															</StyledTableCell>
 														</StyledTableRow>
@@ -309,7 +309,7 @@ const ConversionsTable = ({
 												}
 											)
 										) : (
-											<Empty colSpan={8} text={'No Airtime Convert'} />
+											<Empty colSpan={9} text={'No Airtime Convert'} />
 										)}
 									</>
 								)
@@ -372,3 +372,44 @@ const useStyles = (theme: any) => ({
 });
 
 export default ConversionsTable;
+
+// {conversion.status === STATUS.APPROVED ? (
+// 																TransactionStatus.APPROVED
+// 															) : conversion.status === STATUS.DECLINED ? (
+// 																STATUS.DECLINED
+// 															) : conversion.status === STATUS.PEN ? (
+// 																<Box
+// 																	sx={{
+// 																		display: 'flex',
+// 																		gap: theme.spacing(2),
+// 																	}}
+// 																>
+// 																	<ApproveButton
+// 																		onClick={(e) => {
+// 																			e.stopPropagation();
+// 																			handleUpdateStatus({
+// 																				id: conversion.id,
+// 																				status: STATUS.APPROVED,
+// 																			});
+// 																		}}
+// 																		size={'small'}
+// 																	>
+// 																		Approve
+// 																	</ApproveButton>
+// 																	<DeclineButton
+// 																		onClick={(e) => {
+// 																			e.stopPropagation();
+
+// 																			handleUpdateStatus({
+// 																				id: conversion.id,
+// 																				status: STATUS.DECLINED,
+// 																			});
+// 																		}}
+// 																		size={'small'}
+// 																	>
+// 																		Decline
+// 																	</DeclineButton>
+// 																</Box>
+// 															) : (
+// 																'PENDING'
+// 															)}

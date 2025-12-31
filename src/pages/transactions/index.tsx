@@ -647,9 +647,7 @@ const Transactions = () => {
 							conversions={dataTransactions?.data as any}
 							isLoading={isLoadingConvertAirtime}
 							isDisplayTransactionDetails
-							handleRefetch={() =>
-								switchHandleSubmit(queryValues?.current as any)
-							}
+							handleRefetch={reloadTransactions}
 						/>
 					)}
 					{(dataTransactions?.service ===
@@ -706,6 +704,8 @@ const Transactions = () => {
 						<WithdrawalTransactionsTable
 							data={dataTransactions?.data as IWithdrawal[]}
 							isLoading={isLoadingWalletWithdrawals}
+							reloadTransactions={reloadTransactions}
+							hasActionButton
 						/>
 					)}
 					{dataTransactions?.service === SERVICES.AUTO_AIRTIME_CONVERSION && (
@@ -725,6 +725,7 @@ const Transactions = () => {
 						<BettingTransactionsTable
 							data={dataTransactions?.data as IPurchasedBill[]}
 							isLoading={isLoading}
+							reloadTransactions={reloadTransactions}
 						/>
 					)}
 					{dataTransactions?.service === SERVICES.EPIN && (
@@ -737,6 +738,7 @@ const Transactions = () => {
 						<WalletTransferTransactionsTable
 							data={dataTransactions?.data as Transaction[]}
 							isLoading={isLoadingWalletTransfers}
+							reloadTransactions={reloadTransactions}
 						/>
 					)}
 				</Box>

@@ -80,7 +80,7 @@ export const updateWalletWithdrawal = async ({
 }): Promise<DataResponse<IWithdrawal[]>> =>
 	apiRequest({
 		method: 'PUT',
-		url: `${ENDPOINTS.Withdraw}/${id}`,
+		url: `${ENDPOINTS.Withdraw}/status/${id}`,
 		data,
 	});
 
@@ -108,14 +108,5 @@ export const bankFundings = async (params?: {
 	apiRequest({
 		method: 'GET',
 		url: `${ENDPOINTS.Transfer}`,
-		params,
-	});
-
-export const ePinTransactions = async (params?: {
-	[key: string]: any;
-}): Promise<DataResponse<IEpin[]>> =>
-	apiRequest({
-		method: 'GET',
-		url: `${ENDPOINTS.EPin}`,
 		params,
 	});

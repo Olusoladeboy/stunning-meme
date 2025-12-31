@@ -23,9 +23,14 @@ import TransactionDetailsModal from 'components/modal/transaction-details-modal'
 type Props = {
 	data: Transaction[];
 	isLoading?: boolean;
+	reloadTransactions?: () => void;
 };
 
-const WalletTransferTransactionsTable = ({ data, isLoading }: Props) => {
+const WalletTransferTransactionsTable = ({
+	data,
+	isLoading,
+	reloadTransactions,
+}: Props) => {
 	const theme = useTheme();
 	const styles = useStyles(theme);
 

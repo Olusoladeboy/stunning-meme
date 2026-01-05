@@ -797,20 +797,31 @@ const StatisticsTotalTransaction: React.FC<{
 }> = ({ data }) => {
 	return (
 		<ListItemContainer>
-			<Typography variant={'body1'}>
-				{data.dataTypeName || 'No data-type name'}
-			</Typography>
-			<FigureText variant={'h5'}>
-				{formatNumberToCurrency(data.totalAmount || 0)}
-			</FigureText>
+			<Box>
+				<Typography variant={'body1'}>Total Amount:</Typography>
+				<FigureText
+					sx={{
+						lineHeight: 0.5,
+					}}
+					variant={'h5'}
+				>
+					{formatNumberToCurrency(data.totalAmount || 0)}
+				</FigureText>
+			</Box>
 			<Box
 				sx={{
 					display: 'grid',
 					gridTemplateColumns: 'repeat(2, 1fr)',
 					gap: '6px',
-					marginTop: '6px',
+					marginTop: '15px',
 				}}
 			>
+				<Typography variant={'body1'}>
+					Data Type: {data.dataTypeName || 'No data-type name'}
+				</Typography>
+				<Typography variant={'body1'}>
+					Plan: {data.planName || 'No plan name'}
+				</Typography>
 				<Typography variant={'body1'}>
 					Total Count: {data.totalCount || 0}
 				</Typography>

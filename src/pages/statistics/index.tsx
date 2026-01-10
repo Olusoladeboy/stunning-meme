@@ -281,6 +281,22 @@ const Statistics = () => {
 			sort: sortValue.current,
 		};
 
+		const startDate = moment(values.startDate).format('YYYY-MM-DD');
+		const endDate = moment(values.endDate).format('YYYY-MM-DD');
+
+		const dateRange = `createdAt>${startDate}&createdAt<${endDate}`;
+
+		const dateParams = new URLSearchParams(dateRange);
+
+		payload = {
+			...payload,
+			...Object.fromEntries(dateParams),
+		};
+
+		dataStatisticsUrlEntries.current = Object.fromEntries(
+			new URLSearchParams(payload)
+		);
+
 		// Clear data
 		resetQueryValue(values.service);
 		network.current = '';
@@ -288,13 +304,6 @@ const Statistics = () => {
 		dataPlan.current = '';
 
 		queryValues.current = values;
-
-		// Date Range
-		if (values.dateRange && Object.keys(values.dateRange).length > 0)
-			payload = {
-				...payload,
-				...values.dateRange,
-			};
 
 		if (skipValue.current > 0) payload.skip = skipValue.current;
 
@@ -305,7 +314,10 @@ const Statistics = () => {
 
 		if (values.service === SERVICES.DATA_SUBSCRIPTION) {
 			values.populate = 'user,plan,dataType,network';
-			let dataStatisticPayload: { [key: string]: any } = {};
+			let dataStatisticPayload: { [key: string]: any } = {
+				start_data: startDate,
+				end_data: endDate,
+			};
 			if (values.provider) {
 				payload.network = values.provider;
 				network.current = values.provider;
@@ -320,13 +332,6 @@ const Statistics = () => {
 				payload.dataType = values.type;
 				dataType.current = values.type;
 				dataStatisticPayload.dataType = values.type;
-			}
-
-			if (dataStatisticsUrlEntries.current) {
-				dataStatisticPayload = {
-					...dataStatisticPayload,
-					...dataStatisticsUrlEntries.current,
-				};
 			}
 
 			queryDataSubscriptions(payload);

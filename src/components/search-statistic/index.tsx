@@ -13,11 +13,12 @@ import {
 	useQueryAirtimeNetwork,
 	useQueryDateNetwork,
 	useQueryDataTypes,
-	useQueryDataPlans,
 	useQueryConvertAirtimeNetworks,
 	useQueryCableProviders,
 	useCableBundles,
 } from 'hooks';
+import DateField from 'components/form-components/date-field';
+import useToastAlert from 'hooks/useToastAlert';
 
 const SELECT_SERVICE = 'Select service';
 const SELECT_TYPE = 'Select type';
@@ -38,6 +39,7 @@ const SearchStatistics = ({
 	switchHandleSubmit,
 	isLoading,
 }: ISearchStatistics) => {
+	const toastAlert = useToastAlert();
 	const { isLoadingAirtimeNetworks, queryAirtimeNetworks, airtimeNetworks } =
 		useQueryAirtimeNetwork();
 	const { isLoadingDataNetwork, queryDataNetwork, dataDataNetwork } =
@@ -50,9 +52,6 @@ const SearchStatistics = ({
 	const { isLoadingCableProviders, dataCableProviders, queryCableProviders } =
 		useQueryCableProviders();
 
-	const { dataDataPlans, isLoadingDataPlans, queryDataPlans } =
-		useQueryDataPlans();
-
 	const {
 		isLoadingConvertAirtimeNetwork,
 		convertAirtimeNetworks,
@@ -64,181 +63,9 @@ const SearchStatistics = ({
 		type: SELECT_TYPE,
 		plan: SELECT_PLAN,
 		provider: SELECT_PROVIDER,
+		startDate: '',
+		endDate: '',
 	};
-
-	// 	let payload: { [key: string]: any } = {
-	// 		populate: 'user,plan,dataType,network',
-	// 		limit: maxRecordRef.current,
-	// 	};
-
-	// 	if (values.service === SERVICES.DATA_SUBSCRIPTION) {
-	// 		// if (values.provider) payload.network = values.provider;
-	// 		if (values.plan && values.plan !== SELECT_PLAN)
-	// 			payload.plan = values.plan;
-	// 		if (values.type && values.type !== SELECT_TYPE)
-	// 			payload.dataType = values.type;
-	// 		queryDataSubscriptions(payload);
-	// 		return;
-	// 	}
-
-	// 	if (values.service === SERVICES.AIRTIME_TOP_UP) {
-	// 		if (values.provider && values.provider !== SELECT_PROVIDER)
-	// 			payload.network = values.provider;
-	// 		queryAirtimeTransactions(payload);
-	// 		return;
-	// 	}
-
-	// 	if (values.service === SERVICES.AIRTIME_CONVERSION) {
-	// 		if (values.provider && values.provider !== SELECT_PROVIDER)
-	// 			payload.network = values.provider;
-	// 		queryConvertAirtimes(payload);
-	// 		return;
-	// 	}
-
-	// 	// if (values.service === SERVICES.CABLE) {
-	// 	//   if (values.provider && values.provider !== SELECT_PROVIDER)
-	// 	//     payload.provider = values.provider;
-	// 	//   queryCableAdminTransactions(payload);
-	// 	//   return;
-	// 	// }
-
-	// 	if (values.service === SERVICES.CABLE) {
-	// 		queryCableAdminTransactions();
-	// 		return;
-	// 	}
-
-	// 	// if (values.service === SERVICES.INTERNET) {
-	// 	//   if (values.provider && values.provider !== SELECT_PROVIDER)
-	// 	//     payload.provider = values.provider;
-	// 	//   queryInternetAdminTransactions(payload);
-	// 	//   return;
-	// 	// }
-
-	// 	if (values.service === SERVICES.INTERNET) {
-	// 		queryInternetAdminTransactions();
-	// 		return;
-	// 	}
-
-	// 	// if (values.service === SERVICES.EDUCATION) {
-	// 	//   if (values.provider && values.provider !== SELECT_PROVIDER)
-	// 	//     payload.provider = values.provider;
-	// 	//   queryEducationAdminTransactions(payload);
-	// 	//   return;
-	// 	// }
-
-	// 	if (values.service === SERVICES.EDUCATION) {
-	// 		queryEducationAdminTransactions();
-	// 		return;
-	// 	}
-
-	// 	// if (values.service === SERVICES.ELECTRICITY) {
-	// 	//   if (values.provider && values.provider !== SELECT_PROVIDER)
-	// 	//     payload.provider = values.provider;
-	// 	//   queryElectricityAdminTransactions(payload);
-	// 	//   return;
-	// 	// }
-
-	// 	if (values.service === SERVICES.ELECTRICITY) {
-	// 		queryElectricityAdminTransactions();
-	// 		return;
-	// 	}
-
-	// 	// if (values.service === SERVICES.WITHDRAWAL) {
-	// 	//   if (values.provider && values.provider !== SELECT_PROVIDER)
-	// 	//     payload.provider = values.provider;
-	// 	//   queryWithdrawalAdminTransactions(payload);
-	// 	//   return;
-	// 	// }
-
-	// 	if (values.service === SERVICES.WITHDRAWAL) {
-	// 		queryWithdrawalAdminTransactions();
-	// 		return;
-	// 	}
-
-	// 	// if (values.service === SERVICES.AUTO_AIRTIME_CONVERSION) {
-	// 	//   if (values.provider && values.provider !== SELECT_PROVIDER)
-	// 	//     payload.provider = values.provider;
-	// 	//   queryAutoAirtimeConversionAdminTransactions(payload);
-	// 	//   return;
-	// 	// }
-
-	// 	if (values.service === SERVICES.AUTO_AIRTIME_CONVERSION) {
-	// 		queryAutoAirtimeConversionAdminTransactions();
-	// 		return;
-	// 	}
-
-	// 	// if (values.service === SERVICES.CARD_FUNDING) {
-	// 	//   if (values.provider && values.provider !== SELECT_PROVIDER)
-	// 	//     payload.provider = values.provider;
-	// 	//   queryCardTopUpAdminTransactions(payload);
-	// 	//   return;
-	// 	// }
-
-	// 	if (values.service === SERVICES.CARD_FUNDING) {
-	// 		queryCardTopUpAdminTransactions();
-	// 		return;
-	// 	}
-
-	// 	// if (values.service === SERVICES.BETTING) {
-	// 	//   if (values.provider && values.provider !== SELECT_PROVIDER)
-	// 	//     payload.provider = values.provider;
-	// 	//   queryBettingAdminTransactions(payload);
-	// 	//   return;
-	// 	// }
-
-	// 	if (values.service === SERVICES.BETTING) {
-	// 		queryBettingAdminTransactions();
-	// 		return;
-	// 	}
-
-	// 	// if (values.service === SERVICES.BANK_FUNDING) {
-	// 	//   if (values.provider && values.provider !== SELECT_PROVIDER)
-	// 	//     payload.provider = values.provider;
-	// 	//   queryBankFundingAdminTransactions(payload);
-	// 	//   return;
-	// 	// }
-
-	// 	if (values.service === SERVICES.BANK_FUNDING) {
-	// 		queryBankFundingAdminTransactions();
-	// 		return;
-	// 	}
-
-	// 	// if (values.service === SERVICES.EPIN) {
-	// 	//   if (values.provider && values.provider !== SELECT_PROVIDER)
-	// 	//     payload.provider = values.provider;
-	// 	//   queryEPinAdminTransactions(payload);
-	// 	//   return;
-	// 	// }
-
-	// 	if (values.service === SERVICES.EPIN) {
-	// 		queryEPinAdminTransactions();
-	// 		return;
-	// 	}
-
-	// 	// if (values.service === SERVICES.REVERSAL) {
-	// 	//   if (values.provider && values.provider !== SELECT_PROVIDER)
-	// 	//     payload.provider = values.provider;
-	// 	//   queryReversalAdminTransactions(payload);
-	// 	//   return;
-	// 	// }
-
-	// 	if (values.service === SERVICES.REVERSAL) {
-	// 		queryReversalAdminTransactions();
-	// 		return;
-	// 	}
-
-	// 	// if (values.service === SERVICES.WALLET_TRANSFER) {
-	// 	//   if (values.provider && values.provider !== SELECT_PROVIDER)
-	// 	//     payload.provider = values.provider;
-	// 	//   queryWalletTransferAdminTransactions(payload);
-	// 	//   return;
-	// 	// }
-
-	// 	if (values.service === SERVICES.WALLET_TRANSFER) {
-	// 		queryWalletTransferAdminTransactions();
-	// 		return;
-	// 	}
-	// };
 
 	const {
 		values,
@@ -254,7 +81,22 @@ const SearchStatistics = ({
 		onSubmit: (values) => {
 			const payload: any = {
 				service: values.service,
+				startDate: values.startDate,
+				endDate: values.endDate,
 			};
+
+			if (!values.endDate || !values.startDate) {
+				return;
+			}
+
+			if (new Date(values.startDate) > new Date(values.endDate)) {
+				toastAlert({
+					message: 'Start date cannot be after end date',
+					type: 'info',
+				});
+
+				return;
+			}
 
 			if (values.service === SELECT_SERVICE) {
 				setFieldError('service', 'Select a service');
@@ -268,7 +110,6 @@ const SearchStatistics = ({
 			if (values.provider !== SELECT_PROVIDER)
 				payload.provider = values.provider;
 
-			console.log('PAYLOAD::', payload);
 			typeof switchHandleSubmit === 'function' && switchHandleSubmit(payload);
 		},
 	});
@@ -329,13 +170,6 @@ const SearchStatistics = ({
 		setFieldValue('plan', SELECT_PLAN);
 
 		switch (service) {
-			case SERVICES.DATA_SUBSCRIPTION:
-				queryDataPlans({
-					network: provider,
-					dataType: type,
-				});
-				break;
-
 			case SERVICES.CABLE:
 				break;
 
@@ -451,7 +285,7 @@ const SearchStatistics = ({
 								))}
 						</Select>
 					</SelectContainer>
-					<SelectContainer>
+					{/* <SelectContainer>
 						<Select
 							disabled={Boolean(type === SELECT_TYPE)}
 							fullWidth
@@ -474,7 +308,7 @@ const SearchStatistics = ({
 									</MenuItem>
 								))}
 						</Select>
-					</SelectContainer>
+					</SelectContainer> */}
 				</>
 			)}
 
@@ -541,137 +375,23 @@ const SearchStatistics = ({
 								))}
 						</Select>
 					</SelectContainer>
-					{/* <SelectContainer>
-						<Select
-							fullWidth
-							value={type}
-							error={touched.type && Boolean(errors.type)}
-							helpertext={touched.type && errors.type}
-							onChange={(e) => {
-								const value = e.target.value;
-
-								handleSelectType(`${value}`);
-							}}
-						>
-							<MenuItem disabled value={SELECT_TYPE}>
-								{isLoadingCableBundles
-									? 'Loading...'
-									: cableBundles?.length === 0
-									? 'No available cable bundle'
-									: 'Select cable bundle'}
-							</MenuItem>
-							{cableBundles &&
-								cableBundles.length > 0 &&
-								cableBundles.map((value, key) => (
-									<MenuItem key={`${value.code}-${key}`} value={value.code}>
-										{value.name}
-									</MenuItem>
-								))}
-						</Select>
-					</SelectContainer> */}
 				</>
 			)}
 
-			{/* {service === SERVICES.INTERNET && (
-        <>
-          <SelectContainer>
-            <Select
-              fullWidth
-              error={touched.provider && Boolean(errors.provider)}
-              helpertext={touched.provider && errors.provider}
-              value={provider}
-              onChange={handleChange("provider") as never}
-            >
-              <MenuItem disabled value={SELECT_PROVIDER}>
-                {isLoadingInternetProviders
-                  ? "Loading..."
-                  : dataInternetProviders &&
-                    dataInternetProviders.payload.length === 0
-                  ? "No available provider"
-                  : "Select internet provider"}
-              </MenuItem>
-              {dataInternetProviders &&
-                dataInternetProviders.payload.length > 0 &&
-                dataInternetProviders.payload.map((provider) => (
-                  <MenuItem
-                    key={provider.billerid}
-                    value={provider.service_type}
-                  >
-                    {provider.service_type}
-                  </MenuItem>
-                ))}
-            </Select>
-          </SelectContainer>
-        </>
-      )}
-
-      {service === SERVICES.EDUCATION && (
-        <>
-          <SelectContainer>
-            <Select
-              fullWidth
-              error={touched.provider && Boolean(errors.provider)}
-              helpertext={touched.provider && errors.provider}
-              value={provider}
-              onChange={handleChange("provider") as never}
-            >
-              <MenuItem disabled value={SELECT_PROVIDER}>
-                {isLoadingEducationProviders
-                  ? "Loading..."
-                  : dataEducationProviders &&
-                    dataEducationProviders.payload.length === 0
-                  ? "No available provider"
-                  : "Select education provider"}
-              </MenuItem>
-              {dataEducationProviders &&
-                dataEducationProviders.payload.length > 0 &&
-                dataEducationProviders.payload.map((provider) => (
-                  <MenuItem
-                    key={provider.billerid}
-                    value={provider.service_type}
-                  >
-                    {provider.service_type}
-                  </MenuItem>
-                ))}
-            </Select>
-          </SelectContainer>
-        </>
-      )} 
-
-      {service === SERVICES.ELECTRICITY && (
-        <>
-          <SelectContainer>
-            <Select
-              fullWidth
-              error={touched.provider && Boolean(errors.provider)}
-              helpertext={touched.provider && errors.provider}
-              value={provider}
-              onChange={handleChange("provider") as never}
-            >
-              <MenuItem disabled value={SELECT_PROVIDER}>
-                {isLoadingElectricityProviders
-                  ? "Loading..."
-                  : dataElectricityProviders &&
-                    dataElectricityProviders.payload.length === 0
-                  ? "No available provider"
-                  : "Select electricity provider"}
-              </MenuItem>
-              {dataElectricityProviders &&
-                dataElectricityProviders.payload.length > 0 &&
-                dataElectricityProviders.payload.map((provider) => (
-                  <MenuItem
-                    key={provider.billerid}
-                    value={provider.service_type}
-                  >
-                    {provider.service_type}
-                  </MenuItem>
-                ))}
-            </Select>
-          </SelectContainer>
-        </>
-      )} 
-      
-      */}
+			{service !== SELECT_SERVICE && (
+				<>
+					<DateField
+						placeholder='Start Date'
+						value={values?.startDate as any}
+						onChange={(value) => setFieldValue('startDate', value)}
+					/>
+					<DateField
+						placeholder='End Date'
+						value={values?.endDate as any}
+						onChange={(value) => setFieldValue('endDate', value)}
+					/>
+				</>
+			)}
 
 			<Button
 				loading={isLoading}

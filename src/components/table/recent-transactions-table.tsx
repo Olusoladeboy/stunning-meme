@@ -133,11 +133,11 @@ const RecentTransactionsTable = () => {
 													{row.user && row.user.phone}
 												</StyledTableCell>
 												<StyledTableCell>
-													{formatNumberToCurrency(
+													{/* {formatNumberToCurrency(
 														typeof row.amount !== 'string'
 															? row.amount.$numberDecimal
-															: row.amount
-													)}
+															: row.amount || 0
+													)} */}
 												</StyledTableCell>
 											</StyledTableRow>
 										))

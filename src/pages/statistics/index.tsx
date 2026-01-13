@@ -25,6 +25,10 @@ import {
 	GiftcardESimTransactionTable,
 	CreditDebitTable,
 	ExportButton,
+	ModalWrapper,
+	Button,
+	Loader,
+	CircularProgress,
 } from 'components';
 import {
 	BOX_SHADOW,
@@ -37,6 +41,9 @@ import {
 	STATISTIC_TAB,
 	getFilterDateRange,
 	Transaction,
+	SECOUNDARY_COLOR,
+	formatNumberToCurrency,
+	IDataSubscriptionStatistic,
 } from 'utilities';
 import {
 	usePageTitle,
@@ -54,7 +61,10 @@ import {
 	useQueryInternationalDataTransactions,
 	useQueryESimTransactions,
 	useQueryTransactions,
+	useQueryDataStatisticSubscriptions,
 } from 'hooks';
+import DatePicker from 'components/form-components/date-picker';
+import moment from 'moment';
 
 type TDataStatistics = {
 	service: string;
@@ -70,13 +80,19 @@ const Statistics = () => {
 		STATISTIC_TAB.ALL_TIME
 	);
 
+	const [isDisplayPicker, setDisplayPicker] = useState<boolean>(false);
+
 	const filterUrlEntries = useRef<null | { [key: string]: any }>(null);
+	const dataStatisticsUrlEntries = useRef<null | { [key: string]: any }>(null);
 
 	const queryValues = useRef<null | { [key: string]: any }>(null);
 	const sortValue = useRef<string>('-createdAt');
 	const dataPlan = useRef<string>('');
 	const dataType = useRef<string>('');
 	const network = useRef<string>('');
+
+	const startDate = useRef<string>('');
+	const endDate = useRef<string>('');
 
 	const maxRecordRef = useRef<number>(20);
 	const skipValue = useRef<number>(0);
@@ -235,6 +251,12 @@ const Statistics = () => {
 		}
 	);
 
+	const {
+		isLoadingDataStatisticSubscriptions,
+		dataSubscriptionStatistics,
+		queryDataSubscriptionStatistics,
+	} = useQueryDataStatisticSubscriptions();
+
 	const isLoading =
 		isLoadingDataSubscriptions ||
 		isLoadingAirtimeTransactions ||
@@ -259,6 +281,22 @@ const Statistics = () => {
 			sort: sortValue.current,
 		};
 
+		const startDate = moment(values.startDate).format('YYYY-MM-DD');
+		const endDate = moment(values.endDate).format('YYYY-MM-DD');
+
+		const dateRange = `createdAt>${startDate}&createdAt<${endDate}`;
+
+		const dateParams = new URLSearchParams(dateRange);
+
+		payload = {
+			...payload,
+			...Object.fromEntries(dateParams),
+		};
+
+		dataStatisticsUrlEntries.current = Object.fromEntries(
+			new URLSearchParams(payload)
+		);
+
 		// Clear data
 		resetQueryValue(values.service);
 		network.current = '';
@@ -266,13 +304,6 @@ const Statistics = () => {
 		dataPlan.current = '';
 
 		queryValues.current = values;
-
-		// Date Range
-		if (values.dateRange && Object.keys(values.dateRange).length > 0)
-			payload = {
-				...payload,
-				...values.dateRange,
-			};
 
 		if (skipValue.current > 0) payload.skip = skipValue.current;
 
@@ -283,20 +314,28 @@ const Statistics = () => {
 
 		if (values.service === SERVICES.DATA_SUBSCRIPTION) {
 			values.populate = 'user,plan,dataType,network';
+			let dataStatisticPayload: { [key: string]: any } = {
+				start_data: startDate,
+				end_data: endDate,
+			};
 			if (values.provider) {
 				payload.network = values.provider;
 				network.current = values.provider;
+				dataStatisticPayload.network = values.provider;
 			}
 			if (values.plan) {
 				payload.plan = values.plan;
 				dataPlan.current = values.plan;
+				dataStatisticPayload.plan = values.plan;
 			}
 			if (values.type) {
 				payload.dataType = values.type;
 				dataType.current = values.type;
+				dataStatisticPayload.dataType = values.type;
 			}
 
 			queryDataSubscriptions(payload);
+			queryDataSubscriptionStatistics(dataStatisticPayload);
 			return;
 		}
 
@@ -451,8 +490,76 @@ const Statistics = () => {
 		if (queryValues?.current) switchHandleSubmit(queryValues?.current as any);
 	};
 
+	const handleSetDateRange = (dateRange: any) => {
+		// Clear state
+		startDate.current = '';
+		endDate.current = '';
+
+		const rangeStartDate = moment(dateRange.startDate).format('YYYY-MM-DD');
+		const rangeEndDate = moment(dateRange.endDate).format('YYYY-MM-DD');
+
+		if (rangeStartDate === rangeEndDate) {
+			startDate.current = rangeStartDate;
+		} else {
+			startDate.current = rangeStartDate;
+			endDate.current = rangeEndDate;
+		}
+	};
+
+	const onApplyDateFilter = () => {
+		let payload: { [key: string]: any } = {};
+
+		let dateRange = '';
+
+		if (startDate.current) {
+			payload.start_date = startDate.current;
+			dateRange += `createdAt>${startDate.current}`;
+		}
+		if (endDate.current) {
+			payload.end_date = endDate.current;
+			dateRange += `&createdAt<${endDate.current}`;
+		}
+
+		// const dataRange = `createdAt>${prevDate(days)}&createdAt<${todayDate}`
+
+		const searchParams = new URLSearchParams(dateRange);
+		filterUrlEntries.current = Object.fromEntries(searchParams);
+		dataStatisticsUrlEntries.current = Object.fromEntries(
+			new URLSearchParams(payload)
+		);
+
+		if (queryValues?.current) switchHandleSubmit(queryValues?.current as any);
+	};
+
 	return (
 		<Layout>
+			{isDisplayPicker && (
+				<ModalWrapper
+					title={'Filter Statistics'}
+					contentWidth='700px'
+					closeModal={() => setDisplayPicker(false)}
+				>
+					<DatePicker
+						cancelPicker={() => setDisplayPicker(false)}
+						setDateRange={handleSetDateRange}
+						customButton={
+							<Button
+								sx={{
+									backgroundColor: `${SECOUNDARY_COLOR} !important`,
+									color: 'white',
+									marginTop: '10px',
+								}}
+								onClick={() => {
+									setDisplayPicker(false);
+									onApplyDateFilter();
+								}}
+							>
+								Apply
+							</Button>
+						}
+					/>
+				</ModalWrapper>
+			)}
 			<RouteGuard
 				roles={[
 					ADMIN_ROLE.SUPER_ADMIN,
@@ -479,15 +586,70 @@ const Statistics = () => {
 							}
 						/>
 
-						<StatisticTab
+						{/* <StatisticTab
 							selectedFilter={selectedFilter}
 							selectFilter={handleSelectFilter}
-						/>
-						<StatisticsContainer>
-							<StatisticsTotal name={'Total  Revenue'} figure={123000} />
-							<StatisticsTotal name={'Total  Transactions'} figure={123000} />
-							<StatisticsTotal name={'Total  Data Revenue'} figure={123000} />
-						</StatisticsContainer>
+						/> */}
+						{dataStatistics && dataStatistics.data && (
+							<Box>
+								<Button
+									size='large'
+									sx={{
+										backgroundColor: `${SECOUNDARY_COLOR} !important`,
+										color: 'white',
+									}}
+									onClick={() => setDisplayPicker(true)}
+								>
+									Filter by Date
+								</Button>
+							</Box>
+						)}
+						{dataStatistics?.service === SERVICES.DATA_SUBSCRIPTION && (
+							<>
+								{isLoadingDataStatisticSubscriptions ? (
+									<Box
+										sx={{
+											display: 'flex',
+											flexDirection: 'column',
+											gap: '8px',
+											alignItems: 'center',
+											justifyContent: 'center',
+										}}
+									>
+										<CircularProgress />
+										<Typography>Loading..</Typography>
+									</Box>
+								) : (
+									dataSubscriptionStatistics && (
+										<>
+											{Array.isArray(dataSubscriptionStatistics) &&
+											dataSubscriptionStatistics.length > 0 ? (
+												<StatisticsContainer>
+													{dataSubscriptionStatistics.map((value, key) => (
+														<StatisticsTotalTransaction
+															key={key}
+															data={value}
+														/>
+													))}
+												</StatisticsContainer>
+											) : Object.keys(dataSubscriptionStatistics).length > 0 ? (
+												<StatisticsContainer>
+													<StatisticsTotalTransaction
+														data={
+															dataSubscriptionStatistics as IDataSubscriptionStatistic
+														}
+													/>
+												</StatisticsContainer>
+											) : (
+												<Typography sx={{ textAlign: 'center' }}>
+													No available statistic
+												</Typography>
+											)}
+										</>
+									)
+								)}
+							</>
+						)}
 						{dataStatistics && dataStatistics.data && (
 							<Box
 								sx={{
@@ -634,6 +796,62 @@ const Statistics = () => {
 };
 
 export default Statistics;
+
+const StatisticsTotalTransaction: React.FC<{
+	data: IDataSubscriptionStatistic;
+}> = ({ data }) => {
+	return (
+		<ListItemContainer>
+			<Box>
+				<Typography variant={'body1'}>Total Amount:</Typography>
+				<FigureText
+					sx={{
+						lineHeight: 0.5,
+					}}
+					variant={'h5'}
+				>
+					{formatNumberToCurrency(data.totalAmount || 0)}
+				</FigureText>
+			</Box>
+			<Box
+				sx={{
+					display: 'grid',
+					gridTemplateColumns: 'repeat(2, 1fr)',
+					gap: '6px',
+					marginTop: '15px',
+				}}
+			>
+				<Typography variant={'body1'}>
+					Data Type: {data.dataTypeName || 'No data-type name'}
+				</Typography>
+				<Typography variant={'body1'}>
+					Plan: {data.planName || 'No plan name'}
+				</Typography>
+				<Typography variant={'body1'}>
+					Total Count: {data.totalCount || 0}
+				</Typography>
+				<Typography variant={'body1'}>
+					Total Cost Price: {data.totalCostPrice || 0}
+				</Typography>
+				<Typography variant={'body1'}>
+					Total User Count: {data.totalUserCount || 0}
+				</Typography>
+			</Box>
+		</ListItemContainer>
+	);
+};
+
+const FigureText = styled(Typography)(({ theme }) => ({
+	fontWeight: 'bold',
+	fontSize: '32px',
+	marginTop: theme.spacing(2),
+}));
+
+const ListItemContainer = styled(Box)(({ theme }) => ({
+	padding: '15px 20px',
+	borderRadius: theme.spacing(2),
+	border: `1px solid ${grey['600']}`,
+}));
 
 const StatisticsContainer = styled(Box)(({ theme }) => ({
 	display: 'grid',

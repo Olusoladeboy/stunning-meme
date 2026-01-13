@@ -64,7 +64,6 @@ const LargeView = () => {
 							</Box>
 						)}
 						<RecentConversionsTable />
-						{/* <RecentTransactionsTable /> */}
 						{isSupperAdmin && <Services />}
 					</Box>
 				</Box>
@@ -114,7 +113,7 @@ const MobileView = () => {
 			</Box>
 			<UserRecord />
 			<RecentConversionsTable />
-			<RecentTransactionsTable />
+			{/* <RecentTransactionsTable /> */}
 			<TaskList />
 		</Box>
 	);

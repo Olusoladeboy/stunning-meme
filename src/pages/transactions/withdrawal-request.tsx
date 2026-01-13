@@ -61,6 +61,7 @@ const WithdrawalRequestTransactions = () => {
 				skip: (page - 1) * maxRecordRef.current,
 				populate: 'user',
 				status: 'PENDING',
+				canRequery: false,
 			}),
 		{
 			retry: 2,
@@ -118,6 +119,7 @@ const WithdrawalRequestTransactions = () => {
 					</Box>
 
 					<WithdrawalTransactionsTable
+						isWithdrawalRequest
 						hasActionButton
 						isLoading={isLoading || isSearching}
 						data={search && search.length > 0 ? search : data && data.payload}

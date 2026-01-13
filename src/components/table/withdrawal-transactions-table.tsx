@@ -8,7 +8,7 @@ import {
 	styled,
 } from '@mui/material';
 import { useMutation, useQueryClient } from 'react-query';
-import { updateWalletWithdrawal } from 'api';
+import { updateWalletWithdrawal, updateWalletWithdrawalRequest } from 'api';
 import moment from 'moment';
 import { StyledTableCell, StyledTableRow } from './components';
 import {
@@ -31,6 +31,7 @@ type Props = {
 	isLoading?: boolean;
 	hasActionButton?: boolean;
 	reloadTransactions?: () => void;
+	isWithdrawalRequest?: boolean;
 };
 
 const WithdrawalTransactionsTable = ({
@@ -38,6 +39,7 @@ const WithdrawalTransactionsTable = ({
 	isLoading,
 	hasActionButton,
 	reloadTransactions,
+	isWithdrawalRequest,
 }: Props) => {
 	const theme = useTheme();
 	const handleError = useHandleError();
@@ -56,30 +58,31 @@ const WithdrawalTransactionsTable = ({
 		setSelectedTransaction(value);
 	};
 
-	const { isLoading: isUpdating, mutate } = useMutation(
-		updateWalletWithdrawal,
-		{
-			onSettled: (data, error) => {
-				if (error) {
-					const response = handleError({ error });
-					if (response && response?.message) {
-						alert({
-							message: response.message,
-							type: 'error',
-						});
-					}
-				}
-				if (data && data.success) {
-					queryClient.invalidateQueries(['Withdrawal']);
-					reloadTransactions?.();
+	const controller = isWithdrawalRequest
+		? updateWalletWithdrawalRequest
+		: updateWalletWithdrawal;
+
+	const { isLoading: isUpdating, mutate } = useMutation(controller, {
+		onSettled: (data, error) => {
+			if (error) {
+				const response = handleError({ error });
+				if (response && response?.message) {
 					alert({
-						message: 'Transaction updated successfully',
-						type: 'success',
+						message: response.message,
+						type: 'error',
 					});
 				}
-			},
-		}
-	);
+			}
+			if (data && data.success) {
+				queryClient.invalidateQueries(['Withdrawal']);
+				reloadTransactions?.();
+				alert({
+					message: 'Transaction updated successfully',
+					type: 'success',
+				});
+			}
+		},
+	});
 
 	const handleMutate = ({ id, status }: { id: string; status: string }) => {
 		if (!canApproveWithdrawal) {
@@ -199,7 +202,9 @@ const WithdrawalTransactionsTable = ({
 																		e.stopPropagation();
 																		handleMutate({
 																			id: value.id,
-																			status: 'SUCCESSFUL',
+																			status: isWithdrawalRequest
+																				? 'APPROVE'
+																				: 'SUCCESSFUL',
 																		});
 																	}}
 																	sx={{
@@ -217,7 +222,9 @@ const WithdrawalTransactionsTable = ({
 																		e.stopPropagation();
 																		handleMutate({
 																			id: value.id,
-																			status: 'FAILED',
+																			status: isWithdrawalRequest
+																				? 'DECLINE'
+																				: 'FAILED',
 																		});
 																	}}
 																	sx={{

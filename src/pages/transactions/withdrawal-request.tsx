@@ -119,6 +119,7 @@ const WithdrawalRequestTransactions = () => {
 					</Box>
 
 					<WithdrawalTransactionsTable
+						isWithdrawalRequest
 						hasActionButton
 						isLoading={isLoading || isSearching}
 						data={search && search.length > 0 ? search : data && data.payload}

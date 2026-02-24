@@ -279,6 +279,7 @@ const Statistics = () => {
 			limit: maxRecordRef.current,
 			// sort: '-createdAt',
 			sort: sortValue.current,
+			status: 'SUCCESSFUL',
 		};
 
 		const startDate = moment(values.startDate).format('YYYY-MM-DD');

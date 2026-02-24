@@ -77,7 +77,7 @@ const Statistics = () => {
 	const [total, setTotal] = useState(0);
 	const [currentPage, setCurrentPage] = useState(1);
 	const [selectedFilter, setSelectedFilter] = useState<string>(
-		STATISTIC_TAB.ALL_TIME
+		STATISTIC_TAB.ALL_TIME,
 	);
 
 	const [isDisplayPicker, setDisplayPicker] = useState<boolean>(false);
@@ -98,7 +98,7 @@ const Statistics = () => {
 	const skipValue = useRef<number>(0);
 
 	const [dataStatistics, setDataStatistics] = useState<null | TDataStatistics>(
-		null
+		null,
 	);
 
 	const handleSetDataStatistics = (data: TDataStatistics) => {
@@ -248,7 +248,7 @@ const Statistics = () => {
 				data,
 				service: service as string,
 			});
-		}
+		},
 	);
 
 	const {
@@ -294,7 +294,7 @@ const Statistics = () => {
 		};
 
 		dataStatisticsUrlEntries.current = Object.fromEntries(
-			new URLSearchParams(payload)
+			new URLSearchParams(payload),
 		);
 
 		// Clear data
@@ -315,8 +315,8 @@ const Statistics = () => {
 		if (values.service === SERVICES.DATA_SUBSCRIPTION) {
 			values.populate = 'user,plan,dataType,network';
 			let dataStatisticPayload: { [key: string]: any } = {
-				start_data: startDate,
-				end_data: endDate,
+				start_date: startDate,
+				end_date: endDate,
 			};
 			if (values.provider) {
 				payload.network = values.provider;
@@ -525,7 +525,7 @@ const Statistics = () => {
 		const searchParams = new URLSearchParams(dateRange);
 		filterUrlEntries.current = Object.fromEntries(searchParams);
 		dataStatisticsUrlEntries.current = Object.fromEntries(
-			new URLSearchParams(payload)
+			new URLSearchParams(payload),
 		);
 
 		if (queryValues?.current) switchHandleSubmit(queryValues?.current as any);
@@ -590,20 +590,7 @@ const Statistics = () => {
 							selectedFilter={selectedFilter}
 							selectFilter={handleSelectFilter}
 						/> */}
-						{dataStatistics && dataStatistics.data && (
-							<Box>
-								<Button
-									size='large'
-									sx={{
-										backgroundColor: `${SECOUNDARY_COLOR} !important`,
-										color: 'white',
-									}}
-									onClick={() => setDisplayPicker(true)}
-								>
-									Filter by Date
-								</Button>
-							</Box>
-						)}
+
 						{dataStatistics?.service === SERVICES.DATA_SUBSCRIPTION && (
 							<>
 								{isLoadingDataStatisticSubscriptions ? (

@@ -125,3 +125,18 @@ export const bankFundings = async (params?: {
 		url: `${ENDPOINTS.Transfer}`,
 		params,
 	});
+
+export const statementOfAccount = async (props: {
+	signal?: AbortSignal;
+	params?: {
+		start_date: string;
+		end_date: string;
+	};
+	userId: string;
+}): Promise<DataResponse<undefined>> =>
+	apiRequest({
+		url: `${ENDPOINTS.Transaction}/user/${props.userId}/statement`,
+		method: 'GET',
+		signal: props.signal,
+		params: props.params,
+	});

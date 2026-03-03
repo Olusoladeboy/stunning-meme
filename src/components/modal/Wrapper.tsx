@@ -33,7 +33,6 @@ const ModalWrapper = ({
 
 	return (
 		<Box
-			onClick={onBackgroundClick}
 			sx={{
 				position: 'fixed',
 				top: '0px',
@@ -61,7 +60,7 @@ const ModalWrapper = ({
 			>
 				{hasCloseButton && (
 					<IconButton
-						onClick={() => typeof closeModal !== 'undefined' && closeModal()}
+						onClick={closeModal}
 						size={'small'}
 						sx={{
 							position: 'absolute',

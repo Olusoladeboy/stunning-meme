@@ -16,6 +16,7 @@ import { useHandleError, useAlert, useQueryVerification } from 'hooks';
 import Loader from 'components/loader';
 import { UserWallet, UserLien } from 'components';
 import { useAppSelector } from 'store/hooks';
+import BankStatementForm from 'components/forms/bank-statement-form';
 
 type Props = {
 	user: User | null;
@@ -27,6 +28,8 @@ const UserProfile = ({ user }: Props) => {
 	const handleError = useHandleError();
 	const queryClient = useQueryClient();
 	const theme = useTheme();
+	const [isDisplayStatementModal, setDisplayStatementModal] =
+		useState<boolean>(false);
 	const {
 		isQueryingVerification,
 		verification,
@@ -36,7 +39,7 @@ const UserProfile = ({ user }: Props) => {
 
 	const token = useAppSelector((store) => store.authState.token);
 	const isSupperAdmin = useAppSelector(
-		(store) => store.authState.isSupperAdmin
+		(store) => store.authState.isSupperAdmin,
 	);
 
 	const styles = useStyles(theme);
@@ -96,7 +99,7 @@ const UserProfile = ({ user }: Props) => {
 					}
 				}
 			},
-		}
+		},
 	);
 
 	const wallet =
@@ -109,6 +112,20 @@ const UserProfile = ({ user }: Props) => {
 
 	return (
 		<>
+			{isDisplayStatementModal && (
+				<ModalWrapper
+					canOverlayCloseModal
+					hasCloseButton={true}
+					closeModal={() => setDisplayStatementModal(false)}
+				>
+					<Box>
+						<BankStatementForm
+							callback={() => setDisplayStatementModal(false)}
+							userId={user?.id as string}
+						/>
+					</Box>
+				</ModalWrapper>
+			)}
 			{verification && (
 				<ModalWrapper
 					canOverlayCloseModal
@@ -218,7 +235,7 @@ const UserProfile = ({ user }: Props) => {
 						sx={{
 							display: 'flex',
 							alignItems: 'center',
-							gap: ['25px', '50px'],
+							gap: ['15px'],
 							marginTop: theme.spacing(4),
 						}}
 					>
@@ -258,23 +275,41 @@ const UserProfile = ({ user }: Props) => {
 						)}
 
 						{isSupperAdmin && (
-							<Button
-								loading={isQueryingVerification}
-								onClick={onQueryVerification}
-								sx={{
-									backgroundColor: theme.palette.secondary.main,
-									color: grey[50],
-									textTransform: 'uppercase',
-									fontWeight: '600',
-									minWidth: '160px',
-
-									':hover': {
+							<>
+								<Button
+									loading={isQueryingVerification}
+									onClick={onQueryVerification}
+									sx={{
 										backgroundColor: theme.palette.secondary.main,
-									},
-								}}
-							>
-								View KYC
-							</Button>
+										color: grey[50],
+										textTransform: 'uppercase',
+										fontWeight: '600',
+										minWidth: '160px',
+
+										':hover': {
+											backgroundColor: theme.palette.secondary.main,
+										},
+									}}
+								>
+									View KYC
+								</Button>
+								<Button
+									onClick={() => setDisplayStatementModal(true)}
+									sx={{
+										backgroundColor: theme.palette.secondary.main,
+										color: grey[50],
+										textTransform: 'uppercase',
+										fontWeight: '600',
+										minWidth: '160px',
+
+										':hover': {
+											backgroundColor: theme.palette.secondary.main,
+										},
+									}}
+								>
+									Statement of Account
+								</Button>
+							</>
 						)}
 					</Box>
 				</Box>

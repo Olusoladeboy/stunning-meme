@@ -420,7 +420,7 @@ export interface IBvnVerification {
 		{
 			url: string;
 			image_type: string;
-		}
+		},
 	];
 	enrollment: {
 		bank: string;
@@ -454,7 +454,7 @@ export interface IBvnVerification {
 							id: string;
 							archived: boolean;
 							product: string;
-						}
+						},
 					];
 					source: string;
 					limit: string;

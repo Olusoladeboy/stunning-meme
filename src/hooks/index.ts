@@ -20,3 +20,4 @@ export { default as useAuditLogViewAction } from './audit-log-view-action';
 export { default as useSearchBvn } from './search-hooks/search-bvn';
 export * from './verifications';
 export * from './settings';
+export * from './search-hooks/search-blacklisted-number';

@@ -74,30 +74,23 @@ const TableHeader = ({
 			<Box
 				sx={{
 					display: 'flex',
-					gap: '20px',
+					gap: '15px',
+					alignItems: 'center',
 				}}
 			>
-				<Box
-					sx={{
-						display: 'flex',
-						gap: '15px',
-						alignItems: 'center',
-					}}
-				>
-					{statusFilter}
-					{deletedCheckbox}
-					{children}
-					{canSearch && (
-						<SearchInput
-							fullWidth
-							sx={{ maxWidth: ['100%', '320px'], minWidth: ['100%', '300px'] }}
-							placeholder={rest.placeholder || searchPlaceholder}
-							handleSearch={handleSearch}
-							clearSearch={clearSearch}
-							size={searchInputSize}
-						/>
-					)}
-				</Box>
+				{statusFilter}
+				{deletedCheckbox}
+				{children}
+				{canSearch && (
+					<SearchInput
+						fullWidth
+						sx={{ maxWidth: ['100%', '400px'], minWidth: ['100%', '300px'] }}
+						placeholder={rest.placeholder || searchPlaceholder}
+						handleSearch={handleSearch}
+						clearSearch={clearSearch}
+						size={searchInputSize}
+					/>
+				)}
 			</Box>
 		</Box>
 	);

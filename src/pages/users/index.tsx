@@ -20,7 +20,7 @@ const Users = () => {
 	const location = useLocation();
 	const query = queryString.parse(location.search);
 	const [usersStatus, setUsersStatus] = useState<{ [key: string]: boolean }>(
-		{} as { [key: string]: boolean }
+		{} as { [key: string]: boolean },
 	);
 	const [currentTab, setCurrentTab] = useState(USERS_TAB.All);
 	const { isSearching, search, clearSearch, searchUser } = useSearchUser();
@@ -60,7 +60,7 @@ const Users = () => {
 					setCount(count);
 				}
 			},
-		}
+		},
 	);
 
 	const handlePageChange = (page: number) => {

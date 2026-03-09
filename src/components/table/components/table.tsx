@@ -5,15 +5,15 @@ import { ErrorBoundaryGuard, Transaction, LIGHT_GRAY } from 'utilities';
 import Loader from '../../loader/table-loader';
 import TableEmpty from '../../empty/table-empty';
 
-interface IAppTable {
+type IAppTable = {
 	header: string[];
-	body: { data: any[]; rawData: Transaction }[] | null;
+	body: { data: any[]; rawData?: any }[] | null;
 	isLoading?: boolean;
 	numberOfColumns: number;
 	emptyText?: string;
 	canClickRow?: boolean;
-	onRowClick?: (value: Transaction) => void;
-}
+	onRowClick?: (value: any) => void;
+};
 
 const AppTable = ({
 	header,

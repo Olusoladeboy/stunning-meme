@@ -41,3 +41,5 @@ export { default as TransactionMostUsers } from './transactions/transactions-mos
 // Business
 export { default as Businesses } from './business';
 export { default as BusinessProfile } from './business/profile';
+
+export { default as BlacklistedNumberPage } from './blacklisted-numbers';

@@ -27,6 +27,7 @@ import { useHandleError } from 'hooks';
 import { updateBillTransactions } from 'api/bill';
 import { useAppSelector } from 'store/hooks';
 import Loader from 'components/loader';
+import useToastAlert from 'hooks/useToastAlert';
 
 type Props = {
 	data: IPurchasedBill[];
@@ -39,6 +40,7 @@ const BettingTransactionsTable = ({
 	isLoading,
 	reloadTransactions,
 }: Props) => {
+	const alert = useToastAlert();
 	const theme = useTheme();
 	const styles = useStyles(theme);
 	const handleError = useHandleError();
@@ -46,7 +48,7 @@ const BettingTransactionsTable = ({
 		useState<null | Transaction>(null);
 
 	const isSupperAdmin = useAppSelector(
-		(store) => store.authState.isSupperAdmin
+		(store) => store.authState.isSupperAdmin,
 	);
 
 	const handleClickRow = (value: Transaction) => {

@@ -48,7 +48,7 @@ const ListItemButton = ({
 	const activeColor = theme.palette.secondary.main;
 	const styles = useStyles(theme);
 	const isToggleDrawer = useAppSelector(
-		(store) => store.appState.isToggleDrawer
+		(store) => store.appState.isToggleDrawer,
 	);
 
 	const handleNavigate = () => {
@@ -104,10 +104,10 @@ const DrawerList = () => {
 
 	const styles = useStyles(theme);
 	const canViewStatistics = useAppSelector(
-		(store) => store.authState.canViewStatistics
+		(store) => store.authState.canViewStatistics,
 	);
 	const isToggleDrawer = useAppSelector(
-		(store) => store.appState.isToggleDrawer
+		(store) => store.appState.isToggleDrawer,
 	);
 
 	return (
@@ -558,6 +558,28 @@ const DrawerList = () => {
 							color={
 								getActiveLink({ name: 'suspension', currentPath: pathname })
 									.isActive
+									? activeColor
+									: initialColor
+							}
+						/>
+					}
+				/>
+				<ListItemButton
+					name={'Blacklisted Number'}
+					link={LINKS.BlacklistedNumbers}
+					isActive={
+						getActiveLink({
+							name: 'blacklisted-numbers',
+							currentPath: pathname,
+						}).isActive
+					}
+					icon={
+						<SuspensionIcon
+							color={
+								getActiveLink({
+									name: 'blacklisted-numbers',
+									currentPath: pathname,
+								}).isActive
 									? activeColor
 									: initialColor
 							}

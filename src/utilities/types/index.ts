@@ -1125,3 +1125,13 @@ export interface IDataSubscriptionStatistic {
 	totalCostPrice: number;
 	totalUserCount: number;
 }
+
+export interface IBlacklistedNumber {
+	services: string[];
+	isActive: boolean;
+	phone_number: string;
+	reason: string;
+	createdAt: Date;
+	updatedAt: Date;
+	id: string;
+}

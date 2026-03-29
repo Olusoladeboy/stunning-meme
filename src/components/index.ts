@@ -135,3 +135,5 @@ export { default as RecipientForm } from './forms/recipient-form';
 export { default as AutoConversionStatistics } from './auto-convert-statistics';
 export { default as Services } from './services';
 export { default as DateField } from './form-components/date-field';
+
+export { default as BlacklistedNumbersTable } from './table/blacklisted-number-table';

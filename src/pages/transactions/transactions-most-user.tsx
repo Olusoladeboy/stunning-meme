@@ -77,7 +77,7 @@ const TransactionMostUsers = () => {
 	});
 
 	const [serviceAnchorEl, setServiceAnchorEl] = useState<null | HTMLElement>(
-		null
+		null,
 	);
 	const [transactionService, setTransactionService] = useState<string>('');
 
@@ -94,7 +94,7 @@ const TransactionMostUsers = () => {
 			// handleQueryTransaction(transactionService);
 		},
 		// eslint-disable-next-line
-		[query, query?.page]
+		[query, query?.page],
 	);
 
 	/*
@@ -126,7 +126,11 @@ const TransactionMostUsers = () => {
 		};
 
 		if (startDate.current) payload.start_date = startDate.current;
-		if (endDate.current) payload.end_date = endDate.current;
+		if (endDate.current) {
+			payload.end_date = endDate.current;
+		} else if (startDate.current) {
+			payload.end_date = startDate.current;
+		}
 
 		if (page > 1) payload.page = page;
 

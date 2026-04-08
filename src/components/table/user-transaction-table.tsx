@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import {
 	useTheme,
 	Box,
@@ -9,7 +9,6 @@ import {
 } from '@mui/material';
 import moment from 'moment';
 import { StyledTableRow, StyledTableCell } from './components';
-import TableHeader from '../header/table-header';
 import {
 	Transaction,
 	formatNumberToCurrency,
@@ -103,15 +102,15 @@ const UserTransactionsTable = ({
 													{row.transaction
 														? row.transaction.service
 														: row.service
-														? row.service
-														: row.type}
+															? row.service
+															: row.type}
 												</StyledTableCell>
 												<StyledTableCell style={styles.text}>
 													{row.reference
 														? row.reference
 														: row.transaction
-														? row.transaction.reference
-														: 'No Reference'}
+															? row.transaction.reference
+															: 'No Reference'}
 												</StyledTableCell>
 												<StyledTableCell style={styles.text}>
 													{formatNumberToCurrency(checkAmount(row.amount))}

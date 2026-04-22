@@ -66,7 +66,7 @@ const LienTransactions = () => {
 					setCount(count);
 				}
 			},
-		}
+		},
 	);
 
 	const handlePageChange = (page: number) => {
@@ -97,7 +97,7 @@ const LienTransactions = () => {
 					<TableHeader
 						searchPlaceholder={'Search transaction by email'}
 						title={'Lien Transactions'}
-						handleSearch={searchTransaction}
+						handleSearch={(value) => searchTransaction({ value })}
 						clearSearch={clearSearch}
 					/>
 				</Box>

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Box, useTheme } from '@mui/material';
 import { useQuery } from 'react-query';
 import queryString from 'query-string';
@@ -77,7 +77,7 @@ const BusinessCommissions = ({ business }: Props) => {
 					setCount(count);
 				}
 			},
-		}
+		},
 	);
 
 	const handlePageChange = (page: number) => {
@@ -129,7 +129,7 @@ const BusinessCommissions = ({ business }: Props) => {
 					</Box>
 					<BusinessCommissionsTable
 						isLoading={isLoading || isSearching}
-						searchTransaction={searchTransaction}
+						searchTransaction={(value) => searchTransaction({ value })}
 						data={data && data.payload}
 						clearSearch={clearSearch}
 						handleSelectCommission={handleSelectCommission}

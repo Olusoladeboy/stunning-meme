@@ -76,7 +76,7 @@ const BusinessServiceActivations = ({ business }: Props) => {
 					setCount(count);
 				}
 			},
-		}
+		},
 	);
 
 	const handlePageChange = (page: number) => {
@@ -113,7 +113,7 @@ const BusinessServiceActivations = ({ business }: Props) => {
 				<Box sx={{ marginTop: theme.spacing(4) }}>
 					<BusinessServiceActivationTable
 						isLoading={isLoading || isSearching}
-						searchTransaction={searchTransaction}
+						searchTransaction={(value) => searchTransaction({ value })}
 						data={data && data.payload}
 						clearSearch={clearSearch}
 						// handleSelectCommission={handleSelectCommission}

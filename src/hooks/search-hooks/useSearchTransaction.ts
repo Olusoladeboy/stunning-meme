@@ -23,10 +23,22 @@ const useSearchTransaction = (callback?: () => void) => {
     @Update found Transaction State
     @Handle Network error response, trigger an alert if any
   */
-	const searchTransaction = async (value: string) => {
+	const searchTransaction = async (props: {
+		value: string;
+		searchParams?: { [key: string]: any };
+	}) => {
+		const value = props?.value;
+		const searchParams = props?.searchParams;
+
 		let params = {} as SearchPayload;
 		const referenceRegExp = /\w{10}/gi;
-		if (referenceRegExp.test(value)) params.reference = value;
+		if (value && referenceRegExp.test(value)) params.reference = value;
+		if (searchParams && Object.keys(searchParams).length > 0) {
+			params = {
+				...params,
+				...searchParams,
+			};
+		}
 
 		if (Object.keys(params).length === 0) {
 			setSearch(null);

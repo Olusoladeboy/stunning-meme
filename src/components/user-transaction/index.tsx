@@ -56,7 +56,7 @@ const UserTransaction = ({ user }: Props) => {
 
 	const [selectedService, setSelectedService] = useState<string>(ALL_SERVICES);
 	const [serviceAnchorEl, setServiceAnchorEl] = useState<null | HTMLElement>(
-		null
+		null,
 	);
 
 	const params = useMemo(() => {
@@ -82,7 +82,7 @@ const UserTransaction = ({ user }: Props) => {
 		useSearchTransaction();
 
 	const isEnabledRequest = Boolean(
-		query && UserNavList.Transaction === query?.tab
+		query && UserNavList.Transaction === query?.tab,
 	);
 	// const isEnabledRequest = false;
 
@@ -121,14 +121,14 @@ const UserTransaction = ({ user }: Props) => {
 					setCount(count);
 				}
 			},
-		}
+		},
 	);
 
 	const handlePageChange = (page: number) => {
 		if (page !== 1) {
 			setPage(page);
 			navigate(
-				`${LINKS.Users}/${user?.id}?tab=${UserNavList.Transaction}&page=${page}`
+				`${LINKS.Users}/${user?.id}?tab=${UserNavList.Transaction}&page=${page}`,
 			);
 		} else {
 			navigate(`${LINKS.Users}/${user?.id}?tab=${UserNavList.Transaction}`);
@@ -227,7 +227,9 @@ const UserTransaction = ({ user }: Props) => {
 						title={'User Transaction Summary'}
 						searchPlaceholder={'Search transaction by reference...'}
 						clearSearch={clearSearch}
-						handleSearch={searchTransaction}
+						handleSearch={(value) =>
+							searchTransaction({ value, searchParams: { user: user?.id } })
+						}
 						statusFilter={
 							<Box sx={{ display: 'flex', gap: '15px' }}>{servicesFilter}</Box>
 						}
@@ -235,7 +237,9 @@ const UserTransaction = ({ user }: Props) => {
 				</Box>
 				<TransactionHistoryTable
 					isLoading={isLoading || isSearching}
-					searchTransaction={searchTransaction}
+					searchTransaction={(value) =>
+						searchTransaction({ value, searchParams: { user: user?.id } })
+					}
 					data={search ? search : data && data.payload}
 					clearSearch={clearSearch}
 				/>

@@ -1,3 +1,4 @@
+import { GenericAbortSignal } from 'axios';
 import { ReactNode } from 'react';
 
 export enum ThemeModeType {
@@ -50,6 +51,22 @@ export type LoginData = {
 	phone?: string;
 	password: string;
 };
+
+export interface Google2faRequest {
+	email: string;
+	code: string;
+	preAuthToken: string;
+}
+
+export interface Google2faSetupRequest {
+	email: string;
+	preAuthToken: string;
+}
+
+export interface Google2faSetupResponsePayload {
+	otpauthUrl: string;
+	manualEntryKey: string;
+}
 
 export type LoginDetails = {
 	email: string;
@@ -140,13 +157,13 @@ export interface ModalDetails {
 }
 
 export interface IModalAlert {
-	type?: 'success' | 'error' | 'info';
+	type?: 'success' | 'error' | 'info' | 'verify';
 	title?: string;
 	message?: string;
 	primaryButtonText?: string;
 	secondaryButtonText?: string;
-	onClickPrimaryButton?: () => void;
-	onClickSecondaryButton?: () => void;
+	onClickPrimaryButton?: () => Promise<void> | void;
+	onClickSecondaryButton?: () => Promise<void> | void;
 	children?: ReactNode;
 	isLoading?: boolean;
 	closeModal?: () => void;
@@ -874,6 +891,48 @@ export interface DataResponse<T> {
 	message: string;
 	metadata?: Metadata;
 	payload: T;
+}
+
+type SpreadIfPlainObject<T> = T extends object
+	? T extends any[] // check if T is an array
+		? {} // if array, don't spread
+		: T // if plain object, spread
+	: {};
+
+export type ApiResponse<T = null> = {
+	message?: string;
+	success?: boolean;
+} & SpreadIfPlainObject<T>;
+
+export type ApiRequest<T = null, TParams = null> = {
+	data?: T;
+	signal?: GenericAbortSignal;
+	params?: Partial<IParams<TParams>> & Record<string, any>;
+} & SpreadIfPlainObject<T>;
+
+export type IParams<T = null> = {
+	sort: string;
+	page: number;
+	limit: number;
+} & SpreadIfPlainObject<T>;
+
+export interface HookCallback<T = undefined> {
+	error?: string;
+	success: boolean;
+	data?: T;
+}
+
+export type IHookProps<TCallbackData = unknown, TParams = null> = {
+	callback?: (res?: HookCallback<TCallbackData>) => void;
+	params?: Partial<IParams> & Record<string, any>;
+	queryKeys?: unknown[] | string[];
+} & SpreadIfPlainObject<TParams>;
+
+export interface IInitialLoginResponse {
+	googleAuthenticator2FASetupRequired: boolean;
+	googleAuthenticator2FA: boolean;
+	message: string;
+	preAuthToken: string;
 }
 
 export interface Settings {

@@ -1,4 +1,6 @@
 export { default as Login } from './auth/login';
+export { default as TwoFactorSetup } from './auth/2fa-setup';
+export { default as TwoFactorVerifyCode } from './auth/2fa-verify-code';
 export { default as Dashboard } from './dashboard';
 export { default as ForgetPassword } from './auth/change-password';
 export { default as CreateNewPassword } from './auth/create-new-password';

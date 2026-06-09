@@ -62,7 +62,7 @@ const UserWalletSummary = ({ user }: Props) => {
 
 	const [selectedService, setSelectedService] = useState<string>(ALL_SERVICES);
 	const [serviceAnchorEl, setServiceAnchorEl] = useState<null | HTMLElement>(
-		null
+		null,
 	);
 
 	const styles = useStyles(theme);
@@ -86,7 +86,7 @@ const UserWalletSummary = ({ user }: Props) => {
 	}, [page, selectedService]);
 
 	const isEnabledRequest = Boolean(
-		query && UserNavList.WalletSummary === query?.tab
+		query && UserNavList.WalletSummary === query?.tab,
 	);
 
 	useEffect(() => {
@@ -120,14 +120,14 @@ const UserWalletSummary = ({ user }: Props) => {
 					setCount(count);
 				}
 			},
-		}
+		},
 	);
 
 	const handlePageChange = (page: number) => {
 		if (page !== 1) {
 			setPage(page);
 			navigate(
-				`${LINKS.Users}/${user?.id}?tab=${UserNavList.WalletSummary}&page=${page}`
+				`${LINKS.Users}/${user?.id}?tab=${UserNavList.WalletSummary}&page=${page}`,
 			);
 		} else {
 			navigate(`${LINKS.Users}/${user?.id}?tab=${UserNavList.WalletSummary}`);
@@ -232,7 +232,9 @@ const UserWalletSummary = ({ user }: Props) => {
 					}}
 					title={'User Wallet Summary'}
 					clearSearch={clearSearch}
-					handleSearch={searchTransaction}
+					handleSearch={(value) =>
+						searchTransaction({ value, searchParams: { user: user?.id } })
+					}
 					placeholder={'Search transaction by reference'}
 					statusFilter={servicesFilter}
 				/>

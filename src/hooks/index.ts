@@ -21,3 +21,4 @@ export { default as useSearchBvn } from './search-hooks/search-bvn';
 export * from './verifications';
 export * from './settings';
 export * from './search-hooks/search-blacklisted-number';
+export * from './two-factor-authentication';

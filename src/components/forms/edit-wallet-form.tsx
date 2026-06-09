@@ -54,11 +54,11 @@ const EditWalletForm = ({ user, close }: Props) => {
 	//Search Transaction Hooks
 	const { search, searchTransaction, isSearching, clearSearch } =
 		useSearchTransaction(() =>
-			setAlert({ message: 'Transaction reference confirm', type: 'info' })
+			setAlert({ message: 'Transaction reference confirm', type: 'info' }),
 		);
 
 	const foundTransaction = Boolean(
-		search && Array.isArray(search) && search.length > 0
+		search && Array.isArray(search) && search.length > 0,
 	);
 
 	const refundValidationSchema = yup.object().shape({
@@ -171,7 +171,10 @@ const EditWalletForm = ({ user, close }: Props) => {
 	 * Search Transaction by Reference
 	 */
 	const handleSearchTransaction = () => {
-		searchTransaction(reference as string);
+		searchTransaction({
+			value: reference as string,
+			searchParams: { user: user?.id },
+		});
 	};
 
 	const handleEditWallet = () => {
@@ -197,7 +200,7 @@ const EditWalletForm = ({ user, close }: Props) => {
 	};
 
 	const isDisplayConfirmTransactionText = Boolean(
-		type === FUND_WALLET_SERVICE.REFUND && !foundTransaction
+		type === FUND_WALLET_SERVICE.REFUND && !foundTransaction,
 	);
 
 	return (

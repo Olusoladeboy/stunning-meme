@@ -11,6 +11,10 @@ import { use2faLogin, useAlert, useModalAlert } from 'hooks';
 import { useAppDispatch } from 'store/hooks';
 import { setToken, setUser } from 'store/auth';
 
+interface LocationState {
+	preAuthToken?: string;
+}
+
 const Verify2faCodeForm = () => {
 	const theme = useTheme();
 	const styles = useStyles(theme);
@@ -20,7 +24,8 @@ const Verify2faCodeForm = () => {
 
 	const navigate = useNavigate();
 
-	const { state } = useLocation();
+	const location = useLocation();
+	const state = location?.state as LocationState;
 
 	const preAuthToken =
 		state?.preAuthToken || Storage.getItem(StorageKeys.PreAuthToken);

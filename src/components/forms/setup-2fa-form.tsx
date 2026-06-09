@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Box, useTheme } from '@mui/material';
 import { useLocation, useNavigate } from 'react-router-dom';
 import QRCode from 'react-qr-code';
@@ -8,14 +8,20 @@ import { grey } from '@mui/material/colors';
 import { LINKS, Storage, StorageKeys } from 'utilities';
 import * as yup from 'yup';
 import CustomButton from '../button/custom-button';
-import { useAlert, useModalAlert, useVerifySetup2fa } from 'hooks';
+import { useModalAlert, useVerifySetup2fa } from 'hooks';
 
 const Setup2faForm = () => {
 	const theme = useTheme();
-	const { state } = useLocation();
+	const { state }: any = useLocation();
 	const styles = useStyles(theme);
 	const navigate = useNavigate();
 	const modal = useModalAlert();
+
+	const qrCodeUrl = useMemo(() => {
+		if (state?.otpauthUrl) return state?.otpauthUrl;
+
+		return '';
+	}, [state]);
 
 	const preAuthTokenRef = useRef<string>(
 		Storage.getItem(StorageKeys.PreAuthToken) || '',
@@ -32,21 +38,26 @@ const Setup2faForm = () => {
 		code: '',
 	};
 
+	const onSessionTimeOut = () => {
+		modal({
+			title: 'Account Setup',
+			message:
+				'The setup session has expired. Please restart the 2FA setup process.',
+			primaryButtonText: 'Re-start',
+			onClickPrimaryButton: async () => {
+				navigate(LINKS.Login);
+				modal(null);
+			},
+		});
+	};
+
 	useEffect(() => {
 		const TIMEOUT_DURATION = 900000;
 
 		const timer = setTimeout(() => {
 			console.log('15 minutes passed! Running action...');
-			modal({
-				title: 'Account Setup',
-				message:
-					'The setup session has expired. Please restart the 2FA setup process.',
-				primaryButtonText: 'Re-start',
-				onClickPrimaryButton: async () => {
-					navigate(LINKS.Login);
-					modal(null);
-				},
-			});
+			onSessionTimeOut();
+			Storage.deleteItem(StorageKeys.PreAuthToken);
 		}, TIMEOUT_DURATION);
 
 		return () => {
@@ -80,8 +91,6 @@ const Setup2faForm = () => {
 		},
 	});
 
-	const otpauthUrl = state?.otpauthUrl;
-
 	const { handleChange, errors, touched, values, handleSubmit } = useFormik({
 		initialValues,
 		validationSchema,
@@ -114,7 +123,7 @@ const Setup2faForm = () => {
 					},
 				}}
 			>
-				<QRCode value={otpauthUrl} />
+				<QRCode value={qrCodeUrl} />
 			</Box>
 
 			<Box>

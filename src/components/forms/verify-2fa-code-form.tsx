@@ -1,47 +1,43 @@
 import React from 'react';
 import { Box, useTheme } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
-import { useMutation } from 'react-query';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useFormik } from 'formik';
 import TextInput from '../form-components/TextInput';
+import * as yup from 'yup';
 import { grey } from '@mui/material/colors';
-import { LINKS, LoginData, validationSchema } from 'utilities';
+import { LINKS, Storage, StorageKeys } from 'utilities';
+import CustomButton from '../button/custom-button';
+import { use2faLogin, useAlert, useModalAlert } from 'hooks';
 import { useAppDispatch } from 'store/hooks';
 import { setToken, setUser } from 'store/auth';
-import CustomButton from '../button/custom-button';
-import { useAlert, useHandleError, useModalAlert } from 'hooks';
-import { login } from 'api';
 
 const Verify2faCodeForm = () => {
 	const theme = useTheme();
-	const setAlert = useAlert();
-	const handleError = useHandleError();
 	const styles = useStyles(theme);
 	const dispatch = useAppDispatch();
-	const navigate = useNavigate();
 	const modal = useModalAlert();
+	const setAlert = useAlert();
 
-	const initialValues: LoginData = {
-		email: '',
-		password: '',
-	};
+	const navigate = useNavigate();
 
-	const { isLoading, mutate } = useMutation(login, {
-		onSettled: (data, error) => {
-			if (error) {
-				const response = handleError({ error });
-				if (response?.message) {
-					setAlert({ message: response.message, type: 'error' });
-				}
-			}
-			if (data && data.success) {
-				const user = data.payload.user;
-				const token = data.payload.token;
+	const { state } = useLocation();
+
+	const preAuthToken =
+		state?.preAuthToken || Storage.getItem(StorageKeys.PreAuthToken);
+	const email = Storage.getItem(StorageKeys.UserEmail);
+
+	const { isLogining, login } = use2faLogin({
+		callback: (res) => {
+			if (res?.success && res.data) {
+				const token = res.data.payload.token;
+				const user = res.data.payload.user;
+
 				const userName = `${user.firstname} ${user.lastname}`;
+
 				dispatch(setToken(token));
 				dispatch(setUser(user));
+
 				if (
-					// user.defaultPasswordChanged &&
 					'defaultPasswordChanged' in user &&
 					!Boolean(user.defaultPasswordChanged)
 				) {
@@ -58,37 +54,57 @@ const Verify2faCodeForm = () => {
 
 					return;
 				}
+
 				navigate(LINKS.Dashboard);
+
 				setAlert({ message: `Welcome back ${userName}!`, type: 'success' });
 			}
 		},
 	});
 
+	const validationSchema = yup.object().shape({
+		code: yup
+			.string()
+			.required('Verification code is required')
+			.matches(/^[0-9]{6}$/, 'Code must be exactly 6 digits'),
+	});
+
+	const initialValues = {
+		code: '',
+	};
+
 	const { handleChange, errors, touched, values, handleSubmit } = useFormik({
 		initialValues,
-		validationSchema: validationSchema.Login,
+		validationSchema,
 		onSubmit: (values) => {
-			mutate(values);
+			if (preAuthToken && email) {
+				const payload = {
+					email,
+					preAuthToken,
+					code: values.code,
+				};
+				login(payload);
+			}
 		},
 	});
 
-	const { email } = values;
+	const { code } = values;
 
 	return (
 		<Box style={styles.form as any} component={'form'}>
 			<Box>
 				<TextInput
 					fullWidth
-					error={errors && touched.email && errors.email ? true : false}
-					helperText={errors && touched.email && errors.email}
+					error={errors && touched.code && errors.code ? true : false}
+					helperText={errors && touched.code && errors.code}
 					placeholder={'Enter code'}
-					value={email}
-					onChange={handleChange('email')}
+					value={code}
+					onChange={handleChange('code')}
 				/>
 			</Box>
 
 			<CustomButton
-				loading={isLoading && isLoading}
+				loading={isLogining}
 				onClick={(e: React.FormEvent<HTMLButtonElement>) => {
 					e.preventDefault();
 					handleSubmit();

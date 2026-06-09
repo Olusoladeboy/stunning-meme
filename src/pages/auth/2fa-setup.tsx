@@ -1,4 +1,3 @@
-import React from 'react';
 import { Box, Typography } from '@mui/material';
 import { AuthLayout, Image, Setup2faForm } from 'components';
 import { usePageTitle } from 'hooks';
@@ -36,8 +35,8 @@ const TwoFactorSetup = () => {
 							textAlign: 'center',
 						}}
 					>
-						Scan the QR Code below using your preferred authenticator app and
-						then enter the provided one-time code below.
+						Scan the QR Code below using google authenticator app and then enter
+						the provided one-time code below.
 					</Typography>
 				</Box>
 				<Setup2faForm />

@@ -1,80 +1,104 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { Box, useTheme } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
-import { useMutation } from 'react-query';
+import { useLocation, useNavigate } from 'react-router-dom';
+import QRCode from 'react-qr-code';
 import { useFormik } from 'formik';
 import TextInput from '../form-components/TextInput';
 import { grey } from '@mui/material/colors';
-import { LINKS, LoginData, validationSchema } from 'utilities';
-import { useAppDispatch } from 'store/hooks';
-import { setToken, setUser } from 'store/auth';
+import { LINKS, Storage, StorageKeys } from 'utilities';
+import * as yup from 'yup';
 import CustomButton from '../button/custom-button';
-import { useAlert, useHandleError, useModalAlert } from 'hooks';
-import { login } from 'api';
+import { useAlert, useModalAlert, useVerifySetup2fa } from 'hooks';
 
 const Setup2faForm = () => {
 	const theme = useTheme();
-	const setAlert = useAlert();
-	const handleError = useHandleError();
+	const { state } = useLocation();
 	const styles = useStyles(theme);
-	const dispatch = useAppDispatch();
 	const navigate = useNavigate();
 	const modal = useModalAlert();
 
-	const randomValue = Math.random().toString(36);
+	const preAuthTokenRef = useRef<string>(
+		Storage.getItem(StorageKeys.PreAuthToken) || '',
+	);
 
-	const initialValues: LoginData = {
-		email: '',
-		password: '',
+	const validationSchema = yup.object().shape({
+		code: yup
+			.string()
+			.required('Verification code is required')
+			.matches(/^[0-9]{6}$/, 'Code must be exactly 6 digits'),
+	});
+
+	const initialValues = {
+		code: '',
 	};
 
-	const { isLoading, mutate } = useMutation(login, {
-		onSettled: (data, error) => {
-			if (error) {
-				const response = handleError({ error });
-				if (response?.message) {
-					setAlert({ message: response.message, type: 'error' });
-				}
-			}
-			if (data && data.success) {
-				const user = data.payload.user;
-				const token = data.payload.token;
-				const userName = `${user.firstname} ${user.lastname}`;
-				dispatch(setToken(token));
-				dispatch(setUser(user));
-				if (
-					// user.defaultPasswordChanged &&
-					'defaultPasswordChanged' in user &&
-					!Boolean(user.defaultPasswordChanged)
-				) {
-					modal({
-						title: 'Change Password',
-						message: 'Kindly change your password',
-						type: 'error',
-						primaryButtonText: 'Change Password',
-						onClickPrimaryButton: () => {
-							modal(null);
-							navigate(LINKS.ChangePassword);
-						},
-					});
+	useEffect(() => {
+		const TIMEOUT_DURATION = 900000;
 
-					return;
-				}
-				navigate(LINKS.Dashboard);
-				setAlert({ message: `Welcome back ${userName}!`, type: 'success' });
+		const timer = setTimeout(() => {
+			console.log('15 minutes passed! Running action...');
+			modal({
+				title: 'Account Setup',
+				message:
+					'The setup session has expired. Please restart the 2FA setup process.',
+				primaryButtonText: 'Re-start',
+				onClickPrimaryButton: async () => {
+					navigate(LINKS.Login);
+					modal(null);
+				},
+			});
+		}, TIMEOUT_DURATION);
+
+		return () => {
+			clearTimeout(timer);
+		};
+	}, []);
+
+	const { isVerifying2faSetup, verify2faSetup } = useVerifySetup2fa({
+		callback: (res) => {
+			if (res?.success && res.data) {
+				const preAuthToken = res.data.payload.preAuthToken;
+				const message = res.data.payload.message;
+
+				Storage.saveItem(StorageKeys.PreAuthToken, preAuthToken);
+				preAuthTokenRef.current = preAuthToken;
+
+				modal({
+					message,
+					title: 'Account Setup',
+					primaryButtonText: 'Continue',
+					onClickPrimaryButton: async () => {
+						navigate(LINKS.Auth2faVerifyCode, {
+							state: {
+								preAuthToken,
+							},
+						});
+						modal(null);
+					},
+				});
 			}
 		},
 	});
+
+	const otpauthUrl = state?.otpauthUrl;
 
 	const { handleChange, errors, touched, values, handleSubmit } = useFormik({
 		initialValues,
-		validationSchema: validationSchema.Login,
+		validationSchema,
 		onSubmit: (values) => {
-			mutate(values);
+			const email = Storage.getItem(StorageKeys.UserEmail);
+			if (preAuthTokenRef.current && email) {
+				const payload = {
+					email,
+					preAuthToken: preAuthTokenRef.current,
+					code: values.code,
+				};
+				verify2faSetup(payload);
+			}
 		},
 	});
 
-	const { password, email } = values;
+	const { code } = values;
 
 	return (
 		<Box style={styles.form as any} component={'form'}>
@@ -90,25 +114,22 @@ const Setup2faForm = () => {
 					},
 				}}
 			>
-				<img
-					src={`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${randomValue}`}
-					alt='QR Code'
-				/>
+				<QRCode value={otpauthUrl} />
 			</Box>
 
 			<Box>
 				<TextInput
 					fullWidth
-					error={errors && touched.email && errors.email ? true : false}
-					helperText={errors && touched.email && errors.email}
+					error={errors && touched.code && errors.code ? true : false}
+					helperText={errors && touched.code && errors.code}
 					placeholder={'Enter your one-time code'}
-					value={email}
-					onChange={handleChange('email')}
+					value={code}
+					onChange={handleChange('code')}
 				/>
 			</Box>
 
 			<CustomButton
-				loading={isLoading && isLoading}
+				loading={isVerifying2faSetup}
 				onClick={(e: React.FormEvent<HTMLButtonElement>) => {
 					e.preventDefault();
 					handleSubmit();

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { Box, useTheme, InputAdornment, Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { useMutation } from 'react-query';
@@ -7,12 +7,18 @@ import TextInput from '../form-components/TextInput';
 import Button from '../button';
 import { grey } from '@mui/material/colors';
 import Link from '../link';
-import { LINKS, LoginData, validationSchema } from 'utilities';
-import { useAppDispatch } from 'store/hooks';
-import { setToken, setUser } from 'store/auth';
+import {
+	IModalAlert,
+	LINKS,
+	LoginData,
+	Storage,
+	StorageKeys,
+	validationSchema,
+} from 'utilities';
 import CustomButton from '../button/custom-button';
-import { useAlert, useHandleError, useModalAlert } from 'hooks';
+import { useAlert, useHandleError, useModalAlert, useSetup2fa } from 'hooks';
 import { login } from 'api';
+import Loader from 'components/loader';
 
 const LoginForm = () => {
 	const theme = useTheme();
@@ -20,9 +26,24 @@ const LoginForm = () => {
 	const handleError = useHandleError();
 	const styles = useStyles(theme);
 	const [isDisplayPassword, setDisplayPassword] = useState<boolean>(false);
-	const dispatch = useAppDispatch();
 	const navigate = useNavigate();
 	const modal = useModalAlert();
+
+	const { setup2fa, isSettingup2fa } = useSetup2fa({
+		callback: (res) => {
+			if (res?.success && res.data) {
+				const otpauthUrl = res.data.payload.otpauthUrl;
+				const manualEntryKey = res.data.payload.manualEntryKey;
+
+				navigate(LINKS.Auth2faSetup, {
+					state: {
+						otpauthUrl,
+						manualEntryKey,
+					},
+				});
+			}
+		},
+	});
 
 	const initialValues: LoginData = {
 		email: '',
@@ -30,7 +51,7 @@ const LoginForm = () => {
 	};
 
 	const { isLoading, mutate } = useMutation(login, {
-		onSettled: (data, error) => {
+		onSettled: (data, error, variables) => {
 			if (error) {
 				const response = handleError({ error });
 				if (response?.message) {
@@ -38,31 +59,72 @@ const LoginForm = () => {
 				}
 			}
 			if (data && data.success) {
-				const user = data.payload.user;
-				const token = data.payload.token;
-				const userName = `${user.firstname} ${user.lastname}`;
-				dispatch(setToken(token));
-				dispatch(setUser(user));
-				if (
-					// user.defaultPasswordChanged &&
-					'defaultPasswordChanged' in user &&
-					!Boolean(user.defaultPasswordChanged)
-				) {
-					modal({
-						title: 'Change Password',
-						message: 'Kindly change your password',
-						type: 'error',
-						primaryButtonText: 'Change Password',
-						onClickPrimaryButton: () => {
+				const googleAuthenticator2FA = data.payload.googleAuthenticator2FA;
+				const googleAuthenticator2FASetupRequired =
+					data.payload.googleAuthenticator2FASetupRequired;
+
+				console.log('DATA::', data);
+
+				const preAuthToken = data.payload.preAuthToken;
+
+				Storage.saveItem(StorageKeys.PreAuthToken, preAuthToken);
+				Storage.saveItem(StorageKeys.UserEmail, variables.email);
+
+				setTimeout(() => {
+					Storage.deleteItem(StorageKeys.PreAuthToken);
+				}, 900000);
+
+				const email = variables.email as string;
+
+				if (googleAuthenticator2FASetupRequired) {
+					const message =
+						data.payload.message ||
+						'Google Authenticator setup is required before you can access the admin console';
+
+					const modalData: IModalAlert = {
+						title: 'Account Setup',
+						message,
+						type: 'verify',
+						primaryButtonText: 'Set up account',
+						onClickPrimaryButton: async () => {
+							setup2fa({
+								email,
+								preAuthToken,
+							});
 							modal(null);
-							navigate(LINKS.ChangePassword);
 						},
-					});
+					};
+
+					modal(modalData);
 
 					return;
 				}
-				navigate(LINKS.Dashboard);
-				setAlert({ message: `Welcome back ${userName}!`, type: 'success' });
+
+				if (googleAuthenticator2FA) {
+					const message =
+						data.payload.message ||
+						'Kindly input the code from your Google Authenticator app';
+
+					const modalData: IModalAlert = {
+						title: 'Verify Code',
+						message,
+						type: 'verify',
+						primaryButtonText: 'Continue',
+						onClickPrimaryButton: async () => {
+							navigate(LINKS.Auth2faVerifyCode, {
+								state: {
+									email,
+									preAuthToken,
+								},
+							});
+							modal(null);
+						},
+					};
+
+					modal(modalData);
+
+					return;
+				}
 			}
 		},
 	});
@@ -78,62 +140,65 @@ const LoginForm = () => {
 	const { password, email } = values;
 
 	return (
-		<Box style={styles.form as any} component={'form'}>
-			<Box>
-				<TextInput
-					fullWidth
-					error={errors && touched.email && errors.email ? true : false}
-					helperText={errors && touched.email && errors.email}
-					placeholder={'Username'}
-					value={email}
-					onChange={handleChange('email')}
-				/>
-			</Box>
+		<>
+			{isSettingup2fa && <Loader />}
+			<Box style={styles.form as any} component={'form'}>
+				<Box>
+					<TextInput
+						fullWidth
+						error={errors && touched.email && errors.email ? true : false}
+						helperText={errors && touched.email && errors.email}
+						placeholder={'Email'}
+						value={email}
+						onChange={handleChange('email')}
+					/>
+				</Box>
 
-			<Box>
-				<TextInput
-					fullWidth
-					error={errors && touched.password && errors.password ? true : false}
-					helperText={errors && touched.password && errors.password}
-					placeholder={'Password'}
-					value={password}
-					onChange={handleChange('password')}
-					type={isDisplayPassword ? 'text' : 'password'}
-					InputProps={{
-						endAdornment: (
-							<InputAdornment position='start'>
-								<Button
-									onClick={() => setDisplayPassword(!isDisplayPassword)}
-									disableRipple
-									style={styles.endAdornmentBtn}
-								>
-									{isDisplayPassword ? 'hide' : 'show'}
-								</Button>
-							</InputAdornment>
-						),
+				<Box>
+					<TextInput
+						fullWidth
+						error={errors && touched.password && errors.password ? true : false}
+						helperText={errors && touched.password && errors.password}
+						placeholder={'Password'}
+						value={password}
+						onChange={handleChange('password')}
+						type={isDisplayPassword ? 'text' : 'password'}
+						InputProps={{
+							endAdornment: (
+								<InputAdornment position='start'>
+									<Button
+										onClick={() => setDisplayPassword(!isDisplayPassword)}
+										disableRipple
+										style={styles.endAdornmentBtn}
+									>
+										{isDisplayPassword ? 'hide' : 'show'}
+									</Button>
+								</InputAdornment>
+							),
+						}}
+					/>
+				</Box>
+
+				<Box>
+					<Link to={LINKS.ForgetPassword}>
+						<Typography style={styles.link}>Forget Password?</Typography>
+					</Link>
+				</Box>
+
+				<CustomButton
+					loading={isLoading && isLoading}
+					onClick={(e: React.FormEvent<HTMLButtonElement>) => {
+						e.preventDefault();
+						handleSubmit();
 					}}
-				/>
+					style={styles.btn}
+					size={'large'}
+					type={'submit'}
+				>
+					Login
+				</CustomButton>
 			</Box>
-
-			<Box>
-				<Link to={LINKS.ForgetPassword}>
-					<Typography style={styles.link}>Forget Password?</Typography>
-				</Link>
-			</Box>
-
-			<CustomButton
-				loading={isLoading && isLoading}
-				onClick={(e: React.FormEvent<HTMLButtonElement>) => {
-					e.preventDefault();
-					handleSubmit();
-				}}
-				style={styles.btn}
-				size={'large'}
-				type={'submit'}
-			>
-				Login
-			</CustomButton>
-		</Box>
+		</>
 	);
 };
 

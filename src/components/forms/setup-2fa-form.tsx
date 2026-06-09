@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Box, useTheme } from '@mui/material';
 import { useLocation, useNavigate } from 'react-router-dom';
 import QRCode from 'react-qr-code';
@@ -12,10 +12,16 @@ import { useModalAlert, useVerifySetup2fa } from 'hooks';
 
 const Setup2faForm = () => {
 	const theme = useTheme();
-	const { state } = useLocation();
+	const { state }: any = useLocation();
 	const styles = useStyles(theme);
 	const navigate = useNavigate();
 	const modal = useModalAlert();
+
+	const qrCodeUrl = useMemo(() => {
+		if (state?.otpauthUrl) return state?.otpauthUrl;
+
+		return '';
+	}, [state]);
 
 	const preAuthTokenRef = useRef<string>(
 		Storage.getItem(StorageKeys.PreAuthToken) || '',
@@ -85,8 +91,6 @@ const Setup2faForm = () => {
 		},
 	});
 
-	const otpauthUrl = state?.otpauthUrl;
-
 	const { handleChange, errors, touched, values, handleSubmit } = useFormik({
 		initialValues,
 		validationSchema,
@@ -119,7 +123,7 @@ const Setup2faForm = () => {
 					},
 				}}
 			>
-				<QRCode value={otpauthUrl} />
+				<QRCode value={qrCodeUrl} />
 			</Box>
 
 			<Box>

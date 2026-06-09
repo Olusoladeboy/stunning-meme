@@ -60,11 +60,11 @@ const AllTransactions = () => {
 	const maxRecordRef = useRef<number>(MAX_RECORDS);
 
 	const canViewStatistics = useAppSelector(
-		(store) => store.authState.canViewStatistics
+		(store) => store.authState.canViewStatistics,
 	);
 
 	const [serviceAnchorEl, setServiceAnchorEl] = useState<null | HTMLElement>(
-		null
+		null,
 	);
 	const [transactionService, setTransactionService] = useState<string>('');
 	const { isSearching, searchTransaction, clearSearch, search } =
@@ -95,7 +95,7 @@ const AllTransactions = () => {
 			}
 		},
 		// eslint-disable-next-line
-		[query]
+		[query],
 	);
 
 	const { isLoading, data, refetch } = useQuery(
@@ -130,7 +130,7 @@ const AllTransactions = () => {
 					setCount(count);
 				}
 			},
-		}
+		},
 	);
 
 	const handlePageChange = (page: number) => {
@@ -251,7 +251,7 @@ const AllTransactions = () => {
 					<TableHeader
 						searchPlaceholder={'Search transaction by reference'}
 						title={'Transactions'}
-						handleSearch={searchTransaction}
+						handleSearch={(value) => searchTransaction({ value })}
 						clearSearch={clearSearch}
 						statusFilter={statusFilter}
 					/>

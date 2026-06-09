@@ -48,7 +48,9 @@ const BankStatementForm = ({ callback, userId }: Props) => {
 					message: response.message,
 					type: 'success',
 					primaryButtonText: 'Close',
-					onClickPrimaryButton: () => modal(null),
+					onClickPrimaryButton: () => {
+						modal(null);
+					},
 				});
 			}
 		} catch (error) {

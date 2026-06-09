@@ -42,6 +42,8 @@ import {
 	BusinessProfile,
 	AutoConversionRecipients,
 	BlacklistedNumberPage,
+	TwoFactorSetup,
+	TwoFactorVerifyCode,
 } from '../pages';
 
 const Router = () => {
@@ -59,6 +61,8 @@ const Router = () => {
 			</Route>
 			<Route path={'auth'}>
 				<Route path={'login'} element={<Login />} />
+				<Route path={'2fa/setup'} element={<TwoFactorSetup />} />
+				<Route path={'2fa/verify-code'} element={<TwoFactorVerifyCode />} />
 				<Route path={'password/change'} element={<ChangePassword />} />
 				<Route path={'forget-password'} element={<ChangePassword />} />
 			</Route>

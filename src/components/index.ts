@@ -137,3 +137,5 @@ export { default as Services } from './services';
 export { default as DateField } from './form-components/date-field';
 
 export { default as BlacklistedNumbersTable } from './table/blacklisted-number-table';
+export { default as Setup2faForm } from './forms/setup-2fa-form';
+export { default as Verify2faCodeForm } from './forms/verify-2fa-code-form';

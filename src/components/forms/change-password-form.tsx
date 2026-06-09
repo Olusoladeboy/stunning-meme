@@ -39,7 +39,7 @@ const ChangePasswordForm = () => {
 			.string()
 			.matches(
 				PASSWORD_REX,
-				'Password must be at least 8 characters, one uppercase letter, one special charater, one number.'
+				'Password must be at least 8 characters, one uppercase letter, one special charater, one number.',
 			)
 			.required('Enter your password'),
 		confirmPassword: yup
@@ -92,8 +92,6 @@ const ChangePasswordForm = () => {
 
 	const { newPassword, oldPassword, confirmPassword } = values;
 
-	console.log(errors);
-
 	return (
 		<Box style={styles.form as any} component={'form'}>
 			<Box>
@@ -103,7 +101,7 @@ const ChangePasswordForm = () => {
 						errors && touched.oldPassword && errors.oldPassword ? true : false
 					}
 					helperText={errors && touched.oldPassword && errors.oldPassword}
-					placeholder={'oldPassword'}
+					placeholder={'Old Password'}
 					value={oldPassword}
 					onChange={handleChange('oldPassword')}
 					type={isDisplayOldPassword ? 'text' : 'password'}

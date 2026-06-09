@@ -49,7 +49,7 @@ const WithdrawalRequestTransactions = () => {
 			}
 		},
 		// eslint-disable-next-line
-		[query]
+		[query],
 	);
 
 	const { isLoading, data, refetch } = useQuery(
@@ -80,7 +80,7 @@ const WithdrawalRequestTransactions = () => {
 					// setCount(count);
 				}
 			},
-		}
+		},
 	);
 
 	const handlePageChange = (page: number) => {
@@ -113,7 +113,7 @@ const WithdrawalRequestTransactions = () => {
 						<TableHeader
 							searchPlaceholder={'Search transaction by reference'}
 							title={'Withdrawal  Request'}
-							handleSearch={searchTransaction}
+							handleSearch={(value) => searchTransaction({ value })}
 							clearSearch={clearSearch}
 						/>
 					</Box>

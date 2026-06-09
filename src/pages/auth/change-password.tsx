@@ -1,4 +1,3 @@
-import React from 'react';
 import { AuthLayout, Image } from 'components';
 import ChangePasswordForm from 'components/forms/change-password-form';
 import { Typography } from '@mui/material';
@@ -10,7 +9,7 @@ const ChangePassword = () => {
 		<AuthLayout>
 			<Image
 				sx={{
-					maxWidth: '80%',
+					maxWidth: '70%',
 					margin: '0px auto 2rem',
 					img: {
 						width: '100%',

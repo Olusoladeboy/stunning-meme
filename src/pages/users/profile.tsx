@@ -129,7 +129,7 @@ const Profile = () => {
 					setUser(data.payload[0]);
 				}
 			},
-		}
+		},
 	);
 
 	return (

@@ -50,9 +50,9 @@ const Modal = ({
 					<Typography
 						sx={{
 							fontWeight: '600',
-							fontSize: '20px',
+							fontSize: ['20px'],
 						}}
-						variant={'body1'}
+						variant={'h1'}
 					>
 						{title}
 					</Typography>

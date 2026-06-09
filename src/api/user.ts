@@ -2,6 +2,10 @@ import apiRequest from './apiRequest';
 import {
 	DataResponse,
 	ENDPOINTS,
+	Google2faRequest,
+	Google2faSetupRequest,
+	Google2faSetupResponsePayload,
+	IInitialLoginResponse,
 	LoginData,
 	ManagerDetailsData,
 	SuspendUser,
@@ -9,13 +13,41 @@ import {
 } from '../utilities';
 
 export const login = async (
-	data: LoginData
-): Promise<DataResponse<{ user: User; token: string }>> =>
+	data: LoginData,
+): Promise<DataResponse<IInitialLoginResponse>> =>
 	apiRequest({
 		method: 'POST',
 		url: `${ENDPOINTS.Staff}/login`,
 		data,
 	});
+
+export const google2faLogin = async (
+	data: Google2faRequest,
+): Promise<DataResponse<{ user: User; token: string }>> =>
+	apiRequest({
+		method: 'POST',
+		url: `${ENDPOINTS.Staff}/login/google-2fa`,
+		data,
+	});
+
+export const google2faSetup = async (
+	data: Google2faSetupRequest,
+): Promise<DataResponse<Google2faSetupResponsePayload>> =>
+	apiRequest({
+		method: 'POST',
+		url: `${ENDPOINTS.Staff}/login/google-auth/setup`,
+		data,
+	});
+
+export const google2faVerifySetup = async (
+	data: Google2faRequest,
+): Promise<DataResponse<IInitialLoginResponse>> =>
+	apiRequest({
+		method: 'POST',
+		url: `${ENDPOINTS.Staff}/login/google-auth/verify-setup`,
+		data,
+	});
+
 export const me = async (): Promise<DataResponse<User>> =>
 	apiRequest({
 		method: 'GET',

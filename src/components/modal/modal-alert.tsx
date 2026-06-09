@@ -9,6 +9,7 @@ import { useAppSelector, useAppDispatch } from 'store/hooks';
 import { setModalAlert } from 'store/app';
 import * as success from 'assets/json-file/success.json';
 import * as failed from 'assets/json-file/failed.json';
+import * as verify from 'assets/json-file/verified.json';
 // import * as pending from 'assets/json-file/pending.json';
 
 const ModalAlert = () => {
@@ -39,25 +40,17 @@ const ModalAlert = () => {
 			onClickSecondaryButton,
 			children,
 			type,
+			isLoading,
 		} = modalAlert;
+
+		const source =
+			type === 'error' ? failed : type === 'verify' ? verify : success;
+
 		return (
-			<ModalWrapper closeModal={closeModal}>
+			<ModalWrapper disableCloseButton={isLoading} closeModal={closeModal}>
 				<Box style={styles.main as CSSProperties}>
 					<Box>
-						{type === 'success' && (
-							<Lottie
-								options={defaultOptions(success)}
-								height={140}
-								width={140}
-							/>
-						)}
-						{type === 'error' && (
-							<Lottie
-								options={defaultOptions(failed)}
-								height={140}
-								width={140}
-							/>
-						)}
+						<Lottie options={defaultOptions(source)} height={140} width={140} />
 					</Box>
 					<Box
 						sx={{
@@ -70,10 +63,9 @@ const ModalAlert = () => {
 					>
 						<Typography
 							sx={{
-								fontWeight: '600',
-								fontSize: '20px',
+								fontSize: ['20px', '24px'],
 							}}
-							variant={'body1'}
+							variant={'h1'}
 						>
 							{title}
 						</Typography>
@@ -84,6 +76,7 @@ const ModalAlert = () => {
 					<Box>{children}</Box>
 					{primaryButtonText && (
 						<Button
+							loading={isLoading}
 							onClick={onClickPrimaryButton}
 							fullWidth
 							size={'large'}
@@ -102,6 +95,7 @@ const ModalAlert = () => {
 
 					{secondaryButtonText && (
 						<Button
+							disabled={isLoading}
 							onClick={onClickSecondaryButton}
 							fullWidth
 							size={'large'}

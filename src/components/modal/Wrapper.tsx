@@ -11,6 +11,7 @@ interface Props extends BoxProps {
 	contentWidth?: string;
 	containerStyle?: any;
 	canOverlayCloseModal?: boolean;
+	disableCloseButton?: boolean;
 }
 
 const ModalWrapper = ({
@@ -21,6 +22,7 @@ const ModalWrapper = ({
 	contentWidth,
 	containerStyle,
 	canOverlayCloseModal = false,
+	disableCloseButton = false,
 	...rest
 }: Props) => {
 	const theme = useTheme();
@@ -60,6 +62,7 @@ const ModalWrapper = ({
 			>
 				{hasCloseButton && (
 					<IconButton
+						disabled={disableCloseButton}
 						onClick={closeModal}
 						size={'small'}
 						sx={{

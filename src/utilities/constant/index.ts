@@ -71,11 +71,13 @@ export const QueryKeys = {
 };
 
 export const StorageKeys = {
-	themeMode: '@Storage_theme_mode',
-	UserToken: '@Storage:user_token',
-	UserDetails: '@Storage:user_details',
-	Application: '@Storage:key_application',
-	SignUpDetails: '@Storage:key_signUp_Details',
+	themeMode: '@AirtimeFlip:theme_mode',
+	UserToken: '@AirtimeFlip:user_token',
+	UserEmail: '@AirtimeFlip:user_email',
+	UserDetails: '@AirtimeFlip:user_details',
+	Application: '@AirtimeFlip:key_application',
+	SignUpDetails: '@AirtimeFlip:key_signUp_Details',
+	PreAuthToken: '@AirtimeFlip:pre-auth-token',
 };
 
 export const HttpStatusCode = {
@@ -96,6 +98,8 @@ export const LINKS = {
 	ForgetPassword: '/auth/forget-password',
 	CreateNewPassword: '/auth/password/new',
 	ChangePassword: '/auth/password/change',
+	Auth2faSetup: '/auth/2fa/setup',
+	Auth2faVerifyCode: '/auth/2fa/verify-code',
 	Users: '/users',
 	User: `/user`,
 	Managers: '/managers',

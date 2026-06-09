@@ -1,4 +1,3 @@
-import React from 'react';
 import { Box } from '@mui/material';
 import { AuthLayout, LoginForm, Image } from 'components';
 import { usePageTitle } from 'hooks';
@@ -10,7 +9,7 @@ const Login = () => {
 			<Box>
 				<Image
 					sx={{
-						maxWidth: '80%',
+						maxWidth: '70%',
 						margin: '0px auto 2rem',
 						img: {
 							width: '100%',

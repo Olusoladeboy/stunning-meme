@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useState } from 'react';
 import { Box, useTheme, InputAdornment, Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { useMutation } from 'react-query';
@@ -62,8 +62,6 @@ const LoginForm = () => {
 				const googleAuthenticator2FA = data.payload.googleAuthenticator2FA;
 				const googleAuthenticator2FASetupRequired =
 					data.payload.googleAuthenticator2FASetupRequired;
-
-				console.log('DATA::', data);
 
 				const preAuthToken = data.payload.preAuthToken;
 

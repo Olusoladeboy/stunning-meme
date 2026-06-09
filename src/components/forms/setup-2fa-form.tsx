@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef } from 'react';
 import { Box, useTheme } from '@mui/material';
 import { useLocation, useNavigate } from 'react-router-dom';
 import QRCode from 'react-qr-code';
@@ -10,9 +10,15 @@ import * as yup from 'yup';
 import CustomButton from '../button/custom-button';
 import { useModalAlert, useVerifySetup2fa } from 'hooks';
 
+interface LocationState {
+	otpauthUrl?: string;
+}
+
 const Setup2faForm = () => {
 	const theme = useTheme();
-	const { state }: any = useLocation();
+
+	const location = useLocation();
+	const state = location.state as LocationState;
 	const styles = useStyles(theme);
 	const navigate = useNavigate();
 	const modal = useModalAlert();

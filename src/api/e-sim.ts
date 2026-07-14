@@ -1,13 +1,18 @@
 import apiRequest from './apiRequest';
 import { ENDPOINTS, DataResponse, Transaction } from '../utilities';
+import { GenericAbortSignal } from 'axios';
 
-export const eSimTransactions = async (params: {
-	[key: string]: any;
-}): Promise<DataResponse<Transaction[]>> =>
+export const eSimTransactions = async (
+	params: {
+		[key: string]: any;
+	},
+	signal?: GenericAbortSignal,
+): Promise<DataResponse<Transaction[]>> =>
 	apiRequest({
 		url: ENDPOINTS.ESim,
 		method: 'GET',
 		params,
+		signal,
 	});
 
 export const updateESimTransactions = async (payload: {

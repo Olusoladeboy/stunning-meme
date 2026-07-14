@@ -1,10 +1,5 @@
 import apiRequest from './apiRequest';
-import {
-	DataResponse,
-	ENDPOINTS,
-	User,
-	IBlacklistedNumber,
-} from '../utilities';
+import { DataResponse, ENDPOINTS, IBlacklistedNumber } from '../utilities';
 
 export const queryBlacklistedNumbers = async (
 	params: Record<string, any>,

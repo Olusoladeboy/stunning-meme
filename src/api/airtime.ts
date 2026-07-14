@@ -1,5 +1,6 @@
 import apiRequest from './apiRequest';
 import { ENDPOINTS, DataResponse, Transaction } from '../utilities';
+import { GenericAbortSignal } from 'axios';
 
 export const airtimeTransactions = async (params: {
 	[key: string]: any;
@@ -20,13 +21,17 @@ export const updateAirtime = async (payload: {
 		data: payload.data,
 	});
 
-export const internationalAirtimeTransactions = async (params: {
-	[key: string]: any;
-}): Promise<DataResponse<Transaction[]>> =>
+export const internationalAirtimeTransactions = async (
+	params: {
+		[key: string]: any;
+	},
+	signal?: GenericAbortSignal,
+): Promise<DataResponse<Transaction[]>> =>
 	apiRequest({
 		url: ENDPOINTS.InternationalAirtime,
 		method: 'GET',
 		params,
+		signal,
 	});
 
 export const updateInternationalAirtimeTransactions = async (payload: {

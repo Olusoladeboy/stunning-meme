@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { useQuery } from 'react-query';
 import {
 	ENDPOINTS,
@@ -45,7 +45,7 @@ export const useQueryTransactions = (
 		data: any;
 		metadata?: Metadata;
 		service?: string;
-	}) => void
+	}) => void,
 ) => {
 	const [dataTransactions, setDataTransactions] = useState<
 		{ [key: string]: any }[] | null
@@ -94,7 +94,7 @@ export const useQueryAirtimeNetwork = (queryKey?: string) => {
 			onSettled: (data) => {
 				setIsEnable(false);
 			},
-		}
+		},
 	);
 
 	const queryAirtimeNetworks = () => setIsEnable(true);
@@ -119,7 +119,7 @@ export const useQueryDateNetwork = (queryKey?: string) => {
 			onSettled: (data) => {
 				setIsEnable(false);
 			},
-		}
+		},
 	);
 
 	const queryDataNetwork = () => setIsEnable(true);
@@ -144,7 +144,7 @@ export const useQueryConvertAirtimeNetworks = (queryKey?: string) => {
 			onSettled: (data) => {
 				setIsEnable(false);
 			},
-		}
+		},
 	);
 
 	const queryConvertAirtimeNetwork = () => setIsEnable(true);
@@ -158,7 +158,7 @@ export const useQueryConvertAirtimeNetworks = (queryKey?: string) => {
 
 // Query Convert Airtimes
 export const useQueryConvertAirtimes = (
-	callback?: (data: any, metadata: Metadata) => void
+	callback?: (data: any, metadata: Metadata) => void,
 ) => {
 	const [dataConvertAirtimes, setDataConvertAirtime] = useState<
 		{ [key: string]: any }[] | null
@@ -191,7 +191,7 @@ export const useQueryConvertAirtimes = (
 };
 
 export const useQueryAutoConvertAirtimes = (
-	callback?: (data: any, matadata?: Metadata) => void
+	callback?: (data: any, matadata?: Metadata) => void,
 ) => {
 	const [dataAutoConvertAirtimes, setDataAutoConvertAirtime] = useState<
 		{ [key: string]: any }[] | null
@@ -236,7 +236,7 @@ export const useQueryDataTypes = () => {
 			onSettled: (data) => {
 				setIsEnable(false);
 			},
-		}
+		},
 	);
 
 	const queryDataTypes = (params: Record<string, any> = {}) => {
@@ -266,7 +266,7 @@ export const useQueryDataPlans = () => {
 			onSettled: (data) => {
 				setIsEnable(false);
 			},
-		}
+		},
 	);
 
 	const queryDataPlans = async (params: Record<string, any> = {}) => {
@@ -284,7 +284,7 @@ export const useQueryDataPlans = () => {
 
 // Query Data Subscription
 export const useQueryDataSubscriptions = (
-	callback?: (data: any, metadata?: Metadata) => void
+	callback?: (data: any, metadata?: Metadata) => void,
 ) => {
 	const [dataDataSubscriptions, setDataDataSubscriptions] = useState<
 		{ [key: string]: any }[] | null
@@ -319,8 +319,8 @@ export const useQueryDataSubscriptions = (
 // Data subscription statistic
 export const useQueryDataStatisticSubscriptions = (
 	callback?: (
-		data: IDataSubscriptionStatistic[] | IDataSubscriptionStatistic
-	) => void
+		data: IDataSubscriptionStatistic[] | IDataSubscriptionStatistic,
+	) => void,
 ) => {
 	const [data, setData] = useState<
 		IDataSubscriptionStatistic[] | IDataSubscriptionStatistic | null
@@ -328,7 +328,7 @@ export const useQueryDataStatisticSubscriptions = (
 	const [isLoading, setLoading] = useState<boolean>(false);
 
 	const queryDataSubscriptionStatistics = async (
-		params?: Record<string, any>
+		params?: Record<string, any>,
 	) => {
 		setLoading(true);
 		try {
@@ -357,7 +357,7 @@ export const useQueryDataStatisticSubscriptions = (
 
 // Query Airtime Transactiion
 export const useQueryAirtimeTransactions = (
-	callback?: (data: any, metadata?: Metadata) => void
+	callback?: (data: any, metadata?: Metadata) => void,
 ) => {
 	const [dataAirtimeTransactions, setDataAirtimeTransactions] = useState<
 		{ [key: string]: any }[] | null
@@ -401,7 +401,7 @@ export const useQueryCableProviders = () => {
 			onSettled: (data) => {
 				setSetEnable(false);
 			},
-		}
+		},
 	);
 
 	const queryCableProviders = () => {
@@ -448,7 +448,7 @@ export const useCableBundles = () => {
 };
 
 export const useQueryCableTransactions = (
-	callback?: (data: any, metadata?: Metadata) => void
+	callback?: (data: any, metadata?: Metadata) => void,
 ) => {
 	const [transactions, setTransactions] = useState<
 		{ [key: string]: any }[] | null
@@ -490,7 +490,7 @@ export const useQueryBillTransactions = (
 		data: any;
 		metadata?: Metadata;
 		service: string;
-	}) => void
+	}) => void,
 ) => {
 	const [transactions, setTransactions] = useState<
 		{ [key: string]: any }[] | null
@@ -527,7 +527,7 @@ export const useQueryBillTransactions = (
 };
 
 export const useQueryEducationTransactions = (
-	callback?: (data: any, metadata?: Metadata) => void
+	callback?: (data: any, metadata?: Metadata) => void,
 ) => {
 	const [transactions, setTransactions] = useState<
 		{ [key: string]: any }[] | null
@@ -563,7 +563,7 @@ export const useQueryEducationTransactions = (
 // Wallet Transaction Query Hooks
 
 export const useQueryWalletWithdrawals = (
-	callback?: (data: any, metadata?: Metadata) => void
+	callback?: (data: any, metadata?: Metadata) => void,
 ) => {
 	const [withdrawals, setWithdrawals] = useState<
 		{ [key: string]: any }[] | null
@@ -599,29 +599,31 @@ export const useQueryWalletWithdrawals = (
 // Wallet Funding hooks
 
 export const useQueryWalletFundings = (
-	callback?: (data: any, metadata?: Metadata) => void
+	callback?: (data: any, metadata?: Metadata) => void,
 ) => {
 	const [dataWalletFundings, setDataWalletFundings] = useState<
 		IFunding[] | null
 	>(null);
 
 	const [isLoading, setLoading] = useState<boolean>(false);
-	const queryWalletFundings = async (params: Record<string, any>) => {
-		setLoading(true);
-		try {
-			const response = await walletFunding(params);
-			setLoading(false);
+	const queryWalletFundings = useCallback(
+		async (params: Record<string, any>) => {
+			setLoading(true);
+			try {
+				const response = await walletFunding(params);
 
-			if (response && response.success) {
-				setDataWalletFundings(response.payload);
-				typeof callback === 'function' &&
-					callback(response.payload, response?.metadata);
-				// return response.payload;
+				if (response && response.success) {
+					setDataWalletFundings(response.payload);
+					typeof callback === 'function' &&
+						callback(response.payload, response?.metadata);
+					// return response.payload;
+				}
+			} finally {
+				setLoading(false);
 			}
-		} catch (error) {
-			setLoading(false);
-		}
-	};
+		},
+		[callback],
+	);
 
 	return {
 		isLoadingWalletFundings: isLoading,
@@ -632,7 +634,7 @@ export const useQueryWalletFundings = (
 
 // Wallet Transfer hooks
 export const useQueryWalletTransfers = (
-	callback?: (data: any, metadata?: Metadata) => void
+	callback?: (data: any, metadata?: Metadata) => void,
 ) => {
 	const [dataWalletTransfers, setDataWalletTransfers] = useState<
 		ITransfer[] | null
@@ -665,7 +667,7 @@ export const useQueryWalletTransfers = (
 
 // Wallet Bank Funding hooks
 export const useQueryBankFunding = (
-	callback?: (data: any, metadata?: Metadata) => void
+	callback?: (data: any, metadata?: Metadata) => void,
 ) => {
 	const [dataWalletTransfers, setDataWalletTransfers] = useState<
 		ITransfer[] | null
@@ -699,7 +701,7 @@ export const useQueryBankFunding = (
 // Epin Transaction Hooks
 
 export const useQueryEPinTransactions = (
-	callback?: (data: any, metadata?: Metadata) => void
+	callback?: (data: any, metadata?: Metadata) => void,
 ) => {
 	const [dataEPinTransactions, setDataEPinTransactions] = useState<
 		IEpin[] | null
@@ -733,7 +735,7 @@ export const useQueryEPinTransactions = (
 
 // Refund Query
 export const useQueryRefunds = (
-	callback?: (data: any, metadata?: Metadata) => void
+	callback?: (data: any, metadata?: Metadata) => void,
 ) => {
 	const [dataRefunds, setDataRefunds] = useState<IEpin[] | null>(null);
 
@@ -764,7 +766,7 @@ export const useQueryRefunds = (
 };
 
 export const useQueryVoucherTransactions = (
-	callback?: (data: any, metadata?: Metadata) => void
+	callback?: (data: any, metadata?: Metadata) => void,
 ) => {
 	const [dataVoucherTransactions, setDataVoucherTransactions] = useState<
 		Transaction[] | null
@@ -773,21 +775,26 @@ export const useQueryVoucherTransactions = (
 	const [isLoading, setLoading] = useState<boolean>(false);
 
 	// const query = async (params: Record<string, any>) => {
-	const queryVoucherTransactions = async (params: Record<string, any>) => {
-		setLoading(true);
-		try {
-			const response = await voucherTransactions(params);
-			setLoading(false);
+	const queryVoucherTransactions = useCallback(
+		async (params: Record<string, any>) => {
+			setLoading(true);
+			const controller = new AbortController();
 
-			if (response && response.success) {
-				setDataVoucherTransactions(response.payload as Transaction[]);
-				typeof callback === 'function' &&
-					callback(response.payload, response?.metadata);
+			try {
+				const response = await voucherTransactions(params, controller.signal);
+
+				if (response && response.success) {
+					setDataVoucherTransactions(response.payload as Transaction[]);
+					typeof callback === 'function' &&
+						callback(response.payload, response?.metadata);
+				}
+			} catch (error) {
+			} finally {
+				setLoading(false);
 			}
-		} catch (error) {
-			setLoading(false);
-		}
-	};
+		},
+		[],
+	);
 
 	return {
 		isLoadingVoucherTransactions: isLoading,
@@ -797,7 +804,7 @@ export const useQueryVoucherTransactions = (
 };
 
 export const useQueryGiftCardTransactions = (
-	callback?: (data: any, metadata?: Metadata) => void
+	callback?: (data: any, metadata?: Metadata) => void,
 ) => {
 	const [dataGiftCardTransactions, setGiftCardTransactions] = useState<
 		{ [key: string]: any }[] | null
@@ -805,22 +812,26 @@ export const useQueryGiftCardTransactions = (
 
 	const [isLoading, setLoading] = useState<boolean>(false);
 
-	const queryGiftCardTransactions = async (params: Record<string, any>) => {
-		setLoading(true);
-		try {
-			const response = await giftCardTransactions(params);
-			setLoading(false);
+	const queryGiftCardTransactions = useCallback(
+		async (params: Record<string, any>) => {
+			setLoading(true);
+			const controller = new AbortController();
+			try {
+				const response = await giftCardTransactions(params, controller.signal);
 
-			if (response && response.success) {
-				setGiftCardTransactions(response.payload);
-				const metadata = response.metadata;
-				typeof callback === 'function' && callback(response.payload, metadata);
-				return response.payload;
+				if (response && response.success) {
+					setGiftCardTransactions(response.payload);
+					const metadata = response.metadata;
+					callback?.(response.payload, metadata);
+					return response.payload;
+				}
+			} catch (error) {
+			} finally {
+				setLoading(false);
 			}
-		} catch (error) {
-			setLoading(false);
-		}
-	};
+		},
+		[],
+	);
 
 	return {
 		isLoadingGiftCardTransactions: isLoading,
@@ -831,7 +842,7 @@ export const useQueryGiftCardTransactions = (
 
 // Query International Airtime Transactiion
 export const useQueryInternationalAirtimeTransactions = (
-	callback?: (data: any, metadata?: Metadata) => void
+	callback?: (data: any, metadata?: Metadata) => void,
 ) => {
 	const [dataAirtimeTransactions, setDataAirtimeTransactions] = useState<
 		{ [key: string]: any }[] | null
@@ -839,22 +850,30 @@ export const useQueryInternationalAirtimeTransactions = (
 
 	const [isLoading, setLoading] = useState<boolean>(false);
 
-	const queryInterAirtimeTransactions = async (params: Record<string, any>) => {
-		setLoading(true);
-		try {
-			const response = await internationalAirtimeTransactions(params);
-			setLoading(false);
+	const queryInterAirtimeTransactions = useCallback(
+		async (params: Record<string, any>) => {
+			setLoading(true);
+			const controller = new AbortController();
+			try {
+				const response = await internationalAirtimeTransactions(
+					params,
+					controller.signal,
+				);
 
-			if (response && response.success) {
-				setDataAirtimeTransactions(response.payload);
-				const metadata = response.metadata;
-				typeof callback === 'function' && callback(response.payload, metadata);
-				return response.payload;
+				if (response && response.success) {
+					setDataAirtimeTransactions(response.payload);
+					const metadata = response.metadata;
+
+					callback?.(response.payload, metadata);
+					return response.payload;
+				}
+			} catch (error) {
+			} finally {
+				setLoading(false);
 			}
-		} catch (error) {
-			setLoading(false);
-		}
-	};
+		},
+		[callback],
+	);
 
 	return {
 		isLoadingInterAirtimeTransactions: isLoading,
@@ -865,7 +884,7 @@ export const useQueryInternationalAirtimeTransactions = (
 
 // Query IInternational Data Transaction
 export const useQueryInternationalDataTransactions = (
-	callback?: (data: any, metadata?: Metadata) => void
+	callback?: (data: any, metadata?: Metadata) => void,
 ) => {
 	const [dataResponse, setDataResponse] = useState<
 		{ [key: string]: any }[] | null
@@ -873,23 +892,28 @@ export const useQueryInternationalDataTransactions = (
 
 	const [isLoading, setLoading] = useState<boolean>(false);
 
-	const queryInterDataTransactions = async (params: Record<string, any>) => {
-		setLoading(true);
-		try {
-			const response = await internationalDataSubscriptions(params);
+	const queryInterDataTransactions = useCallback(
+		async (params: Record<string, any>) => {
+			setLoading(true);
+			const controller = new AbortController();
+			try {
+				const response = await internationalDataSubscriptions(
+					params,
+					controller.signal,
+				);
 
-			if (response && response.success) {
-				setDataResponse(response.payload);
-				const metadata = response.metadata;
-				typeof callback === 'function' && callback(response.payload, metadata);
-				return response.payload;
+				if (response && response.success) {
+					setDataResponse(response.payload);
+					const metadata = response.metadata;
+					callback?.(response.payload, metadata);
+					return response.payload;
+				}
+			} finally {
+				setLoading(false);
 			}
-		} catch (error) {
-			console.log(error);
-		} finally {
-			setLoading(false);
-		}
-	};
+		},
+		[callback],
+	);
 
 	return {
 		isLoadingInterDataTransactions: isLoading,
@@ -900,7 +924,7 @@ export const useQueryInternationalDataTransactions = (
 
 // Query ESim Transaction
 export const useQueryESimTransactions = (
-	callback?: (data: any, metadata?: Metadata) => void
+	callback?: (data: any, metadata?: Metadata) => void,
 ) => {
 	const [dataResponse, setDataResponse] = useState<
 		{ [key: string]: any }[] | null
@@ -908,23 +932,28 @@ export const useQueryESimTransactions = (
 
 	const [isLoading, setLoading] = useState<boolean>(false);
 
-	const queryESimTransactions = async (params: Record<string, any>) => {
-		setLoading(true);
-		try {
-			const response = await eSimTransactions(params);
+	const queryESimTransactions = useCallback(
+		async (params: Record<string, any>) => {
+			setLoading(true);
+			const controller = new AbortController();
+			try {
+				const response = await eSimTransactions(params, controller.signal);
 
-			if (response && response.success) {
-				setDataResponse(response.payload);
-				const metadata = response.metadata;
-				typeof callback === 'function' && callback(response.payload, metadata);
-				return response.payload;
+				if (response && response.success) {
+					setDataResponse(response.payload);
+					const metadata = response.metadata;
+					typeof callback === 'function' &&
+						callback(response.payload, metadata);
+					return response.payload;
+				}
+			} catch (error) {
+				console.log(error);
+			} finally {
+				setLoading(false);
 			}
-		} catch (error) {
-			console.log(error);
-		} finally {
-			setLoading(false);
-		}
-	};
+		},
+		[callback],
+	);
 
 	return {
 		isLoadingESimTransactions: isLoading,
@@ -934,7 +963,7 @@ export const useQueryESimTransactions = (
 };
 
 export const useQueryTransactionStatistics = (
-	callback?: (data: any, metadata?: Metadata) => void
+	callback?: (data: any, metadata?: Metadata) => void,
 ) => {
 	const [dataResponse, setDataResponse] = useState<
 		{ [key: string]: any }[] | null

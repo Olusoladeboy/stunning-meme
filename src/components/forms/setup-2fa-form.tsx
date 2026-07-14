@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef } from 'react';
 import { Box, useTheme } from '@mui/material';
 import { useLocation, useNavigate } from 'react-router-dom';
 import QRCode from 'react-qr-code';
@@ -44,7 +44,7 @@ const Setup2faForm = () => {
 		code: '',
 	};
 
-	const onSessionTimeOut = () => {
+	const onSessionTimeOut = useCallback(() => {
 		modal({
 			title: 'Account Setup',
 			message:
@@ -55,13 +55,13 @@ const Setup2faForm = () => {
 				modal(null);
 			},
 		});
-	};
+	}, [modal, navigate]);
 
 	useEffect(() => {
 		const TIMEOUT_DURATION = 900000;
 
 		const timer = setTimeout(() => {
-			console.log('15 minutes passed! Running action...');
+			// console.log('15 minutes passed! Running action...');
 			onSessionTimeOut();
 			Storage.deleteItem(StorageKeys.PreAuthToken);
 		}, TIMEOUT_DURATION);
@@ -69,7 +69,7 @@ const Setup2faForm = () => {
 		return () => {
 			clearTimeout(timer);
 		};
-	}, []);
+	}, [onSessionTimeOut]);
 
 	const { isVerifying2faSetup, verify2faSetup } = useVerifySetup2fa({
 		callback: (res) => {

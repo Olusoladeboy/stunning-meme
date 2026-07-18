@@ -1,31 +1,32 @@
 import axios, { AxiosRequestConfig } from 'axios';
-import { Storage, StorageKeys } from '../utilities';
+import { session, SESSION_KEYS } from '../utilities';
 
 const BASE_URL = process.env.REACT_APP_API_URI as string;
 const API_KEY = process.env.REACT_APP_API_KEY as string;
 
 interface ConfigTypes extends AxiosRequestConfig {
-	token?: string;
+  token?: string;
 }
 
 const apiRequest = async (config?: ConfigTypes) => {
-	const token = Storage.getItem(StorageKeys.UserToken) || '';
+  const token =
+    (await session.getSession(SESSION_KEYS.AccessToken))?.accessToken || '';
 
-	const res = await axios({
-		url: config?.url,
-		baseURL: BASE_URL,
-		method: config?.method,
-		headers: {
-			Accept: 'application/json',
-			'Content-Type': 'application/json',
-			Authorization: `Bearer ${token}`,
-			apikey: API_KEY,
-		},
-		data: config?.data,
-		params: config?.params,
-	});
+  const res = await axios({
+    url: config?.url,
+    baseURL: BASE_URL,
+    method: config?.method,
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+      ...(token ? { Authorization: `Bearer ${token}` } : { apiKey: API_KEY }),
+      // apikey: API_KEY,
+    },
+    data: config?.data,
+    params: config?.params,
+  });
 
-	return res.data;
+  return res.data;
 };
 
 export default apiRequest;

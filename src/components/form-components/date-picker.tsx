@@ -35,11 +35,11 @@ const DatePicker: React.FC<Props> = ({
 	const handleOnChange = (ranges: any) => {
 		const { selection } = ranges;
 		setSelectedRange(selection);
-		typeof setDateRange === 'function' && setDateRange(selection);
+		setDateRange?.(selection);
 	};
 
 	const handleApplyChange = () => {
-		typeof onApplyChange === 'function' && onApplyChange(selectionRange);
+		onApplyChange?.(selectionRange);
 		// typeof cancelPicker === 'function' && cancelPicker();
 	};
 

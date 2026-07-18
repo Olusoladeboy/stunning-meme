@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import queryString from 'query-string';
 import { Box, Typography, useTheme } from '@mui/material';
@@ -10,8 +10,6 @@ import {
 	ConversionTotal,
 	AvailableNetwork,
 	Pagination,
-	Button,
-	Loader,
 	AutoConversionStatistics,
 } from 'components';
 import {
@@ -20,7 +18,6 @@ import {
 	MAX_RECORDS,
 	LINKS,
 	ErrorBoundary,
-	AUTO_AIRTIME_CONVERT_PROVIDERS,
 } from 'utilities';
 import { useAppSelector } from 'store/hooks';
 import {
@@ -28,8 +25,6 @@ import {
 	useHandleError,
 	usePageTitle,
 	useSearchConversion,
-	useSettings,
-	useUpdateSettings,
 } from 'hooks';
 import { autoConvertAirtimeGroups } from 'api';
 
@@ -102,7 +97,7 @@ const AutoConversions = () => {
 					setCount(count);
 				}
 			},
-		}
+		},
 	);
 
 	const handlePageChange = (page: number) => {

@@ -1,20 +1,31 @@
-import React, { ReactElement } from 'react';
+import { ReactElement, useEffect, useRef, useState } from 'react';
 import { Navigate } from 'react-router-dom';
-import { Storage } from '../helpers';
-import { StorageKeys } from '../constant';
+import { session } from '../helpers';
+import { SESSION_KEYS } from '../constant';
 
 interface Props {
-	children: ReactElement;
+  children: ReactElement;
 }
 
 const AuthGuard = ({ children }: Props) => {
-	const token = Storage.getItem(StorageKeys.UserToken);
+  let tokenRef = useRef<string>('');
+  const [isLoading, setLoading] = useState<boolean>(true);
 
-	if (token) {
-		return children;
-	}
+  useEffect(() => {
+    session.getSession(SESSION_KEYS.AccessToken).then((value) => {
+      tokenRef.current = value?.accessToken;
 
-	return <Navigate to={'/auth/login'} replace />;
+      setLoading(false);
+    });
+  }, []);
+
+  if (isLoading) return null;
+
+  if (tokenRef.current) {
+    return children;
+  }
+
+  return <Navigate to={'/auth/login'} replace />;
 };
 
 export default AuthGuard;

@@ -5,141 +5,155 @@ import { useFormik } from 'formik';
 import TextInput from '../form-components/TextInput';
 import * as yup from 'yup';
 import { grey } from '@mui/material/colors';
-import { LINKS, Storage, StorageKeys } from 'utilities';
+import { LINKS, session, SESSION_KEYS, Storage, StorageKeys } from 'utilities';
 import CustomButton from '../button/custom-button';
 import { use2faLogin, useAlert, useModalAlert } from 'hooks';
 import { useAppDispatch } from 'store/hooks';
 import { setToken, setUser } from 'store/auth';
 
+interface LocationState {
+  preAuthToken?: string;
+}
+
 const Verify2faCodeForm = () => {
-	const theme = useTheme();
-	const styles = useStyles(theme);
-	const dispatch = useAppDispatch();
-	const modal = useModalAlert();
-	const setAlert = useAlert();
+  const theme = useTheme();
+  const styles = useStyles(theme);
+  const dispatch = useAppDispatch();
+  const modal = useModalAlert();
+  const setAlert = useAlert();
 
-	const navigate = useNavigate();
+  const navigate = useNavigate();
 
-	const { state } = useLocation();
+  const location = useLocation();
+  const state = location?.state as LocationState;
 
-	const preAuthToken =
-		state?.preAuthToken || Storage.getItem(StorageKeys.PreAuthToken);
-	const email = Storage.getItem(StorageKeys.UserEmail);
+  const statePreAuthToken = state?.preAuthToken;
+  const email = Storage.getItem(StorageKeys.UserEmail);
 
-	const { isLogining, login } = use2faLogin({
-		callback: (res) => {
-			if (res?.success && res.data) {
-				const token = res.data.payload.token;
-				const user = res.data.payload.user;
+  const { isLogining, login } = use2faLogin({
+    callback: async (res) => {
+      if (res?.success && res.data) {
+        const token = res.data.payload.token;
+        const user = res.data.payload.user;
 
-				const userName = `${user.firstname} ${user.lastname}`;
+        const userName = `${user.firstname} ${user.lastname}`;
 
-				dispatch(setToken(token));
-				dispatch(setUser(user));
+        await session.createSession({
+          sessionKey: SESSION_KEYS.AccessToken,
+          payload: {
+            accessToken: token,
+          },
+        });
 
-				if (
-					'defaultPasswordChanged' in user &&
-					!Boolean(user.defaultPasswordChanged)
-				) {
-					modal({
-						title: 'Change Password',
-						message: 'Kindly change your password',
-						type: 'error',
-						primaryButtonText: 'Change Password',
-						onClickPrimaryButton: () => {
-							modal(null);
-							navigate(LINKS.ChangePassword);
-						},
-					});
+        dispatch(setToken(token));
+        dispatch(setUser(user));
 
-					return;
-				}
+        if (
+          'defaultPasswordChanged' in user &&
+          !Boolean(user.defaultPasswordChanged)
+        ) {
+          modal({
+            title: 'Change Password',
+            message: 'Kindly change your password',
+            type: 'error',
+            primaryButtonText: 'Change Password',
+            onClickPrimaryButton: () => {
+              modal(null);
+              navigate(LINKS.ChangePassword);
+            },
+          });
 
-				navigate(LINKS.Dashboard);
+          return;
+        }
 
-				setAlert({ message: `Welcome back ${userName}!`, type: 'success' });
-			}
-		},
-	});
+        navigate(LINKS.Dashboard);
 
-	const validationSchema = yup.object().shape({
-		code: yup
-			.string()
-			.required('Verification code is required')
-			.matches(/^[0-9]{6}$/, 'Code must be exactly 6 digits'),
-	});
+        setAlert({ message: `Welcome back ${userName}!`, type: 'success' });
+      }
+    },
+  });
 
-	const initialValues = {
-		code: '',
-	};
+  const validationSchema = yup.object().shape({
+    code: yup
+      .string()
+      .required('Verification code is required')
+      .matches(/^[0-9]{6}$/, 'Code must be exactly 6 digits'),
+  });
 
-	const { handleChange, errors, touched, values, handleSubmit } = useFormik({
-		initialValues,
-		validationSchema,
-		onSubmit: (values) => {
-			if (preAuthToken && email) {
-				const payload = {
-					email,
-					preAuthToken,
-					code: values.code,
-				};
-				login(payload);
-			}
-		},
-	});
+  const initialValues = {
+    code: '',
+  };
 
-	const { code } = values;
+  const { handleChange, errors, touched, values, handleSubmit } = useFormik({
+    initialValues,
+    validationSchema,
+    onSubmit: async (values) => {
+      const preAuthToken =
+        (await session.getSession(SESSION_KEYS.PreAuthToken))?.preAuthToken ||
+        statePreAuthToken;
+      if (preAuthToken && email) {
+        const payload = {
+          email,
+          preAuthToken,
+          code: values.code,
+        };
+        login(payload);
+      }
+    },
+  });
 
-	return (
-		<Box style={styles.form as any} component={'form'}>
-			<Box>
-				<TextInput
-					fullWidth
-					error={errors && touched.code && errors.code ? true : false}
-					helperText={errors && touched.code && errors.code}
-					placeholder={'Enter code'}
-					value={code}
-					onChange={handleChange('code')}
-				/>
-			</Box>
+  const { code } = values;
 
-			<CustomButton
-				loading={isLogining}
-				onClick={(e: React.FormEvent<HTMLButtonElement>) => {
-					e.preventDefault();
-					handleSubmit();
-				}}
-				style={styles.btn}
-				size={'large'}
-				type={'submit'}
-			>
-				Verify
-			</CustomButton>
-		</Box>
-	);
+  return (
+    <Box style={styles.form as any} component={'form'}>
+      <Box>
+        <TextInput
+          fullWidth
+          error={errors && touched.code && errors.code ? true : false}
+          helperText={errors && touched.code && errors.code}
+          placeholder={'Enter code'}
+          value={code}
+          onChange={handleChange('code')}
+        />
+      </Box>
+
+      <CustomButton
+        loading={isLogining}
+        onClick={(e: React.FormEvent<HTMLButtonElement>) => {
+          e.preventDefault();
+          handleSubmit();
+        }}
+        style={styles.btn}
+        size={'large'}
+        type={'submit'}
+      >
+        Verify
+      </CustomButton>
+    </Box>
+  );
 };
 
 const useStyles = (theme: any) => ({
-	form: {
-		display: 'flex',
-		flexDirection: 'column',
-		gap: '20px',
-	},
-	btn: {
-		backgroundColor: theme.palette.secondary.main,
-		color: grey[50],
-		fontWeight: '600',
-	},
-	endAdornmentBtn: {
-		color: theme.palette.secondary.main,
-		fontWeight: '600',
-		fontSize: '12px',
-		padding: '0px',
-		minWidth: 'unset',
-	},
-	link: {
-		color: theme.palette.secondary.main,
-	},
+  form: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '20px',
+  },
+  btn: {
+    backgroundColor: theme.palette.secondary.main,
+    color: grey[50],
+    fontWeight: '600',
+  },
+  endAdornmentBtn: {
+    color: theme.palette.secondary.main,
+    fontWeight: '600',
+    fontSize: '12px',
+    padding: '0px',
+    minWidth: 'unset',
+  },
+  link: {
+    color: theme.palette.secondary.main,
+  },
 });
 
 export default Verify2faCodeForm;

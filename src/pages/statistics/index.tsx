@@ -5,8 +5,6 @@ import {
 	DataSubscriptionTable,
 	Layout,
 	SearchStatistics,
-	StatisticTab,
-	StatisticsTotal,
 	AirtimePurchaseTable,
 	ConversionsTable,
 	CableTransactionsTable,

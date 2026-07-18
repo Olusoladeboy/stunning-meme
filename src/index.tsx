@@ -1,4 +1,5 @@
 import React from 'react';
+// @ts-ignore: Allow side-effect CSS import without type declarations
 import './index.css';
 import { createRoot } from 'react-dom/client';
 import * as Sentry from '@sentry/react';
@@ -16,40 +17,40 @@ const container: any = document.getElementById('root');
 const root = createRoot(container);
 
 Sentry.init({
-	dsn: 'https://a3fb854d3ad5e1cc0798f82569381d92@o4509805294518272.ingest.us.sentry.io/4510362164985856',
-	// Setting this option to true will send default PII data to Sentry.
-	// For example, automatic IP address collection on events
-	sendDefaultPii: true,
+  dsn: 'https://a3fb854d3ad5e1cc0798f82569381d92@o4509805294518272.ingest.us.sentry.io/4510362164985856',
+  // Setting this option to true will send default PII data to Sentry.
+  // For example, automatic IP address collection on events
+  sendDefaultPii: false,
 });
 
 const RootApp = () => {
-	const queryClient = new QueryClient();
+  const queryClient = new QueryClient();
 
-	return (
-		<Provider store={store}>
-			<QueryClientProvider client={queryClient}>
-				<BrowserRouter>
-					<SnackbarProvider
-						anchorOrigin={{
-							vertical: 'top',
-							horizontal: 'right',
-						}}
-						autoHideDuration={3000}
-						maxSnack={3}
-					>
-						<App />
-					</SnackbarProvider>
-				</BrowserRouter>
-				<ReactQueryDevtools />
-			</QueryClientProvider>
-		</Provider>
-	);
+  return (
+    <Provider store={store}>
+      <QueryClientProvider client={queryClient}>
+        <BrowserRouter>
+          <SnackbarProvider
+            anchorOrigin={{
+              vertical: 'top',
+              horizontal: 'right',
+            }}
+            autoHideDuration={3000}
+            maxSnack={3}
+          >
+            <App />
+          </SnackbarProvider>
+        </BrowserRouter>
+        <ReactQueryDevtools />
+      </QueryClientProvider>
+    </Provider>
+  );
 };
 
 root.render(
-	<React.StrictMode>
-		<RootApp />
-	</React.StrictMode>
+  <React.StrictMode>
+    <RootApp />
+  </React.StrictMode>,
 );
 
 // If you want to start measuring performance in your app, pass a function

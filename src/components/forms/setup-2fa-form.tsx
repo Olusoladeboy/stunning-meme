@@ -5,181 +5,195 @@ import QRCode from 'react-qr-code';
 import { useFormik } from 'formik';
 import TextInput from '../form-components/TextInput';
 import { grey } from '@mui/material/colors';
-import { LINKS, Storage, StorageKeys } from 'utilities';
+import { LINKS, session, SESSION_KEYS, Storage, StorageKeys } from 'utilities';
 import * as yup from 'yup';
 import CustomButton from '../button/custom-button';
 import { useModalAlert, useVerifySetup2fa } from 'hooks';
 
 interface LocationState {
-	otpauthUrl?: string;
+  otpauthUrl?: string;
 }
 
 const Setup2faForm = () => {
-	const theme = useTheme();
+  const theme = useTheme();
 
-	const location = useLocation();
-	const state = location.state as LocationState;
-	const styles = useStyles(theme);
-	const navigate = useNavigate();
-	const modal = useModalAlert();
+  const location = useLocation();
+  const state = location.state as LocationState;
+  const styles = useStyles(theme);
+  const navigate = useNavigate();
+  const modal = useModalAlert();
 
-	const qrCodeUrl = useMemo(() => {
-		if (state?.otpauthUrl) return state?.otpauthUrl;
+  const qrCodeUrl = useMemo(() => {
+    if (state?.otpauthUrl) return state?.otpauthUrl;
 
-		return '';
-	}, [state]);
+    return '';
+  }, [state]);
 
-	const preAuthTokenRef = useRef<string>(
-		Storage.getItem(StorageKeys.PreAuthToken) || '',
-	);
+  const preAuthTokenRef = useRef<string>('');
 
-	const validationSchema = yup.object().shape({
-		code: yup
-			.string()
-			.required('Verification code is required')
-			.matches(/^[0-9]{6}$/, 'Code must be exactly 6 digits'),
-	});
+  useEffect(() => {
+    async function getToken() {
+      const token = (await session.getSession(SESSION_KEYS.PreAuthToken))
+        ?.preAuthToken;
+      if (token) preAuthTokenRef.current = token;
+    }
 
-	const initialValues = {
-		code: '',
-	};
+    getToken();
+  }, []);
 
-	const onSessionTimeOut = useCallback(() => {
-		modal({
-			title: 'Account Setup',
-			message:
-				'The setup session has expired. Please restart the 2FA setup process.',
-			primaryButtonText: 'Re-start',
-			onClickPrimaryButton: async () => {
-				navigate(LINKS.Login);
-				modal(null);
-			},
-		});
-	}, [modal, navigate]);
+  const validationSchema = yup.object().shape({
+    code: yup
+      .string()
+      .required('Verification code is required')
+      .matches(/^[0-9]{6}$/, 'Code must be exactly 6 digits'),
+  });
 
-	useEffect(() => {
-		const TIMEOUT_DURATION = 900000;
+  const initialValues = {
+    code: '',
+  };
 
-		const timer = setTimeout(() => {
-			// console.log('15 minutes passed! Running action...');
-			onSessionTimeOut();
-			Storage.deleteItem(StorageKeys.PreAuthToken);
-		}, TIMEOUT_DURATION);
+  const onSessionTimeOut = useCallback(() => {
+    modal({
+      title: 'Account Setup',
+      message:
+        'The setup session has expired. Please restart the 2FA setup process.',
+      primaryButtonText: 'Re-start',
+      onClickPrimaryButton: async () => {
+        navigate(LINKS.Login);
+        modal(null);
+      },
+    });
+  }, [modal, navigate]);
 
-		return () => {
-			clearTimeout(timer);
-		};
-	}, [onSessionTimeOut]);
+  useEffect(() => {
+    const TIMEOUT_DURATION = 900000;
 
-	const { isVerifying2faSetup, verify2faSetup } = useVerifySetup2fa({
-		callback: (res) => {
-			if (res?.success && res.data) {
-				const preAuthToken = res.data.payload.preAuthToken;
-				const message = res.data.payload.message;
+    const timer = setTimeout(async () => {
+      // console.log('15 minutes passed! Running action...');
+      onSessionTimeOut();
 
-				Storage.saveItem(StorageKeys.PreAuthToken, preAuthToken);
-				preAuthTokenRef.current = preAuthToken;
+      session.deleteSession(SESSION_KEYS.PreAuthToken);
+    }, TIMEOUT_DURATION);
 
-				modal({
-					message,
-					title: 'Account Setup',
-					primaryButtonText: 'Continue',
-					onClickPrimaryButton: async () => {
-						navigate(LINKS.Auth2faVerifyCode, {
-							state: {
-								preAuthToken,
-							},
-						});
-						modal(null);
-					},
-				});
-			}
-		},
-	});
+    return () => {
+      clearTimeout(timer);
+    };
+  }, [onSessionTimeOut]);
 
-	const { handleChange, errors, touched, values, handleSubmit } = useFormik({
-		initialValues,
-		validationSchema,
-		onSubmit: (values) => {
-			const email = Storage.getItem(StorageKeys.UserEmail);
-			if (preAuthTokenRef.current && email) {
-				const payload = {
-					email,
-					preAuthToken: preAuthTokenRef.current,
-					code: values.code,
-				};
-				verify2faSetup(payload);
-			}
-		},
-	});
+  const { isVerifying2faSetup, verify2faSetup } = useVerifySetup2fa({
+    callback: async (res) => {
+      if (res?.success && res.data) {
+        const preAuthToken = res.data.payload.preAuthToken;
+        const message = res.data.payload.message;
 
-	const { code } = values;
+        await session.createSession({
+          sessionKey: SESSION_KEYS.AccessToken,
+          payload: {
+            preAuthToken,
+          },
+        });
+        preAuthTokenRef.current = preAuthToken;
 
-	return (
-		<Box style={styles.form as any} component={'form'}>
-			<Box
-				sx={{
-					display: 'flex',
-					alignItems: 'center',
-					justifyContent: 'center',
-					maxWidth: '200px',
-					margin: '0px auto 20px',
-					img: {
-						width: '100%',
-					},
-				}}
-			>
-				<QRCode value={qrCodeUrl} />
-			</Box>
+        modal({
+          message,
+          title: 'Account Setup',
+          primaryButtonText: 'Continue',
+          onClickPrimaryButton: async () => {
+            navigate(LINKS.Auth2faVerifyCode, {
+              state: {
+                preAuthToken,
+              },
+            });
+            modal(null);
+          },
+        });
+      }
+    },
+  });
 
-			<Box>
-				<TextInput
-					fullWidth
-					error={errors && touched.code && errors.code ? true : false}
-					helperText={errors && touched.code && errors.code}
-					placeholder={'Enter your one-time code'}
-					value={code}
-					onChange={handleChange('code')}
-				/>
-			</Box>
+  const { handleChange, errors, touched, values, handleSubmit } = useFormik({
+    initialValues,
+    validationSchema,
+    onSubmit: (values) => {
+      const email = Storage.getItem(StorageKeys.UserEmail);
+      if (preAuthTokenRef.current && email) {
+        const payload = {
+          email,
+          preAuthToken: preAuthTokenRef.current,
+          code: values.code,
+        };
+        verify2faSetup(payload);
+      }
+    },
+  });
 
-			<CustomButton
-				loading={isVerifying2faSetup}
-				onClick={(e: React.FormEvent<HTMLButtonElement>) => {
-					e.preventDefault();
-					handleSubmit();
-				}}
-				style={styles.btn}
-				size={'large'}
-				type={'submit'}
-			>
-				Continue
-			</CustomButton>
-		</Box>
-	);
+  const { code } = values;
+
+  return (
+    <Box style={styles.form as any} component={'form'}>
+      <Box
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          maxWidth: '200px',
+          margin: '0px auto 20px',
+          img: {
+            width: '100%',
+          },
+        }}
+      >
+        <QRCode value={qrCodeUrl} />
+      </Box>
+
+      <Box>
+        <TextInput
+          fullWidth
+          error={errors && touched.code && errors.code ? true : false}
+          helperText={errors && touched.code && errors.code}
+          placeholder={'Enter your one-time code'}
+          value={code}
+          onChange={handleChange('code')}
+        />
+      </Box>
+
+      <CustomButton
+        loading={isVerifying2faSetup}
+        onClick={(e: React.FormEvent<HTMLButtonElement>) => {
+          e.preventDefault();
+          handleSubmit();
+        }}
+        style={styles.btn}
+        size={'large'}
+        type={'submit'}
+      >
+        Continue
+      </CustomButton>
+    </Box>
+  );
 };
 
 const useStyles = (theme: any) => ({
-	form: {
-		display: 'flex',
-		flexDirection: 'column',
-		gap: '20px',
-	},
-	btn: {
-		backgroundColor: theme.palette.secondary.main,
-		color: grey[50],
-		fontWeight: '600',
-	},
-	endAdornmentBtn: {
-		color: theme.palette.secondary.main,
-		fontWeight: '600',
-		fontSize: '12px',
-		padding: '0px',
-		minWidth: 'unset',
-	},
-	link: {
-		color: theme.palette.secondary.main,
-	},
+  form: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '20px',
+  },
+  btn: {
+    backgroundColor: theme.palette.secondary.main,
+    color: grey[50],
+    fontWeight: '600',
+  },
+  endAdornmentBtn: {
+    color: theme.palette.secondary.main,
+    fontWeight: '600',
+    fontSize: '12px',
+    padding: '0px',
+    minWidth: 'unset',
+  },
+  link: {
+    color: theme.palette.secondary.main,
+  },
 });
 
 export default Setup2faForm;

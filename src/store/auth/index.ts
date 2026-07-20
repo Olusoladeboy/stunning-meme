@@ -1,11 +1,12 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import Cookies from 'js-cookie';
 import { AuthState, User, ADMIN_ROLE, session, SESSION_KEYS } from 'utilities';
 
 // Define the initial state using that type
 const initialState: AuthState = {
   isAuthenticated: false,
   user: null,
-  token: null,
+  token: Cookies.get(SESSION_KEYS.AccessToken) || null,
   canViewStatistics: false,
   canCreateOrUpdateRecord: false,
   canApproveWithdrawal: false,

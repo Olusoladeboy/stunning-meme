@@ -2,26 +2,16 @@ import { ReactElement, useEffect, useRef, useState } from 'react';
 import { Navigate } from 'react-router-dom';
 import { session } from '../helpers';
 import { SESSION_KEYS } from '../constant';
+import { useAppSelector } from 'store/hooks';
 
 interface Props {
   children: ReactElement;
 }
 
 const AuthGuard = ({ children }: Props) => {
-  let tokenRef = useRef<string>('');
-  const [isLoading, setLoading] = useState<boolean>(true);
+  const token = useAppSelector((store) => store.authState.token);
 
-  useEffect(() => {
-    session.getSession(SESSION_KEYS.AccessToken).then((value) => {
-      tokenRef.current = value?.accessToken;
-
-      setLoading(false);
-    });
-  }, []);
-
-  if (isLoading) return null;
-
-  if (tokenRef.current) {
+  if (token) {
     return children;
   }
 

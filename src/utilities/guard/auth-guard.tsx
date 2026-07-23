@@ -1,20 +1,21 @@
-import React, { ReactElement } from 'react';
+import { ReactElement, useEffect, useRef, useState } from 'react';
 import { Navigate } from 'react-router-dom';
-import { Storage } from '../helpers';
-import { StorageKeys } from '../constant';
+import { session } from '../helpers';
+import { SESSION_KEYS } from '../constant';
+import { useAppSelector } from 'store/hooks';
 
 interface Props {
-	children: ReactElement;
+  children: ReactElement;
 }
 
 const AuthGuard = ({ children }: Props) => {
-	const token = Storage.getItem(StorageKeys.UserToken);
+  const token = useAppSelector((store) => store.authState.token);
 
-	if (token) {
-		return children;
-	}
+  if (token) {
+    return children;
+  }
 
-	return <Navigate to={'/auth/login'} replace />;
+  return <Navigate to={'/auth/login'} replace />;
 };
 
 export default AuthGuard;

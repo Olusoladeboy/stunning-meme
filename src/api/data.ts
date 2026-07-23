@@ -7,23 +7,32 @@ import {
 	DataPlan,
 	Transaction,
 } from '../utilities';
+import { GenericAbortSignal } from 'axios';
 
-export const dataPlans = async (params: {
-	[key: string]: any;
-}): Promise<DataResponse<DataPlan[]>> =>
+export const dataPlans = async (
+	params: {
+		[key: string]: any;
+	},
+	signal?: GenericAbortSignal,
+): Promise<DataResponse<DataPlan[]>> =>
 	apiRequest({
 		url: ENDPOINTS.DataPlans,
 		method: 'GET',
 		params,
+		signal,
 	});
 
-export const dataSubscriptions = async (params: {
-	[key: string]: any;
-}): Promise<DataResponse<DataPlan[]>> =>
+export const dataSubscriptions = async (
+	params: {
+		[key: string]: any;
+	},
+	signal?: GenericAbortSignal,
+): Promise<DataResponse<DataPlan[]>> =>
 	apiRequest({
 		url: ENDPOINTS.DataSubscription,
 		method: 'GET',
 		params,
+		signal,
 	});
 
 export const updateDataSubscriptions = async (payload: {
@@ -36,17 +45,21 @@ export const updateDataSubscriptions = async (payload: {
 		data: payload.data,
 	});
 
-export const dataTypes = async (params: {
-	[key: string]: any;
-}): Promise<DataResponse<DataType[]>> =>
+export const dataTypes = async (
+	params: {
+		[key: string]: any;
+	},
+	signal?: GenericAbortSignal,
+): Promise<DataResponse<DataType[]>> =>
 	apiRequest({
 		url: ENDPOINTS.DataTypes,
 		method: 'GET',
 		params,
+		signal,
 	});
 
 export const createDataTypes = async (
-	data: DataType
+	data: DataType,
 ): Promise<DataResponse<DataType>> =>
 	apiRequest({
 		url: ENDPOINTS.DataTypes,
@@ -68,7 +81,7 @@ export const updateDataType = async ({
 	});
 
 export const createDataPlan = async (
-	data: DataPlanType
+	data: DataPlanType,
 ): Promise<DataResponse<DataPlanType>> =>
 	apiRequest({
 		method: 'POST',
@@ -89,13 +102,17 @@ export const updateDataPlan = async ({
 		data,
 	});
 
-export const internationalDataSubscriptions = async (params: {
-	[key: string]: any;
-}): Promise<DataResponse<Transaction[]>> =>
+export const internationalDataSubscriptions = async (
+	params: {
+		[key: string]: any;
+	},
+	signal?: GenericAbortSignal,
+): Promise<DataResponse<Transaction[]>> =>
 	apiRequest({
 		url: ENDPOINTS.InternationalData,
 		method: 'GET',
 		params,
+		signal,
 	});
 
 export const updateInternationalDataSubscriptions = async (payload: {

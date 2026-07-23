@@ -1,4 +1,10 @@
-import React, { useState, useRef, MouseEvent, CSSProperties } from 'react';
+import React, {
+	useState,
+	useRef,
+	MouseEvent,
+	CSSProperties,
+	useCallback,
+} from 'react';
 import {
 	Box,
 	Button,
@@ -33,6 +39,7 @@ import {
 	CreditDebitTable,
 	RTransactionTable,
 	GiftcardESimTransactionTable,
+	ModalWrapper,
 } from 'components';
 import {
 	BOX_SHADOW,
@@ -43,6 +50,7 @@ import {
 	capitalize,
 	IGroupAutoTransaction,
 	Transaction,
+	SECOUNDARY_COLOR,
 } from 'utilities';
 import {
 	usePageTitle,
@@ -63,6 +71,8 @@ import {
 	useQueryESimTransactions,
 } from 'hooks';
 import { useAppSelector } from 'store/hooks';
+import DatePicker from 'components/form-components/date-picker';
+import moment from 'moment';
 
 const STATUS = {
 	ALL: 'ALL',
@@ -84,8 +94,11 @@ const Transactions = () => {
 	const styles = useStyles(theme);
 
 	const canViewStatistics = useAppSelector(
-		(store) => store.authState?.canViewStatistics
+		(store) => store.authState?.canViewStatistics,
 	);
+
+	const startDate = useRef<string>('');
+	const endDate = useRef<string>('');
 
 	const [total, setTotal] = useState(0);
 	const [currentPage, setCurrentPage] = useState(1);
@@ -94,11 +107,13 @@ const Transactions = () => {
 
 	const filterUrlEntries = useRef<null | { [key: string]: any }>(null);
 	const [serviceAnchorEl, setServiceAnchorEl] = useState<null | HTMLElement>(
-		null
+		null,
 	);
 	const [statusAnchorEl, setStatusAnchorEl] = useState<null | HTMLElement>(
-		null
+		null,
 	);
+
+	const [isDisplayPicker, setDisplayPicker] = useState<boolean>(false);
 
 	const queryValues = useRef<null | { [key: string]: any }>(null);
 
@@ -218,7 +233,7 @@ const Transactions = () => {
 				data,
 				service: service as string,
 			});
-		}
+		},
 	);
 
 	const { isLoadingESimTransactions, queryESimTransactions } =
@@ -275,137 +290,154 @@ const Transactions = () => {
 		isLoadingInterDataTransactions ||
 		isLoadingInterAirtimeTransactions;
 
-	const switchHandleSubmit = async (values: Record<string, any>) => {
-		let payload: { [key: string]: any } = {
-			// populate: 'user,plan,dataType,network',
-			limit: maxRecordRef.current,
-			sort: '-createdAt',
-		};
+	const switchHandleSubmit = useCallback(
+		async (values: Record<string, any>) => {
+			let payload: { [key: string]: any } = {
+				limit: maxRecordRef.current,
+				sort: '-createdAt',
+			};
 
-		resetQueryValue(values.service);
+			resetQueryValue(values.service);
 
-		queryValues.current = values;
+			queryValues.current = values;
 
-		if (values.status && values.status !== STATUS.ALL)
-			payload.status = values.status;
+			if (values.status && values.status !== STATUS.ALL)
+				payload.status = values.status;
 
-		if (skipValue.current > 0) payload.skip = skipValue.current;
-		if (values.reference) payload.reference = values.reference;
+			if (skipValue.current > 0) payload.skip = skipValue.current;
+			if (values.reference) payload.reference = values.reference;
 
-		// console.log(filterUrlEntries.current);
+			// console.log(filterUrlEntries.current);
 
-		if (filterUrlEntries.current)
-			payload = { ...payload, ...filterUrlEntries.current };
+			if (filterUrlEntries.current)
+				payload = { ...payload, ...filterUrlEntries.current };
 
-		if (values.service === SERVICES.DATA_SUBSCRIPTION) {
-			payload.populate =
-				'user,plan,plan.network,dataType,network,transaction.discount_code';
-			if (values.plan) payload.plan = values.plan;
-			if (values.type) payload.dataType = values.type;
-			queryDataSubscriptions(payload);
-			return;
-		}
+			if (values.service === SERVICES.DATA_SUBSCRIPTION) {
+				payload.populate =
+					'user,plan,plan.network,dataType,network,transaction.discount_code';
+				if (values.plan) payload.plan = values.plan;
+				if (values.type) payload.dataType = values.type;
+				queryDataSubscriptions(payload);
+				return;
+			}
 
-		if (values.service === SERVICES.AIRTIME_TOP_UP) {
-			if (values.provider) payload.network = values.provider;
-			payload.populate = 'user,plan.network,network,transaction.discount_code';
-			queryAirtimeTransactions(payload);
-			return;
-		}
+			if (values.service === SERVICES.AIRTIME_TOP_UP) {
+				if (values.provider) payload.network = values.provider;
+				payload.populate =
+					'user,plan.network,network,transaction.discount_code';
+				queryAirtimeTransactions(payload);
+				return;
+			}
 
-		if (values.service === SERVICES.AIRTIME_CONVERSION) {
-			if (values.provider) payload.network = values.provider;
-			payload.populate =
-				'user,plan,plan.network,network,transaction.discount_code';
-			queryConvertAirtimes(payload);
-			return;
-		}
+			if (values.service === SERVICES.AIRTIME_CONVERSION) {
+				if (values.provider) payload.network = values.provider;
+				payload.populate =
+					'user,plan,plan.network,network,transaction.discount_code';
+				queryConvertAirtimes(payload);
+				return;
+			}
 
-		if (values.service === SERVICES.AUTO_AIRTIME_CONVERSION) {
-			if (values.provider) payload.network = values.provider;
-			payload.populate = 'user,network,transaction.discount_code';
+			if (values.service === SERVICES.AUTO_AIRTIME_CONVERSION) {
+				if (values.provider) payload.network = values.provider;
+				payload.populate = 'user,network,transaction.discount_code';
 
-			queryAutoConvertAirtimes(payload);
-			return;
-		}
+				queryAutoConvertAirtimes(payload);
+				return;
+			}
 
-		if (values.service === SERVICES.WITHDRAWAL) {
-			payload.populate = 'user';
-			queryWalletWithdrawals(payload);
-			return;
-		}
+			if (values.service === SERVICES.WITHDRAWAL) {
+				payload.populate = 'user';
+				queryWalletWithdrawals(payload);
+				return;
+			}
 
-		if (values.service === SERVICES.CARD_FUNDING) {
-			payload.populate = 'user';
-			queryWalletFundings(payload);
-			return;
-		}
+			if (values.service === SERVICES.CARD_FUNDING) {
+				payload.populate = 'user';
+				queryWalletFundings(payload);
+				return;
+			}
 
-		if (values.service === SERVICES.WALLET_TRANSFER) {
-			payload.populate = 'userTo,userFrom,transactionFrom';
-			queryWalletTransfers(payload);
-			return;
-		}
+			if (values.service === SERVICES.WALLET_TRANSFER) {
+				payload.populate = 'userTo,userFrom,transactionFrom';
+				queryWalletTransfers(payload);
+				return;
+			}
 
-		if (values.service === SERVICES.EPIN) {
-			payload.populate = 'user,pin_data.network,transaction.discount_code';
-			queryEPinTransactions(payload);
-			return;
-		}
+			if (values.service === SERVICES.EPIN) {
+				payload.populate = 'user,pin_data.network,transaction.discount_code';
+				queryEPinTransactions(payload);
+				return;
+			}
 
-		if (values.service === SERVICES.INTERNATIONAL_AIRTIME_TOP_UP) {
-			payload.populate = 'user,transaction.discount_code';
-			queryInterAirtimeTransactions(payload);
-			return;
-		}
+			if (values.service === SERVICES.INTERNATIONAL_AIRTIME_TOP_UP) {
+				payload.populate = 'user,transaction.discount_code';
+				queryInterAirtimeTransactions(payload);
+				return;
+			}
 
-		// queryInterDataTransactions
+			if (values.service === SERVICES.INTERNATIONAL_DATA_SUBSCRIPTION) {
+				payload.populate = 'user,transaction.discount_code';
+				queryInterDataTransactions(payload);
+				return;
+			}
 
-		if (values.service === SERVICES.INTERNATIONAL_DATA_SUBSCRIPTION) {
-			payload.populate = 'user,transaction.discount_code';
-			queryInterDataTransactions(payload);
-			return;
-		}
+			if (values.service === SERVICES.ESIM) {
+				payload.populate = 'user,transaction.discount_code';
+				queryESimTransactions(payload);
+				return;
+			}
 
-		if (values.service === SERVICES.ESIM) {
-			payload.populate = 'user,transaction.discount_code';
-			queryESimTransactions(payload);
-			return;
-		}
+			if (values.service === SERVICES.GIFT_CARD) {
+				payload.populate = 'user,transaction.discount_code';
+				queryGiftCardTransactions(payload);
+				return;
+			}
 
-		if (values.service === SERVICES.GIFT_CARD) {
-			payload.populate = 'user,transaction.discount_code';
-			queryGiftCardTransactions(payload);
-			return;
-		}
+			if (
+				values.service === SERVICES.CREDIT ||
+				values.service === SERVICES.DEBIT ||
+				values.service === SERVICES.REFUND ||
+				values.service === SERVICES.REVERSAL
+			) {
+				payload.service = values.service;
+				payload.populate = 'user';
+				queryTransactions(payload);
+				return;
+			}
 
-		if (
-			values.service === SERVICES.CREDIT ||
-			values.service === SERVICES.DEBIT ||
-			values.service === SERVICES.REFUND ||
-			values.service === SERVICES.REVERSAL
-		) {
-			payload.service = values.service;
-			payload.populate = 'user';
-			queryTransactions(payload);
-			return;
-		}
+			if (
+				values.service === SERVICES.CABLE ||
+				values.service === SERVICES.INTERNET ||
+				values.service === SERVICES.ELECTRICITY ||
+				values.service === SERVICES.EDUCATION ||
+				values.service === SERVICES.BETTING
+			) {
+				payload.type = values.service;
+				payload.populate = 'user,transaction.discount_code';
+				if (values.provider) payload.name = values.provider;
 
-		if (
-			values.service === SERVICES.CABLE ||
-			values.service === SERVICES.INTERNET ||
-			values.service === SERVICES.ELECTRICITY ||
-			values.service === SERVICES.EDUCATION ||
-			values.service === SERVICES.BETTING
-		) {
-			payload.type = values.service;
-			payload.populate = 'user,transaction.discount_code';
-			if (values.provider) payload.name = values.provider;
-
-			await queryBillTransactions(payload);
-			return;
-		}
-	};
+				await queryBillTransactions(payload);
+				return;
+			}
+		},
+		[
+			queryAirtimeTransactions,
+			queryAutoConvertAirtimes,
+			queryBillTransactions,
+			queryConvertAirtimes,
+			queryDataSubscriptions,
+			queryEPinTransactions,
+			queryESimTransactions,
+			queryGiftCardTransactions,
+			queryInterAirtimeTransactions,
+			queryInterDataTransactions,
+			queryTransactions,
+			queryWalletFundings,
+			queryWalletTransfers,
+			queryWalletWithdrawals,
+			// startDate?.current,
+		],
+	);
 
 	const reloadTransactions = () => {
 		switchHandleSubmit(queryValues?.current as any);
@@ -427,9 +459,13 @@ const Transactions = () => {
 
 	// Filters
 
-	const handleSelectFilter = (service: string) => {
+	const handleSelectService = (service: string) => {
 		setServiceAnchorEl(null);
 		setSelectedService(service);
+
+		// Clear date range
+		startDate.current = '';
+		endDate.current = '';
 
 		switchHandleSubmit({
 			service,
@@ -473,6 +509,8 @@ const Transactions = () => {
 		if (selectedStatus && selectedStatus !== STATUS.ALL)
 			payload.status = selectedStatus;
 
+		endDate.current = '';
+		startDate.current = '';
 		switchHandleSubmit(payload);
 	};
 
@@ -481,6 +519,46 @@ const Transactions = () => {
 			service: selectedService,
 		});
 	};
+
+	const handleSetDateRange = (dateRange: any) => {
+		// Clear state
+		startDate.current = '';
+		endDate.current = '';
+
+		const rangeStartDate = moment(dateRange.startDate).format('YYYY-MM-DD');
+		const rangeEndDate = moment(dateRange.endDate).format('YYYY-MM-DD');
+
+		if (rangeStartDate === rangeEndDate) {
+			startDate.current = rangeStartDate;
+		} else {
+			startDate.current = rangeStartDate;
+			endDate.current = rangeEndDate;
+		}
+	};
+
+	const onApplyDateFilter = useCallback(
+		() => {
+			let payload: { [key: string]: any } = {};
+
+			let dateRange = '';
+
+			if (startDate.current) {
+				payload.start_date = startDate.current;
+				dateRange += `createdAt>${startDate.current}`;
+			}
+			if (endDate.current) {
+				payload.end_date = endDate.current;
+				dateRange += `&createdAt<${endDate.current}`;
+			}
+
+			const searchParams = new URLSearchParams(dateRange);
+			filterUrlEntries.current = Object.fromEntries(searchParams);
+
+			if (queryValues?.current) switchHandleSubmit(queryValues?.current as any);
+		},
+		// eslint-disable-next-line
+		[startDate.current, endDate.current, queryValues.current],
+	);
 
 	const servicesFilter = (
 		<ClickAwayListener onClickAway={() => setServiceAnchorEl(null)}>
@@ -527,7 +605,7 @@ const Transactions = () => {
 					>
 						{Object.values(SERVICES).map((value) => (
 							<ListItemButton
-								onClick={() => handleSelectFilter(value)}
+								onClick={() => handleSelectService(value)}
 								key={value}
 							>
 								{value === SERVICES.CARD_FUNDING
@@ -600,6 +678,34 @@ const Transactions = () => {
 
 	return (
 		<Layout>
+			{isDisplayPicker && (
+				<ModalWrapper
+					title={`Filter ${capitalize(selectedService)} Transaction`}
+					contentWidth='700px'
+					closeModal={() => setDisplayPicker(false)}
+				>
+					<DatePicker
+						cancelPicker={() => setDisplayPicker(false)}
+						setDateRange={handleSetDateRange}
+						customButton={
+							<Button
+								sx={{
+									backgroundColor: `${SECOUNDARY_COLOR} !important`,
+									color: 'white',
+									marginTop: '10px',
+									minWidth: ['120px'],
+								}}
+								onClick={() => {
+									setDisplayPicker(false);
+									onApplyDateFilter();
+								}}
+							>
+								Apply
+							</Button>
+						}
+					/>
+				</ModalWrapper>
+			)}
 			<Container>
 				<Box
 					sx={{
@@ -615,6 +721,16 @@ const Transactions = () => {
 							<Box sx={{ display: 'flex', gap: '15px' }}>
 								{servicesFilter}
 								{statusFilter}
+								{selectedService && (
+									<Button
+										size='large'
+										style={styles.button as CSSProperties}
+										onClick={(e) => setDisplayPicker(true)}
+										variant={'outlined'}
+									>
+										Filter by date range
+									</Button>
+								)}
 							</Box>
 						}
 						handleSearch={handleSearch}
@@ -630,7 +746,7 @@ const Transactions = () => {
 				>
 					{dataTransactions?.service === SERVICES.DATA_SUBSCRIPTION && (
 						<DataSubscriptionTable
-							isLoading={isLoadingDataSubscriptions}
+							isLoading={isLoading}
 							subscriptions={dataTransactions?.data as any}
 							reloadTransactions={reloadTransactions}
 						/>
@@ -638,14 +754,14 @@ const Transactions = () => {
 					{dataTransactions?.service === SERVICES.AIRTIME_TOP_UP && (
 						<AirtimePurchaseTable
 							transactions={dataTransactions?.data as any}
-							isLoading={isLoadingDataSubscriptions}
+							isLoading={isLoading}
 							reloadTransactions={reloadTransactions}
 						/>
 					)}
 					{dataTransactions?.service === SERVICES.AIRTIME_CONVERSION && (
 						<ConversionsTable
 							conversions={dataTransactions?.data as any}
-							isLoading={isLoadingConvertAirtime}
+							isLoading={isLoading}
 							isDisplayTransactionDetails
 							handleRefetch={reloadTransactions}
 						/>
@@ -655,7 +771,7 @@ const Transactions = () => {
 						dataTransactions?.service ===
 							SERVICES.INTERNATIONAL_DATA_SUBSCRIPTION) && (
 						<RTransactionTable
-							isLoading={isLoadingInterDataTransactions}
+							isLoading={isLoading}
 							data={dataTransactions?.data as Transaction[]}
 							reloadTransactions={reloadTransactions}
 							transactionType={dataTransactions.service}
@@ -664,9 +780,7 @@ const Transactions = () => {
 					{(dataTransactions?.service === SERVICES.ESIM ||
 						dataTransactions?.service === SERVICES.GIFT_CARD) && (
 						<GiftcardESimTransactionTable
-							isLoading={
-								isLoadingESimTransactions || isLoadingGiftCardTransactions
-							}
+							isLoading={isLoading}
 							data={dataTransactions?.data as Transaction[]}
 							reloadTransactions={reloadTransactions}
 							transactionType={dataTransactions.service}
@@ -674,14 +788,14 @@ const Transactions = () => {
 					)}
 					{dataTransactions?.service === SERVICES.CABLE && (
 						<CableTransactionsTable
-							isLoading={isLoadingBillTransactions}
+							isLoading={isLoading}
 							data={dataTransactions?.data as Transaction[]}
 							reloadTransactions={reloadTransactions}
 						/>
 					)}
 					{dataTransactions?.service === SERVICES.INTERNET && (
 						<InternetTransactionsTable
-							isLoading={isLoadingBillTransactions}
+							isLoading={isLoading}
 							data={dataTransactions?.data as any}
 							reloadTransactions={reloadTransactions}
 						/>
@@ -689,21 +803,21 @@ const Transactions = () => {
 					{dataTransactions?.service === SERVICES.EDUCATION && (
 						<EducationTransactionsTable
 							data={dataTransactions?.data as Transaction[]}
-							isLoading={isLoadingBillTransactions}
+							isLoading={isLoading}
 							reloadTransactions={reloadTransactions}
 						/>
 					)}
 					{dataTransactions?.service === SERVICES.ELECTRICITY && (
 						<ElectricityTransactionsTable
 							data={dataTransactions?.data as Transaction[]}
-							isLoading={isLoadingBillTransactions}
+							isLoading={isLoading}
 							reloadTransactions={reloadTransactions}
 						/>
 					)}
 					{dataTransactions?.service === SERVICES.WITHDRAWAL && (
 						<WithdrawalTransactionsTable
 							data={dataTransactions?.data as IWithdrawal[]}
-							isLoading={isLoadingWalletWithdrawals}
+							isLoading={isLoading}
 							reloadTransactions={reloadTransactions}
 							hasActionButton
 						/>
@@ -711,14 +825,14 @@ const Transactions = () => {
 					{dataTransactions?.service === SERVICES.AUTO_AIRTIME_CONVERSION && (
 						<AutoConversionsTable
 							conversions={dataTransactions?.data as IGroupAutoTransaction[]}
-							isLoading={isLoadingAutoConvertAirtime}
+							isLoading={isLoading}
 							isDisplayPopupTransactionDetails
 						/>
 					)}
 					{dataTransactions?.service === SERVICES.CARD_FUNDING && (
 						<CardTopUpTransactionsTable
 							data={dataTransactions?.data as Transaction[]}
-							isLoading={isLoadingWalletFundings}
+							isLoading={isLoading}
 						/>
 					)}
 					{dataTransactions?.service === SERVICES.BETTING && (
@@ -737,7 +851,7 @@ const Transactions = () => {
 					{dataTransactions?.service === SERVICES.WALLET_TRANSFER && (
 						<WalletTransferTransactionsTable
 							data={dataTransactions?.data as Transaction[]}
-							isLoading={isLoadingWalletTransfers}
+							isLoading={isLoading}
 							reloadTransactions={reloadTransactions}
 						/>
 					)}

@@ -8,6 +8,7 @@ import {
 	IFunding,
 	ITransfer,
 } from '../utilities';
+import { GenericAbortSignal } from 'axios';
 
 export const allTransactions = async ({
 	params,
@@ -20,31 +21,43 @@ export const allTransactions = async ({
 		params,
 	});
 
-export const transactions = async (params?: {
-	[key: string]: any;
-}): Promise<any> =>
+export const transactions = async (
+	params?: {
+		[key: string]: any;
+	},
+	signal?: GenericAbortSignal,
+): Promise<any> =>
 	apiRequest({
 		method: 'GET',
 		url: `${ENDPOINTS.Transaction}`,
 		params,
+		signal,
 	});
 
-export const transactionsStatistics = async (params?: {
-	[key: string]: any;
-}): Promise<any> =>
+export const transactionsStatistics = async (
+	params?: {
+		[key: string]: any;
+	},
+	signal?: GenericAbortSignal,
+): Promise<any> =>
 	apiRequest({
 		method: 'GET',
 		url: `${ENDPOINTS.TransactionStatistics}`,
 		params,
+		signal,
 	});
 
-export const lienTransactions = async (params?: {
-	[key: string]: any;
-}): Promise<any> =>
+export const lienTransactions = async (
+	params?: {
+		[key: string]: any;
+	},
+	signal?: GenericAbortSignal,
+): Promise<any> =>
 	apiRequest({
 		method: 'GET',
 		url: `${ENDPOINTS.Transaction}/lien`,
 		params,
+		signal,
 	});
 
 export const transactUser = async ({
@@ -60,13 +73,17 @@ export const transactUser = async ({
 		data,
 	});
 
-export const walletWithdrawal = async (params?: {
-	[key: string]: any;
-}): Promise<DataResponse<IWithdrawal[]>> =>
+export const walletWithdrawal = async (
+	params?: {
+		[key: string]: any;
+	},
+	signal?: GenericAbortSignal,
+): Promise<DataResponse<IWithdrawal[]>> =>
 	apiRequest({
 		method: 'GET',
 		url: `${ENDPOINTS.Withdraw}`,
 		params,
+		signal,
 	});
 
 export const updateWalletWithdrawal = async ({
@@ -99,31 +116,43 @@ export const updateWalletWithdrawalRequest = async ({
 		data,
 	});
 
-export const walletFunding = async (params?: {
-	[key: string]: any;
-}): Promise<DataResponse<IFunding[]>> =>
+export const walletFunding = async (
+	params?: {
+		[key: string]: any;
+	},
+	signal?: GenericAbortSignal,
+): Promise<DataResponse<IFunding[]>> =>
 	apiRequest({
 		method: 'GET',
 		url: `${ENDPOINTS.Funding}`,
 		params,
+		signal,
 	});
 
-export const walletTransfers = async (params?: {
-	[key: string]: any;
-}): Promise<DataResponse<ITransfer[]>> =>
+export const walletTransfers = async (
+	params?: {
+		[key: string]: any;
+	},
+	signal?: GenericAbortSignal,
+): Promise<DataResponse<ITransfer[]>> =>
 	apiRequest({
 		method: 'GET',
 		url: `${ENDPOINTS.Transfer}`,
 		params,
+		signal,
 	});
 
-export const bankFundings = async (params?: {
-	[key: string]: any;
-}): Promise<DataResponse<Transaction[]>> =>
+export const bankFundings = async (
+	params?: {
+		[key: string]: any;
+	},
+	signal?: GenericAbortSignal,
+): Promise<DataResponse<Transaction[]>> =>
 	apiRequest({
 		method: 'GET',
 		url: `${ENDPOINTS.Transfer}`,
 		params,
+		signal,
 	});
 
 export const statementOfAccount = async (props: {

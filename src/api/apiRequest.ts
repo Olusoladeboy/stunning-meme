@@ -19,8 +19,8 @@ const apiRequest = async (config?: ConfigTypes) => {
     headers: {
       Accept: 'application/json',
       'Content-Type': 'application/json',
-      ...(token ? { Authorization: `Bearer ${token}` } : { apiKey: API_KEY }),
-      // apikey: API_KEY,
+      ...(token && { Authorization: `Bearer ${token}` }),
+      ...(API_KEY && { apiKey: API_KEY }),
     },
     data: config?.data,
     params: config?.params,

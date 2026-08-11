@@ -25,7 +25,6 @@ import {
   RouteGuard,
   ADMIN_ROLE,
   SECOUNDARY_COLOR,
-  capitalize,
 } from 'utilities';
 import { walletWithdrawal } from 'api';
 import {
@@ -135,16 +134,12 @@ const WithdrawalRequestTransactions = () => {
 
   const onApplyDateFilter = useCallback(
     () => {
-      let payload: { [key: string]: any } = {};
-
       let dateRange = '';
 
       if (startDate.current) {
-        payload.start_date = startDate.current;
         dateRange += `createdAt>=${startDate.current}`;
       }
       if (endDate.current) {
-        payload.end_date = endDate.current;
         dateRange += `&createdAt<=${endDate.current}`;
       }
 

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import queryString from 'query-string';
 import { Box, Typography, useTheme } from '@mui/material';
@@ -11,6 +11,8 @@ import {
   AvailableNetwork,
   Pagination,
   AutoConversionStatistics,
+  ModalWrapper,
+  Button,
 } from 'components';
 import {
   BOX_SHADOW,
@@ -18,6 +20,8 @@ import {
   MAX_RECORDS,
   LINKS,
   ErrorBoundary,
+  DateRange,
+  SECOUNDARY_COLOR,
 } from 'utilities';
 import { useAppSelector } from 'store/hooks';
 import {
@@ -27,6 +31,8 @@ import {
   useSearchConversion,
 } from 'hooks';
 import { autoConvertAirtimeGroups } from 'api';
+import moment from 'moment';
+import DatePicker from 'components/form-components/date-picker';
 
 const AutoConversions = () => {
   usePageTitle('Auto Conversion');
@@ -42,6 +48,10 @@ const AutoConversions = () => {
   const [count, setCount] = useState<number>(1);
   const [page, setPage] = useState<number>(1);
   const [total, setTotal] = useState<number>(0);
+
+  const [isDisplayPicker, setDisplayPicker] = useState<boolean>(false);
+
+  const dateRange = useRef<DateRange>();
 
   const location = useLocation();
   const query = queryString.parse(location.search);
@@ -72,10 +82,15 @@ const AutoConversions = () => {
     skip: (page - 1) * MAX_RECORDS,
     sort,
     populate: 'network,user',
+    ...(dateRange.current ? dateRange.current : {}),
   };
 
   const { isLoading, data, refetch } = useQuery(
-    [QueryKeys.AutoConvertAirtime, page],
+    [
+      QueryKeys.AutoConvertAirtime,
+      page,
+      ...(dateRange.current ? Object.values(dateRange.current) : []),
+    ],
     () => autoConvertAirtimeGroups(params),
     {
       enabled: !!(token || isReload),
@@ -118,8 +133,60 @@ const AutoConversions = () => {
     }
   };
 
+  const handleSetDateRange = (date: any) => {
+    const rangeStartDate = moment(date.startDate).format('YYYY-MM-DD');
+    const rangeEndDate = moment(date.endDate).format('YYYY-MM-DD');
+
+    if (rangeStartDate === rangeEndDate) {
+      dateRange.current = { 'createdAt>': rangeStartDate };
+    } else {
+      dateRange.current = {
+        'createdAt>': rangeStartDate,
+        'createdAt<': rangeEndDate,
+      };
+    }
+  };
+
+  const onApplyDateFilter = useCallback(
+    () => {
+      setTimeout(() => {
+        refetch();
+      }, 500);
+    },
+    // eslint-disable-next-line
+    [dateRange.current],
+  );
+
   return (
     <Layout>
+      {isDisplayPicker && (
+        <ModalWrapper
+          title={`Filter Transaction`}
+          contentWidth='700px'
+          closeModal={() => setDisplayPicker(false)}
+        >
+          <DatePicker
+            cancelPicker={() => setDisplayPicker(false)}
+            setDateRange={handleSetDateRange}
+            customButton={
+              <Button
+                sx={{
+                  backgroundColor: `${SECOUNDARY_COLOR} !important`,
+                  color: 'white',
+                  marginTop: '10px',
+                  minWidth: ['120px'],
+                }}
+                onClick={() => {
+                  setDisplayPicker(false);
+                  onApplyDateFilter();
+                }}
+              >
+                Apply
+              </Button>
+            }
+          />
+        </ModalWrapper>
+      )}
       <Box style={styles.container}>
         <Box
           sx={{
@@ -184,6 +251,17 @@ const AutoConversions = () => {
             handleSort={handleSort}
             handleSearch={searchConversion}
             clearSearch={clearSearch}
+            dateFilter={
+              <Box sx={{ display: 'flex', gap: '15px' }}>
+                <Button
+                  size='large'
+                  onClick={(e) => setDisplayPicker(true)}
+                  variant={'outlined'}
+                >
+                  Filter by date range
+                </Button>
+              </Box>
+            }
           />
 
           {!search && total > MAX_RECORDS && !isReloading && (

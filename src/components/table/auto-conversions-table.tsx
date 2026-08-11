@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { ReactNode, useState } from 'react';
 import {
   TableBody,
   TableHead,
@@ -37,6 +37,7 @@ type Props = {
   clearSearch?: () => void;
   isDisplaySearchField?: boolean;
   isDisplayPopupTransactionDetails?: boolean;
+  dateFilter?: ReactNode;
 };
 
 const AutoConversionsTable = ({
@@ -47,6 +48,7 @@ const AutoConversionsTable = ({
   clearSearch,
   isDisplaySearchField = false,
   isDisplayPopupTransactionDetails = false,
+  dateFilter,
 }: Props) => {
   const theme = useTheme();
   const styles = useStyles(theme);
@@ -112,6 +114,7 @@ const AutoConversionsTable = ({
         {isUpdatingStatus && <Loader />}
         {isDisplaySearchField && (
           <SearchContainer>
+            {dateFilter}
             <SearchInput
               sx={{ maxWidth: '400px', width: '100%' }}
               placeholder='Search conversion with phone or reference ID...'
@@ -267,6 +270,8 @@ const Container = styled(Box)(({ theme }) => ({
 const SearchContainer = styled(Box)(({ theme }) => ({
   display: 'flex',
   justifyContent: 'flex-end',
+  alignItems: 'center',
+  gap: '15px',
   padding: '0px 15px',
   marginBottom: '2rem',
 }));

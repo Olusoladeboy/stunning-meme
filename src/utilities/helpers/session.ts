@@ -27,7 +27,7 @@ export class SessionManager {
 
   constructor(config: SessionConfig) {
     if (!config.secretKey) {
-      throw new Error('Missing environment variable: VITE_SESSION_SECRET');
+      throw new Error('Missing environment variable: REACT_APP_SESSION_SECRET');
     }
 
     this.expirationDays = config.expirationDays || 30;

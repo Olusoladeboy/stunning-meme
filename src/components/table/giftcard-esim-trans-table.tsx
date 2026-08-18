@@ -6,12 +6,17 @@ import {
   extractUserName,
   formatNumberToCurrency,
   SERVICES,
+  SECOUNDARY_COLOR,
 } from 'utilities';
 import AppTable from './components/table';
 import TransactionDetailsModal from 'components/modal/transaction-details-modal';
 import { useMutation } from 'react-query';
 import { useHandleError } from 'hooks';
-import { updateESimTransactions, updateGiftCardTransactionStatus } from 'api';
+import {
+  sendESiNotifications,
+  updateESimTransactions,
+  updateGiftCardTransactionStatus,
+} from 'api';
 import Loader from 'components/loader';
 import Button from 'components/button';
 import { Box } from '@mui/material';
@@ -73,6 +78,25 @@ const GiftcardESimTransactionTable = ({
     },
   );
 
+  const { mutate: sendNotification, isLoading: isSendingNotification } =
+    useMutation(sendESiNotifications, {
+      onSettled: (data, error) => {
+        if (error) {
+          const errorResponse = handleError({ error });
+          if (errorResponse?.message) {
+            alert({ message: errorResponse.message, type: 'error' });
+          }
+        }
+
+        if (data && (data as any).success) {
+          alert({
+            message: data.message || 'ESIM PIN notification sent successfully!',
+            type: 'success',
+          });
+        }
+      },
+    });
+
   const handleUpdateTransaction = ({
     id,
     status,
@@ -101,7 +125,7 @@ const GiftcardESimTransactionTable = ({
 
   return (
     <>
-      {isUpdatingTransaction && <Loader />}
+      {(isUpdatingTransaction || isSendingNotification) && <Loader />}
       {/* <TransactionDetails ref={transactionDetailsRef} /> */}
       {selectedTransaction && (
         <TransactionDetailsModal
@@ -137,40 +161,62 @@ const GiftcardESimTransactionTable = ({
                 formatNumberToCurrency(checkAmount(`${value?.amount}`)),
                 moment(value.createdAt).format('ll'),
                 value.status,
-                value.status.toLocaleLowerCase() === 'pending' && (
-                  <Box sx={{ display: 'flex', gap: '10px' }}>
-                    <Button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleUpdateTransaction({
-                          id: value.id,
-                          status: 'SUCCESSFUL',
-                        });
-                      }}
-                      sx={{
-                        backgroundColor: `${green['600']} !important`,
-                        color: 'white',
-                      }}
-                    >
-                      Approve
-                    </Button>
-                    <Button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleUpdateTransaction({
-                          id: value.id,
-                          status: 'FAILED',
-                        });
-                      }}
-                      sx={{
-                        backgroundColor: `${red['600']} !important`,
-                        color: 'white',
-                      }}
-                    >
-                      Decline
-                    </Button>
-                  </Box>
-                ),
+                <Box
+                  sx={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '6px',
+                  }}
+                >
+                  <Button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      sendNotification({
+                        reference: value.reference,
+                      });
+                    }}
+                    sx={{
+                      backgroundColor: `${SECOUNDARY_COLOR} !important`,
+                      color: 'white',
+                    }}
+                  >
+                    Send Notification
+                  </Button>
+                  {value.status.toLocaleLowerCase() === 'pending' && (
+                    <Box sx={{ display: 'flex', gap: '10px' }}>
+                      <Button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleUpdateTransaction({
+                            id: value.id,
+                            status: 'SUCCESSFUL',
+                          });
+                        }}
+                        sx={{
+                          backgroundColor: `${green['600']} !important`,
+                          color: 'white',
+                        }}
+                      >
+                        Approve
+                      </Button>
+                      <Button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleUpdateTransaction({
+                            id: value.id,
+                            status: 'FAILED',
+                          });
+                        }}
+                        sx={{
+                          backgroundColor: `${red['600']} !important`,
+                          color: 'white',
+                        }}
+                      >
+                        Decline
+                      </Button>
+                    </Box>
+                  )}
+                </Box>,
               ],
               rawData: value,
             };

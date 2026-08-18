@@ -81,7 +81,6 @@ const GiftCardTransactions = () => {
         skip: (page - 1) * maxRecordRef.current,
         populate: 'user',
         status: 'PENDING',
-        canRequery: false,
         ...(dateRange.current ? dateRange.current : {}),
       }),
     {

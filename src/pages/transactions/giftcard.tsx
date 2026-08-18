@@ -1,12 +1,20 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, {
+  useState,
+  useEffect,
+  useRef,
+  useCallback,
+  CSSProperties,
+} from 'react';
 import queryString from 'query-string';
 import { Box, useTheme } from '@mui/material';
 import { useQuery } from 'react-query';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { grey } from '@mui/material/colors';
 import {
+  Button,
   GiftcardESimTransactionTable,
   Layout,
+  ModalWrapper,
   TableHeader,
   TablePagination,
 } from 'components';
@@ -17,6 +25,8 @@ import {
   RouteGuard,
   ADMIN_ROLE,
   SERVICES,
+  DateRange,
+  SECOUNDARY_COLOR,
 } from 'utilities';
 import { giftCardTransactions } from 'api';
 import {
@@ -25,6 +35,8 @@ import {
   useSearchTransaction,
   usePageTitle,
 } from 'hooks';
+import moment from 'moment';
+import DatePicker from 'components/form-components/date-picker';
 
 const GiftCardTransactions = () => {
   usePageTitle('Giftcards Transactions');
@@ -38,6 +50,10 @@ const GiftCardTransactions = () => {
   const [page, setPage] = useState<number>(Number(query?.page) || 1);
   const [total, setTotal] = useState<number>(0);
   const maxRecordRef = useRef<number>(MAX_RECORDS);
+
+  const [isDisplayPicker, setDisplayPicker] = useState<boolean>(false);
+
+  const dateRange = useRef<DateRange>();
 
   const { isSearching, searchTransaction, clearSearch, search } =
     useSearchTransaction();
@@ -53,7 +69,11 @@ const GiftCardTransactions = () => {
   );
 
   const { isLoading, data, refetch } = useQuery(
-    ['Giftcards', query.page],
+    [
+      'Giftcards',
+      query.page,
+      ...(dateRange.current ? Object.values(dateRange.current) : []),
+    ],
     () =>
       giftCardTransactions({
         sort: '-createdAt',
@@ -61,7 +81,7 @@ const GiftCardTransactions = () => {
         skip: (page - 1) * maxRecordRef.current,
         populate: 'user',
         status: 'PENDING',
-        canRequery: false,
+        ...(dateRange.current ? dateRange.current : {}),
       }),
     {
       retry: 2,
@@ -99,8 +119,60 @@ const GiftCardTransactions = () => {
     refetch();
   };
 
+  const handleSetDateRange = (date: any) => {
+    const rangeStartDate = moment(date.startDate).format('YYYY-MM-DD');
+    const rangeEndDate = moment(date.endDate).format('YYYY-MM-DD');
+
+    if (rangeStartDate === rangeEndDate) {
+      dateRange.current = { 'createdAt>': rangeStartDate };
+    } else {
+      dateRange.current = {
+        'createdAt>': rangeStartDate,
+        'createdAt<': rangeEndDate,
+      };
+    }
+  };
+
+  const onApplyDateFilter = useCallback(
+    () => {
+      setTimeout(() => {
+        refetch();
+      }, 500);
+    },
+    // eslint-disable-next-line
+    [dateRange.current],
+  );
+
   return (
     <Layout>
+      {isDisplayPicker && (
+        <ModalWrapper
+          title={`Filter Transaction`}
+          contentWidth='700px'
+          closeModal={() => setDisplayPicker(false)}
+        >
+          <DatePicker
+            cancelPicker={() => setDisplayPicker(false)}
+            setDateRange={handleSetDateRange}
+            customButton={
+              <Button
+                sx={{
+                  backgroundColor: `${SECOUNDARY_COLOR} !important`,
+                  color: 'white',
+                  marginTop: '10px',
+                  minWidth: ['120px'],
+                }}
+                onClick={() => {
+                  setDisplayPicker(false);
+                  onApplyDateFilter();
+                }}
+              >
+                Apply
+              </Button>
+            }
+          />
+        </ModalWrapper>
+      )}
       <RouteGuard roles={[ADMIN_ROLE.SUPER_ADMIN]}>
         <Box style={styles.container}>
           <Box
@@ -115,6 +187,18 @@ const GiftCardTransactions = () => {
               title={'Giftcard Transactions'}
               handleSearch={(value) => searchTransaction({ value })}
               clearSearch={clearSearch}
+              statusFilter={
+                <Box sx={{ display: 'flex', gap: '15px' }}>
+                  <Button
+                    size='large'
+                    style={styles.button as CSSProperties}
+                    onClick={(e) => setDisplayPicker(true)}
+                    variant={'outlined'}
+                  >
+                    Filter by date range
+                  </Button>
+                </Box>
+              }
             />
           </Box>
 

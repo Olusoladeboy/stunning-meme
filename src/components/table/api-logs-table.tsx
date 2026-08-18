@@ -6,8 +6,8 @@ import { grey } from '@mui/material/colors';
 import JsonFormatter from 'react-json-formatter';
 import { IApiLog, LINKS, extractUserName } from 'utilities';
 import {
-	StyledTableCell as TableCell,
-	StyledTableRow as TableRow,
+  StyledTableCell as TableCell,
+  StyledTableRow as TableRow,
 } from './components';
 import Empty from '../empty';
 import Button from '../button';
@@ -16,124 +16,124 @@ import TableLoader from '../loader/table-loader';
 import ModalWrapper from '../modal/Wrapper';
 
 interface Props {
-	data: IApiLog[] | null;
-	isLoading: boolean;
+  data: IApiLog[] | null;
+  isLoading: boolean;
 }
 
 const ApiLogsTable: React.FC<Props> = ({ data, isLoading }) => {
-	const theme = useTheme();
-	const navigate = useNavigate();
+  const theme = useTheme();
+  const navigate = useNavigate();
 
-	const jsonStyle = {
-		propertyStyle: { color: 'red' },
-		stringStyle: { color: 'green' },
-		numberStyle: { color: 'darkorange' },
-	};
+  const jsonStyle = {
+    propertyStyle: { color: 'red' },
+    stringStyle: { color: 'green' },
+    numberStyle: { color: 'darkorange' },
+  };
 
-	const [jsonData, setJsonData] = useState<string>('');
+  const [jsonData, setJsonData] = useState<string>('');
 
-	const handleViewLog = (log: IApiLog) => {
-		const jsonObj = log.api_log;
+  const handleViewLog = (log: IApiLog) => {
+    const jsonObj = log.api_log;
 
-		setJsonData(JSON.stringify(jsonObj));
-	};
+    setJsonData(JSON.stringify(jsonObj));
+  };
 
-	const handleViewProfile = (log: IApiLog) => {
-		const id = typeof log.user === 'object' && log.user.id;
-		const link = `${LINKS.Users}/${id}`;
+  const handleViewProfile = (log: IApiLog) => {
+    const id = typeof log.user === 'object' && log.user.id;
+    const link = `${LINKS.Users}/${id}`;
 
-		navigate(link);
-	};
+    navigate(link);
+  };
 
-	return (
-		<>
-			{jsonData && (
-				<ModalWrapper hasCloseButton={true} closeModal={() => setJsonData('')}>
-					<Box
-						sx={{
-							overflow: 'auto',
-							maxWidth: '540px',
-							width: '100%',
-							alignSelf: 'flex-start',
-						}}
-					>
-						<JsonFormatter json={jsonData} tabWith={4} jsonStyle={jsonStyle} />
-					</Box>
-				</ModalWrapper>
-			)}
-			<Table sx={{ overflow: 'auto' }}>
-				<TableHead
-					sx={{
-						'& tr': {
-							backgroundColor: `${grey[50]} !important`,
-							color: theme.palette.primary.main,
-						},
-					}}
-				>
-					<TableRow>
-						<CustomTableCell label={'Reference'} />
+  return (
+    <>
+      {jsonData && (
+        <ModalWrapper hasCloseButton={true} closeModal={() => setJsonData('')}>
+          <Box
+            sx={{
+              overflow: 'auto',
+              maxWidth: '540px',
+              width: '100%',
+              alignSelf: 'flex-start',
+            }}
+          >
+            <JsonFormatter json={jsonData} tabWith={4} jsonStyle={jsonStyle} />
+          </Box>
+        </ModalWrapper>
+      )}
+      <Table sx={{ overflow: 'auto' }}>
+        <TableHead
+          sx={{
+            '& tr': {
+              backgroundColor: `${grey[50]} !important`,
+              color: theme.palette.primary.main,
+            },
+          }}
+        >
+          <TableRow>
+            <CustomTableCell label={'Reference'} />
 
-						<CustomTableCell label={'User Name'} />
-						<CustomTableCell label={'User Email'} />
-						<CustomTableCell label={'Date'} />
-						<CustomTableCell label={'Time'} />
-						<CustomTableCell label={'Profile'} />
-						<CustomTableCell label={'View'} />
-					</TableRow>
-				</TableHead>
-				<TableBody
-					sx={{
-						'& tr': {
-							color: theme.palette.primary.main,
-						},
-					}}
-				>
-					{isLoading ? (
-						<TableLoader colSpan={7} />
-					) : (
-						data && (
-							<>
-								{data.length > 0 ? (
-									data.map((row: IApiLog) => (
-										<TableRow key={row.id}>
-											<TableCell>{row.reference}</TableCell>
-											<TableCell>
-												{typeof row.user === 'object' &&
-													extractUserName(row.user)}
-											</TableCell>
-											<TableCell>
-												{typeof row.user === 'object' && row.user.email}
-											</TableCell>
-											<TableCell>{moment(row.createdAt).format('l')}</TableCell>
-											<TableCell>
-												{moment(row.createdAt).format('LT')}
-											</TableCell>
-											<TableCell>
-												<Button onClick={() => handleViewProfile(row)}>
-													View profile
-												</Button>
-											</TableCell>
-											<TableCell>
-												<Button onClick={() => handleViewLog(row)}>
-													View log
-												</Button>
-											</TableCell>
-										</TableRow>
-									))
-								) : (
-									<TableRow>
-										<TableCell colSpan={7}>
-											<Empty text={'No api log(s)'} />
-										</TableCell>
-									</TableRow>
-								)}
-							</>
-						)
-					)}
-				</TableBody>
-			</Table>
-		</>
-	);
+            <CustomTableCell label={'User Name'} />
+            <CustomTableCell label={'User Email'} />
+            <CustomTableCell label={'Date'} />
+            <CustomTableCell label={'Time'} />
+            <CustomTableCell label={'Profile'} />
+            <CustomTableCell label={'View'} />
+          </TableRow>
+        </TableHead>
+        <TableBody
+          sx={{
+            '& tr': {
+              color: theme.palette.primary.main,
+            },
+          }}
+        >
+          {isLoading ? (
+            <TableLoader colSpan={7} />
+          ) : (
+            data && (
+              <>
+                {data.length > 0 ? (
+                  data.map((row: IApiLog) => (
+                    <TableRow key={row.id}>
+                      <TableCell>{row.reference}</TableCell>
+                      <TableCell>
+                        {typeof row.user === 'object' &&
+                          extractUserName(row.user)}
+                      </TableCell>
+                      <TableCell>
+                        {typeof row.user === 'object' && row?.user?.email}
+                      </TableCell>
+                      <TableCell>{moment(row.createdAt).format('l')}</TableCell>
+                      <TableCell>
+                        {moment(row.createdAt).format('LT')}
+                      </TableCell>
+                      <TableCell>
+                        <Button onClick={() => handleViewProfile(row)}>
+                          View profile
+                        </Button>
+                      </TableCell>
+                      <TableCell>
+                        <Button onClick={() => handleViewLog(row)}>
+                          View log
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                ) : (
+                  <TableRow>
+                    <TableCell colSpan={7}>
+                      <Empty text={'No api log(s)'} />
+                    </TableCell>
+                  </TableRow>
+                )}
+              </>
+            )
+          )}
+        </TableBody>
+      </Table>
+    </>
+  );
 };
 
 // const useStyles = (theme: any) => ({

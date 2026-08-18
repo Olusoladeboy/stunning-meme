@@ -45,3 +45,4 @@ export { default as Businesses } from './business';
 export { default as BusinessProfile } from './business/profile';
 
 export { default as BlacklistedNumberPage } from './blacklisted-numbers';
+export { default as GiftCardTransactions } from './transactions/giftcard';

@@ -107,6 +107,7 @@ export const LINKS = {
   TransactionsMostUser: '/transactions-most-user',
   AllTransactions: '/transactions/all',
   WithdrawalRequestTransactions: '/withdrawal-request',
+  GiftcardTransactions: '/giftcard-transactions',
   Conversions: '/conversions',
   AllConversions: '/conversions/all',
   AutoConversions: '/auto-conversions',

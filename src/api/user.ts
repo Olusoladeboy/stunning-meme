@@ -1,199 +1,198 @@
 import apiRequest from './apiRequest';
 import {
-	DataResponse,
-	ENDPOINTS,
-	Google2faRequest,
-	Google2faSetupRequest,
-	Google2faSetupResponsePayload,
-	IInitialLoginResponse,
-	LoginData,
-	ManagerDetailsData,
-	SuspendUser,
-	User,
+  DataResponse,
+  ENDPOINTS,
+  Google2faRequest,
+  Google2faSetupRequest,
+  Google2faSetupResponsePayload,
+  IInitialLoginResponse,
+  LoginData,
+  ManagerDetailsData,
+  SuspendUser,
+  User,
 } from '../utilities';
 
 export const login = async (
-	data: LoginData,
+  data: LoginData,
 ): Promise<DataResponse<IInitialLoginResponse>> =>
-	apiRequest({
-		method: 'POST',
-		url: `${ENDPOINTS.Staff}/login`,
-		data,
-	});
+  apiRequest({
+    method: 'POST',
+    url: `${ENDPOINTS.Staff}/login`,
+    data,
+  });
 
 export const google2faLogin = async (
-	data: Google2faRequest,
+  data: Google2faRequest,
 ): Promise<DataResponse<{ user: User; token: string }>> =>
-	apiRequest({
-		method: 'POST',
-		url: `${ENDPOINTS.Staff}/login/google-2fa`,
-		data,
-	});
+  apiRequest({
+    method: 'POST',
+    url: `${ENDPOINTS.Staff}/login/google-2fa`,
+    data,
+  });
 
 export const google2faSetup = async (
-	data: Google2faSetupRequest,
+  data: Google2faSetupRequest,
 ): Promise<DataResponse<Google2faSetupResponsePayload>> =>
-	apiRequest({
-		method: 'POST',
-		url: `${ENDPOINTS.Staff}/login/google-auth/setup`,
-		data,
-	});
+  apiRequest({
+    method: 'POST',
+    url: `${ENDPOINTS.Staff}/login/google-auth/setup`,
+    data,
+  });
 
 export const google2faVerifySetup = async (
-	data: Google2faRequest,
+  data: Google2faRequest,
 ): Promise<DataResponse<IInitialLoginResponse>> =>
-	apiRequest({
-		method: 'POST',
-		url: `${ENDPOINTS.Staff}/login/google-auth/verify-setup`,
-		data,
-	});
+  apiRequest({
+    method: 'POST',
+    url: `${ENDPOINTS.Staff}/login/google-auth/verify-setup`,
+    data,
+  });
 
 export const me = async (): Promise<DataResponse<User>> =>
-	apiRequest({
-		method: 'GET',
-		url: `${ENDPOINTS.Staff}/me`,
-	});
+  apiRequest({
+    method: 'GET',
+    url: `${ENDPOINTS.Staff}/me`,
+  });
 
 export const createUser = async ({
-	data,
+  data,
 }: {
-	data: ManagerDetailsData;
+  data: ManagerDetailsData;
 }): Promise<any> =>
-	apiRequest({
-		method: 'POST',
-		url: ENDPOINTS.User,
+  apiRequest({
+    method: 'POST',
+    url: ENDPOINTS.User,
 
-		data,
-	});
+    data,
+  });
 
 export const resetPassword = async (data: {
-	[key: string]: any;
+  [key: string]: any;
 }): Promise<any> =>
-	apiRequest({
-		method: 'PUT',
-		url: `${ENDPOINTS.Staff}/reset-password`,
-		data,
-	});
+  apiRequest({
+    method: 'PUT',
+    url: `${ENDPOINTS.Staff}/reset-password`,
+    data,
+  });
 
 export const updateUser = async ({
-	data,
-	id,
+  data,
+  id,
 }: {
-	data: ManagerDetailsData;
-	id: string;
+  data: ManagerDetailsData;
+  id: string;
 }): Promise<any> =>
-	apiRequest({
-		method: 'PUT',
-		url: `${ENDPOINTS.User}/${id}`,
+  apiRequest({
+    method: 'PUT',
+    url: `${ENDPOINTS.User}/${id}`,
 
-		data,
-	});
+    data,
+  });
 
 export const users = async ({
-	params,
+  params,
 }: {
-	params?: { [key: string]: any };
+  params?: { [key: string]: any };
 }): Promise<any> =>
-	apiRequest({
-		method: 'GET',
-		url: `${ENDPOINTS.User}`,
+  apiRequest({
+    method: 'GET',
+    url: `${ENDPOINTS.User}`,
 
-		params,
-	});
+    params,
+  });
 export const user = async ({ id }: { id: string }): Promise<any> =>
-	apiRequest({
-		method: 'GET',
-		url: `${ENDPOINTS.User}?_id=${id}&populate=manager`,
-	});
+  apiRequest({
+    method: 'GET',
+    url: `${ENDPOINTS.User}?_id=${id}&populate=manager`,
+  });
 
 export const assignManagerToUser = async ({
-	data,
-	id,
+  data,
+  id,
 }: {
-	data: any;
-	id: string;
+  data: any;
+  id: string;
 }): Promise<any> =>
-	apiRequest({
-		method: 'PUT',
-		url: `${ENDPOINTS.User}/assign-manager/${id}`,
+  apiRequest({
+    method: 'PUT',
+    url: `${ENDPOINTS.User}/assign-manager/${id}`,
 
-		data,
-	});
+    data,
+  });
 
 export const suspendUser = async ({
-	data,
-	id,
+  data,
+  id,
 }: {
-	data: SuspendUser;
-	id: string;
+  data: SuspendUser;
+  id: string;
 }): Promise<any> =>
-	apiRequest({
-		method: 'PUT',
-		url: `${ENDPOINTS.User}/suspend/${id}`,
+  apiRequest({
+    method: 'PUT',
+    url: `${ENDPOINTS.User}/suspend/${id}`,
 
-		data,
-	});
+    data,
+  });
 
 export const verifyUser = async (id: string): Promise<any> =>
-	apiRequest({
-		method: 'GET',
-		url: `${ENDPOINTS.User}/admin-verify/${id}`,
-	});
+  apiRequest({
+    method: 'GET',
+    url: `${ENDPOINTS.User}/admin-verify/${id}`,
+  });
 
 export const activateOrDeativateUser = async ({
-	id,
-	data,
+  id,
+  data,
 }: {
-	id: string;
-	data: {
-		isActive: boolean;
-	};
+  id: string;
+  data: {
+    isActive: boolean;
+  };
 }): Promise<any> =>
-	apiRequest({
-		method: 'PUT',
-		url: `${ENDPOINTS.User}/activate/${id}`,
-
-		data,
-	});
+  apiRequest({
+    method: 'PUT',
+    url: `${ENDPOINTS.User}/activate/${id}`,
+    data,
+  });
 
 export const suspendWithdraw = async ({
-	data,
-	id,
+  data,
+  id,
 }: {
-	data: any;
-	id: string;
+  data: any;
+  id: string;
 }) =>
-	apiRequest({
-		method: 'PUT',
-		url: `${ENDPOINTS.User}/suspend/${id}`,
+  apiRequest({
+    method: 'PUT',
+    url: `${ENDPOINTS.User}/suspend/${id}`,
 
-		data,
-	});
+    data,
+  });
 
 export const restrictWithdraw = async ({
-	data,
-	id,
+  data,
+  id,
 }: {
-	data: {
-		restrictWithdrawal: boolean;
-	};
-	id: string;
+  data: {
+    restrictWithdrawal: boolean;
+  };
+  id: string;
 }) =>
-	apiRequest({
-		method: 'PUT',
-		url: `${ENDPOINTS.User}/withdrawal/restrict/${id}`,
+  apiRequest({
+    method: 'PUT',
+    url: `${ENDPOINTS.User}/withdrawal/restrict/${id}`,
 
-		data,
-	});
+    data,
+  });
 
 export const restoreDeletedAccount = async (id: string) =>
-	apiRequest({
-		method: 'PATCH',
-		url: `${ENDPOINTS.User}/restore/${id}`,
-	});
+  apiRequest({
+    method: 'PATCH',
+    url: `${ENDPOINTS.User}/restore/${id}`,
+  });
 
 export const userTransactionStatistics = async (id: string) =>
-	apiRequest({
-		method: 'GET',
-		url: `${ENDPOINTS.User}/statistics/${id}`,
-	});
+  apiRequest({
+    method: 'GET',
+    url: `${ENDPOINTS.User}/statistics/${id}`,
+  });

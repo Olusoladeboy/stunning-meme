@@ -12,11 +12,11 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { grey } from '@mui/material/colors';
 import {
   Button,
+  GiftcardESimTransactionTable,
   Layout,
   ModalWrapper,
   TableHeader,
   TablePagination,
-  WithdrawalTransactionsTable,
 } from 'components';
 import {
   BOX_SHADOW,
@@ -24,36 +24,36 @@ import {
   LINKS,
   RouteGuard,
   ADMIN_ROLE,
+  SERVICES,
+  DateRange,
   SECOUNDARY_COLOR,
 } from 'utilities';
-import { walletWithdrawal } from 'api';
+import { giftCardTransactions } from 'api';
 import {
   useHandleError,
   useAlert,
   useSearchTransaction,
   usePageTitle,
 } from 'hooks';
-import DatePicker from 'components/form-components/date-picker';
 import moment from 'moment';
+import DatePicker from 'components/form-components/date-picker';
 
-const WithdrawalRequestTransactions = () => {
-  usePageTitle('Withdrawal Request');
+const GiftCardTransactions = () => {
+  usePageTitle('Giftcards Transactions');
   const theme = useTheme();
   const handleError = useHandleError();
   const styles = useStyles(theme);
-  const [isDisplayPicker, setDisplayPicker] = useState<boolean>(false);
   const alert = useAlert();
   const navigate = useNavigate();
-  // const [count, setCount] = useState<number>(1);
   const location = useLocation();
   const query = queryString.parse(location.search);
   const [page, setPage] = useState<number>(Number(query?.page) || 1);
   const [total, setTotal] = useState<number>(0);
   const maxRecordRef = useRef<number>(MAX_RECORDS);
-  const [dateRange, setDateRange] = useState<{ [key: string]: string }>({});
 
-  const startDate = useRef<string>('');
-  const endDate = useRef<string>('');
+  const [isDisplayPicker, setDisplayPicker] = useState<boolean>(false);
+
+  const dateRange = useRef<DateRange>();
 
   const { isSearching, searchTransaction, clearSearch, search } =
     useSearchTransaction();
@@ -69,15 +69,19 @@ const WithdrawalRequestTransactions = () => {
   );
 
   const { isLoading, data, refetch } = useQuery(
-    ['Withdrawal', query.page, dateRange],
+    [
+      'Giftcards',
+      query.page,
+      ...(dateRange.current ? Object.values(dateRange.current) : []),
+    ],
     () =>
-      walletWithdrawal({
+      giftCardTransactions({
         sort: '-createdAt',
         limit: maxRecordRef.current,
         skip: (page - 1) * maxRecordRef.current,
         populate: 'user',
         status: 'PENDING',
-        ...(Object.values(dateRange).length > 0 && dateRange),
+        ...(dateRange.current ? dateRange.current : {}),
       }),
     {
       retry: 2,
@@ -115,48 +119,35 @@ const WithdrawalRequestTransactions = () => {
     refetch();
   };
 
-  const handleSetDateRange = (dateRange: any) => {
-    // Clear state
-    startDate.current = '';
-    endDate.current = '';
-
-    const rangeStartDate = moment(dateRange.startDate).format('YYYY-MM-DD');
-    const rangeEndDate = moment(dateRange.endDate).format('YYYY-MM-DD');
+  const handleSetDateRange = (date: any) => {
+    const rangeStartDate = moment(date.startDate).format('YYYY-MM-DD');
+    const rangeEndDate = moment(date.endDate).format('YYYY-MM-DD');
 
     if (rangeStartDate === rangeEndDate) {
-      startDate.current = rangeStartDate;
+      dateRange.current = { 'createdAt>': rangeStartDate };
     } else {
-      startDate.current = rangeStartDate;
-      endDate.current = rangeEndDate;
+      dateRange.current = {
+        'createdAt>': rangeStartDate,
+        'createdAt<': rangeEndDate,
+      };
     }
   };
 
   const onApplyDateFilter = useCallback(
     () => {
-      let dateRange = '';
-
-      if (startDate.current) {
-        dateRange += `createdAt>=${startDate.current}`;
-      }
-      if (endDate.current) {
-        dateRange += `&createdAt<=${endDate.current}`;
-      }
-
-      const searchParams = new URLSearchParams(dateRange);
-      setDateRange(Object.fromEntries(searchParams));
       setTimeout(() => {
         refetch();
       }, 500);
     },
     // eslint-disable-next-line
-    [startDate.current, endDate.current],
+    [dateRange.current],
   );
 
   return (
     <Layout>
       {isDisplayPicker && (
         <ModalWrapper
-          title={`Filter  Transaction`}
+          title={`Filter Transaction`}
           contentWidth='700px'
           closeModal={() => setDisplayPicker(false)}
         >
@@ -193,31 +184,29 @@ const WithdrawalRequestTransactions = () => {
           >
             <TableHeader
               searchPlaceholder={'Search transaction by reference'}
-              title={'Withdrawal  Request'}
+              title={'Giftcard Transactions'}
               handleSearch={(value) => searchTransaction({ value })}
               clearSearch={clearSearch}
               statusFilter={
                 <Box sx={{ display: 'flex', gap: '15px' }}>
-                  {data?.payload?.length > 0 && (
-                    <Button
-                      size='large'
-                      style={styles.button as CSSProperties}
-                      onClick={(e) => setDisplayPicker(true)}
-                      variant={'outlined'}
-                    >
-                      Filter by date range
-                    </Button>
-                  )}
+                  <Button
+                    size='large'
+                    style={styles.button as CSSProperties}
+                    onClick={(e) => setDisplayPicker(true)}
+                    variant={'outlined'}
+                  >
+                    Filter by date range
+                  </Button>
                 </Box>
               }
             />
           </Box>
 
-          <WithdrawalTransactionsTable
-            isWithdrawalRequest
-            hasActionButton
+          <GiftcardESimTransactionTable
             isLoading={isLoading || isSearching}
             data={search && search.length > 0 ? search : data && data.payload}
+            transactionType={SERVICES.GIFT_CARD}
+            reloadTransactions={refetch}
           />
 
           {!Boolean(search && search.length > 0) &&
@@ -267,4 +256,4 @@ const useStyles = (theme: any) => ({
   },
 });
 
-export default WithdrawalRequestTransactions;
+export default GiftCardTransactions;

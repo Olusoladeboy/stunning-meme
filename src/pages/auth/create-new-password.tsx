@@ -1,12 +1,13 @@
 import React from 'react';
-import AuthContainer from '../../components/layout/auth';
-import CreateNewPasswordForm from '../../components/forms/create-new-password-form';
+import { AuthLayout, CreatePasswordForm } from 'components';
+import { usePageTitle } from 'hooks';
 
 const CreateNewPassword = () => {
+	usePageTitle('Create new password');
 	return (
-		<AuthContainer>
-			<CreateNewPasswordForm />
-		</AuthContainer>
+		<AuthLayout>
+			<CreatePasswordForm />
+		</AuthLayout>
 	);
 };
 

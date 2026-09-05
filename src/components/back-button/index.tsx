@@ -13,10 +13,8 @@ const BackButton = ({ text }: Props) => {
 	const styles = useStyles(theme);
 	return (
 		<Box onClick={() => navigate(-1)} style={styles.container}>
-			<ArrowBack />
-			<Typography variant={'h5'} style={styles.text}>
-				{text || 'Back'}
-			</Typography>
+			<ArrowBack sx={{ fontSize: '18px' }} />
+			<Typography variant={'body1'}>{text || 'Back'}</Typography>
 		</Box>
 	);
 };
@@ -27,9 +25,6 @@ const useStyles = (theme: any) => ({
 		alignItems: 'center',
 		gap: theme.spacing(2),
 		cursor: 'pointer',
-	},
-	text: {
-		fontWeight: '600',
 	},
 });
 

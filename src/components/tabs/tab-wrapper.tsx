@@ -1,19 +1,18 @@
 import React, { ReactNode } from 'react';
 import { Tabs, useTheme } from '@mui/material';
 import { grey } from '@mui/material/colors';
-import { useAppSelector } from '../../store/hooks';
-import { ThemeModeType } from '../../utilities/types';
-import { DARK_BACKGROUND_COLOR } from '../../utilities/constant';
+import { useAppSelector } from 'store/hooks';
+import { DARK_BACKGROUND_COLOR, ThemeModeType } from 'utilities';
 
 type Props = {
 	currentTab: string | number;
-	handleChange: (e: any, value: number) => void;
+	handleChange: (e: any, value: any) => void;
 	children: ReactNode;
 };
 
 const TabWrapper = ({ currentTab, handleChange, children }: Props) => {
 	const theme = useTheme();
-	const { mode } = useAppSelector((store) => store.theme);
+	const mode = useAppSelector((store) => store.theme.mode);
 	return (
 		<Tabs
 			sx={{

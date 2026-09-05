@@ -4,10 +4,10 @@ import { grey } from '@mui/material/colors';
 
 type Props = {
 	name: string;
-	value: number;
+	rate: string;
 };
 
-const AvaliableNetworkItem = ({ name, value }: Props) => {
+const AvaliableNetworkItem = ({ name, rate }: Props) => {
 	const theme = useTheme();
 	return (
 		<Box
@@ -28,7 +28,7 @@ const AvaliableNetworkItem = ({ name, value }: Props) => {
 				{name} -
 			</Typography>
 			<Typography sx={{ color: grey[50], fontSize: '16px' }} variant={'body1'}>
-				{value}%
+				{rate}%
 			</Typography>
 		</Box>
 	);

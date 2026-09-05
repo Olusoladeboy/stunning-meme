@@ -17,7 +17,7 @@ const Empty = ({ text }: Props) => {
 			}}
 		>
 			<Image
-				src={require('../../assets/icons/data.png')}
+				src={require('assets/icons/data.png')}
 				alt={'empty data'}
 				sx={{
 					maxWidth: '40px',

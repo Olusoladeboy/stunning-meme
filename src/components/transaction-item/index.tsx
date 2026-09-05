@@ -4,12 +4,13 @@ import { grey } from '@mui/material/colors';
 
 type Props = {
 	icon: any;
-	amount: string;
+	amount: string | number;
 	children: ReactNode;
 	bgColor?: string;
 	amountColor?: string;
 	isBorder?: boolean;
 	borderColor?: string;
+	onClick?: () => void;
 };
 
 const TransactionItem = ({
@@ -20,12 +21,16 @@ const TransactionItem = ({
 	isBorder,
 	borderColor,
 	amountColor,
+	onClick,
 }: Props) => {
 	const theme = useTheme();
 	return (
 		<Box
+			onClick={onClick}
 			sx={{
 				backgroundColor: bgColor || grey[50],
+				minWidth: '200px',
+				cursor: 'pointer',
 				borderRadius: theme.spacing(2),
 				padding: theme.spacing(3),
 				border: isBorder

@@ -1,15 +1,15 @@
 import React from 'react';
 import { TextField, TextFieldProps } from '@mui/material';
-import { useAppSelector } from '../../store/hooks';
-import { ThemeModeType } from '../../utilities/types';
 import { grey } from '@mui/material/colors';
+import { useAppSelector } from 'store/hooks';
+import { ThemeModeType } from 'utilities';
 
 type Props = {
 	isLoading?: boolean;
 };
 
 const TextInput = (props: TextFieldProps & Props) => {
-	const { mode } = useAppSelector((store) => store.theme);
+	const mode = useAppSelector((store) => store.theme.mode);
 	return (
 		<TextField
 			{...props}
@@ -19,7 +19,7 @@ const TextInput = (props: TextFieldProps & Props) => {
 					borderColor: mode === ThemeModeType.dark ? grey[500] : 'initial',
 				},
 			}}
-			disabled={props.isLoading}
+			disabled={props.disabled || props.isLoading}
 		/>
 	);
 };

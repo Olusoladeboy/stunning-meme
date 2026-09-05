@@ -8,16 +8,17 @@ import {
 } from '@mui/material';
 import { grey } from '@mui/material/colors';
 import { FilterAlt } from '@mui/icons-material';
-import { ThemeModeType } from '../../utilities/types';
-import { useAppSelector } from '../../store/hooks';
+import { ThemeModeType } from 'utilities';
+import { useAppSelector } from 'store/hooks';
 
 interface Props extends BoxProps {
 	isLoading?: boolean;
 	selectProps?: SelectProps;
+	placeholder?: string;
 }
 
 const FilterBy = (props: Props) => {
-	const { mode } = useAppSelector((store) => store.theme);
+	const mode = useAppSelector((store) => store.theme.mode);
 	return (
 		<Box
 			sx={{

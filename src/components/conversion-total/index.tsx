@@ -2,9 +2,19 @@ import React from 'react';
 import { Box, Typography, useTheme, IconButton } from '@mui/material';
 import { grey } from '@mui/material/colors';
 import { Refresh } from '@mui/icons-material';
-import formatNumberToCurrency from '../../utilities/helpers/formatNumberToCurrency';
+import { formatNumberToCurrency } from 'utilities';
 
-const ConversionTotal = () => {
+type Props = {
+	total?: number;
+	handleRefresh?: () => void;
+	totalAmount?: number | string;
+};
+
+const ConversionTotal = ({
+	total = 0,
+	handleRefresh,
+	totalAmount = 0,
+}: Props) => {
 	const theme = useTheme();
 	const styles = useStyles(theme);
 	return (
@@ -12,21 +22,24 @@ const ConversionTotal = () => {
 			<Box style={styles.main}>
 				<Box>
 					<Typography sx={{ marginBottom: theme.spacing(2) }} variant={'h6'}>
-						Main Balance
+						Total Conversions
 					</Typography>
 					<Typography variant={'h4'}>
-						{formatNumberToCurrency(500000)}
+						{formatNumberToCurrency(totalAmount)}
 					</Typography>
 				</Box>
 				<Box style={styles.verticalLine} />
 				<Box>
 					<Typography sx={{ marginBottom: theme.spacing(2) }} variant={'h4'}>
-						{700}
+						{total}
 					</Typography>
 					<Typography variant={'h6'}>Total conversions</Typography>
 				</Box>
 			</Box>
-			<IconButton style={styles.refreshBtn}>
+			<IconButton
+				onClick={() => typeof handleRefresh !== 'undefined' && handleRefresh()}
+				style={styles.refreshBtn}
+			>
 				<Refresh />
 			</IconButton>
 		</Box>

@@ -1,15 +1,17 @@
-import React, { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
-import { useSnackbar } from 'notistack';
-import ThemeProvider from './utilities/theme/MuiThemeProvider';
+import React from 'react';
 import Router from './router';
-import ScrollToTop from './utilities/helpers/ScrollToTop';
+import { ScrollToTop, ThemeProvider } from './utilities';
+import { useLoadUser, useLoadStatistics } from './hooks';
+import { ModalAlert } from './components';
 
 function App() {
+	useLoadUser();
+	useLoadStatistics();
+
 	return (
 		<ThemeProvider>
 			<ScrollToTop>
+				<ModalAlert />
 				<Router />
 			</ScrollToTop>
 		</ThemeProvider>

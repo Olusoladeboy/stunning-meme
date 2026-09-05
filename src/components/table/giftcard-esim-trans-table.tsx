@@ -168,20 +168,22 @@ const GiftcardESimTransactionTable = ({
                     gap: '6px',
                   }}
                 >
-                  <Button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      sendNotification({
-                        reference: value.reference,
-                      });
-                    }}
-                    sx={{
-                      backgroundColor: `${SECOUNDARY_COLOR} !important`,
-                      color: 'white',
-                    }}
-                  >
-                    Send Notification
-                  </Button>
+                  {transactionType === SERVICES.ESIM && (
+                    <Button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        sendNotification({
+                          reference: value.reference,
+                        });
+                      }}
+                      sx={{
+                        backgroundColor: `${SECOUNDARY_COLOR} !important`,
+                        color: 'white',
+                      }}
+                    >
+                      Send Notification
+                    </Button>
+                  )}
                   {value.status.toLocaleLowerCase() === 'pending' && (
                     <Box sx={{ display: 'flex', gap: '10px' }}>
                       <Button

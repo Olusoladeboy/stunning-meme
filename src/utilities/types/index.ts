@@ -1172,6 +1172,8 @@ export interface IAutoConvertAirtimeStatistics {
   totalFailedA2CashCount: number;
   totalPendingA2CashCount: number;
   totalAmountReceived: number;
+  networkId: string;
+  networkName: string;
 }
 
 export interface IDataSubscriptionStatistic {
